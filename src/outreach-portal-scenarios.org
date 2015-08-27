@@ -55,6 +55,20 @@
    - Total number of workshops run with details
    - Total usage per institute
     
+** Scenario 7A: Dashboard
+:PROPERTIES:
+:CUSTOM_ID: admin_dashboard
+:END:      
+  - Page 13 : Admin should be able to view the dashboard with information
+    about:
+   - All outreach coordinators and on clicking the tab should be able to see
+     the list of all Outreach coordinators.
+   - All Nodal center coordinators and on clicking the tab should be able to see
+     the list of all Nodal coordinators
+   - Total number of workshops run with details and on clicking the tab should be able to see
+     the list of all workshops.
+   - Total usage per institute
+     
 * Outreach Coordinator User
 ** Scenario 8 : Adding Nodal coordinators
   - Page 14 : Required fields to add new nodal coordinator as follows
@@ -197,3 +211,14 @@
    and experiments and also which associate with submitted reports.
 
    
+** Scenario 23A: Dashboard of Nodal Coordinator
+:PROPERTIES:
+:CUSTOM_ID: admin_dashboard
+:END:      
+  - Page 13 : Nodal Coordinator should be able to view the dashboard with information
+    about:
+   - All Workshops w.r.t targets set by Outreach Coordinator
+   - All Experiments w.r.t targets set by Outreach Coordinator
+   - Total number of participants w.r.t targets set by Outreach Coordinator
+  
+    
