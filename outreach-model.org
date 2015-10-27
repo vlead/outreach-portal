@@ -288,7 +288,7 @@
    The model-diagram can be found below. This gives an overview of the
    relationships between different entities.
 
-   [[https://github.com/vlead/outreach-portal/outreach-model-diagram.jpg][Model-diagram]] 
+   [[https://github.com/vlead/outreach-portal/blob/master/outreach-model-diagram.jpg][Model-diagram]] 
 
    This diagram highlights the following facts:
 
