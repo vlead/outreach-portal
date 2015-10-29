@@ -1,23 +1,23 @@
-#+AUTHOR: VLEAD
+#+AUTHOR: VLAD
 #+TITLE: Scenarios of Outreach Portal
 #+DATE: 28-Oct-2015
 * Introduction
- This document breifly explaines the functions and roles of each user (Admin, Outreach or Nodal coordinator) in scenario wise. 
+  This document briefly explains the functions and roles of each user (Admin, Outreach or Nodal coordinator) scenario wise. 
 * Admin user
 ** Scenario 1 : Adding Outreach coordinator
-  - Page 1 : Required feilds Name, Email-id
+  - Page 1 : Required fields Name, Email-id
   - Page 2 : Result page on successful/failure of adding new outreach coordinator
 ** Scenario 2 : Editing Outreach coordinator
-  - Page 3 : Required feilds Name, Email-id with ability to edit 
+  - Page 3 : Required fields Name, Email-id with ability to edit 
   - Page 4 : Result page on successful/failure of updating coordinator details
 ** Scenario 3 : Deleting Outreach coordinator
   - Page 5 : Page with listing all Outreach Coordinators associated with ==delete== button 
   - Page 6 : Result page on successful/failure of deleting coordinator
-** Scenario 4 : Adding guidence & Meterials
-  - Page 7 : Required feilds Name, feilds to upload supported documents (.pdf, .doc)
-  - Page 8 : Result page on successful/failure of uploading meterials
+** Scenario 4 : Adding guidance & Materials
+  - Page 7 : Required fields Name, fields to upload supported documents (.pdf, .doc)
+  - Page 8 : Result page on successful/failure of uploading materials
 ** Scenario 5 : Editing Documents
-  - Page 9 : Required feilds Name, feilds to upload supported documents (.pdf, .doc)
+  - Page 9 : Required fields Name, fields to upload supported documents (.pdf, .doc)
   - Page 10 : Result page on successful/failure of updating documents details
 
 ** Scenario 6 : Deleting Documents
@@ -26,7 +26,7 @@
     
 * Outreach Coordinator User
 ** Scenario 7 : Adding Nodal coordinators
-  - Page 13 : Required feilds to add new nodal coordinator as follows
+  - Page 13 : Required fields to add new nodal coordinator as follows
               1) Name of the nodal center
               2) Name of the coordinator
               3) Email-id
@@ -39,21 +39,21 @@
   - Page 15 : Page with listing all nodal coordinators associate with delete button
   - Page 16 : Result page on successful/failure of deleting nodal coordinator
 ** Scenario 9 : Editing Nodal coordinators
-  - Page 17 : Page with all nodal coordinator's feilds as editable
+  - Page 17 : Page with all nodal coordinator's fields as editable
   - Page 18 : Result page on successful/failure of editing nodal coordinator details
 ** Scenario 10 : Listing out upcoming workshops
   - Page 19 : Page which lists all the upcoming workshops with details like
     date, location, participants planned, institute name and nodal
     center and nodal coordinator
 ** Scenario 11 : Attaching documents for nodal coordinator training
-  - Page 20 : Feilds for uploading documents (.pdf or .doc), feedback
-    (possitive and nagative), No of participants attended and no of
+  - Page 20 : Fields for uploading documents (.pdf or .doc), feedback
+    (positive and negative), No of participants attended and no of
     experiments conducted
   - Page 21 : Result page after submitting the above form
 ** Scenario 12 : Displaying workshop history
   - Page 22 : Page with listing all finished workshops details like
     date, location, participants, experiments, participating institutes,
-    nodal center and submited reports with view.
+    nodal center and submitted reports with view.
 ** Scenario 13 : Listing reports to be approved by outreach coordinator
    - Page 23 : Page with details like date, location, participants,
      experiments, participating institutes, nodal centers and reports
@@ -62,10 +62,10 @@
    
 * Nodal Coordinator User
 ** Scenario 14 : Listing all the documents which are uploaded by Admin. 
-   - Page 24 : Page has to list all the documents with dowonload link
+   - Page 24 : Page has to list all the documents with download link
      Following are the documents :
 
-     1) Eligibility-SystemsConfiguration-Infrastructure,
+     1) Eligibility-Systems Configuration-Infrastructure,
      2) Pre-requisites-for-workshop, Attendance sheet, Feedback form,
      3) Virtual Labs Handout, College Report, Sample-workshop-schedule,
      4) Virtual Labs Introduction presentation and College Report format
@@ -81,13 +81,13 @@
      8) name of domain/discipline/department
      9) labs planned for workshop and other details
 
-  - Page 26 : Result page on successfull/failure of creating new workshop
-** Scenario 16 : Cancelling workshop
+  - Page 26 : Result page on successful/failure of creating new workshop
+** Scenario 16 : Cancelling the workshop
   - Page 27 : Page with listing all the upcoming workshops associated with ==cancel== button
   - Page 28 : Result page on successful/failure of cancelling workshop
 ** Scenario 17 : Upload workshop feedback materials
- - Page 29 : Feilds for uploading documents (.pdf or .doc) and images (.png or .jpeg)
- - Page 30 : Result page on successfull/failure uploading above documents
+ - Page 29 : Fields for uploading documents (.pdf or .doc) and images (.png or .jpeg)
+ - Page 30 : Result page on successful/failure uploading above documents
 ** Scenario 18 : History of conducted workshops
  - Page 31 : Page with workshop details like date, location, no of participants and experiments and also which associate with submitted reports. 
 
