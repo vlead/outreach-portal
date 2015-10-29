@@ -2,27 +2,27 @@
 #+TITLE: Scenarios of Outreach Portal
 #+DATE: 28-Oct-2015
 * Introduction
- This documents breifly explaines the functions and roles of each user (Admin, Outreach or Nodal coordinator) in scenario wise. 
+ This document breifly explaines the functions and roles of each user (Admin, Outreach or Nodal coordinator) in scenario wise. 
 * Admin user
 ** Scenario 1 : Adding Outreach coordinator
   - Page 1 : Required feilds Name, Email-id
-  - Page 2 : Result page on successful/failure of adding new coordinator
+  - Page 2 : Result page on successful/failure of adding new outreach coordinator
 ** Scenario 2 : Editing Outreach coordinator
-  - Page 3 : Required feilds Name, Email-id
+  - Page 3 : Required feilds Name, Email-id with ability to edit 
   - Page 4 : Result page on successful/failure of updating coordinator details
 ** Scenario 3 : Deleting Outreach coordinator
-  - Page 5 : Page with list of Outreach Coordinators 
-  - Page 6 : Result page on successful/failure of updating coordinator
+  - Page 5 : Page with listing all Outreach Coordinators associated with ==delete== button 
+  - Page 6 : Result page on successful/failure of deleting coordinator
 ** Scenario 4 : Adding guidence & Meterials
   - Page 7 : Required feilds Name, feilds to upload supported documents (.pdf, .doc)
-  - Page 8 : Result page on successful/failure of updating meterials
+  - Page 8 : Result page on successful/failure of uploading meterials
 ** Scenario 5 : Editing Documents
-  - Page 9 : Required feilds Name, supported documents (.pdf, .doc)
-  - Page 10 : Result page on successful/failure of updating meterial details
+  - Page 9 : Required feilds Name, feilds to upload supported documents (.pdf, .doc)
+  - Page 10 : Result page on successful/failure of updating documents details
 
 ** Scenario 6 : Deleting Documents
-  - Page 11 : Page with listing documents
-  - Page 12 : Result page on successful/failure of deleting documents.
+  - Page 11 : Page with listing all documents
+  - Page 12 : Result page on successful/failure of deleting documents
     
 * Outreach Coordinator User
 ** Scenario 7 : Adding Nodal coordinators
@@ -30,39 +30,39 @@
               1) Name of the nodal center
               2) Name of the coordinator
               3) Email-id
-              4) Target section as follows
+              *Target section as follows*
               5) No of workshops
               6) No of participants
               7) No of experiments
   - Page 14 : Result page on successful/failure of adding new nodal coordinator
 ** Scenario 8 : Deleting Nodal coordinators
   - Page 15 : Page with listing all nodal coordinators associate with delete button
-  - Page 14 : Result page on successful/failure of deleting nodal coordinator
+  - Page 16 : Result page on successful/failure of deleting nodal coordinator
 ** Scenario 9 : Editing Nodal coordinators
-  - Page 16 : Page with all required feilds as editable
-  - Page 14 : Result page on successful/failure of editing nodal coordinator details.
+  - Page 17 : Page with all nodal coordinator's feilds as editable
+  - Page 18 : Result page on successful/failure of editing nodal coordinator details
 ** Scenario 10 : Listing out upcoming workshops
-  - Page 17 : Page which lists all the upcoming workshops with details like
+  - Page 19 : Page which lists all the upcoming workshops with details like
     date, location, participants planned, institute name and nodal
     center and nodal coordinator
 ** Scenario 11 : Attaching documents for nodal coordinator training
-  - Page 18 : Feilds for uploading documents (.pdf or .doc), feedback
+  - Page 20 : Feilds for uploading documents (.pdf or .doc), feedback
     (possitive and nagative), No of participants attended and no of
     experiments conducted
-  - Page 19 : Result page after submitting the above form
+  - Page 21 : Result page after submitting the above form
 ** Scenario 12 : Displaying workshop history
-  - Page 20 : Page with listing all finished workshops details like
+  - Page 22 : Page with listing all finished workshops details like
     date, location, participants, experiments, participating institutes,
     nodal center and submited reports with view.
 ** Scenario 13 : Listing reports to be approved by outreach coordinator
-   - Page 21 : Page with details like date, location, participants,
+   - Page 23 : Page with details like date, location, participants,
      experiments, participating institutes, nodal centers and reports
      with its details. Approve button has to be associated with report
      view.
    
 * Nodal Coordinator User
 ** Scenario 14 : Listing all the documents which are uploaded by Admin. 
-   - Page 22 : Page has to list all the documents with dowonload link
+   - Page 24 : Page has to list all the documents with dowonload link
      Following are the documents :
 
      1) Eligibility-SystemsConfiguration-Infrastructure,
@@ -70,7 +70,7 @@
      3) Virtual Labs Handout, College Report, Sample-workshop-schedule,
      4) Virtual Labs Introduction presentation and College Report format
 ** Scenario 15 : Creating new workshop
-   - Page 23: Required following details to create new workshop
+   - Page 25: Required following details to create new workshop
      1) Name
      2) location
      3) participating institutes
@@ -81,13 +81,13 @@
      8) name of domain/discipline/department
      9) labs planned for workshop and other details
 
-  - Page 24 : Result page on successfull/failure of creating new workshop
+  - Page 26 : Result page on successfull/failure of creating new workshop
 ** Scenario 16 : Cancelling workshop
-  - Page : Page with listing all the upcoming workshops associated with ==cancel== button
-  - Page : Result page on successful/failure of cancelling workshop
+  - Page 27 : Page with listing all the upcoming workshops associated with ==cancel== button
+  - Page 28 : Result page on successful/failure of cancelling workshop
 ** Scenario 17 : Upload workshop feedback materials
- - Page 25 : Feilds for uploading documents (.pdf or .doc) and images (.png or .jpeg)
- - Page 26 : Result page on successfull/failure uploading above documents
+ - Page 29 : Feilds for uploading documents (.pdf or .doc) and images (.png or .jpeg)
+ - Page 30 : Result page on successfull/failure uploading above documents
 ** Scenario 18 : History of conducted workshops
- - Page 27 : Page with workshop details like date, location, no of participants and experiments and also which associate with submitted reports. 
+ - Page 31 : Page with workshop details like date, location, no of participants and experiments and also which associate with submitted reports. 
 
