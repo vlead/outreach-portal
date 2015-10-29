@@ -1,0 +1,86 @@
+#+AUTHOR: VLEAD
+#+TITLE: Scenarios of Outreach Portal
+#+DATE: 28-Oct-2015
+* Introduction
+ This documents breifly explaines the functions and roles of each user (Admin, Outreach or Nodal coordinator) in scenario wise. 
+* Admin user
+** Scenario 1 : Adding Outreach coordinator
+  - Page 1 : Required feilds Name, Email-id
+  - Page 2 : On successful/failure of adding new coordinator result page
+** Scenario 2 : Editing Outreach coordinator
+  - Page 3 : Required feilds Name, Email-id
+  - Page 4 : On successful/failure of updating coordinator result page
+** Scenario 3 : Deleting Outreach coordinator
+  - Page 5 : Page with list of Outreach Coordinators 
+  - Page 6 : On successful/failure of updating coordinator result page
+** Scenario 4 : Adding guidence & Meterials
+  - Page 7 : Required feilds Name, supported documents (.pdf, .doc)
+  - Page 8 : On successful/failure of updating meterials result page
+** Scenario 5 : Editing Documents
+  - Page 9 : Required feilds Name, supported documents (.pdf, .doc)
+  - Page 10 : On successful/failure of updating meterials result page
+
+** Scenario 6 : Deleting Documents
+  - Page 11 : Page with all lisetd documents
+  - Page 12 : On successful/failure of deleting meterials result page
+    
+* Outreach Coordinator User
+** Scenario 7 : Adding Nodal coordinators
+  - Page 13 : Required feilds as follows
+              Name of the center
+              Name of the coordinator
+              Email-id
+              Target section as follows
+              No of workshops
+              No of participants
+              No of experiments
+  - Page 14 : Result page on successful/failure of adding nodal coordinator
+** Scenario 8 : Deleting Nodal coordinators
+  - Page 15 : Page with all nodal coordinators associate with delete button
+** Scenario 9 : Editing Nodal coordinators
+  - Page 16 : Page with all required feilds as editable
+
+** Scenario 10 : Listing out upcoming workshops
+  - Page 17 : Page which lists all the upcoming workshops details like
+    date, location, participants planned, institute name and nodal
+    center.
+** Scenario 11 : Attaching documents for nodal coordinator training
+  - Page 18 : Feilds for uploading documents (.pdf or .doc),feedback
+    (possitive and nagative), No of participants attended and no of
+    experiments conducted
+  - Page 19 : Result page after submitting the above form
+** Scenario 12 : Displaying workshop history
+  - Page 20 : Page wich lists all finished workshop details like
+    date, location, participants, experiments, participating institutes,
+    nodal center and submited reports.
+** Scenario 13 : List out reports to be approved
+   - Page 21 : Page with details like date, location, participants,
+     experiments, participating institutes, nodal centers and reports
+     with its details. Approve button has to be associated with report
+     view.
+   
+* Nodal Coordinator User
+** Scenario 14 : Listing all the documents which are uploaded by Admin. 
+   - Page 22 : Page has to list all the documents with dowonload link
+     Following are the documents :
+     1)Eligibility-SystemsConfiguration-Infrastructure,
+     2)Pre-requisites-for-workshop, Attendance sheet, Feedback form,
+     3)Virtual Labs Handout, College Report, Sample-workshop-schedule,
+     4)Virtual Labs Introduction presentation and College Report format
+** Scenario 15 : Creating new workshop
+   - Page 23: Required following details to create new workshop Name
+     location
+     participating institutes
+     date
+     no. of participants
+     no of sessions 
+     duration of sessions 
+     name of domain/discipline/department
+     labs planned for workshop and other details
+  - Page 24 : Result page on successfull/failure creating workshop
+** Scenario 16 : Upload workshop feedback materials
+ - Page 25 : Feilds for uploading documents (.pdf or .doc) and images (.png or .jpeg)
+ - Page 26 : Result page on successfull/failure uploading above documents
+** Scenario 17 : History of conducted workshops
+ - Page 27 : Page with workshop details like date, location, no of participants and experiments and also which associate with submitted reports. 
+
