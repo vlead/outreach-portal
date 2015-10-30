@@ -58,9 +58,9 @@
   - The list should appear chronologically. 
   - The list should be sortable nodal coordinator-wise
 
-** Scenario XX : Editing upcoming workshops details
+** Scenario 11 : Editing upcoming workshops details
 
-** Scenario 11 : Creating new workshops
+** Scenario 12 : Creating new workshops
   - Add details about a new wokshop (same as a nodal coordinator)
   - Add details of old workshops conducted (this will appear as Workshop History after the workshop reports are submitted)
   - These workshop history details should add to the experiments/usage, participants, workshops, and nodal center count.
@@ -70,49 +70,49 @@
     (positive and negative), No of participants attended and no of
     experiments conducted
   - Page 21 : Result page after submitting the above form
-** Scenario 12 : Displaying workshop history
+** Scenario 13 : Displaying workshop history
   - Page 22 : Page with listing all finished workshops details like
     date, location, participants, experiments, participating institutes,
     nodal center and submitted reports with view.
-** Scenario 13 : Listing reports to be approved by outreach coordinator
+** Scenario 14 : Listing reports to be approved by outreach coordinator
    - Page 23 : Page with details like date, location, participants,
      experiments, participating institutes, nodal centers and reports
      with its details. Approve button has to be associated with report
      view.
-** Scenario 14 : View actual workshops, participants and experiments (against target workshops, participants, and experiments) for each Nodal Coordinator in Manage Nodal Coordinators
-** Scenario 15 : Add new documents to the documents list provided by Admin.  
+** Scenario 15 : View actual workshops, participants and experiments (against target workshops, participants, and experiments) for each Nodal Coordinator in Manage Nodal Coordinators
+** Scenario 16 : Add new documents to the documents list provided by Admin.  
   - These should be subject to approval by the admin. 
    
 * Nodal Coordinator User
-** Scenario 16 : Can view and download documents which are uploaded by Admin and Outreach Coordinator 
+** Scenario 17 : Can view and download documents which are uploaded by Admin and Outreach Coordinator 
    - Page 24 : Page has to list all the documents with download link
      Following are the documents :
 
-     1) Eligibility-Systems Configuration-Infrastructure,
-     2) Pre-requisites-for-workshop, Attendance sheet, Feedback form,
-     3) Virtual Labs Handout, College Report, Sample-workshop-schedule,
-     4) Virtual Labs Introduction presentation and College Report format
-** Scenario 17 : Creating new workshops and Modifiable by Outreach Coordinators
+     - Eligibility-Systems Configuration-Infrastructure,
+     - Pre-requisites-for-workshop, Attendance sheet, Feedback form,
+     - Virtual Labs Handout, College Report, Sample-workshop-schedule,
+     - Virtual Labs Introduction presentation and College Report format
+** Scenario 18 : Creating new workshops and Modifiable by Outreach Coordinators
    - Page 25: Required following details to create new workshop
-     1) Name
-     2) location
-     3) participating institutes
-     4) date
-     5) no. of participants
-     6) no of sessions 
-     7) duration of sessions 
-     8) name of domain/discipline/department
-     9) labs planned for workshop and other details
+     - Name
+     - Location
+     - Participating institutes
+     - Date
+     - No. of participants
+     - No of sessions 
+     - Duration of sessions 
+     - Name of domain/discipline/department
+     - Labs planned for workshop and other details
 
   - Page 26 : Result page on successful/failure of creating new workshop
-** Scenario 18 : Cancelling the workshop
+** Scenario 19 : Cancelling the workshop
   - Page 27 : Page with listing all the upcoming workshops associated with ==cancel== button
   - Page 28 : Result page on successful/failure of cancelling workshop
-** Scenario 19 : Upload workshop feedback materials
+** Scenario 20 : Upload workshop feedback materials
  - Page 29 : Fields for uploading documents (.pdf or .doc) and images (.png or .jpeg). Should be able to upload multiple documents or multiple pages of same document.
  - Page 30 : Result page on successful/failure uploading above documents
  - Page XX : Upload scanned feedback forms of the workshop
  
-** Scenario 20 : History of conducted workshops
+** Scenario 21 : History of conducted workshops
  - Page 31 : Page with workshop details like date, location, no of participants and experiments and also which associate with submitted reports. 
 
