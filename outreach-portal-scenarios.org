@@ -36,14 +36,14 @@
 * Outreach Coordinator User
 ** Scenario 7 : Adding Nodal coordinators
   - Page 13 : Required fields to add new nodal coordinator as follows
-              1) Name of the nodal center
-              2) Name of the coordinator
-              3) Email-id
-              4) Phone number
+              - Name of the nodal center
+              - Name of the coordinator
+              - Email-id
+              - Phone number
               *Target section as follows*
-              5) No of workshops
-              6) No of participants
-              7) No of experiments/usage
+              - No of workshops
+              - No of participants
+              - No of experiments/usage
   - Page 14 : Result page on successful/failure of adding new nodal coordinator
 ** Scenario 8 : Deleting Nodal coordinators
   - Page 15 : Can delete one or many nodal coordinators. Page with listing all nodal coordinators associate with delete button
@@ -79,12 +79,12 @@
      experiments, participating institutes, nodal centers and reports
      with its details. Approve button has to be associated with report
      view.
-** Scenario XX : View actual workshops, participants and experiments (against target workshops, participants, and experiments) for each Nodal Coordinator in Manage Nodal Coordinators
-** Scenario XY : Add new documents to the documents list provided by Admin.  
+** Scenario 14 : View actual workshops, participants and experiments (against target workshops, participants, and experiments) for each Nodal Coordinator in Manage Nodal Coordinators
+** Scenario 15 : Add new documents to the documents list provided by Admin.  
   - These should be subject to approval by the admin. 
    
 * Nodal Coordinator User
-** Scenario 14 : Can view and download documents which are uploaded by Admin and Outreach Coordinator 
+** Scenario 16 : Can view and download documents which are uploaded by Admin and Outreach Coordinator 
    - Page 24 : Page has to list all the documents with download link
      Following are the documents :
 
@@ -92,7 +92,7 @@
      2) Pre-requisites-for-workshop, Attendance sheet, Feedback form,
      3) Virtual Labs Handout, College Report, Sample-workshop-schedule,
      4) Virtual Labs Introduction presentation and College Report format
-** Scenario 15 : Creating new workshops and Modifiable by Outreach Coordinators
+** Scenario 17 : Creating new workshops and Modifiable by Outreach Coordinators
    - Page 25: Required following details to create new workshop
      1) Name
      2) location
@@ -105,14 +105,14 @@
      9) labs planned for workshop and other details
 
   - Page 26 : Result page on successful/failure of creating new workshop
-** Scenario 16 : Cancelling the workshop
+** Scenario 18 : Cancelling the workshop
   - Page 27 : Page with listing all the upcoming workshops associated with ==cancel== button
   - Page 28 : Result page on successful/failure of cancelling workshop
-** Scenario 17 : Upload workshop feedback materials
+** Scenario 19 : Upload workshop feedback materials
  - Page 29 : Fields for uploading documents (.pdf or .doc) and images (.png or .jpeg). Should be able to upload multiple documents or multiple pages of same document.
  - Page 30 : Result page on successful/failure uploading above documents
  - Page XX : Upload scanned feedback forms of the workshop
  
-** Scenario 18 : History of conducted workshops
+** Scenario 20 : History of conducted workshops
  - Page 31 : Page with workshop details like date, location, no of participants and experiments and also which associate with submitted reports. 
 
