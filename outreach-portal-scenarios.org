@@ -79,7 +79,9 @@
      experiments, participating institutes, nodal centers and reports
      with its details. Approve button has to be associated with report
      view.
-** Scenario 15 : View actual workshops, participants and experiments (against target workshops, participants, and experiments) for each Nodal Coordinator in Manage Nodal Coordinators
+** Scenario 15 : Following has to be listed in Manage Nodal Coordinators
+   - View actual workshops
+   - Participants and experiments (against target workshops, participants, and experiments) for each Nodal Coordinator in 
 ** Scenario 16 : Add new documents to the documents list provided by Admin.  
   - These should be subject to approval by the admin. 
    
