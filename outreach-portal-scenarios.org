@@ -81,7 +81,7 @@
      view.
 ** Scenario 15 : Following has to be listed in Manage Nodal Coordinators
    - View actual workshops
-   - Participants and experiments (against target workshops, participants, and experiments) for each Nodal Coordinator in 
+   - Participants and experiments (against target workshops, participants, and experiments) for each Nodal Coordinator
 ** Scenario 16 : Add new documents to the documents list provided by Admin.  
   - These should be subject to approval by the admin. 
    
