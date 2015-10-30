@@ -113,8 +113,8 @@
 ** Scenario 20 : Upload workshop feedback materials
  - Page 29 : Fields for uploading documents (.pdf or .doc) and images (.png or .jpeg). Should be able to upload multiple documents or multiple pages of same document.
  - Page 30 : Result page on successful/failure uploading above documents
- - Page XX : Upload scanned feedback forms of the workshop
+ - Page 31 : Upload scanned feedback forms of the workshop
  
 ** Scenario 21 : History of conducted workshops
- - Page 31 : Page with workshop details like date, location, no of participants and experiments and also which associate with submitted reports. 
+ - Page 32 : Page with workshop details like date, location, no of participants and experiments and also which associate with submitted reports. 
 
