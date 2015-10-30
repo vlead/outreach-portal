@@ -4,14 +4,14 @@
 * Introduction
   This document briefly explains the functions and roles of each user (Admin, Outreach or Nodal coordinator) scenario wise. 
 * Admin user
-** Scenario 1 : Adding Outreach coordinator
-  - Page 1 : Required fields Name, Email-id, Institute Name, 
+** Scenario 1 : Adding Outreach Coordinator
+  - Page 1 : Required fields Name, Email-id, Institute Name
   - Page 2 : Result page on successful/failure of adding new outreach coordinator
-** Scenario 2 : Editing Outreach coordinator
-  - Page 3 : Required fields Name, Email-id with ability to edit, new email=id for the same institute
+** Scenario 2 : Editing Outreach Coordinator
+  - Page 3 : Required fields Name, Email-id with ability to edit, new Email-id for the same institute
   - Page 4 : Result page on successful/failure of updating coordinator details
   The admin should be able to assign another person as an outreach coordinator for the same institute. All earlier Nodal coordinator details for that institute should get transferred automatically to the new Outreach Coordinator.
-** Scenario 3 : Deleting Outreach coordinator
+** Scenario 3 : Deleting Outreach Coordinator
   - Page 5 : Page with listing all Outreach Coordinators associated with ==delete== button 
   - Page 6 : Result page on successful/failure of deleting coordinator
   The admin should be able to delete any outreach coordinator and assign a new one. But data pertaining to the old outreach coordinator should be available.
