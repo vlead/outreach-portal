@@ -63,43 +63,43 @@
   - The workshop history details should add to the experiments/usage, participants, workshops, and nodal center count.
 
 ** Scenario 12 : Creating new workshops
-  - The outreach coordinator should be able to add details about a new wokshop (same as a nodal coordinator)
+  - Page 22 : The outreach coordinator should be able to add details about a new wokshop (same as a nodal coordinator)
   - He should be able to add details of old workshops conducted as in the scenario above. 
   - The outreach coordinator does not need any approvals for closing a workshop. If he/she submits the workshop reports,       attendance sheets, and photographs, he should be able to submit the Workshop & close it. Then the workshop will move into Workshop History.
   These workshop history details should add to the experiments/usage, participants, workshops, and nodal center count.
-  - The outreach coordinator should be able to add scanned feedback forms for each workshop. As many forms as he/she wants to upload and in any format.
-  - The outreach coordinator should be able to share his/her feedback about the workshop on the portal. This can be feedback about the infrastructure of the college, condition of labs, any techincal difficulty faced, logistics issues with the workshop etc.
+  - Page 23 : The outreach coordinator should be able to add scanned feedback forms for each workshop. As many forms as he/she wants to upload and in any format.
+  - Page 24 : The outreach coordinator should be able to share his/her feedback about the workshop on the portal. This can be feedback about the infrastructure of the college, condition of labs, any techincal difficulty faced, logistics issues with the workshop etc.
   - The uploading of scanned feedback form should not be a mandatory field.
   - Sharing of feedback about the workshop should not be a mandatory field.
-
+ - Page 25 : Result page on successful/failure of creating new workshop
 ** Scenario 13 : Editing upcoming workshops details
   
-  - Page 22 : Fields for uploading documents (.pdf or .doc), feedback
+  - Page 26 : Fields for uploading documents (.pdf or .doc), feedback
     (positive and negative), No of participants attended and no of
     experiments conducted
-  - Page 23 : Result page after submitting the above form
+  - Page 27 : Result page after submitting the above form
 ** Scenario 14 : Displaying workshop history
-  - Page 24 : Page with listing all finished workshops details like
+  - Page 28 : Page with listing all finished workshops details like
     date, location, participants, experiments, participating institutes,
     nodal center and submitted reports with view.
 ** Scenario 15 : Listing reports to be approved by outreach coordinator
-   - Page 25 : Page with details like date, location, participants,
+   - Page 29 : Page with details like date, location, participants,
      experiments, participating institutes, nodal centers and reports
      with its details. Approve button has to be associated with report
      view.
 ** Scenario 16 : Following has to be listed in Manage Nodal Coordinators
-   - View actual workshops
+   - Page 30 : View actual workshops
    - Participants and experiments (against target workshops, participants, and experiments) for each Nodal Coordinator
 ** Scenario 17 : Add new documents to the documents list provided by Admin.  
   - These should be subject to approval by the admin. 
   
 ** Scenario 18 : Search workshops by date, nodal coordinators, institutes etc
-  - The outreach coordinator should be able to search any information regarding a workshop on the portal.
+  - Page 31 : The outreach coordinator should be able to search any information regarding a workshop on the portal.
   - The outreach coordinator should be able to view past workshops in chronological order as well as according to nodal         coordinators. 
-   
+  - Page 32 : Result page on successful/failure of searching
 * Nodal Coordinator User
 ** Scenario 19 : Can view and download documents that are uploaded by Admin and Outreach Coordinator 
-   - Page 24 : Page has to list all the documents with download link
+   - Page 33 : Page has to list all the documents with download link
      Following are the documents :
 
      - Eligibility-Systems Configuration-Infrastructure,
@@ -108,7 +108,7 @@
      - Virtual Labs Introduction presentation and College Report format
 
 ** Scenario 20 : Creating new workshops that can be modified by Outreach Coordinators
-   - Page 25: Required following details to create new workshop
+   - Page 34 : Required following details to create new workshop
      - Name
      - Location
      - Participating institutes
@@ -119,21 +119,21 @@
      - Name of domain/discipline/department
      - Labs planned for workshop and other details
 
-  - Page 26 : Result page on successful/failure of creating new workshop
+  - Page 35 : Result page on successful/failure of creating new workshop
 
 ** Scenario 21 : Cancelling the workshop after providing a reason why the workshop was cancelled
-  - Page 27 : Page with listing all the upcoming workshops associated with cancel button
-  - Page 28 : Result page on successful/failure of cancelling workshop
+  - Page 36 : Page with listing all the upcoming workshops associated with cancel button
+  - Page 37 : Result page on successful/failure of cancelling workshop
 
 ** Scenario 22 : Upload documents, reports, photographs etc post workshop
- - Page 29 : Fields for uploading documents (.pdf or .doc) and images (.png or .jpeg). Should be able to upload      multiple documents or multiple pages of same document in multiple formats. For example, he should be able to upload 5 sheets of scanned attendance sheet (pdfs) and 10 photographs (jpg), and 1 college report in Word format.
- - Page 30 : Result page on successful/failure uploading above documents
- - Page 31 : Upload scanned feedback forms of the workshop
+ - Page 38 : Fields for uploading documents (.pdf or .doc) and images (.png or .jpeg). Should be able to upload      multiple documents or multiple pages of same document in multiple formats. For example, he should be able to upload 5 sheets of scanned attendance sheet (pdfs) and 10 photographs (jpg), and 1 college report in Word format.
+ - Page 39 : Result page on successful/failure uploading above documents
+ - Page 40 : Upload scanned feedback forms of the workshop
    - The uploading of scanned feedback form should not be a mandatory field.
    The nodal cooridnator should be able to upload 100s of scanned feedback forms. Or provide a link to a storage place where the    feedback forms are uploaded.
    The nodal coordinator should be able to share his/her feedback about the workshop on the portal. This can be feedback about    the infrastructure of the college, condition of labs, any techincal difficulty faced, logistics issues with the workshop etc.
-  - Sharing of feedback about the workshop should not be a mandatory field.
+  - Page 41 : Sharing of feedback about the workshop should not be a mandatory field.
  
 ** Scenario 23 : History of conducted workshops
- - Page 32 : Page with workshop details like date, location, no of participants and experiments and also which associate with submitted reports. 
+ - Page 42 : Page with workshop details like date, location, no of participants and experiments and also which associate with submitted reports. 
 
