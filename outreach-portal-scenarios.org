@@ -12,7 +12,7 @@
   - Page 4 : Result page on successful/failure of updating coordinator details
   - The admin should be able to assign another person as an outreach coordinator for the same institute. All earlier Nodal coordinator details for that institute should get transferred automatically to the new Outreach Coordinator.
 ** Scenario 3 : Deleting Outreach Coordinator
-  - Page 5 : Page with listing all Outreach Coordinators associated with ==delete== button 
+  - Page 5 : Page with listing all Outreach Coordinators associated with delete button 
   - Page 6 : Result page on successful/failure of deleting coordinator
   - The admin should be able to delete any outreach coordinator and assign a new one. But data pertaining to the old outreach coordinator should be available.
 ** Scenario 4 : Adding guidance & Materials
@@ -122,7 +122,7 @@
   - Page 26 : Result page on successful/failure of creating new workshop
 
 ** Scenario 21 : Cancelling the workshop after providing a reason why the workshop was cancelled
-  - Page 27 : Page with listing all the upcoming workshops associated with ==cancel== button
+  - Page 27 : Page with listing all the upcoming workshops associated with cancel button
   - Page 28 : Result page on successful/failure of cancelling workshop
 
 ** Scenario 22 : Upload documents, reports, photographs etc post workshop
