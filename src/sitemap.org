@@ -1,3 +1,0 @@
-#+TITLE: Sitemap for project org-docs
-
-   + [[file:index.org][Outreach Portal]]
