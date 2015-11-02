@@ -37,8 +37,8 @@ class Name(object):
 
 *** Email
 
-     Email is a type as defined in RFC [[https://tools.ietf.org/html/rfc5321][5321]], [[https://tools.ietf.org/html/rfc5322][5322]] and [[https://tools.ietf.org/html/rfc6531][6531]].
-     Following is the constructor for this class.
+     Email is a type as defined in RFC [[https://tools.ietf.org/html/rfc5321][5321]], [[https://tools.ietf.org/html/rfc5322][5322]] and [[https://tools.ietf.org/html/rfc6531][6531]].  Following
+     is the constructor for this class.
 
 #+BEGIN_SRC python :tangle src/db.py :eval no
 class Email(object):
@@ -46,6 +46,37 @@ class Email(object):
         if not re.search('[^@]+@[^@]+\.[^@]+', value):
             raise TypeError('%s is not an email!' % value)
         self.value = value
+#+END_SRC
+
+*** Status
+    Status is 
+    { Upcoming, Cancelled, Completed }
+    #+BEGIN_SRC python :tangle src/db.py :eval no
+class Status(Entity):
+    __tablename__ = 'status'
+    id = db.Column(db.Integer, primary_key=True)
+    status_of_entity = db.Column(db.String(64), nullable=False, unique=True)
+
+    workshops = db.relationship('Workshop', backref='status')
+
+    @staticmethod
+    def get_by_id(id):
+        return Status.query.get(id)
+
+    @staticmethod
+    def get_by_status(status):
+        return Status.query.filter_by(status_of_entity=status).first()
+
+    def to_client(self):
+        return {
+            'id': self.id,
+            'status_of_entity': self.status_of_entity
+        }
+
+    @staticmethod
+    def get_all():
+        return Status.query.all()
+
 #+END_SRC
 
 *** Outreach Coordinator
@@ -178,6 +209,7 @@ class NodalCoordinator(Entity):
 
     nodal_centres = db.relationship('NodalCentre', backref='nodal_coordinator')
     coordinator_trainings = db.relationship('NodalCoordinatorsTraining', backref='nodal_coordinator')
+    workshops = db.relationship('Workshop', backref='nodal_coordinator')
 
 #+END_SRC
 
@@ -365,7 +397,7 @@ class NodalCoordinator(Entity):
     def set_current_experiments(self, current_experiments):
         self.current_experiments = current_experiments
 #+END_SRC
-
+      
 *** Nodal Centre
 **** Immutable data
      + Id
@@ -463,12 +495,12 @@ class NodalCentre(Entity):
      + Description
      + Invitees
      + Created By
-
+       
 **** Definition
 #+BEGIN_SRC python :tangle src/db.py :eval no
 class NodalCoordinatorsTraining(Entity):
 
-    __tablename__ = 'nodal_coordinators_training'
+    __tablename__ = 'nodal_coordinators_trainings'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), nullable=False)
@@ -480,15 +512,151 @@ class NodalCoordinatorsTraining(Entity):
 
     created_by = db.Column(db.Integer, db.ForeignKey('nodal_coordinators.id'))
 #+END_SRC
-
+     
 **** Constructor
+#+BEGIN_EXAMPLE
+    nodal_coordinators_training = NodalCoordinatorsTraining(name=<instance of class Name>,
+                                                            location=str,
+                                                            date=Date,
+                                                            created_by=<instance of NodalCoordinator class>
+                                                            [,duration=int]
+                                                            [,description=str]
+                                                            [,invitees=str])
+                                            
+#+END_EXAMPLE
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def __init__(self, **kwargs):
+        if 'name' not in kwargs:
+            raise AttributeRequired("mandatory attribute `name` is missing")
+        self.set_name(kwargs['name'])
+
+        if 'location' not in kwargs:
+            raise AttributeRequired("mandatory attribute `location` is missing")
+        self.set_location(kwargs['location'])
+
+        if 'date' not in kwargs:
+            raise AttributeRequired("mandatory attribute `date` is missing")
+        self.set_date(kwargs['date'])
+
+        if 'created_by' not in kwargs:
+            raise AttributeRequired("mandatory attribute `created_by` is missing")
+        self.set_created_by(kwargs['created_by'])
+
+        if 'duration' in kwargs:
+        self.set_duration(kwargs['duration'])
+
+        if 'description' in kwargs:
+        self.set_description(kwargs['description'])
+
+        if 'invitees' in kwargs:
+        self.set_invitees(kwargs['invitees'])
+
+#+END_SRC
 
 **** Functions that operate on the Nodal Coordinators Training domain
+***** getName: NodalCoordinatorsTraining --> Name
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_name(self):
+        return self.name
+
+#+END_SRC
+
+***** getLocation: NodalCoordinatorsTraining --> String
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_location(self):
+        return self.location
+
+#+END_SRC
+
+***** getDate: NodalCoordinatorsTraining --> Date
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_date(self):
+        return self.date
+
+#+END_SRC
+
+***** getCreatedBy: NodalCoordinatorsTraining --> NodalCoordinator
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_created_by(self):
+        return self.created_by
+
+#+END_SRC
+
+***** getDuration: NodalCoordinatorsTraining --> Integer
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_duration(self):
+        return self.created_by
+
+#+END_SRC
+
+***** getDescription: NodalCoordinatorsTraining --> String
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_description(self):
+        return self.description
+
+#+END_SRC
+
+***** getInvitees: NodalCoordinatorsTraining --> String
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_invitees(self):
+        return self.invitees
+
+#+END_SRC
+
+***** setName: NodalCoordinatorsTraining, Name --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(name=Name)
+    def set_name(self, name):
+        self.name = name
+#+END_SRC
+
+***** setLocation: NodalCoordinatorsTraining, String --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(location=str)
+    def set_location(self, location):
+        self.location = location
+#+END_SRC
+
+***** setDate: NodalCoordinatorsTraining, Date --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(date=Date)
+    def set_date(self, date):
+        self.date = date
+#+END_SRC
+
+***** setCreatedBy: NodalCoordinatorsTraining, NodalCoordinator --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(created_by=NodalCoordinator)
+    def set_created_by(self, created_by):
+        self.created_by = created_by
+#+END_SRC
+
+***** setDuration: NodalCoordinatorsTraining, Integer --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(duration=int)
+    def set_duration(self, duration):
+        self.duration = duration
+#+END_SRC
+
+***** setInvitees: NodalCoordinatorsTraining, String --> Void 
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(invitees=str)
+    def set_invitees(self, invitees):
+        self.invitees = invitees
+#+END_SRC
+
+***** setDescription: NodalCoordinatorsTraining, String --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(description=str)
+    def set_description(self, description):
+        self.description = description
+#+END_SRC
+
     
 *** Workshop
 **** Immutable data
+     + Id
      + Created
-     + Last Updated
 
 **** Mutable data
      + Location
@@ -503,10 +671,287 @@ class NodalCoordinatorsTraining(Entity):
      + Labs Planned
      + Other Details
      + Status
+     + Last Updated
 
 **** Definition
+#+BEGIN_SRC python :tangle src/db.py :eval no
+class Workshop(Entity):
+
+    __tablename__ = 'workshops'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128), nullable=False)
+    location = db.Column(db.String(128))
+    date = db.Column(db.DateTime, default=datetime.utcnow) 
+    institutes = db.Column(db.String(128))
+    no_of_participants = db.Column(db.Integer)
+    no_of_sessions = db.Column(db.Integer)
+    duration_of_sessions = db.Column(db.Integer)
+    labs_planned = db.Column(db.Integer)
+    discipline = db.Column(db.String(128))
+    other_details = db.Column(db.String(128))
+    status =
+
+    created = db.Column(db.DateTime, default=datetime.utcnow) 
+    last_updated = db.Column(db.DateTime, default=datetime.utcnow) 
+   
+    conducted_by = db.Column(db.Integer, db.ForeignKey('nodal_coordinators.id'))
+    reports = db.relationship('WorkshopReport', backref='workshops')
+#+END_SRC
+
 **** Constructor
+#+BEGIN_EXAMPLE
+    workshop  = Workshop(name=<instance of class Name>,
+                         location=str,
+                         date=Date,
+                         institutes=str,
+                         no_of_participants=int,
+                         no_of_sessions=int,
+                         duration_of_sessions=int,
+                         labs_planned=int,
+                         discipline=str
+                         [,other_details=str],
+                         status=
+                         created=Date,
+                         last_updated=Date,
+                         conducted_by=<instance of class NodalCoordinator>)
+                                            
+#+END_EXAMPLE
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def __init__(self, **kwargs):
+        if 'name' not in kwargs:
+            raise AttributeRequired("mandatory attribute `name` is missing")
+        self.set_name(kwargs['name'])
+
+        if 'location' not in kwargs:
+            raise AttributeRequired("mandatory attribute `location` is missing")
+        self.set_location(kwargs['location'])
+
+        if 'date' not in kwargs:
+            raise AttributeRequired("mandatory attribute `date` is missing")
+        self.set_date(kwargs['date'])
+
+        if 'created' not in kwargs:
+            raise AttributeRequired("mandatory attribute `created` is missing")
+
+        if not isinstance(kwargs['created'], date):
+            raise TypeError("created should be of type date")
+        self.created = kwargs['created']
+
+        if 'institutes' not in kwargs:
+            raise AttributeRequired("mandatory attribute `institutes` is missing")
+        self.set_institutes(kwargs['institutes'])
+
+        if 'no_of_participants' not in kwargs:
+            raise AttributeRequired("mandatory attribute `no_of_participants` is missing")
+        self.set_no_of_participants(kwargs['no_of_participants'])
+
+        if 'no_of_sessions' not in kwargs:
+            raise AttributeRequired("mandatory attribute `no_of_sessions` is missing")
+        self.set_no_of_sessions(kwargs['no_of_sessions'])
+
+        if 'duration_of_sessions' not in kwargs:
+            raise AttributeRequired("mandatory attribute `duration_of_sessions` is missing")
+        self.set_duration_of_sessions(kwargs['duration_of_sessions'])
+
+        if 'labs_planned' not in kwargs:
+            raise AttributeRequired("mandatory attribute `labs_planned` is missing")
+        self.set_labs_planned(kwargs['labs_planned'])
+
+        if 'discipline' not in kwargs:
+            raise AttributeRequired("mandatory attribute `discipline` is missing")
+        self.set_discipline(kwargs['discipline'])
+
+        if 'conducted_by' not in kwargs:
+            raise AttributeRequired("mandatory attribute `conducted_by` is missing")
+        self.set_conducted_by(kwargs['conducted_by'])
+
+        if 'last_updated' not in kwargs:
+            raise AttributeRequired("mandatory attribute `last_updated` is missing")
+        self.set_last_updated(kwargs['last_updated'])
+
+        if 'status' not in kwargs:
+            raise AttributeRequired("mandatory attribute `status` is missing")
+        self.set_status(kwargs['status'])
+
+        if 'other_details' in kwargs:
+            self.set_other_details(kwargs['other_details'])
+
+#+END_SRC
+
 **** Functions that operate on the Workshop domain
+***** getName: Workshop --> Name
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_name(self):
+        return self.name
+
+#+END_SRC
+
+***** getLocation: Workshop --> Location
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_location(self):
+        return self.location
+
+#+END_SRC
+
+***** getDate: Workshop --> Date
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_date(self):
+        return self.date
+
+#+END_SRC
+
+***** getInstitutes: Workshop --> Institutes(String)
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_institutes(self):
+        return self.institutes
+
+#+END_SRC
+
+***** getNoOfParticipants: Workshop --> Integer
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_no_of_participants(self):
+        return self.no_of_participants
+
+#+END_SRC
+
+***** getNoOfSessions: Workshop --> Integer
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_no_of_sessions(self):
+        return self.no_of_sessions
+
+#+END_SRC
+
+***** getDurationOfSessions: Workshop --> Integer
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_duration_of_sessions(self):
+        return self.duration_of_sessions
+
+#+END_SRC
+
+***** getLabsPlanned: Workshop --> Integer
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_labs_planned(self):
+        return self.labs_planned
+
+#+END_SRC
+
+***** getDiscipline: Workshop --> String
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_discipline(self):
+        return self.discipline
+
+#+END_SRC
+
+***** getConductedBy: Workshop --> NodalCoordinator
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_conducted_by(self):
+        return self.conducted_by
+
+#+END_SRC
+
+***** getLastUpdated: Workshop --> Date
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_last_updated(self):
+        return self.last_updated
+
+#+END_SRC
+
+***** getStatus: Workshop --> Set
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_status(self):
+        return self.status
+
+#+END_SRC
+
+***** getOtherDetails: Workshop --> String
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_other_details(self):
+        return self.other_details
+
+#+END_SRC
+
+***** setName: Workshop, Name --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(name=Name)
+    def set_name(self, name):
+        self.name = name
+#+END_SRC
+
+***** setLocation: Workshop, String --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(location=str)
+    def set_location(self, location):
+        self.location = location
+#+END_SRC
+
+***** setDate: Workshop, Date --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(date=Date)
+    def set_date(self, date):
+        self.date = date
+#+END_SRC
+
+***** setInstitutes: Workshop, String --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(institutes=str)
+    def set_institutes(self, institutes):
+        self.institutes = institutes
+#+END_SRC
+      
+***** setNoOfParticipants: Workshop, Integer --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(no_of_participants=int)
+    def set_no_of_participants(self, no_of_participants):
+        self.no_of_participants = no_of_participants
+#+END_SRC
+
+***** setNoOfSessions: Workshop, Integer --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(no_of_sessions=int)
+    def set_no_of_sessions(self, no_of_sessions):
+        self.no_of_sessions = no_of_sessions
+#+END_SRC
+
+***** setDurationOfSessions: Workshop, Integer --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(duration_of_sessions=int)
+    def set_duration_of_sessions(self, duration_of_sessions):
+        self.duration_of_sessions = duration_of_sessions
+#+END_SRC
+
+***** setLabsPlanned: Workshop, Integer --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(labs_planned=int)
+    def set_labs_planned(self, labs_planned):
+        self.labs_planned = labs_planned
+#+END_SRC
+
+***** setDiscipline: Workshop, String --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(discipline=str)
+    def set_discipline(self, discipline):
+        self.discipline = discipline
+#+END_SRC
+
+***** setConductedBy: Workshop, NodalCoordinator --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(conducted_by=NodalCoordinator)
+    def set_conducted_by(self, conducted_by):
+        self.conducted_by = conducted_by
+#+END_SRC
+
+***** setStatus: Workshop, Status --> Void
+
+***** setLastUpdated: Workshop, Date --> Void
+      
+***** setOtherDetails: Workshop, String --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(other_details=str)
+    def set_other_details(self, other_details):
+        self.other_details = other_details
+#+END_SRC
+
 
 *** Workshop Document
 **** Immutable data
@@ -572,11 +1017,11 @@ class WorkshopDocument(Entity):
     def set_path(self, path):
         self.path = path
 #+END_SRC
-     
+      
 *** Workshop Report
 **** Immutable data
+     + Id
      + Created
-     + Last Updated
 
 **** Mutable data
      + Workshop Id
@@ -587,27 +1032,130 @@ class WorkshopDocument(Entity):
      + Status
      + Positive Comments
      + Negative Comments
+     + Last Updated
 
 **** Definition
+#+BEGIN_SRC python :tangle src/db.py :eval no
+class WorkshopReport(Entity):
+
+    __tablename__ = 'workshop_reports'
+
+    id = db.Column(db.Integer, primary_key=True)
+    workshop_id = db.Column(db.Integer, db.ForeignKey('workshops.id'))
+    
+    participants_attended=db.Column(db.Integer)
+    experiments_conducted=db.Column(db.Integer)
+    positive_comments = db.Column(db.String(128))
+    negative_comments = db.Column(db.String(128))
+    photos = db.relationship('WorkshopPhoto', backref='workshop_reports')
+
+    created =
+    last_updated = 
+    attendance_sheet =
+    college_report = 
+#+END_SRC
 
 **** Constructor
+#+BEGIN_EXAMPLE
+    workshop_report = WorkshopReport(workshop=<instance of class Workshop>,
+                                     participants_attended=int,
+                                     experiments_conducted=int,
+                                     positive_comments=str,
+                                     negative_comments=str,                      
+                                     photos=<instance of class WorkshopPhoto>,
+                                     created=time,                      
+                                     last_updated=time,
+                                     attendance_sheet= ,
+                                     college_report= )
+                                            
+#+END_EXAMPLE
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def __init__(self, **kwargs):
+        if 'workshop' not in kwargs:
+            raise AttributeRequired("mandatory attribute `workshop` is missing")
+        self.set_workshop(kwargs['workshop'])
 
+        if 'participants_attended' not in kwargs:
+            raise AttributeRequired("mandatory attribute `participants_attended` is missing")
+        self.set_participants_attended(kwargs['participants_attended'])
+
+        if 'experiments_conducted' not in kwargs:
+            raise AttributeRequired("mandatory attribute `experiments_conducted` is missing")
+        self.set_experiments_conducted(kwargs['experiments_conducted'])
+
+        if 'photos' not in kwargs:
+            raise AttributeRequired("mandatory attribute `photos` is missing")
+        self.set_photos(kwargs['photos'])
+
+        if 'created' not in kwargs:
+            raise AttributeRequired("mandatory attribute `created` is missing")
+
+        if not isinstance(kwargs['created'], time):
+            raise TypeError("created should be of type time")
+        self.created = kwargs['created']
+
+       if 'positive_comments' not in kwargs:
+            raise AttributeRequired("mandatory attribute `positive_comments` is missing")
+        self.set_positive_comments(kwargs['positive_comments'])
+
+       if 'last_updated' not in kwargs:
+            raise AttributeRequired("mandatory attribute `last_updated` is missing")
+        self.set_last_updated(kwargs['last_updated'])
+
+       if 'attendance_sheet' not in kwargs:
+            raise AttributeRequired("mandatory attribute `attendance_sheet` is missing")
+        self.set_attendance_sheet(kwargs['attendance_sheet'])
+       
+       if 'college_report' not in kwargs:
+            raise AttributeRequired("mandatory attribute `college_report` is missing")
+        self.set_college_report(kwargs['college_report'])
+
+ 
+#+END_SRC
+
+  
 **** Functions that operate on the Workshop Report domain
  
 *** Workshop Photo
 **** Immutable data
-     None of the data is immutable.
-
+     + Id
+      
 **** Mutable data
      + Path
      + Workshop Report Id
 
 **** Definition
+#+BEGIN_SRC python :tangle src/db.py :eval no
+class WorkshopPhoto(Entity):
+
+    __tablename__ = 'workshop_photos'
+
+    id = db.Column(db.Integer, primary_key=True)
+    path = db.Column(db.String(128))
+    workshop_report_id = db.Column(db.Integer, db.ForeignKey('workshop_reports.id'))
+    
+#+END_SRC
 
 **** Constructor
+#+BEGIN_EXAMPLE
+    workshop_photo = WorkshopPhoto(path=str,
+                                   workshop_report=<instance of class WorkshopReport>)
+                                            
+#+END_EXAMPLE
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def __init__(self, **kwargs):
+        if 'path' not in kwargs:
+            raise AttributeRequired("mandatory attribute `path` is missing")
+        self.set_path(kwargs['path'])
+
+        if 'workshop_report' not in kwargs:
+            raise AttributeRequired("mandatory attribute `workshop_report` is missing")
+        self.set_workshop_report(kwargs['workshop_report'])
+
+#+END_SRC
 
 **** Functions that operate on the Workshop Photo domain
-
+     
 
 ** Model Diagram
     The model-diagram can be found below. This gives an overview of the
