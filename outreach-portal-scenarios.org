@@ -80,7 +80,7 @@
   - Page 27 : Result page after submitting the above form
 ** Scenario 14 : Displaying workshop history
   - Page 28 : Page with listing all finished workshops details like
-    date, location, participants, experiments, participating institutes,
+    date, location, no of participants, experiments, participating institutes,
     nodal center and submitted reports with view.
 ** Scenario 15 : Listing reports to be approved by outreach coordinator
    - Page 29 : Page with details like date, location, participants,
