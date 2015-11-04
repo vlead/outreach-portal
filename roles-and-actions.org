@@ -22,14 +22,15 @@
 |                      | 3. View the dashboard                                                                 |
 |----------------------+---------------------------------------------------------------------------------------|
 | Outreach Coordinator | 1. Add/Edit/Delete nodal coordinators and nodal centers                               |
-|                      | 2. Add/Edit/Delete workshop details conducted by OC                                   |
+|                      | 2. Add/Edit/Delete workshop details conducted by outreach coordinator                 |
 |                      | 3. Approve/Reject a workshop report associated with a workshop and comment            |
 |                      | 4. Add/Edit/Delete nodal centres associated with nodal coordinators                   |
 |                      | 5. Set targets for nodal coordinators                                                 |
 |                      | 6. Add/Update old workshops and its details                                           |
 |                      | 7. Create/Edit/Cancel new workshops and its details                                   |
 |                      | 8. Add workshop documents (needs to be approved by the admin)                         |
-|                      | 9.View and download documents uploaded by nodal coordinators.                        |
+|                      | 9. View and download documents uploaded by nodal coordinators.                        |
+|                      |10. Search for workshops based on dates, nodal coordinator names, institute names.     |
 |----------------------+---------------------------------------------------------------------------------------|
 | Nodal Coordinator    | 1. Add/Edit/Cancel multiple workshops                                                 |
 |                      | 2. Add/Edit/Delete workshop reports                                                   |
