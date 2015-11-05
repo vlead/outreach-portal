@@ -12,12 +12,79 @@
   documents related to workshops/trainings are stored.
 
 * Requirements
+  This release (outreach portal - admin release), fulfills the
+  following requirements:
+
   1. Python API that acts as a wrapper to make CRUD operations on the
-     data.
+     entities - users, roles and workshop_documents.
   2. REST API for various applications to perform CRUD operations on
-     the data.
+     the entities - users, roles and workshop_documents.
   
 * Design & Implementation  
+** Some initialization and boilerplate code
+*** __init__
+#+BEGIN_SRC python :tangle src/__init__.py :eval no
+print "src package"
+import db
+
+#+END_SRC
+*** imports
+#+BEGIN_SRC python :tangle src/db.py :eval no
+# -*- coding: utf-8 -*-
+
+from collections import OrderedDict
+
+from flask.ext.sqlalchemy import SQLAlchemy
+from flask import current_app
+
+import sqlalchemy.types as types
+
+import re
+from urlparse import urlparse
+from datetime import datetime
+import json
+
+from op_exceptions import AttributeRequired
+from utils import typecheck
+
+db = SQLAlchemy()
+
+
+# Abstract class to hold common methods
+class Entity(db.Model):
+
+    __abstract__ = True
+
+    # save a db.Model to the database. commit it.
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    # update the object, and commit to the database
+    def update(self, **kwargs):
+        for attr, val in kwargs.iteritems():
+            setter_method = "set_" + attr
+            try:
+                self.__getattribute__(setter_method)(val)
+            except Exception as e:
+                raise e
+
+        self.save()
+
+    #print "Setting new val"
+    #print "Calling %s on %s" % (method_to_set, curr_entity)
+    #try:
+    #    getattr(record, method_to_set)(new_val)
+    #except Exception as e:
+    #pass
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+#+END_SRC
+
+
 ** The Data Model
    
 *** Name
@@ -48,912 +115,54 @@ class Email(object):
         self.value = value
 #+END_SRC
 
-*** Status
-    Status is 
-    { Upcoming, Cancelled, Completed }
-    #+BEGIN_SRC python :tangle src/db.py :eval no
-class Status(Entity):
-    __tablename__ = 'status'
-    id = db.Column(db.Integer, primary_key=True)
-    status_of_entity = db.Column(db.String(64), nullable=False, unique=True)
-
-    workshops = db.relationship('Workshop', backref='status')
-
-    @staticmethod
-    def get_by_id(id):
-        return Status.query.get(id)
-
-    @staticmethod
-    def get_by_status(status):
-        return Status.query.filter_by(status_of_entity=status).first()
-
-    def to_client(self):
-        return {
-            'id': self.id,
-            'status_of_entity': self.status_of_entity
-        }
-
-    @staticmethod
-    def get_all():
-        return Status.query.all()
-
-#+END_SRC
-
-*** Outreach Coordinator
-**** Immutable data
-     + Id
-     + Created
-
-**** Mutable data
-     + Name
-     + Email
-     + Last Active
-
-**** Definition
-#+BEGIN_SRC python :tangle src/db.py :eval no
-class OutreachCoordinator(Entity):
-
-    __tablename__ = 'outreach_coordinators'
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(128), nullable=False)
-    email = db.Column(db.String(128), unique=True)
-    created = db.Column(db.DateTime, default=datetime.utcnow)
-    last_active = db.Column(db.DateTime, default=datetime.utcnow)
-
-    nodal_coordinators = db.relationship('NodalCoordinator', backref='outreach_coordinator')
-
-#+END_SRC
-
-**** Constructor
-     Signature of the constructor is as follows. Attributes inside [...]  are
-     optional. Others are mandatory.
-      
-#+BEGIN_EXAMPLE
-    outreach_coordinator = OutreachCoordinator(name=<instance of class Name>,
-                                               email=<instance of Email>,
-                                               created=Timestamp,
-                                               last_active=Timestamp)
-#+END_EXAMPLE
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def __init__(self, **kwargs):
-        if 'name' not in kwargs:
-            raise AttributeRequired("mandatory attribute `name` is missing")
-        self.set_name(kwargs['name'])
-
-        if 'email' not in kwargs:
-            raise AttributeRequired("mandatory attribute `email` is missing")
-        self.set_email(kwargs['email'])
-
-        if 'created' not in kwargs:
-            raise AttributeRequired("mandatory attribute `created` is missing")
-
-        if not isinstance(kwargs['created'], time):
-            raise TypeError("created should be of type time")
-        self.created = kwargs['created']
-     
-        if 'last_active' not in kwargs:
-            raise AttributeRequired("mandatory attribute `last_active` is missing")
-        self.set_last_active(kwargs['last_active'])
-
-#+END_SRC
-
-**** Functions that operate on the Outreach Coordinator domain 
-***** getName: OutreachCoordinator --> Name
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def get_name(self):
-        return self.name
-#+END_SRC
-   
-***** getEmail: OutreachCoordinator --> Email
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def get_email(self):
-        return self.email
-#+END_SRC
-***** setName: OutreachCoordinator, Name --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(name=Name)
-    def set_name(self, name):
-        self.name = name.value
-#+END_SRC
-
-***** setEmail: OutreachCoordinator, Email --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(email=Email)
-    def set_email(self, email):
-        self.email = email.value
-#+END_SRC
-
-***** setLastActive: OutreachCoordinator, Email --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(=)
-    def set_last_active(self, ):
-
-#+END_SRC
-      
-*** Nodal Coordinator
-**** Immutable data
-     + Id
-     + Created
-
-**** Mutable data     
-     + Name
-     + Email
-     + Created By
-     + Target Workshops
-     + Target Participants
-     + Target Experiments
-     + Current Workshops
-     + Current Participants
-     + Current Experiments
-     + Last Active
-
-**** Definition
-#+BEGIN_SRC python :tangle src/db.py :eval no
-class NodalCoordinator(Entity):
-
-    __tablename__ = 'nodal_coordinators'
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(128), nullable=False)
-    email = db.Column(db.String(128), unique=True)
-    created = db.Column(db.DateTime, default=datetime.utcnow)
-    last_active = db.Column(db.DateTime, default=datetime.utcnow)
-    created_by =  db.Column(db.Integer, db.ForeignKey('outreach_coordinators.id'))
-    target_workshop = db.Column(db.Integer)
-    target_participants = db.Column(db.Integer)
-    target_experiments = db.Column(db.Integer)
-    current_workshops = db.Column(db.Integer)
-    current_participants = db.Column(db.Integer)
-    current_experiments = db.Column(db.Integer)
-
-    nodal_centres = db.relationship('NodalCentre', backref='nodal_coordinator')
-    coordinator_trainings = db.relationship('NodalCoordinatorsTraining', backref='nodal_coordinator')
-    workshops = db.relationship('Workshop', backref='nodal_coordinator')
-
-#+END_SRC
-
-**** Constructor
-
-#+BEGIN_EXAMPLE
-    nodal_coordinator = NodalCoordinator(name=<instance of class Name>,
-                                         email=<instance of Email>,
-                                         created=Timestamp,
-                                         created_by=<instance of OutreachCoordinator class>,
-                                         target_workshops=Integer,
-                                         target_participants=Integer,
-                                         target_experiments=Integer,
-                                         current_workshops=Integer,
-                                         current_participants=Integer,
-                                         current_experiments=Integer,
-                                         last_active=Timestamp)
-#+END_EXAMPLE
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def __init__(self, **kwargs):
-        if 'name' not in kwargs:
-            raise AttributeRequired("mandatory attribute `name` is missing")
-        self.set_name(kwargs['name'])
-
-        if 'email' not in kwargs:
-            raise AttributeRequired("mandatory attribute `email` is missing")
-        self.set_email(kwargs['email'])
-
-        if 'created' not in kwargs:
-            raise AttributeRequired("mandatory attribute `creation time` is missing")
-
-        if not isinstance(kwargs['created'], time):
-            raise TypeError("created should be of type time")
-        self.created = kwargs['created']
-
-        if 'created_by' not in kwargs:
-            raise AttributeRequired("mandatory attribute `created_by` is missing")
-        self.set_created_by(kwargs['created_by'])
-
-        if 'target_workshops' not in kwargs:
-            raise AttributeRequired("mandatory attribute `target_workshops` is missing")
-        self.set_target_workshops(kwargs['target_workshops'])
-
-        if 'target_participants' not in kwargs:
-            raise AttributeRequired("mandatory attribute `target_participants` is missing")
-        self.set_target_participants(kwargs['target_participants'])
-
-        if 'target_experiments' not in kwargs:
-            raise AttributeRequired("mandatory attribute `target_experiments' is missing")
-        self.set_target_experiments(kwargs['target_experiments'])
-
-        if 'current_workshops' not in kwargs:
-            raise AttributeRequired("mandatory attribute `current_workshops` is missing")
-        self.set_current_workshops(kwargs['current_workshops'])
-
-        if 'current_participants' not in kwargs:
-            raise AttributeRequired("mandatory attribute `current_participants` is missing")
-        self.set_current_participants(kwargs['current_participants'])
-
-        if 'current_experiments' not in kwargs:
-            raise AttributeRequired("mandatory attribute `current_experiments` is missing")
-        self.set_current_experiments(kwargs['current_experiments'])
-
-        if 'last_active' in kwargs:
-            self.set_last_active(kwargs['last_active'])
-
-#+END_SRC
-
-**** Functions that operate on the Nodal Coordinator domain
-***** getName: NodalCoordinator --> Name
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def get_name(self):
-        return self.name
-
-#+END_SRC
-
-***** getEmail: NodalCoordinator --> Email
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def get_email(self):
-        return self.email
-#+END_SRC
-
-***** getCreatedBy: NodalCoordinator --> OutreachCoordinator
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def get_created_by(self):
-        return self.created_by
-#+END_SRC
-
-***** getTargetWorkshops: NodalCoordinator --> Integer
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def get_target_workshops(self):
-        return self.target_workshops
-#+END_SRC
-
-***** getTargetParticipants: NodalCoordinator --> Integer
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def get_target_participants(self):
-        return self.target_participants
-#+END_SRC
-
-***** getTargetExperiments: NodalCoordinator --> Integer
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def get_target_experiments(self):
-        return self.target_experiments
-#+END_SRC
-
-***** getCurrentWorkshops: NodalCoordinator --> Integer
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def get_current_workshops(self):
-        return self.current_workshops
-#+END_SRC
-
-***** getCurrentParticipants: NodalCoordinator --> Integer
-
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def get_current_participants(self):
-        return self.current_participants
-#+END_SRC
-
-***** getCurrentExperiments: NodalCoordinator --> Integer
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def get_current_experiments(self):
-        return self.current_experiments
-#+END_SRC
-
-***** setName: NodalCoordinator, Name --> Void 
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(name=Name)
-    def set_name(self, name):
-        self.name = name
-#+END_SRC
-
-***** setEmail: NodalCoordinator, Email --> Void 
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(email=Email)
-    def set_email(self, email):
-        self.email = email.value
-#+END_SRC
-
-***** setCreatedBy: NodalCoordinator, OutreachCoordinator --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(created_by=OutreachCoordinator)
-    def set_created_by(self, created_by):
-        self.created_by = created_by
-#+END_SRC
-
-***** setTargetWorkshops: NodalCoordinator, Integer --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(target_workshops=int)
-    def set_target_workshops(self, target_workshops):
-        self.target_workshops = target_workshops
-#+END_SRC
-
-***** setTargetParticipants: NodalCoordinator, Integer --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(target_participants=int)
-    def set_target_participants(self, target_participants):
-        self.target_participants = target_participants
-#+END_SRC
-
-***** setTargetExperiments: NodalCoordinator, Integer --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(target_experiments=int)
-    def set_target_experiments(self, target_experiments):
-        self.target_experiments = target_experiments
-#+END_SRC
-
-***** setCurrentWorkshops: NodalCoordinator, Integer --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(current_workshops=int)
-    def set_current_workshops(self, current_workshops):
-        self.current_workshops = current_workshops
-#+END_SRC
-
-***** setCurrentParticipants: NodalCoordinator, Integer --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(current_participants=int)
-    def set_current_participants(self, current_participants):
-        self.current_participants = current_participants
-#+END_SRC
-
-***** setCurrentExperiments: NodalCoordinator, Integer --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(current_experiments=int)
-    def set_current_experiments(self, current_experiments):
-        self.current_experiments = current_experiments
-#+END_SRC
-      
-*** Nodal Centre
+*** Role
 **** Immutable data
      + Id
 
 **** Mutable data
-     + Name
-     + Location
-     + Coordinator 
-   
+     + Role Name
+
 **** Definition
 #+BEGIN_SRC python :tangle src/db.py :eval no
-class NodalCentre(Entity):
+class Role(Entity):
 
-    __tablename__ = 'nodal_centres'
+    __tablename__ = 'roles'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(128), nullable=False)
-    location = db.Column(db.String(128), nullable=False)
+    role_name = db.Column(db.String(128), nullable=False)
 
-    coordinator =  db.Column(db.Integer, db.ForeignKey('nodal_coordinators.id'))
 #+END_SRC
 
 **** Constructor
 #+BEGIN_EXAMPLE
-    nodal_centre = NodalCentre(name=<instance of class Name>,
-                               location=str,
-                               coordinator=<instance of NodalCoordinator class>)
-                                            
+    role = Role(name=<instance of class Name>)
+                    
 #+END_EXAMPLE
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def __init__(self, **kwargs):
-        if 'name' not in kwargs:
-            raise AttributeRequired("mandatory attribute `name` is missing")
-        self.set_name(kwargs['name'])
-
-        if 'location' not in kwargs:
-            raise AttributeRequired("mandatory attribute `location` is missing")
-        self.set_location(kwargs['location'])
-
-        if 'coordinator' not in kwargs:
-            raise AttributeRequired("mandatory attribute `coordinator` is missing")
-        self.set_coordinator(kwargs['coordinator'])
+        if 'role_name' not in kwargs:
+            raise AttributeRequired("mandatory attribute `role_name` is missing")
+        self.set_role_name(kwargs['role_name'])
 
 #+END_SRC
 
-**** Functions that operate on the Nodal Centre domain
-***** getName: NodalCentre --> Name
+**** Functions that operate on the Workshop Document domain
+***** getName: Role --> Name
 #+BEGIN_SRC python :tangle src/db.py :eval no
-    def get_name(self):
-        return self.name
+    def get_role_name(self):
+        return self.role_name
 #+END_SRC
 
-***** getLocation: NodalCentre --> String
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def get_location(self):
-        return self.location
-#+END_SRC
-
-***** getCoordinator: NodalCentre --> NodalCoordinator
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def get_coordinator(self):
-        return self.coordinator
-#+END_SRC
-
-***** setName: NodalCentre, Name --> Void
+***** setName: Role, Name --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(name=Name)
-    def set_name(self, name):
-        self.name = name
-#+END_SRC
-
-***** setLocation: NodalCentre, String --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(location=str)
-    def set_location(self, location):
-        self.location = location
-#+END_SRC
-
-***** setCoordinator: NodalCentre, NodalCoordinator --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(coordinator=NodalCoordinator)
-    def set_coordinator(self, coordinator):
-        self.coordinator = coordinator
-#+END_SRC
- 
-*** Nodal Coordinators Training
-**** Immutable data
-     + Id
-
-**** Mutable data
-     + Name
-     + Date
-     + Location
-     + Duration
-     + Description
-     + Invitees
-     + Created By
-       
-**** Definition
-#+BEGIN_SRC python :tangle src/db.py :eval no
-class NodalCoordinatorsTraining(Entity):
-
-    __tablename__ = 'nodal_coordinators_trainings'
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(128), nullable=False)
-    location = db.Column(db.String(128))
-    date = db.Column(db.DateTime, default=datetime.utcnow) 
-    duration = db.Column(db.Integer)
-    description = db.Column(db.String(128))
-    invitees = db.Column(db.String(128))
-
-    created_by = db.Column(db.Integer, db.ForeignKey('nodal_coordinators.id'))
-#+END_SRC
-     
-**** Constructor
-#+BEGIN_EXAMPLE
-    nodal_coordinators_training = NodalCoordinatorsTraining(name=<instance of class Name>,
-                                                            location=str,
-                                                            date=Date,
-                                                            created_by=<instance of NodalCoordinator class>
-                                                            [,duration=int]
-                                                            [,description=str]
-                                                            [,invitees=str])
-                                            
-#+END_EXAMPLE
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def __init__(self, **kwargs):
-        if 'name' not in kwargs:
-            raise AttributeRequired("mandatory attribute `name` is missing")
-        self.set_name(kwargs['name'])
-
-        if 'location' not in kwargs:
-            raise AttributeRequired("mandatory attribute `location` is missing")
-        self.set_location(kwargs['location'])
-
-        if 'date' not in kwargs:
-            raise AttributeRequired("mandatory attribute `date` is missing")
-        self.set_date(kwargs['date'])
-
-        if 'created_by' not in kwargs:
-            raise AttributeRequired("mandatory attribute `created_by` is missing")
-        self.set_created_by(kwargs['created_by'])
-
-        if 'duration' in kwargs:
-        self.set_duration(kwargs['duration'])
-
-        if 'description' in kwargs:
-        self.set_description(kwargs['description'])
-
-        if 'invitees' in kwargs:
-        self.set_invitees(kwargs['invitees'])
-
-#+END_SRC
-
-**** Functions that operate on the Nodal Coordinators Training domain
-***** getName: NodalCoordinatorsTraining --> Name
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def get_name(self):
-        return self.name
-
-#+END_SRC
-
-***** getLocation: NodalCoordinatorsTraining --> String
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def get_location(self):
-        return self.location
-
-#+END_SRC
-
-***** getDate: NodalCoordinatorsTraining --> Date
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def get_date(self):
-        return self.date
-
-#+END_SRC
-
-***** getCreatedBy: NodalCoordinatorsTraining --> NodalCoordinator
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def get_created_by(self):
-        return self.created_by
-
-#+END_SRC
-
-***** getDuration: NodalCoordinatorsTraining --> Integer
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def get_duration(self):
-        return self.created_by
-
-#+END_SRC
-
-***** getDescription: NodalCoordinatorsTraining --> String
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def get_description(self):
-        return self.description
-
-#+END_SRC
-
-***** getInvitees: NodalCoordinatorsTraining --> String
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def get_invitees(self):
-        return self.invitees
-
-#+END_SRC
-
-***** setName: NodalCoordinatorsTraining, Name --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(name=Name)
-    def set_name(self, name):
-        self.name = name
-#+END_SRC
-
-***** setLocation: NodalCoordinatorsTraining, String --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(location=str)
-    def set_location(self, location):
-        self.location = location
-#+END_SRC
-
-***** setDate: NodalCoordinatorsTraining, Date --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(date=Date)
-    def set_date(self, date):
-        self.date = date
-#+END_SRC
-
-***** setCreatedBy: NodalCoordinatorsTraining, NodalCoordinator --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(created_by=NodalCoordinator)
-    def set_created_by(self, created_by):
-        self.created_by = created_by
-#+END_SRC
-
-***** setDuration: NodalCoordinatorsTraining, Integer --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(duration=int)
-    def set_duration(self, duration):
-        self.duration = duration
-#+END_SRC
-
-***** setInvitees: NodalCoordinatorsTraining, String --> Void 
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(invitees=str)
-    def set_invitees(self, invitees):
-        self.invitees = invitees
-#+END_SRC
-
-***** setDescription: NodalCoordinatorsTraining, String --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(description=str)
-    def set_description(self, description):
-        self.description = description
-#+END_SRC
-
-    
-*** Workshop
-**** Immutable data
-     + Id
-     + Created
-
-**** Mutable data
-     + Location
-     + Conducted By
-     + Name
-     + Date
-     + Institutes
-     + No of Participants
-     + No Of Sessions
-     + Duration Of Sessions
-     + Discipline
-     + Labs Planned
-     + Other Details
-     + Status
-     + Last Updated
-
-**** Definition
-#+BEGIN_SRC python :tangle src/db.py :eval no
-class Workshop(Entity):
-
-    __tablename__ = 'workshops'
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(128), nullable=False)
-    location = db.Column(db.String(128))
-    date = db.Column(db.DateTime, default=datetime.utcnow) 
-    institutes = db.Column(db.String(128))
-    no_of_participants = db.Column(db.Integer)
-    no_of_sessions = db.Column(db.Integer)
-    duration_of_sessions = db.Column(db.Integer)
-    labs_planned = db.Column(db.Integer)
-    discipline = db.Column(db.String(128))
-    other_details = db.Column(db.String(128))
-    status =
-
-    created = db.Column(db.DateTime, default=datetime.utcnow) 
-    last_updated = db.Column(db.DateTime, default=datetime.utcnow) 
-   
-    conducted_by = db.Column(db.Integer, db.ForeignKey('nodal_coordinators.id'))
-    reports = db.relationship('WorkshopReport', backref='workshops')
-#+END_SRC
-
-**** Constructor
-#+BEGIN_EXAMPLE
-    workshop  = Workshop(name=<instance of class Name>,
-                         location=str,
-                         date=Date,
-                         institutes=str,
-                         no_of_participants=int,
-                         no_of_sessions=int,
-                         duration_of_sessions=int,
-                         labs_planned=int,
-                         discipline=str
-                         [,other_details=str],
-                         status=
-                         created=Date,
-                         last_updated=Date,
-                         conducted_by=<instance of class NodalCoordinator>)
-                                            
-#+END_EXAMPLE
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def __init__(self, **kwargs):
-        if 'name' not in kwargs:
-            raise AttributeRequired("mandatory attribute `name` is missing")
-        self.set_name(kwargs['name'])
-
-        if 'location' not in kwargs:
-            raise AttributeRequired("mandatory attribute `location` is missing")
-        self.set_location(kwargs['location'])
-
-        if 'date' not in kwargs:
-            raise AttributeRequired("mandatory attribute `date` is missing")
-        self.set_date(kwargs['date'])
-
-        if 'created' not in kwargs:
-            raise AttributeRequired("mandatory attribute `created` is missing")
-
-        if not isinstance(kwargs['created'], date):
-            raise TypeError("created should be of type date")
-        self.created = kwargs['created']
-
-        if 'institutes' not in kwargs:
-            raise AttributeRequired("mandatory attribute `institutes` is missing")
-        self.set_institutes(kwargs['institutes'])
-
-        if 'no_of_participants' not in kwargs:
-            raise AttributeRequired("mandatory attribute `no_of_participants` is missing")
-        self.set_no_of_participants(kwargs['no_of_participants'])
-
-        if 'no_of_sessions' not in kwargs:
-            raise AttributeRequired("mandatory attribute `no_of_sessions` is missing")
-        self.set_no_of_sessions(kwargs['no_of_sessions'])
-
-        if 'duration_of_sessions' not in kwargs:
-            raise AttributeRequired("mandatory attribute `duration_of_sessions` is missing")
-        self.set_duration_of_sessions(kwargs['duration_of_sessions'])
-
-        if 'labs_planned' not in kwargs:
-            raise AttributeRequired("mandatory attribute `labs_planned` is missing")
-        self.set_labs_planned(kwargs['labs_planned'])
-
-        if 'discipline' not in kwargs:
-            raise AttributeRequired("mandatory attribute `discipline` is missing")
-        self.set_discipline(kwargs['discipline'])
-
-        if 'conducted_by' not in kwargs:
-            raise AttributeRequired("mandatory attribute `conducted_by` is missing")
-        self.set_conducted_by(kwargs['conducted_by'])
-
-        if 'last_updated' not in kwargs:
-            raise AttributeRequired("mandatory attribute `last_updated` is missing")
-        self.set_last_updated(kwargs['last_updated'])
-
-        if 'status' not in kwargs:
-            raise AttributeRequired("mandatory attribute `status` is missing")
-        self.set_status(kwargs['status'])
-
-        if 'other_details' in kwargs:
-            self.set_other_details(kwargs['other_details'])
-
-#+END_SRC
-
-**** Functions that operate on the Workshop domain
-***** getName: Workshop --> Name
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def get_name(self):
-        return self.name
-
-#+END_SRC
-
-***** getLocation: Workshop --> Location
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def get_location(self):
-        return self.location
-
-#+END_SRC
-
-***** getDate: Workshop --> Date
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def get_date(self):
-        return self.date
-
-#+END_SRC
-
-***** getInstitutes: Workshop --> Institutes(String)
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def get_institutes(self):
-        return self.institutes
-
-#+END_SRC
-
-***** getNoOfParticipants: Workshop --> Integer
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def get_no_of_participants(self):
-        return self.no_of_participants
-
-#+END_SRC
-
-***** getNoOfSessions: Workshop --> Integer
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def get_no_of_sessions(self):
-        return self.no_of_sessions
-
-#+END_SRC
-
-***** getDurationOfSessions: Workshop --> Integer
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def get_duration_of_sessions(self):
-        return self.duration_of_sessions
-
-#+END_SRC
-
-***** getLabsPlanned: Workshop --> Integer
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def get_labs_planned(self):
-        return self.labs_planned
-
-#+END_SRC
-
-***** getDiscipline: Workshop --> String
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def get_discipline(self):
-        return self.discipline
-
-#+END_SRC
-
-***** getConductedBy: Workshop --> NodalCoordinator
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def get_conducted_by(self):
-        return self.conducted_by
-
-#+END_SRC
-
-***** getLastUpdated: Workshop --> Date
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def get_last_updated(self):
-        return self.last_updated
-
-#+END_SRC
-
-***** getStatus: Workshop --> Set
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def get_status(self):
-        return self.status
-
-#+END_SRC
-
-***** getOtherDetails: Workshop --> String
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def get_other_details(self):
-        return self.other_details
-
-#+END_SRC
-
-***** setName: Workshop, Name --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(name=Name)
-    def set_name(self, name):
-        self.name = name
-#+END_SRC
-
-***** setLocation: Workshop, String --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(location=str)
-    def set_location(self, location):
-        self.location = location
-#+END_SRC
-
-***** setDate: Workshop, Date --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(date=Date)
-    def set_date(self, date):
-        self.date = date
-#+END_SRC
-
-***** setInstitutes: Workshop, String --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(institutes=str)
-    def set_institutes(self, institutes):
-        self.institutes = institutes
-#+END_SRC
-      
-***** setNoOfParticipants: Workshop, Integer --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(no_of_participants=int)
-    def set_no_of_participants(self, no_of_participants):
-        self.no_of_participants = no_of_participants
-#+END_SRC
-
-***** setNoOfSessions: Workshop, Integer --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(no_of_sessions=int)
-    def set_no_of_sessions(self, no_of_sessions):
-        self.no_of_sessions = no_of_sessions
-#+END_SRC
-
-***** setDurationOfSessions: Workshop, Integer --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(duration_of_sessions=int)
-    def set_duration_of_sessions(self, duration_of_sessions):
-        self.duration_of_sessions = duration_of_sessions
-#+END_SRC
-
-***** setLabsPlanned: Workshop, Integer --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(labs_planned=int)
-    def set_labs_planned(self, labs_planned):
-        self.labs_planned = labs_planned
-#+END_SRC
-
-***** setDiscipline: Workshop, String --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(discipline=str)
-    def set_discipline(self, discipline):
-        self.discipline = discipline
-#+END_SRC
-
-***** setConductedBy: Workshop, NodalCoordinator --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(conducted_by=NodalCoordinator)
-    def set_conducted_by(self, conducted_by):
-        self.conducted_by = conducted_by
-#+END_SRC
-
-***** setStatus: Workshop, Status --> Void
-
-***** setLastUpdated: Workshop, Date --> Void
-      
-***** setOtherDetails: Workshop, String --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(other_details=str)
-    def set_other_details(self, other_details):
-        self.other_details = other_details
+    def set_role_name(self, name):
+        self.role_name = name
 #+END_SRC
 
 
-*** Workshop Document
+
+***  User
 **** Immutable data
      + Id
 
@@ -962,7 +171,7 @@ class Workshop(Entity):
      + Path
 
 **** Definition
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC 
 class WorkshopDocument(Entity):
 
     __tablename__ = 'workshop_documents'
@@ -979,7 +188,73 @@ class WorkshopDocument(Entity):
                                          path=str)
                                             
 #+END_EXAMPLE
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC 
+    def __init__(self, **kwargs):
+        if 'name' not in kwargs:
+            raise AttributeRequired("mandatory attribute `name` is missing")
+        self.set_name(kwargs['name'])
+
+        if 'path' not in kwargs:
+            raise AttributeRequired("mandatory attribute `path` is missing")
+        self.set_path(kwargs['path'])
+
+#+END_SRC
+     
+**** Functions that operate on the Workshop Document domain
+***** getName: WorkshopDocument --> Name
+#+BEGIN_SRC 
+    def get_name(self):
+        return self.name
+#+END_SRC
+
+***** getPath: WorkshopDocument --> String
+#+BEGIN_SRC 
+    def get_path(self):
+        return self.path
+#+END_SRC
+
+***** setName: WorkshopDocument, Name --> Void
+#+BEGIN_SRC 
+    @typecheck(name=Name)
+    def set_name(self, name):
+        self.name = name
+#+END_SRC
+
+***** setPath: WorkshopDocument, String --> Void
+#+BEGIN_SRC 
+    @typecheck(path=str)
+    def set_path(self, path):
+        self.path = path
+#+END_SRC
+      
+
+*** Workshop Document
+**** Immutable data
+     + Id
+
+**** Mutable data
+     + Name
+     + Path
+
+**** Definition
+#+BEGIN_SRC 
+class WorkshopDocument(Entity):
+
+    __tablename__ = 'workshop_documents'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128), nullable=False)
+    path = db.Column(db.String(128), nullable=False)
+
+#+END_SRC
+
+**** Constructor
+#+BEGIN_EXAMPLE
+    workshop_document = WorkshopDocument(name=<instance of class Name>,
+                                         path=str)
+                                            
+#+END_EXAMPLE
+#+BEGIN_SRC 
     def __init__(self, **kwargs):
         if 'name' not in kwargs:
             raise AttributeRequired("mandatory attribute `name` is missing")
@@ -993,169 +268,272 @@ class WorkshopDocument(Entity):
 
 **** Functions that operate on the Workshop Document domain
 ***** getName: WorkshopDocument --> Name
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC 
     def get_name(self):
         return self.name
 #+END_SRC
 
 ***** getPath: WorkshopDocument --> String
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC 
     def get_path(self):
         return self.path
 #+END_SRC
 
 ***** setName: WorkshopDocument, Name --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC 
     @typecheck(name=Name)
     def set_name(self, name):
         self.name = name
 #+END_SRC
 
 ***** setPath: WorkshopDocument, String --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC 
     @typecheck(path=str)
     def set_path(self, path):
         self.path = path
 #+END_SRC
       
-*** Workshop Report
-**** Immutable data
-     + Id
-     + Created
+** Custom Exceptions
 
-**** Mutable data
-     + Workshop Id
-     + Attendance Sheet
-     + College Report
-     + Participants Attended
-     + Experiments Conducted
-     + Status
-     + Positive Comments
-     + Negative Comments
-     + Last Updated
+These are some of the custom exceptions used in the application.
+*** AttributeRequired
+#+BEGIN_SRC python :tangle src/op_exceptions.py :eval no
+class AttributeRequired(Exception):
+    str = None
 
-**** Definition
-#+BEGIN_SRC python :tangle src/db.py :eval no
-class WorkshopReport(Entity):
+    def __init__(self, str):
+        self.str = str
 
-    __tablename__ = 'workshop_reports'
-
-    id = db.Column(db.Integer, primary_key=True)
-    workshop_id = db.Column(db.Integer, db.ForeignKey('workshops.id'))
-    
-    participants_attended=db.Column(db.Integer)
-    experiments_conducted=db.Column(db.Integer)
-    positive_comments = db.Column(db.String(128))
-    negative_comments = db.Column(db.String(128))
-    photos = db.relationship('WorkshopPhoto', backref='workshop_reports')
-
-    created =
-    last_updated = 
-    attendance_sheet =
-    college_report = 
-#+END_SRC
-
-**** Constructor
-#+BEGIN_EXAMPLE
-    workshop_report = WorkshopReport(workshop=<instance of class Workshop>,
-                                     participants_attended=int,
-                                     experiments_conducted=int,
-                                     positive_comments=str,
-                                     negative_comments=str,                      
-                                     photos=<instance of class WorkshopPhoto>,
-                                     created=time,                      
-                                     last_updated=time,
-                                     attendance_sheet= ,
-                                     college_report= )
-                                            
-#+END_EXAMPLE
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def __init__(self, **kwargs):
-        if 'workshop' not in kwargs:
-            raise AttributeRequired("mandatory attribute `workshop` is missing")
-        self.set_workshop(kwargs['workshop'])
-
-        if 'participants_attended' not in kwargs:
-            raise AttributeRequired("mandatory attribute `participants_attended` is missing")
-        self.set_participants_attended(kwargs['participants_attended'])
-
-        if 'experiments_conducted' not in kwargs:
-            raise AttributeRequired("mandatory attribute `experiments_conducted` is missing")
-        self.set_experiments_conducted(kwargs['experiments_conducted'])
-
-        if 'photos' not in kwargs:
-            raise AttributeRequired("mandatory attribute `photos` is missing")
-        self.set_photos(kwargs['photos'])
-
-        if 'created' not in kwargs:
-            raise AttributeRequired("mandatory attribute `created` is missing")
-
-        if not isinstance(kwargs['created'], time):
-            raise TypeError("created should be of type time")
-        self.created = kwargs['created']
-
-       if 'positive_comments' not in kwargs:
-            raise AttributeRequired("mandatory attribute `positive_comments` is missing")
-        self.set_positive_comments(kwargs['positive_comments'])
-
-       if 'last_updated' not in kwargs:
-            raise AttributeRequired("mandatory attribute `last_updated` is missing")
-        self.set_last_updated(kwargs['last_updated'])
-
-       if 'attendance_sheet' not in kwargs:
-            raise AttributeRequired("mandatory attribute `attendance_sheet` is missing")
-        self.set_attendance_sheet(kwargs['attendance_sheet'])
-       
-       if 'college_report' not in kwargs:
-            raise AttributeRequired("mandatory attribute `college_report` is missing")
-        self.set_college_report(kwargs['college_report'])
-
- 
-#+END_SRC
-
-  
-**** Functions that operate on the Workshop Report domain
- 
-*** Workshop Photo
-**** Immutable data
-     + Id
-      
-**** Mutable data
-     + Path
-     + Workshop Report Id
-
-**** Definition
-#+BEGIN_SRC python :tangle src/db.py :eval no
-class WorkshopPhoto(Entity):
-
-    __tablename__ = 'workshop_photos'
-
-    id = db.Column(db.Integer, primary_key=True)
-    path = db.Column(db.String(128))
-    workshop_report_id = db.Column(db.Integer, db.ForeignKey('workshop_reports.id'))
-    
-#+END_SRC
-
-**** Constructor
-#+BEGIN_EXAMPLE
-    workshop_photo = WorkshopPhoto(path=str,
-                                   workshop_report=<instance of class WorkshopReport>)
-                                            
-#+END_EXAMPLE
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def __init__(self, **kwargs):
-        if 'path' not in kwargs:
-            raise AttributeRequired("mandatory attribute `path` is missing")
-        self.set_path(kwargs['path'])
-
-        if 'workshop_report' not in kwargs:
-            raise AttributeRequired("mandatory attribute `workshop_report` is missing")
-        self.set_workshop_report(kwargs['workshop_report'])
+    def __str__(self):
+        return repr(self.str)
 
 #+END_SRC
 
-**** Functions that operate on the Workshop Photo domain
-     
+** Utility Functions
+#+BEGIN_SRC python :tangle src/utils.py :eval no
+# module to hold all utilities/helper functions
+
+import json
+
+from flask import make_response, current_app
+
+
+# return a list of dicts as json with correct mime types
+# flask does not provide a jsonify for lists; hence this method
+def jsonify_list(data):
+    if type(data) is not list:
+        raise Exception('jsonify_list function accepts only a list')
+
+    return make_response(json.dumps(data), 200,
+                         {'content-type': 'application/json'})
+
+
+# take in a flask request object and try to parse out a dictionary from the
+# request
+# try to find if request is as JSON first, then look into forms, finally force
+# find it.
+# If not found return a dict; else return the parsed data
+def parse_request(request):
+    if request.json:
+        # print 'found in request.json'
+        data = request.get_json()
+
+    elif request.data:
+        # print 'found in request.data'
+        data = json.loads(request.data)
+
+    elif request.form:
+        # print 'found in request.form'
+        data = request.form.to_dict()
+        # try to detect if form contains integers and boolean data and attempt
+        # to convert them
+        # FIXME: is this a good idea? Fix this to do it in a better way?
+        for k in data:
+            if is_number(data[k]):
+                data[k] = int(data[k])
+            if is_bool_in_str(data[k]):
+                data[k] = str_to_bool(data[k])
+
+            # print k, data[k]
+
+    else:
+        data = request.get_json(force=True)
+
+    if not data:
+        return False
+
+    return data
+
+
+# check if a given string is a number
+def is_number(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
+
+
+# check if in a given string python bool types are represented
+def is_bool_in_str(s):
+    if s == "True" or s == "False":
+        return True
+    return False
+
+
+# convert python bool types in string to native bool types
+def str_to_bool(s):
+    if s == "True":
+        return True
+    if s == "False":
+        return False
+    return None
+
+
+# decorator to do typechecking of arguments passed to functions
+# usage: @typecheck(var1=<type>, var2=(<type1>, <type2>), ..)
+#        def yourfunc(var1, var2, ..):
+#           ....
+def typecheck(**typemap):
+    """
+    Decorator to do typechecking of arguments passed to functions. Similar to
+    function annotations in Python 3, but this also does strict type checking
+    when a function is called.
+    The type to an argument can be single or multiple types. Mutiple types are
+    to be specified in a tuple.
+    Usage:
+        @typecheck(var1=<type>, var2=(<type1>, <type2>), ..)
+        def yourfunc(var1, var2, ..):
+            ....
+    """
+    # print "all valid types: %s" % typemap
+
+    def make_wrapper(decorated_func):
+
+        def wrapper(*arg_vals, **kw_vals):
+            # TODO: have more comments to better describe each line
+            arg_names = decorated_func.func_code.co_varnames
+            # print arg_names
+            # if not arg_vals:
+            #     print kw_vals
+            #     # arg_vals = kw_vals
+            # print arg_vals
+
+            # iterate over the typemap passed to the typecheck decorator and
+            # compare with the actual arguments passed to the function
+            for key, val in typemap.iteritems():
+                arg_name = key
+                idx = arg_names.index(arg_name)
+                arg = arg_vals[idx]
+                # print "arg_name: %s, arg: %s, typemap[arg_name]: %s" %\
+                #    (arg_name, arg, typemap[arg_name])
+
+                # if the passed type is a list throw an error
+                if typemap[arg_name] is list:
+                    raise SyntaxError("The types of %s has to be a tuple, "
+                                      "not list. \n See usage of `typecheck`" %
+                                      arg_name)
+
+                # check if the passed type is a tuple, if not make it
+                if typemap[arg_name] is not tuple:
+                    types = (typemap[arg_name],)
+                else:
+                    types = typemap[arg_name]
+
+                # iterate over the `types` tuple to see the arg matches any of
+                # the type provided in the tuple
+                if True not in map(lambda type: isinstance(arg, type), types):
+                    # print "types are not fine"
+                    raise TypeError("For %s type should have been %s. But "
+                                    "provided: %s" % (arg_name,
+                                                      typemap[arg_name],
+                                                      type(arg)))
+
+            return decorated_func(*arg_vals, **kw_vals)
+        return wrapper
+
+    return make_wrapper
+
+#+END_SRC
+
+** The web application
+#+BEGIN_SRC python :tangle src/app.py :eval no
+# -*- coding: utf-8 -*-
+
+import os
+
+from flask import Flask, jsonify, make_response
+# from flask.ext.cors import CORS
+
+from db import db
+from api import api
+# import config file
+import config
+
+
+def create_app(config):
+    # init our app
+    app = Flask(__name__)
+
+    # load config values from the config file
+    app.config.from_object(config)
+
+    # init sqlalchemy db instance
+    db.init_app(app)
+    db.app = app
+
+    # register blueprints
+    app.register_blueprint(api)
+
+ #   configure_errorhandlers(app)
+ #   configure_cors(app)
+ #   configure_logging(app)
+
+    # all set; return app object
+    return app
+
+
+if __name__ == "__main__":
+    app = create_app(config)
+    app.run(debug=True, host='0.0.0.0')
+
+#+END_SRC
+
+** Configuring the application
+Below is the configuration for the application
+#+BEGIN_SRC python :tangle src/config.py :eval no
+# DB URI
+# example DB URI:
+# mysql+oursql://scott:tiger@localhost/mydatabase
+# postgresql+psycopg2://scott:tiger@localhost/mydatabase
+SQLALCHEMY_DATABASE_URI = 'mysql+oursql://<userid>:<password>@<servername>/<db_name>'
+# example
+#SQLALCHEMY_DATABASE_URI = 'mysql+oursql://root:mysql@localhost/outreach'
+
+# Debug from SQLAlchemy
+# Turn this to False on production
+SQLALCHEMY_ECHO = True
+
+# List of allowed origins for CORS
+#ALLOWED_ORIGINS = ["*.vlabs.ac.in", "*.virtual-labs.ac.in"]
+
+# List of allowed IPs
+WHITELIST_IPS = ["127.0.0.1"]
+
+# Configure your log paths
+#LOG_FILE = 'outreach.log'
+
+# Log level for the application
+#LOG_LEVEL = 'DEBUG'
+
+# destination for uploaded files
+#UPLOAD_FOLDER = 'src/static/temp'
+
+# allowed file extensions that can be uploaded
+#ALLOWED_EXTENSIONS = set(['csv'])
+
+#+END_SRC
+
 
 ** Model Diagram
     The model-diagram can be found below. This gives an overview of the
@@ -1184,42 +562,278 @@ class WorkshopPhoto(Entity):
       admin.
 
 ** REST APIs
+*** Some code..
+   The Python code to have the imports, boilerplate code etc. for the
+   APIs.  We are using Flask blueprints to make the API, and then we
+   can plug this blueprint in our main application. [[http://flask.pocoo.org/docs/0.10/blueprints/][More on Flask
+   blueprints]].
+#+BEGIN_SRC python :tangle src/api.py :eval no :noweb yes
+# -*- coding: utf-8 -*-
 
-* Operations of the application
-  + The outreach coordinators would broadly do the following operations
-    through this portal:
+import os
+import csv
 
-    - Add Nodal Centres.
-    - Assign new or existing nodal coordinators to nodal centres.
-    - Set targets for nodal coordinators.
-    - Approve/reject workshop reports and comment on them.
-    - Add a nodal coordinator training workshop
+from flask import Blueprint, request, jsonify, abort, current_app, redirect,\
+    url_for
 
-  + The nodal coordinators would perform the following operations:
+from db import *
+from utils import parse_request, jsonify_list
+# from maps import *
+api = Blueprint('APIs', __name__)
 
-    - Create/edit/delete workshop.
-    - Submit/edit workshop report.
+#+END_SRC
 
-  + Besides these users, an admin is part of the system and the
-    application assumes who the admin is. He can upload the relevant
-    workshop documents and add outreach coordinators. 
+*** Implementation
+**** The entity look up table with corresponding types of their attributes
+#+NAME: entity-map-types
+#+BEGIN_SRC python
+entity_map_types = {
+    'roles': {
+        'entity': Role,
+        'types': {
+            'role_name': Name
+          }
+    }
+}
+#+END_SRC
 
-* Link to wireframes 
-  A skeletal of the front-end is given below in different use-case
-  scenarios:
+**** The API to update/delete entries
+***** API route definition
+The API route definitions. Defining the =/entity/id= API for update and delete
+operations. The following API handler first checks if the requested URL is a
+valid entity. If not it sends back a HTTP 400. If it is a valid entity, then
+it looks at the HTTP method, and calls the appropriate function to actually
+delete or update an existing record.
+#+NAME: modify-entity
+#+BEGIN_SRC python
+@api.route('/<entity>/<id>', methods=['PUT', 'DELETE'])
+def modify_entity(entity, id):
+    if entity not in entity_map_types:
+        abort(400, 'Entity %s is not valid.' % entity)
 
-  [[https://github.com/Virtual-Labs/outreach-portal/blob/master/vlead-effort/wireframes/Vlabs%20Outreach%20Portal%20design-%20Wireframes.pdf][Wireframes]]
+    curr_entity = entity_map_types[entity]['entity']
 
-* Quality Parameters
-  Following standard practices need to be strictly observed:
+    if request.method == 'DELETE':
+       status = delete_record(curr_entity, id)
+       return status
 
-  + Issue tracking should be done via Github portal.
-  + The function and variable names should be relevant along with
-    proper casing.(Camel case or upper case)
-  + Complete code should be properly indented.
-  + There should be relevant comments in the code.
-  + The database tables should be normalized.
-  + The application should be properly secured from common web attacks
-    such as SQL injection.
-  + The directory structure of the different folders should be proper
-    and the documents should be checked in relevant folders only.
+    if request.method == 'PUT':
+        status = update_record(entity, curr_entity, id)
+        return status
+#+END_SRC
+
+***** Delete Record function
+The function to delete a record given an entity and a id. On success, it
+returns the =id= and a ~status=success~ as a JSON. If no such record with the
+given =id= is found, it return a HTTP 404 not found error. If the record is
+found, but there was error deleting the record, it sends back a HTTP 500 with
+corresponding error.
+#+NAME: delete-record
+#+BEGIN_SRC python
+def delete_record(entity, id):
+    record = entity.get_by_id(id)
+    if not record:
+        abort(404, 'No %s with id %s' % (entity, id))
+    else:
+        try:
+            record.delete()
+            #db.session.delete(record)
+            #db.session.commit()
+        except Exception, e:
+            print e
+            abort(500, str(e))
+
+    return jsonify(id=id, status="success")
+#+END_SRC
+
+***** Update Record function
+The function to update an record given the entity name, the actual entity,
+=id= of the record and the request object which has the data to be updated.
+Following steps:
+1. Check if the record with given =id= exist.
+   1. If record doesn't exist, send back a HTTP 404 error.
+2. If record exist, parse the request data into a =dict=, if the =dict= is
+   empty or malformed send back a HTTP 400 error.
+3. Now the request =dict= contains the request data, but they are all in
+   strings. To handover the data to actually operate on to update, the data
+   has to be converted to correct types, looking at the lookup table which has
+   the type information. This type conversion is handled by the function
+   =typecast_data=.
+4. Once, the data is type converted, it calls the =update= method on the
+   record.
+5. If the =update= is not successful, it will send back a HTTP 500 with
+   corresponding error.
+6. If success, it will send back a JSON with the updated record.
+#+NAME: update-record
+#+BEGIN_SRC python
+def update_record(entity_name, entity, id):
+    record = entity.get_by_id(id)
+
+    if not record:
+        abort(404, 'No %s with id %s' % (entity_name, id))
+
+    data = parse_request(request)
+    if not data or type(data) is not dict:
+        abort(400, "The data should be in JSON format")
+
+    data = typecast_data(entity_name, data)
+    print "updated, typecasted data: %s" % data
+
+    try:
+        print "Updating record: %s with data: %s" % (record, data)
+        record.update(**data)
+    except Exception, e:
+        print e
+        abort(500, str(e))
+
+    return jsonify(record.to_client())
+#+END_SRC
+
+***** Typecast Data function
+The method to typecast the data. It takes in an entity, and the data in a
+=dict= format; and returns another =dict= with all the values having correct
+types, based on the passed entity (this information is stored in the lookup
+table with entity, its attributes and their type information). The following
+functions just takes each item in the data =dict=, finds out its corresponding
+constructor from the type information and calls the =typecast_item= function
+over it.
+#+NAME: typecast-data
+#+BEGIN_SRC python
+def typecast_data(entity, data):
+    updated_data = {}
+    for attr, val in data.iteritems():
+        print "attr: %s, val: %s" % (attr, val)
+        if attr not in entity_map_types[entity]['types']:
+            abort(400, '%s attribute not in %s' % (attr, entity))
+        const = entity_map_types[entity]['types'][attr]
+        print "const for %s is %s" % (attr, const)
+
+        if type(val) is list:
+            new_val = map(lambda item: typecast_item(const, attr, item), val)
+        else:
+            new_val = typecast_item(const, attr, val)
+
+        updated_data[attr] = new_val
+
+    return updated_data
+#+END_SRC
+
+The function takes in a constructor, the attribute name and the actual
+attribute value, and returns the new value typecasted to its correct type.
+If the attribute is a compound item (like that itself is a =dict=), then it
+calls the =typecast_compound_item= function. Else if it is a simple attribute
+it just calls the constructor over the value. If the constructor throws an
+error, the function returns a HTTP 400 error.
+#+NAME: typecast-item
+#+BEGIN_SRC python
+# take a constructor, and attr name and the actual attribute and convert the
+# attribute value to its actual type
+def typecast_item(const, attr, val):
+    if type(val) is dict:
+        new_val = typecast_compound_item(const, attr, val)
+        return new_val
+
+    try:
+        new_val = const(val)
+    except TypeError:
+        abort(400, '%s is not a valid %s' % (val, attr))
+
+    print "new val after const: %s" % new_val
+    return new_val
+#+END_SRC
+
+The function takes in a constructor, the attribute name and the actual
+attribute value, and returns the new value typecasted to its correct type.
+Here the assumption is, that the value that it has been passed is of type
+=dict=, and the =dict= contains an =id= field, which means this value is an
+existing record. Hence, this function calls the =get_by_id= method of the
+constructor (or the type). If there is an error it sends back appropriate HTTP
+error codes.
+#+NAME: typecast-compound-item
+#+BEGIN_SRC python
+# take a constructor, and attr name and the actual attribute and convert the
+# attribute value to its actual type
+def typecast_compound_item(const, attr, val):
+    if 'id' not in val:
+        abort(400, "id attr has to be present in %s:%s" % (attr,
+                                                           val))
+    try:
+        new_val = const.get_by_id(val['id'])
+    except TypeError:
+        abort(400, '%s is not a valid %s' % (val, attr))
+
+    if not new_val:
+        abort(404, 'id %s of %s is not found' % (val['id'], attr))
+    print "new val after const: %s" % new_val
+    return new_val
+
+#+END_SRC
+
+***** Code tangle
+In the below, all the above code blocks are arranged in the order the python
+interpreter expects them to be.
+#+BEGIN_SRC python :tangle src/api.py :eval no :noweb yes
+<<entity-map-types>>
+
+<<delete-record>>
+
+<<typecast-compound-item>>
+
+<<typecast-item>>
+
+<<typecast-data>>
+
+<<update-record>>
+
+<<modify-entity>>
+#+END_SRC
+
+
+**** The API to create new entries
+***** API route definition
+#+NAME: create-entity
+#+BEGIN_SRC python
+@api.route('/<entity>', methods=['POST'])
+def create_entity(entity):
+    if entity not in entity_map_types:
+        abort(400, 'Entity %s is not valid.' % entity)
+
+    curr_entity = entity_map_types[entity]['entity']
+
+    status = create_record(entity, curr_entity)
+    return status
+
+#+END_SRC
+***** Create Record function
+#+NAME: create-record
+#+BEGIN_SRC python
+def create_record(entity_name, entity):
+
+    data = parse_request(request)
+    if not data or type(data) is not dict:
+        abort(400, "The data should be in JSON format")
+
+    data = typecast_data(entity_name, data)
+    print "creating new, typecasted data: %s" % data
+
+    try:
+        print "Creating record: %s with data: %s" % (entity_name, data)
+        new_record = entity(**data)
+        new_record.save()
+    except Exception, e:
+        print e
+        abort(500, str(e))
+
+    return jsonify(new_record.to_client())
+#+END_SRC
+
+
+***** Code tangle
+#+BEGIN_SRC python :tangle src/api.py :eval no :noweb yes
+<<create-record>>
+<<create-entity>>
+#+END_SRC
+
+
+
+
