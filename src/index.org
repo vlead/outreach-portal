@@ -584,6 +584,14 @@ api = Blueprint('APIs', __name__)
 #+END_SRC
 
 *** Implementation
+   Look up table would be like (this is an example, not the
+   implementation):
+#+BEGIN_SRC python
+  entity_map = {
+      'roles': Role
+  }
+#+END_SRC
+
 **** The entity look up table with corresponding types of their attributes
 #+NAME: entity-map-types
 #+BEGIN_SRC python
@@ -837,3 +845,4 @@ def create_record(entity_name, entity):
 
 
 
+      
