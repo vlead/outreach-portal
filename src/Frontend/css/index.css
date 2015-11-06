@@ -45,9 +45,30 @@ body{
 }
 #map{
 	border: solid 1px #ccc;
-	height: 300px;
+	height: 350px;
 }
-.login{
-	
+#btn-signin{
+	margin-top: 20px;
+	border-radius: 3px;
+}
+.section-two{
+	margin-top: 30px;
+	color: #404040;
+	font-size: 16px;
+}
+.section-two .title{
+	font-size: 20px;
+	padding-bottom: 10px;
+	border-bottom: solid 1px #ccc;
+}
+.section-two .workshop-row{
+	border-bottom: solid 1px #ccc; 
+	padding-top: 20px;
+	padding-bottom: 20px;
+
+}
+
+.section-two .workshop-row:hover{
+	background: #eee;
 }
 
