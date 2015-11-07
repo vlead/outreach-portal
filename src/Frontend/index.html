@@ -55,12 +55,18 @@
       </div>
     </div>
     <div class="container">
-      <div class="section-one">
+      <div class="section-one" ng-controller="mapCtrl">
         <div class="row">
           <div class="col-md-12" id="map">
             
           </div> 
         </div>
+      </div>
+      <div class="section-one" ng-controller="geocodeCtrl">
+          <ul ng-repeat="post in posts">
+              {{post[0]['geometry']['location']['lat']}}
+              {{post[0]['geometry']['location']['lng']}}
+         </ul>
       </div>
       <div class="section-two" ng-controller="upcomingController as upcomingList">
         <div class="row">
@@ -78,6 +84,8 @@
           </div>
         </div>
       </div>
+     
+      
     </div>
     <script>
       function initMap() {
@@ -95,6 +103,7 @@
     <script src="js/bootstrap.min.js"></script>
     <script src="https://login.persona.org/include.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
+    <script src="http://maps.googleapis.com/maps/api/js?sensor=false&language=en"></script>
     <script type="text/javascript" src="js/app.js"></script>
   </body>
 </html>
