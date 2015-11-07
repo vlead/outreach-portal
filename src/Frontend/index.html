@@ -15,6 +15,7 @@
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+
     <![endif]-->
   </head>
   <body ng-app="outreachApp">
@@ -62,12 +63,7 @@
           </div> 
         </div>
       </div>
-      <div class="section-one" ng-controller="geocodeCtrl">
-          <ul ng-repeat="post in posts">
-              {{post[0]['geometry']['location']['lat']}}
-              {{post[0]['geometry']['location']['lng']}}
-         </ul>
-      </div>
+      
       <div class="section-two" ng-controller="upcomingController as upcomingList">
         <div class="row">
           <div class="title">Upcoming Workshops</div>
@@ -87,16 +83,9 @@
      
       
     </div>
-    <script>
-      function initMap() {
-        var map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 8,
-          center: {lat: 17.4488093, lng: 78.344397}
-        });
-      }
-    </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBX1OcvkC9hUnosWDTIi_P6QXOrZUVVGm8&callback=initMap"
-    async defer></script>
+   
+    <!--<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBX1OcvkC9hUnosWDTIi_P6QXOrZUVVGm8&callback=initMap"
+    async defer></script>-->
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
@@ -105,6 +94,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
     <script src="http://maps.googleapis.com/maps/api/js?sensor=false&language=en"></script>
     <script type="text/javascript" src="js/app.js"></script>
+    <script src="http://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+    
   </body>
 </html>
           

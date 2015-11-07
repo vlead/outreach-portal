@@ -7,70 +7,52 @@
     });
      var cities1 = [
               {
-                  city : 'India',
-                  desc : 'This is the best country in the world!'
+                  city : 'Gnanadeep college,kamareddy',
+                 
               },
               {
                   city : 'New Delhi',
-                  desc : 'The Heart of India!'
-              }
-          ];
-   app.controller("geocodeCtrl", function($scope, $http) {  
-   
-   var url = 'https://maps.googleapis.com/maps/api/geocode/json?address=%s&key=AIzaSyAEV1VldTH11hpV0ej-LLDc85GTHs68WjM';
-   for(i=0;i<cities1.length;i++)
-   {
-    $http.get(url.replace('%s',cities1[i]['city'])).
-    success(function(data, status, headers, config) {
-    $scope.posts = data; 
-   }).
-  error(function(data, status, headers, config) {
-  // log error
-    });	 		  		      		  
-   }              
-              
-  
-  });
-
-  var cities = [
-              {
-                  city : 'India',
-                  desc : 'This is the best country in the world!',
-                  lat : 23.200000,
-                  long : 79.225487
-              },
-              {
-                  city : 'New Delhi',
-                  desc : 'The Heart of India!',
-                  lat : 28.500000,
-                  long : 77.250000
+                 
               },
               {
                   city : 'Mumbai',
-                  desc : 'Bollywood city!',
-                  lat : 19.000000,
-                  long : 72.90000
+                 
               },
               {
-                  city : 'hyderabad',
-                  desc : 'Bollywood city!',
-                  lat : 18.000000,
-                  long : 20.90000
-              },
-              
-              {
-                  city : 'Kolkata',
-                  desc : 'Howrah Bridge!',
-                  lat : 22.500000,
-                  long : 88.400000
-              },
-              {
-                  city : 'Chennai  ',
-                  desc : 'Kathipara Bridge!',
-                  lat : 13.000000,
-                  long : 80.250000
+                  city : 'kolkata',
+                  
               }
           ];
+var geocoder = new google.maps.Geocoder();
+
+var newcity = [{lan: "", lng: "", city: ""}];
+
+var a = function (info){ 
+ 
+   geocoder.geocode( { "address": info.city }, function(results, status) {
+    if (status == google.maps.GeocoderStatus.OK && results.length > 0) {
+        var location = results[0].geometry.location,
+            lat      = location.lat(),
+            lng      = location.lng();
+            newcity.push({lan: lat, lng: lng, city: info.city});
+        
+    }
+});
+
+}
+for(i=0;i<cities1.length;i++)
+{
+  a(cities1[i]);
+
+
+
+}
+
+
+
+
+
+  
    app.controller('mapCtrl', function ($scope) {
 
               var mapOptions = {
@@ -82,13 +64,14 @@
 	      var createMarker = function (info){
                   var marker = new google.maps.Marker({
                       map: $scope.map,
-                      position: new google.maps.LatLng(info.lat, info.long),
-                      title: info.city
+                      position: new google.maps.LatLng(newcity[i].lan, newcity[i].lng),
+                      //position: new google.maps.LatLng(17, 80),
+                      title: newcity[i].city
                   });
               }  
-              for (i = 0; i < cities.length; i++){
+              for (i = 0; i < newcity.length; i++){
 		 		  		      		  
-                  createMarker(cities[i]);
+                  createMarker(newcity[i]);
               }
 	      
           });
