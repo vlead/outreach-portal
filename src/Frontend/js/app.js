@@ -21,59 +21,74 @@
               {
                   city : 'kolkata',
                   
+              },
+              {
+                  city : 'bihar',
+                  
+              },
+	      {
+                  city : 'kadapa',
+                  
               }
           ];
+
+  
+   app.controller('mapCtrl', function ($scope) {
 var geocoder = new google.maps.Geocoder();
 
 var newcity = [{lan: "", lng: "", city: ""}];
 
-var a = function (info){ 
+var a = function (info,i){ 
  
    geocoder.geocode( { "address": info.city }, function(results, status) {
     if (status == google.maps.GeocoderStatus.OK && results.length > 0) {
         var location = results[0].geometry.location,
             lat      = location.lat(),
             lng      = location.lng();
-            newcity.push({lan: lat, lng: lng, city: info.city});
-        
+            //newcity.push({lan: lat, lng: lng, city: info.city});
+            $scope.createMarker(lat,lng,info.city,i);
     }
 });
 
 }
+
 for(i=0;i<cities1.length;i++)
 {
-  a(cities1[i]);
-
-
+  a(cities1[i],i);
 
 }
-
-
-
-
-
-  
-   app.controller('mapCtrl', function ($scope) {
 
               var mapOptions = {
                   zoom: 4,
                   center: new google.maps.LatLng(20,80)                
               }
-
               $scope.map = new google.maps.Map(document.getElementById('map'), mapOptions);
-	      var createMarker = function (info){
+              
+              
+	      $scope.createMarker = function (lat,lng,city,i){
                   var marker = new google.maps.Marker({
                       map: $scope.map,
-                      position: new google.maps.LatLng(newcity[i].lan, newcity[i].lng),
+                      animation: google.maps.Animation.DROP,
+                      draggable: true,
+                      label : String(i+1),
+                      position: new google.maps.LatLng(lat, lng),
                       //position: new google.maps.LatLng(17, 80),
-                      title: newcity[i].city
+                      title: city
                   });
+                
+
+             
+
               }  
-              for (i = 0; i < newcity.length; i++){
-		 		  		      		  
-                  createMarker(newcity[i]);
-              }
+    
 	      
           });
+
+
+
+
+
+
+
 })();
   
