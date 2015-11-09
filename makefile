@@ -35,6 +35,8 @@ ifeq ($(wildcard elisp),)
 	mv ${LITERATE_DIR}/${ELISP_DIR} .
 	mv ${LITERATE_DIR}/${ORG_DIR} .
 	mv ${LITERATE_DIR}/${STYLE_DIR} .
+	ln -s ${PWD}/${ORG_DIR}/ ${PWD}/src/${ORG_DIR}
+	ln -s ${PWD}/${STYLE_DIR}/ ${PWD}/src/${STYLE_DIR}
 	rm -rf ${LITERATE_DIR}
 else
 	@echo "Literate support code already present"
@@ -45,7 +47,6 @@ init: pull-literate-tools
 
 build: init write-version
 	emacs  --script elisp/publish.el
-	mkdir -p ${CODE_DEST}/src/static/temp
 	rm -f ${BUILD_DEST}/docs/*.html~
 
 # get the latest commit hash and its subject line
@@ -60,6 +61,6 @@ lint:
 
 build-with-lint: build lint
 
-clean:
+clean:  clean-literate
 	rm -rf ${BUILD_DEST}
 
