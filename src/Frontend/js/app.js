@@ -60,13 +60,15 @@
 	}
 	
         today = new Date();
-        
+        var count = 0;
 	for(i=0;i<cities.length;i++)
 	{
             //var yest = String(cities[i].date);
-	    var a = new Date(cities[i].date);
-            if(today <= a){
-		get_geocode(cities[i],i);
+	    date_array = cities[i].date.split("/");
+	    workshop_date = new Date(Number(date_array[2]), Number(date_array[1])-1, Number(date_array[0]));
+	    if(today <= workshop_date){
+		count ++;
+		get_geocode(cities[i],count);
 	    }
 	    
 	}
@@ -81,7 +83,7 @@
                 map: $scope.map,
                 animation: google.maps.Animation.DROP,
                 draggable: true,
-                label : String(count+1),
+                label : String(count),
                 position: new google.maps.LatLng(lat, lng),
                 //position: new google.maps.LatLng(17, 80),
                 title: city
