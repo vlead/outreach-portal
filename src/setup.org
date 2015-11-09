@@ -33,6 +33,20 @@ setup(
 
 #+END_SRC
 
+* Program to set up the database
+  #+BEGIN_SRC python :tangle db_setup.py :eval no
+from src.app import create_app
+from src.db import *
+import src.config as config
+
+
+def create_roles():
+    new_role = Role(name="admin")
+    new_role.save()
+
+if __name__ == "__main__":
+    db.create_all(app=create_app(config))
+  #+END_SRC
 * Install all dependencies and setup the software
 Install all dependencies, including the OS related packages, Python packages,
 setup the database, configure the webserver, and finally deploy the
@@ -157,8 +171,8 @@ update_app_config () {
   # NOTE: this is hardcoded now..somehow the log file when dynamically created
   # is owned by root. then the app fails to run.. hence the following is
   # necessary
-  touch /var/www/dataservice.log
-  chmod a+w /var/www/dataservice.log
+  touch /var/www/outreach.log
+  chmod a+w /var/www/outreach.log
 }
 
 update_apache_config() {
