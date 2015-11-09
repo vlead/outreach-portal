@@ -47,10 +47,6 @@ init: pull-literate-tools
 
 build: init write-version
 	emacs  --script elisp/publish.el
-<<<<<<< HEAD
-	mkdir -p ${CODE_DEST}/src/static/temp
-=======
->>>>>>> master
 	rm -f ${BUILD_DEST}/docs/*.html~
 
 # get the latest commit hash and its subject line
@@ -65,10 +61,6 @@ lint:
 
 build-with-lint: build lint
 
-<<<<<<< HEAD
-clean:
-=======
 clean:  clean-literate
->>>>>>> master
 	rm -rf ${BUILD_DEST}
 
