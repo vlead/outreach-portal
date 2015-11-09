@@ -85,7 +85,6 @@ class Entity(db.Model):
 
 #+END_SRC
 
-
 ** The Data Model
    
 *** Name
@@ -157,6 +156,14 @@ class Role(Entity):
 
 #+END_SRC
 
+***** getAll: Nil --> set[Role]
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @staticmethod
+    def get_all():
+        return Role.query.all()
+
+#+END_SRC
+      
 ***** getName: Role --> Name
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_name(self):
@@ -169,7 +176,6 @@ class Role(Entity):
     def set_name(self, name):
         self.name = name
 #+END_SRC
-
 
 ***** to_client
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -553,7 +559,6 @@ WHITELIST_IPS = ["127.0.0.1"]
 
 #+END_SRC
 
-
 ** Model Diagram
     The model-diagram can be found below. This gives an overview of the
     relationships between different entities.
@@ -597,20 +602,210 @@ from flask import Blueprint, request, jsonify, abort, current_app, redirect,\
 
 from db import *
 from utils import parse_request, jsonify_list
-# from maps import *
+from maps import *
 api = Blueprint('APIs', __name__)
 
 #+END_SRC
 
-*** Implementation
+** REST APIs to read and query data
+   These are the set of REST APIs for read operations.
+
+*** Design
+   The REST APIs to get and query data are designed in a generic
+   way. That is, APIs for each entity is not designed and implemented
+   specifically, rather three generic API patterns are designed which,
+   presumably, will capture all kinds of query patterns.
+
+   The three API patterns are:
+   1. =/<:entity>s?query_param1=val1&query_param2=val2&..query_paramn=valn=
+   2. =/<:entity>s/<:id>?fields=field1,field2,field3=
+   3. =/<:entity>s/<:id>/<entity>s?query_param1=val1&query_param2=val2=
+
+   =<:entity>s= are defined in the corresponding look up table.
+
+   Let's explain each URL pattern:
+   1. The first URL pattern is to get record(s) of an entity which
+      satisfies some query parameters. Note, if one does not pass any
+      query parameter, it returns all records of that entity.  For
+      example:
+      1. To get all labs of IIIT-H at integration level 6 and hosted on
+         AWS:
+        #+BEGIN_EXAMPLE
+	GET /labs?integration_level=6&institute=iiith&hosted_on=AWS
+	#+END_EXAMPLE
+      2. To get all labs in the system:
+         #+BEGIN_EXAMPLE
+	 GET /labs
+	 #+END_EXAMPLE
+      3. To get all the developers associated with IIIT-H:
+         #+BEGIN_EXAMPLE
+	 GET /developers?institute=iiith
+	 #+END_EXAMPLE
+   2. The second URL pattern is to get details of a particular record,
+      identified by a unique identifier =id=. The records can be
+      further filtered down with only desired attributes.  For example:
+      1. Get only few details the Data Structures lab (where the lab
+         id is known before):
+         #+BEGIN_EXAMPLE
+	 GET /labs/cse02?fields=name,institute,hosted_url
+	 #+END_EXAMPLE
+      2. Get all the details of particular developer (presuming the id
+         is known beforehand):
+         #+BEGIN_EXAMPLE
+	 GET /developers/22
+	 #+END_EXAMPLE
+   3. The third URL pattern is to get record(s) of an entity which is
+      part of another entity. Like to get experiments / technologies /
+      developers of a lab, or to get labs of an institute. The
+      record(s) can also be filtered on some query parameters. Like to
+      get all the technologies of a lab which are non FOSS.  For
+      example:
+      1. Get all technologies of a lab which are non FOSS:
+         #+BEGIN_EXAMPLE
+	 GET /labs/cse02/technologies?foss=false
+	 #+END_EXAMPLE
+      2. Get all experiments of a lab which uses Java3D and Flash:
+         #+BEGIN_EXAMPLE
+	 GET /labs/cse02/experiments?technologies=java3d,flash
+	 #+END_EXAMPLE
+
+
+   Note that, nesting of entities in the URL API is only allowed till
+   2nd level. Arbitrary nesting of entities might have the problem of
+   falling into infinite loop while querying.
+
+   Also note that, attributes with multiple values are
+   comma-separated; and the default action is to use AND operation
+   among them. If the OR operation is needed, they need to be
+   substituted by '+'. Example: To get all experiments of a lab which
+   uses Java3D OR Flash:
+   #+BEGIN_EXAMPLE
+   GET /labs/cse02/experiments?technologies=java3d+flash
+   #+END_EXAMPLE
+
+   In the above, a valid =<:entity>s= can be any of the keywords
+   defined in the look up table. Like, =labs=, =disciplines=,
+   =experiements=, =developers=. Note that the entity name is always
+   plural, but the look up table maps the plural keyword to a
+   particular entity (which is usually in singular form).
+
    Look up table would be like (this is an example, not the
    implementation):
 #+BEGIN_SRC python
   entity_map = {
       'roles': Role
-  }
+    }
 #+END_SRC
-   
+
+   **TODO**: usage documentation of all REST APIs for the consumers of
+   data service has to be written down somewhere and published.
+
+*** Implementation
+**** Attributes of an entity and their relationship
+     All the attributes of an entity and the relationship between the entity
+     and the attribute is captured to facilitate run time creation of queries.
+
+#+BEGIN_SRC python :tangle src/maps.py :eval no
+from db import *
+role = {'entity_class': Role,
+        'attributes': [
+            {'name': 'id',
+             'class': None,
+             'relationship': 'one'},
+            {'name': 'name',
+             'class': None,
+             'relationship': 'one'}
+            ]}
+
+roles = role
+
+entity_pairs = {
+    'roles': role
+}
+                   
+#+END_SRC
+
+**** GET APIS
+#+BEGIN_SRC python :tangle src/api.py :eval no
+# query an entity
+# =/<:entity>s?query_param1=val1&query_param2=val2&..query_paramn=valn=
+@api.route('/<entity>', methods=['GET'])
+def query_an_entity(entity):
+    if entity not in entity_pairs:
+        abort(400, 'Entity %s is not valid.' % entity)
+
+    curr_entity = entity_pairs[entity]['entity_class']
+    arg_tuple_list = request.args.lists()
+    if not arg_tuple_list:
+        print "data: %s" % [i.to_client() for i in curr_entity.get_all()]
+        return jsonify_list([i.to_client() for i in curr_entity.get_all()])
+    else:
+        query = curr_entity.query
+        filters = []
+        for arg_tuple in arg_tuple_list:
+            args = arg_tuple[0].split('.')
+            values = arg_tuple[1][0].split(',')
+            filters.append(create_filters(entity_pairs[entity],
+                                          curr_entity,
+                                          args,
+                                          values))
+        for filter in filters:
+            query = query.filter(filter)
+        entities = query.all()
+        print "data: %s" % [ent.to_client() for ent in entities]
+        return jsonify_list([ent.to_client() for ent in entities])
+
+
+def create_filters(entity_map, curr_entity, args, values):
+    if len(args) == 1:
+        try:
+            return getattr(curr_entity, args[0]).in_(values)
+        except Exception, e:
+            abort(400, 'error is %s' % (str(e)))
+    else:
+        result = filter(lambda item: item['name'] == args[0],
+                        entity_map['attributes'])
+        if not result:
+            abort(400, '%s is not attribute of %s' %
+                  (args[0], str(entity_map['entity_class'])))
+
+        entity_map = args[0]
+        if result[0]['relationship'] == 'one':
+            try:
+                return getattr(curr_entity, args[0]).has(
+                    create_filters(entity_map,
+                                   result[0]['class'],
+                                   args[1:],
+                                   values))
+            except Exception, e:
+                abort(400, 'error is %s' % (str(e)))
+        else:
+            try:
+                return getattr(curr_entity, args[0]).any(
+                    create_filters(entity_map,
+                                   result[0]['class'],
+                                   args[1:],
+                                   values))
+            except Exception, e:
+                abort(400, 'error is %s' % (str(e)))
+
+
+@api.route('/<entity>/<id>', methods=['GET'])
+def get_specific_entity(entity, id):
+    if entity not in entity_pairs:
+        abort(400, 'Entity %s is not valid.' % entity)
+    curr_entity = entity_pairs[entity]['entity_class']
+    record = curr_entity.get_by_id(id)
+    if not record:
+        abort(404, "No entry for %s with id: %s found." % (entity, id))
+
+    return jsonify(record.to_client())
+
+#+END_SRC
+
+** REST API to create/update/delete data
+*** Design
+*** Implementation
 **** The entity look up table with corresponding types of their attributes
 #+NAME: entity-map-types
 #+BEGIN_SRC python
@@ -716,7 +911,7 @@ def update_record(entity_name, entity, id):
     return jsonify(record.to_client())
 #+END_SRC
 
-***** Typecast Data function
+****** Typecast Data function
 The method to typecast the data. It takes in an entity, and the data in a
 =dict= format; and returns another =dict= with all the values having correct
 types, based on the passed entity (this information is stored in the lookup
