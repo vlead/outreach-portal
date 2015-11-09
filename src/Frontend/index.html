@@ -119,7 +119,7 @@
       success: function(res, status, xhr) { window.location.reload(); },
       error: function(xhr, status, err) {
         navigator.id.logout();
-        //alert("Login failure: " + err);
+        alert("Login failure: " + err);
       }
     });
   },
@@ -132,7 +132,7 @@
       type: 'POST',
       url: '/auth/logout', // This is a URL on your website.
       success: function(res, status, xhr) { window.location.reload(); },
-      error: function(xhr, status, err) { //alert("Logout failure: " + err); }
+      error: function(xhr, status, err) { alert("Logout failure: " + err); }
     });
   }
 });
