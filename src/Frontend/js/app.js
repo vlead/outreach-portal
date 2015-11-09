@@ -31,6 +31,9 @@
 	      {
                   city : 'kadapa',
                   
+              },
+              {
+                city: 'Rajahmundry'
               }
           ];
 
