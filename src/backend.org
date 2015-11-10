@@ -115,7 +115,7 @@ class Email(object):
             raise TypeError('%s is not an email!' % value)
         self.value = value
 #+END_SRC
-
+     
 *** Role
 **** Immutable data
      + Id
@@ -132,6 +132,7 @@ class Role(Entity):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), nullable=False)
 
+    users = db.relationship('User', backref='role')
 #+END_SRC
 
 **** Constructor
@@ -187,72 +188,163 @@ class Role(Entity):
 
 #+END_SRC
 
-***  User
+*** User
 **** Immutable data
      + Id
+     + Created
 
 **** Mutable data
      + Name
-     + Path
-
+     + Email
+     + Role --> Id
+     + Last Active
+  
 **** Definition
-#+BEGIN_SRC 
-class WorkshopDocument(Entity):
+#+BEGIN_SRC python :tangle src/db.py :eval no
+class User(Entity):
 
-    __tablename__ = 'workshop_documents'
+    __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), nullable=False)
-    path = db.Column(db.String(128), nullable=False)
-
-#+END_SRC
+    email = db.Column(db.String(128), unique=True)
+    
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
+ 
+    created = db.Column(db.DateTime())
+    last_active = db.Column(db.DateTime(), default=datetime.utcnow)
+ #+END_SRC
 
 **** Constructor
 #+BEGIN_EXAMPLE
-    workshop_document = WorkshopDocument(name=<instance of class Name>,
-                                         path=str)
+    User = User(name=str,
+                email=str,
+                role=<instance of class Role>)
                                             
 #+END_EXAMPLE
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     def __init__(self, **kwargs):
         if 'name' not in kwargs:
             raise AttributeRequired("mandatory attribute `name` is missing")
         self.set_name(kwargs['name'])
 
-        if 'path' not in kwargs:
-            raise AttributeRequired("mandatory attribute `path` is missing")
-        self.set_path(kwargs['path'])
+        if 'email' not in kwargs:
+            raise AttributeRequired("mandatory attribute `email` is missing")
+        self.set_email(kwargs['email'])
+
+        if 'role' not in kwargs:
+            raise AttributeRequired("mandatory attribute `role` is missing")
+        self.set_role(kwargs['role'])
+        
+#        if 'created' not in kwargs:
+#            raise AttributeRequired("mandatory attribute `created` is missing")
+
+#        if not isinstance(kwargs['created'], Datetime):
+#            raise TypeError("created should be of type Datetime")
+#        self.created = kwargs['created']
+       
+        if 'last_active' in kwargs:
+            self.set_last_active(kwargs['last_active'])
+
+    def __str__(self):
+        return "Name = %s, e-mail id = %s, role = %s, last_active = %s, created = %s" % \
+            (self.name, self.email, self.role.name, self.last_active, self.created)
+
+    def __repr__(self):
+        return "Name = %s, e-mail id = %s, role = %s, last_active = %s, created = %s" % \
+            (self.name, self.email, self.role.name, self.last_active, self.created)
 
 #+END_SRC
      
 **** Functions that operate on the Workshop Document domain
-***** getName: WorkshopDocument --> Name
-#+BEGIN_SRC 
+***** getAll: Nil --> set[User]
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @staticmethod
+    def get_all():
+        return User.query.all()
+
+#+END_SRC
+***** getUser: Id --> User
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @staticmethod
+    def get_by_id(id):
+        return User.query.get(id)
+
+#+END_SRC
+
+***** getName: User --> Name
+#+BEGIN_SRC python :tangle src/db.py :eval no
     def get_name(self):
         return self.name
 #+END_SRC
 
-***** getPath: WorkshopDocument --> String
-#+BEGIN_SRC 
-    def get_path(self):
-        return self.path
+***** getEmail: User --> Email
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_email(self):
+        return self.email
 #+END_SRC
 
-***** setName: WorkshopDocument, Name --> Void
-#+BEGIN_SRC 
-    @typecheck(name=Name)
+***** getRole: User --> Role
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_role(self):
+        return self.role
+
+#+END_SRC
+
+***** timeOfCreation: User --> Datetime
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_created(self):
+        return self.created
+#+END_SRC
+
+***** getLastActive: User --> Datetime
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_last_active(self):
+        return self.last_active
+#+END_SRC
+
+***** setName: User, Name --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(name=str)
     def set_name(self, name):
         self.name = name
 #+END_SRC
 
-***** setPath: WorkshopDocument, String --> Void
-#+BEGIN_SRC 
-    @typecheck(path=str)
-    def set_path(self, path):
-        self.path = path
+***** setEmail: User, Email --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(email=str)
+    def set_email(self, email):
+        self.email = email
+#+END_SRC
+
+***** setLastActive: User, Datetime --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+#    @typecheck(email=str)
+    def set_last_active(self, last_active):
+        self.last_active = last_active
+#+END_SRC
+            
+***** setRole: User, Role --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(role=Role)
+    def set_role(self, role):
+        self.role = role
+
+#+END_SRC
+
+***** to_client
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def to_client(self):
+        return {
+            'id': self.id,
+            'email': self.email,
+            'name': self.name,
+            'role': self.role.to_client(),
+#            'last_active': self.last_active.isoformat(),
+#            'created': self.created.isoformat()
+        }
 #+END_SRC
       
-
 *** Workshop Document
 **** Immutable data
      + Id
@@ -693,7 +785,8 @@ api = Blueprint('APIs', __name__)
    implementation):
 #+BEGIN_SRC python
   entity_map = {
-      'roles': Role
+      'roles': Role,
+      'users': User
     }
 #+END_SRC
 
@@ -714,13 +807,41 @@ role = {'entity_class': Role,
              'relationship': 'one'},
             {'name': 'name',
              'class': None,
-             'relationship': 'one'}
+             'relationship': 'one'},
+            {'name': 'users',
+             'class': User,
+             'relationship': 'many'}
             ]}
 
+user = {'entity_class': User,
+        'attributes': [
+            {'name': 'id',
+             'class': None,
+             'relationship': 'one'},
+            {'name': 'name',
+             'class': None,
+             'relationship': 'one'},
+            {'name': 'email',
+             'class': None,
+             'relationship': 'one'},
+            {'name': 'created',
+             'class': None,
+             'relationship': 'one'},
+            {'name': 'last_active',
+             'class': None,
+             'relationship': 'one'},
+            {'name': 'role',
+             'class': Role,
+             'relationship': 'many'}
+             ]}
+
+
 roles = role
+users = user
 
 entity_pairs = {
-    'roles': role
+    'roles': role,
+    'users': user
 }
                    
 #+END_SRC
@@ -814,6 +935,15 @@ entity_map_types = {
         'entity': Role,
         'types': {
             'name': str
+          }
+    },
+    'users': {
+        'entity': User,
+        'types': {
+            'name': str,
+            'email': str,
+            'role': Role,
+            'last_active': datetime
           }
     }
 }
