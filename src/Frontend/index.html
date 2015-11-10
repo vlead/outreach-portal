@@ -104,10 +104,10 @@
       if (signoutLink) {
         signoutLink.onclick = function() { navigator.id.logout(); };
       }
-      var currentUser = 'bob@example.com';
+
 
       navigator.id.watch({
-        loggedInUser: currentUser,
+        
         onlogin: function(assertion) {
     // A user has logged in! Here you need to:
     // 1. Send the assertion to your backend for verification and to create a session.
