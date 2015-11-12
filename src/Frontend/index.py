@@ -9,22 +9,18 @@ def index():
 
 @app.route("/auth/login", methods=['GET','POST'])
 def login():
-# The request has to have an assertion for us to verify
-   if 'assertion' not in request.form:
-       abort(400)
+	if request.method == 'POST':
+		if 'assertion' not in request.form:
+			abort(400)
+		data = {'assertion': request.form['assertion'], 'audience': 'http://localhost:5000/'}
+		resp = requests.post('https://verifier.login.persona.org/verify', data=data, verify=True)
 
-   # Send the assertion to Mozilla's verifier service.
-   data = {'assertion': request.form['assertion'], 'audience': 'http://localhost:5000/'}
-   resp = requests.post('https://verifier.login.persona.org/verify', data=data, verify=True)
-   #print request.form['assertion']
-   # Did the verifier respond?
-   if resp.ok:
-       # Parse the response
-       verification_data = resp.json()
+		if resp.ok:
+			verification_data = resp.json()
 
-       # Check if the assertion was valid
-       if verification_data['status'] == 'okay':
-           return 'Okay'
-
+		if verification_data['status'] == 'okay':
+			return 'Okay'
+	else:
+		return redirect_url('index')
 if __name__ == "__main__":
 	app.run(debug=True)
