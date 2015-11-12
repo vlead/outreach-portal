@@ -32,7 +32,17 @@
           </div>
           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-form navbar-right">
+	      
+	      {% if g.user %}
+	      <li>Logged in as <strong>{{ g.user }}</strong>
+	      <button class="btn btn-primary" id="btn-signout">Log out</button></li>
+	      {% else %}
+	      
               <li><button class="btn btn-primary" id="btn-signin">Log In</button></li>
+	      
+	      {% endif %}
+
+	      
             </ul>
           </div>
         </div>
@@ -86,7 +96,7 @@
     $.ajax({
       type: 'POST',
       url: '/auth/logout', // This is a URL on your website.
-      success: function(res, status, xhr) { window.location.reload(); },
+      success: function(res, status, xhr) { alert("signout successfully"); },
       error: function(xhr, status, err) { alert("Logout failure: " + err); }
     });
   }
