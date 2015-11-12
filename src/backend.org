@@ -98,6 +98,7 @@ class Entity(db.Model):
 
 import unittest
 from flask.ext.testing import TestCase
+from datetime import datetime
 # import json
 
 from src.db import *
@@ -309,6 +310,16 @@ class TestRole(TestCase):
 
 #+END_SRC
 
+***** Test Role to_client
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_role_to_client(self):
+        print "test_role_to_client"
+        role = Role(name="Admin")
+        role.save()
+        role = Role.get_by_id(1)
+        role_dict = role.to_client()
+        self.assertEqual("Admin", role_dict['name'])
+#+END_SRC
 *** User
 **** Immutable data
      + Id
@@ -367,12 +378,68 @@ class User(Entity):
 
 #+END_SRC
      
+**** Tests for User Constructor
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+class TestUser(TestCase):
+    TESTING = True
+
+    def create_app(self):
+        app = create_app(config)
+        return app
+
+    def setUp(self):
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+#+END_SRC
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_user_constructor(self):
+        print "test_user_constructor"
+        name = "Admin"
+        role = Role(name=name)
+        role.save()
+         
+        user = User(name="Ambika", email="ambika@vlabs.ac.in", role = role)
+        user.save()
+        self.assertEqual("Ambika", user.name)
+        self.assertEqual("ambika@vlabs.ac.in", user.email)
+
+        # Calling the user constructor without any arguments should
+        # raise AttributeRequired exception
+        self.assertRaises(AttributeRequired, User)
+
+        # Calling the user constructor with necessary arguments
+        # (name, email and role) but with wrong type should raise TypeError
+        self.assertRaises(TypeError, User,
+                          **{'name': Name("Admin"),
+                             'email': "ambika@vlabs.ac.in",
+                             'role': role
+                            })
+
+#+END_SRC
 **** Functions that operate on the Workshop Document domain
 ***** getAll: Nil --> set[User]
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_all():
         return User.query.all()
+
+#+END_SRC
+***** Test getAll: Nil --> set[User]
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_all_users(self):
+        print "test_get_all_users"
+        role = Role(name="Admin")
+        role.save()
+       
+        user1 = User(name="ambika", email="ambika@vlabs.ac.in", role=role)
+        user2 = User(name="madhavi", email="madhavi@vlabs.ac.in", role=role)
+        r = self.client.get('/users')
+        result = json.loads(r.data)
+        print result
+        self.assertEquals(len(result), 2)
 
 #+END_SRC
 ***** getUser: Id --> User
@@ -382,6 +449,15 @@ class User(Entity):
         return User.query.get(id)
 
 #+END_SRC
+***** Test getUser: Id --> User
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_user_by_id(self):
+        print "test_get_user_by_id"
+        role = Role(name="Admin")
+        role.save()
+        user = User(name="ambika", email="ambika@vlabs.ac.in", role=role)
+        self.assertEqual(user.get_by_id(1).name, "ambika")
+#+END_SRC
 
 ***** getName: User --> Name
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -389,10 +465,30 @@ class User(Entity):
         return self.name
 #+END_SRC
 
+***** Test getName: User --> Name 
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_user_name(self):
+        print "test_get_user_name"
+        role = Role(name="Admin")
+        user = User(name="ambika", email="ambika@vlabs.ac.in", role=role)
+        user_name = user.get_name()
+        self.assertEqual(user_name, "ambika")
+#+END_SRC
+
 ***** getEmail: User --> Email
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_email(self):
         return self.email
+#+END_SRC
+
+***** Test getEmail: User --> Email
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_user_email(self):
+        print "test_get_user_email"
+        role = Role(name="Admin")
+        user = User(name="ambika", email="ambika@vlabs.ac.in", role=role)
+        user_email = user.get_email()
+        self.assertEqual(user_email, "ambika@vlabs.ac.in")
 #+END_SRC
 
 ***** getRole: User --> Role
@@ -402,16 +498,49 @@ class User(Entity):
 
 #+END_SRC
 
+***** Test getRole: User --> Role
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_user_role(self):
+        print "test_get_user_role"
+        role = Role(name="Admin")
+        user = User(name="ambika", email="ambika@vlabs.ac.in", role=role)
+        user_role = user.get_role()
+        self.assertEqual(user_role, role)
+#+END_SRC
+
 ***** timeOfCreation: User --> Datetime
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_created(self):
         return self.created
 #+END_SRC
 
+***** Test timeOfCreation: User --> Datetime
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_user_toc(self):
+        print "test_get_user_toc"
+        role = Role(name="Admin")
+        user = User(name="ambika", email="ambika@vlabs.ac.in", role=role)
+        user.save()
+        time = datetime.utcnow()
+        user_toc = user.get_created()
+        self.assertEqual(user_toc, time)
+#+END_SRC
+
 ***** getLastActive: User --> Datetime
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_last_active(self):
         return self.last_active
+#+END_SRC
+
+***** Test getLastActive: User --> Datetime
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_user_last_act(self):
+        print "test_get_user_last_act"
+        role = Role(name="Admin")
+        user = User(name="ambika", email="ambika@vlabs.ac.in", role=role)
+        user.save()
+        user_last_act = user.get_last_active()
+        self.assertEqual(user_last_act, datetime.utcnow())
 #+END_SRC
 
 ***** setName: User, Name --> Void
@@ -421,11 +550,37 @@ class User(Entity):
         self.name = name
 #+END_SRC
 
+***** Test setName: User, Name --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_set_user_name(self):
+        print "test_set_user_name"
+        role = Role(name="Admin")
+        user = User(name="ambika", email="ambika@vlabs.ac.in", role=role)     
+        user.save()
+        user.set_name("Madhavi")
+        user.save()
+        user = User.get_by_id(1)
+        self.assertEqual("Madhavi", user.name)
+#+END_SRC
+
 ***** setEmail: User, Email --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(email=str)
     def set_email(self, email):
         self.email = email
+#+END_SRC
+
+***** Test setEmail: User, Email --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_set_user_email(self):
+        print "test_set_user_email"
+        role = Role(name="Admin")
+        user = User(name="ambika", email="ambika@vlabs.ac.in", role=role)     
+        user.save()
+        user.set_email("madhavi@vlabs.ac.in")
+        user.save()
+        user = User.get_by_id(1)
+        self.assertEqual("madhavi@vlabs.ac.in", user.email)
 #+END_SRC
 
 ***** setRole: User, Role --> Void
@@ -434,6 +589,20 @@ class User(Entity):
     def set_role(self, role):
         self.role = role
 
+#+END_SRC
+
+***** Test setRole: User, Role --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_set_user_role(self):
+        print "test_set_user_role"
+        role1 = Role(name="Admin")
+        role2 = Role(name="OC")
+        user = User(name="ambika", email="ambika@vlabs.ac.in", role=role1)
+        user.save()     
+        user.set_role(role2)
+        user.save()
+        user = User.get_by_id(1)
+        self.assertEqual(user.role, role2)
 #+END_SRC
 
 ***** to_client
@@ -449,6 +618,20 @@ class User(Entity):
         }
 #+END_SRC
       
+***** Test User to_client
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_user_to_client(self):
+        print "test_user_to_client"
+        role = Role(name="Admin")
+        user = User(name = "madhavi", email = "madhavi@vlabs.ac.in", role = role)
+        user.save()
+        user = User.get_by_id(1)
+        user_dict = user.to_client()
+        self.assertEqual("madhavi@vlabs.ac.in", user_dict['email'])
+        self.assertEqual("madhavi", user_dict['name'])
+        self.assertEqual("Admin", user_dict['role']['name'])
+#+END_SRC
+
 *** Workshop Document
 **** Immutable data
      + Id
@@ -487,6 +670,41 @@ class WorkshopDocument(Entity):
 
 #+END_SRC
 
+**** Tests for Workshop Document Constructor
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+class TestWorkshopDocument(TestCase):
+    TESTING = True
+
+    def create_app(self):
+        app = create_app(config)
+        return app
+
+    def setUp(self):
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+#+END_SRC
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_workshop_document_constructor(self):
+        print "test_workshop_document_constructor"
+        name = "Attandance Sheet"
+        path = "/workshop-documents/admin"
+        workshop_document = WorkshopDocument(name=name, path=path)
+        self.assertEqual(isinstance(workshop_document, WorkshopDocument), True)
+
+        # Calling the workshop_document constructor without any arguments should
+        # raise AttributeRequired exception
+        self.assertRaises(AttributeRequired, WorkshopDocument)
+
+        # Calling the workshop_document constructor with necessary arguments
+        # (name,path) but with wrong type should raise TypeError
+        self.assertRaises(TypeError, WorkshopDocument,
+                          **{'name': Name("College Report")
+                            })
+
+#+END_SRC
 **** Functions that operate on the Workshop Document domain
 ***** getAll: Nil --> set[WorkshopDocument]
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -495,6 +713,23 @@ class WorkshopDocument(Entity):
         return WorkshopDocument.query.all()
 
 #+END_SRC
+
+***** Test getAll: Nil --> set[WorkshopDocument]
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_all_workshop_documents(self):
+        print "test_get_all_workshop_documents"
+
+        document1 = WorkshopDocument(name="Attandance Sheet", path="/workshop-documents/admin")
+        document1.save()
+        document2 = WorkshopDocument(name="College Report", path="/workshop-documents/admin")
+        document2.save()
+        r = self.client.get('/workshop_documents')
+        result = json.loads(r.data)
+        print result
+        self.assertEquals(len(result), 2)
+
+#+END_SRC
+
 ***** getWorkshopDocument: Id --> WorkshopDocument
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
@@ -503,10 +738,29 @@ class WorkshopDocument(Entity):
 
 #+END_SRC
 
+***** Test getWorkshopDocument: Id --> WorkshopDocument
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no 
+    def test_get_workshop_document_by_id(self):
+        print "test_get_document_by_id"
+        workshop_document = WorkshopDocument(name="Attendance Sheet", path="/workshop-documents/admin")
+        workshop_document.save()
+        self.assertEqual(workshop_document.get_by_id(1).name, "Attendance Sheet")
+
+#+END_SRC
+     
 ***** getName: WorkshopDocument --> Name
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_name(self):
         return self.name
+#+END_SRC
+
+***** Test getName: WorkshopDocument --> Name
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_workshop_document_name(self):
+        print "test_get_document_name"
+        workshop_document = WorkshopDocument(name="Attendance Sheet", path="/workshop-documents/admin")
+        workshop_document_name = workshop_document.get_name()
+        self.assertEqual(workshop_document_name, "Attendance Sheet")
 #+END_SRC
 
 ***** getPath: WorkshopDocument --> String
@@ -514,12 +768,30 @@ class WorkshopDocument(Entity):
     def get_path(self):
         return self.path
 #+END_SRC
-      
+
+***** Test getPath: WorkshopDocument --> String
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_workshop_document_path(self):
+        print "test_get_document_path"
+        workshop_document = WorkshopDocument(name="Attendance Sheet", path="/workshop-documents/admin")
+        workshop_document_path = workshop_document.get_path()
+        self.assertEqual(workshop_document_path, "/workshop-documents/admin")
+#+END_SRC
+     
 ***** setName: WorkshopDocument, Name --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(name=str)
     def set_name(self, name):
         self.name = name
+#+END_SRC
+
+***** Test setName: WorkshopDocument, Name --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_set_workshop_document_name(self):
+        print "test_set_document_name"
+        workshop_document = WorkshopDocument(name="Attandance Sheet", path="/workshop-documents/admin")
+        workshop_document.set_name("College Report")
+        self.assertEqual(workshop_document.name, "College Report")
 #+END_SRC
 
 ***** setPath: WorkshopDocument, String --> Void
@@ -528,7 +800,18 @@ class WorkshopDocument(Entity):
     def set_path(self, path):
         self.path = path
 #+END_SRC
-      
+
+***** Test setPath: WorkshopDocument, String --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_set_workshop_document_path(self):
+        print "test_set_document_path"
+        workshop_document = WorkshopDocument(name="Attandance Sheet", path="/workshop-documents/admin")
+        workshop_document.set_path("/workshop-documents/OC")
+        workshop_document.save()
+        doc = workshop_document.get_by_id(1)
+        self.assertEqual(doc.path, "/workshop-documents/OC")
+#+END_SRC
+     
 ***** to_client
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def to_client(self):
@@ -1338,7 +1621,7 @@ def create_record(entity_name, entity):
 <<create-entity>>
 #+END_SRC
 
-
+      
 
 * Run the Test Cases
 ** Python DB Tests
