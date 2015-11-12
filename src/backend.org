@@ -192,12 +192,12 @@ class Role(Entity):
 **** Immutable data
      + Id
      + Created
+     + Last Active
 
 **** Mutable data
      + Name
      + Email
      + Role --> Id
-     + Last Active
   
 **** Definition
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -211,7 +211,7 @@ class User(Entity):
     
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
  
-    created = db.Column(db.DateTime())
+    created = db.Column(db.DateTime(), default=datetime.utcnow)
     last_active = db.Column(db.DateTime(), default=datetime.utcnow)
  #+END_SRC
 
@@ -236,23 +236,13 @@ class User(Entity):
             raise AttributeRequired("mandatory attribute `role` is missing")
         self.set_role(kwargs['role'])
         
-#        if 'created' not in kwargs:
-#            raise AttributeRequired("mandatory attribute `created` is missing")
-
-#        if not isinstance(kwargs['created'], Datetime):
-#            raise TypeError("created should be of type Datetime")
-#        self.created = kwargs['created']
-       
-        if 'last_active' in kwargs:
-            self.set_last_active(kwargs['last_active'])
-
     def __str__(self):
-        return "Name = %s, e-mail id = %s, role = %s, last_active = %s, created = %s" % \
-            (self.name, self.email, self.role.name, self.last_active, self.created)
+        return "Name = %s, e-mail id = %s, role = %s" % \
+            (self.name, self.email, self.role.name)
 
     def __repr__(self):
-        return "Name = %s, e-mail id = %s, role = %s, last_active = %s, created = %s" % \
-            (self.name, self.email, self.role.name, self.last_active, self.created)
+        return "Name = %s, e-mail id = %s, role = %s" % \
+            (self.name, self.email, self.role.name)
 
 #+END_SRC
      
@@ -317,13 +307,6 @@ class User(Entity):
         self.email = email
 #+END_SRC
 
-***** setLastActive: User, Datetime --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
-#    @typecheck(email=str)
-    def set_last_active(self, last_active):
-        self.last_active = last_active
-#+END_SRC
-            
 ***** setRole: User, Role --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(role=Role)
@@ -340,8 +323,8 @@ class User(Entity):
             'email': self.email,
             'name': self.name,
             'role': self.role.to_client(),
-#            'last_active': self.last_active.isoformat(),
-#            'created': self.created.isoformat()
+            'last_active': self.last_active.isoformat(),
+            'created': self.created.isoformat()
         }
 #+END_SRC
       
@@ -943,7 +926,8 @@ entity_map_types = {
             'name': str,
             'email': str,
             'role': Role,
-            'last_active': datetime
+            'last_active': datetime,
+            'created': datetime
           }
     }
 }
