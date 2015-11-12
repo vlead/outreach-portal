@@ -337,7 +337,7 @@ class User(Entity):
      + Path
 
 **** Definition
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no
 class WorkshopDocument(Entity):
 
     __tablename__ = 'workshop_documents'
@@ -349,12 +349,12 @@ class WorkshopDocument(Entity):
 #+END_SRC
 
 **** Constructor
-#+BEGIN_EXAMPLE
-    workshop_document = WorkshopDocument(name=<instance of class Name>,
+#+BEGIN_EXAMPLE 
+    workshop_document = WorkshopDocument(name=str,
                                          path=str)
                                             
 #+END_EXAMPLE
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     def __init__(self, **kwargs):
         if 'name' not in kwargs:
             raise AttributeRequired("mandatory attribute `name` is missing")
@@ -367,32 +367,58 @@ class WorkshopDocument(Entity):
 #+END_SRC
 
 **** Functions that operate on the Workshop Document domain
+***** getAll: Nil --> set[WorkshopDocument]
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @staticmethod
+    def get_all():
+        return WorkshopDocument.query.all()
+
+#+END_SRC
+***** getWorkshopDocument: Id --> WorkshopDocument
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @staticmethod
+    def get_by_id(id):
+        return WorkshopDocument.query.get(id)
+
+#+END_SRC
+
 ***** getName: WorkshopDocument --> Name
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     def get_name(self):
         return self.name
 #+END_SRC
 
 ***** getPath: WorkshopDocument --> String
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no 
     def get_path(self):
         return self.path
 #+END_SRC
-
+      
 ***** setName: WorkshopDocument, Name --> Void
-#+BEGIN_SRC 
-    @typecheck(name=Name)
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(name=str)
     def set_name(self, name):
         self.name = name
 #+END_SRC
 
 ***** setPath: WorkshopDocument, String --> Void
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no 
     @typecheck(path=str)
     def set_path(self, path):
         self.path = path
 #+END_SRC
       
+***** to_client
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def to_client(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'path': self.path
+        }
+#+END_SRC
+      
+
 ** Custom Exceptions
 
 These are some of the custom exceptions used in the application.
@@ -769,7 +795,8 @@ api = Blueprint('APIs', __name__)
 #+BEGIN_SRC python
   entity_map = {
       'roles': Role,
-      'users': User
+      'users': User,
+      'workshop_documents': WorkshopDocument
     }
 #+END_SRC
 
@@ -818,13 +845,27 @@ user = {'entity_class': User,
              'relationship': 'many'}
              ]}
 
+workshop_document = {'entity_class': WorkshopDocument,
+                     'attributes': [
+                         {'name': 'id',
+                          'class': None,
+                          'relationship': 'one'},
+                         {'name': 'name',
+                          'class': None,
+                          'relationship': 'one'},
+                         {'name': 'path',
+                          'class': None,
+                          'relationship': 'one'}
+                          ]}
 
 roles = role
 users = user
+workshop_documents = workshop_document
 
 entity_pairs = {
     'roles': role,
-    'users': user
+    'users': user,
+    'workshop_documents': workshop_document
 }
                    
 #+END_SRC
@@ -928,6 +969,13 @@ entity_map_types = {
             'role': Role,
             'last_active': datetime,
             'created': datetime
+          }
+    },
+    'workshop_documents': {
+        'entity': WorkshopDocument,
+        'types': {
+            'name': str,
+            'path': str
           }
     }
 }
