@@ -29,6 +29,12 @@ import db
 import app
 import config
 #+END_SRC
+*** __init__ for Tests
+#+BEGIN_SRC python :tangle tests/__init__.py :eval no
+#something
+print "test package"
+#+END_SRC
+
 *** imports
 #+BEGIN_SRC python :tangle src/db.py :eval no
 # -*- coding: utf-8 -*-
@@ -85,8 +91,25 @@ class Entity(db.Model):
 
 #+END_SRC
 
+*** Imports and Initialization of testcases
+
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+# -*- coding: utf-8 -*-
+
+import unittest
+from flask.ext.testing import TestCase
+# import json
+
+from src.db import *
+from src.app import create_app
+from src.op_exceptions import AttributeRequired
+
+config = {
+    'SQLALCHEMY_DATABASE_URI': ''
+}
+#+END_SRC
+
 ** The Data Model
-   
 *** Name
      
     Name is an alphabetical string.
@@ -116,6 +139,35 @@ class Email(object):
         self.value = value
 #+END_SRC
      
+*** Tests for Custom Types
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+
+class TestCustomTypes(TestCase):
+    TESTING = True
+
+    def create_app(self):
+        app = create_app(config)
+        return app
+
+    # Test the Name type
+    def test_name_type(self):
+        print "test_name_type"
+        new_name = Name("John")
+        # correct name
+        self.assertEqual(new_name.value, "John")
+        # incorrect name
+        self.assertRaises(TypeError, Name, "123dasd")
+
+    # Test the Email type
+    def test_email_type(self):
+        print "test_email_type"
+        new_email = Email("smith@gmail.com")
+        # correct name
+        self.assertEqual(new_email.value, "smith@gmail.com")
+        # incorrect name
+        self.assertRaises(TypeError, Email, "@@@@smithgmail.com")
+#+END_SRC
+
 *** Role
 **** Immutable data
      + Id
@@ -147,7 +199,40 @@ class Role(Entity):
         self.set_name(kwargs['name'])
 
 #+END_SRC
+**** Tests for Role Constructor
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+class TestRole(TestCase):
+    TESTING = True
 
+    def create_app(self):
+        app = create_app(config)
+        return app
+
+    def setUp(self):
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+#+END_SRC
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_role_constructor(self):
+        print "test_role_constructor"
+        name = "Admin"
+        role = Role(name=name)
+        self.assertEqual(isinstance(role, Role), True)
+
+        # Calling the institute constructor without any arguments should
+        # raise AttributeRequired exception
+        self.assertRaises(AttributeRequired, Role)
+
+        # Calling the role constructor with necessary arguments
+        # (name) but with wrong type should raise TypeError
+        self.assertRaises(TypeError, Role,
+                          **{'name': Name("Admin")
+                            })
+
+#+END_SRC
 **** Functions that operate on the Workshop Document domain
 ***** getRole: Id --> Role
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -156,19 +241,46 @@ class Role(Entity):
         return Role.query.get(id)
 
 #+END_SRC
-
+***** Test getRole: Id --> Role
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_role_by_id(self):
+        print "test_get_role_by_id"
+        role = Role(name="Admin")
+        role.save()
+        self.assertEqual(role.get_by_id(1).name, "Admin")
+#+END_SRC
 ***** getAll: Nil --> set[Role]
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_all():
         return Role.query.all()
+#+END_SRC
+***** Test getAll: Nil --> set[Role]
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_all_roles(self):
+        print "test_get_all_roles"
+        role1 = Role(name="Admin")
+        role1.save()
+        role2 = Role(name="OC")
+        role2.save()
+        r = self.client.get('/roles')
+        result = json.loads(r.data)
+        print result
+        self.assertEquals(len(result), 2)
 
 #+END_SRC
-      
 ***** getName: Role --> Name
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_name(self):
         return self.name
+#+END_SRC
+***** Test getName: Role --> Name 
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_role_name(self):
+        print "test_get_role_name"
+        role = Role(name="Admin")
+        role_name = role.get_name()
+        self.assertEqual(role_name, "Admin")
 #+END_SRC
 
 ***** setName: Role, Name --> Void
@@ -176,6 +288,15 @@ class Role(Entity):
     @typecheck(name=str)
     def set_name(self, name):
         self.name = name
+#+END_SRC
+***** Test setName: Role, Name --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_set_role_name(self):
+        print "test_set_role_name"
+        role = Role(name="Admin")
+        new_name = "OC"
+        role.set_name(new_name)
+        self.assertEqual(role.name, "OC")
 #+END_SRC
 
 ***** to_client
@@ -418,7 +539,6 @@ class WorkshopDocument(Entity):
         }
 #+END_SRC
       
-
 ** Custom Exceptions
 
 These are some of the custom exceptions used in the application.
@@ -734,9 +854,9 @@ api = Blueprint('APIs', __name__)
         #+BEGIN_EXAMPLE
 	GET /labs?integration_level=6&institute=iiith&hosted_on=AWS
 	#+END_EXAMPLE
-      2. To get all labs in the system:
+      2. To get all roles in the system:
          #+BEGIN_EXAMPLE
-	 GET /labs
+	 GET /roles
 	 #+END_EXAMPLE
       3. To get all the developers associated with IIIT-H:
          #+BEGIN_EXAMPLE
@@ -748,12 +868,12 @@ api = Blueprint('APIs', __name__)
       1. Get only few details the Data Structures lab (where the lab
          id is known before):
          #+BEGIN_EXAMPLE
-	 GET /labs/cse02?fields=name,institute,hosted_url
+	 GET /labs/cse02?fields=name,institute, hosted_url
 	 #+END_EXAMPLE
-      2. Get all the details of particular developer (presuming the id
+      2. Get all the details of particular user (presuming the id
          is known beforehand):
          #+BEGIN_EXAMPLE
-	 GET /developers/22
+	 GET /users/2
 	 #+END_EXAMPLE
    3. The third URL pattern is to get record(s) of an entity which is
       part of another entity. Like to get experiments / technologies /
@@ -785,8 +905,8 @@ api = Blueprint('APIs', __name__)
    #+END_EXAMPLE
 
    In the above, a valid =<:entity>s= can be any of the keywords
-   defined in the look up table. Like, =labs=, =disciplines=,
-   =experiements=, =developers=. Note that the entity name is always
+   defined in the look up table. Like, =roles=, =users=,
+   =workshop_documents=. Note that the entity name is always
    plural, but the look up table maps the plural keyword to a
    particular entity (which is usually in singular form).
 
@@ -1220,4 +1340,13 @@ def create_record(entity_name, entity):
 
 
 
+* Run the Test Cases
+** Python DB Tests
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
 
+if __name__ == '__main__':
+    unittest.main()
+
+#+END_SRC
+
+** Python REST API Tests
