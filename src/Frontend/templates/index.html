@@ -8,8 +8,8 @@
   <title>Outreach Portal</title>
 
   <!-- Bootstrap -->
-  <link href="css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="css/index.css">
+  <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/index.css">
   <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -18,6 +18,7 @@
 
       <![endif]-->
     </head>
+    {% raw %}
     <body ng-app="outreachApp">
       <div class="navbar navbar-default navbar-custom">
         <div class="container">
@@ -28,7 +29,7 @@
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#"><img src="img/logo.png" class="logo-img"></a>
+            <a class="navbar-brand" href="#"><img src="/static/img/logo.png" class="logo-img"></a>
           </div>
           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-form navbar-right">
@@ -89,10 +90,10 @@
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="js/bootstrap.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
     <script src="http://maps.googleapis.com/maps/api/js?language=en async defer"></script>
-    <script type="text/javascript" src="js/app.js"></script>
+    <script type="text/javascript" src="/static/js/app.js"></script>
     <script src="https://login.persona.org/include.js"></script>
     <script type="text/javascript">
       var signinLink = document.getElementById('btn-signin');
@@ -138,5 +139,6 @@
 });
 </script>
 </body>
+{% endraw %}
 </html>
 
