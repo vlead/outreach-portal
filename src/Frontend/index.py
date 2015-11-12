@@ -35,7 +35,7 @@ def login():
 @app.route('/auth/logout', methods=['POST'])
 def logout_handler():
         session.pop('email', None)
-        return redirect('/')
+        return "Ok"
         
 
 if __name__ == "__main__":

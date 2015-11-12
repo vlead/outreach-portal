@@ -72,6 +72,11 @@
 
 
       navigator.id.watch({
+      {% if session.email %}
+      loggedInUser: '{{ session.email }}',
+      {% else %}
+      loggedInUser: null,
+      {% endif %}
         
         onlogin: function(assertion) {
     // A user has logged in! Here you need to:
@@ -96,7 +101,7 @@
     $.ajax({
       type: 'POST',
       url: '/auth/logout', // This is a URL on your website.
-      success: function(res, status, xhr) { alert("signout successfully"); },
+      success: function(res, status, xhr) { window.location.reload(); },
       error: function(xhr, status, err) { alert("Logout failure: " + err); }
     });
   }
