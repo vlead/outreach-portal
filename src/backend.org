@@ -615,7 +615,7 @@ SQLALCHEMY_DATABASE_URI = 'mysql+oursql://<userid>:<password>@<servername>/<db_n
 SQLALCHEMY_ECHO = True
 
 # List of allowed origins for CORS
-#ALLOWED_ORIGINS = ["*.vlabs.ac.in", "*.virtual-labs.ac.in"]
+ALLOWED_ORIGINS = "['*']"
 
 # List of allowed IPs
 WHITELIST_IPS = ["127.0.0.1"]
