@@ -22,7 +22,7 @@ def login():
 		if verification_data['status'] == 'okay':
                         session['email'] =  verification_data['email']
                         backend_resp = requests.get("http://10.2.58.114:5000/users?email="+session['email'])
-                        print backend_resp
+                        print backend_resp.json()
                         return 'Okay'
 	else:
 		return redirect_url('index')
