@@ -3,27 +3,27 @@
     var cities = [
         {
             city : 'Gnanadeep college,kamareddy',
-	    date: '29/11/2015',
+	    date: '2/12/2015',
 	    coordinator: 'A',
             
         },
         {
             city : 'New Delhi',
-	    date: '29/11/2015',
+	    date: '13/11/2015',
 	    coordinator: 'A2',
             
             
         },
         {
             city : 'Mumbai',
-	    date: '29/09/2015',
+	    date: '4/12/2015',
 	    coordinator: 'A1',
             
             
         },
         {
             city : 'kolkata',
-	    date: '29/11/2015',
+	    date: '5/12/2015',
 	    coordinator: 'B',
             
             
@@ -74,8 +74,10 @@
 	{
             //var yest = String(cities[i].date);
 	    date_array = cities[i].date.split("/");
+	   
 	    workshop_date = new Date(Number(date_array[2]), Number(date_array[1])-1, Number(date_array[0]));
-	    if(today <= workshop_date){
+	    console.log(today.getDate(),typeof(today.getMonth()));
+	    if((today <= workshop_date) || (today.getDate() == workshop_date.getDate() & (today.getMonth() == workshop_date.getMonth()) & (today.getFullYear() == workshop_date.getFullYear()))){
 		count ++;
 		get_geocode(cities[i],count);
 	    }
