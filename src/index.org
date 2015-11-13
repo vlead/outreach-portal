@@ -6,6 +6,7 @@
 #+SETUPFILE: ./org-templates/level-0.org
 #+options: ^:nil
 
+
 * Introduction
   Outreach portal keeps track of all the outreach activities done to
   promote Virtual Labs. It also acts as a central place where all the
@@ -875,10 +876,15 @@ def create_record(entity_name, entity):
   12. Outreach coordinator views workshop history.
   13. Nodal coordinator creates a workshop. 
   14. Nodal coordinator uploads workshop documents for approval by outreach
-      coordinator or cancel a workshop. 
+      coordinator or cancels a workshop. 
   15. Nodal coordinator views the workshop history. 
 
 * Design & Implementation  
+** High Level Design
+#+CAPTION: High Level Design Diagram
+  [[./diagrams/outreach.svg]]
+** [[View%20&%20Controller][View & Controller]]
+** [[./backend.org][REST API & DB Layer]]
 * Test Cases
 * Provisioning
 * Releases
