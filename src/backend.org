@@ -91,7 +91,7 @@ class Entity(db.Model):
 
 #+END_SRC
 
-*** Imports and Initialization of testcases
+*** Imports and Initialization of testcases for Python API
 
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
 # -*- coding: utf-8 -*-
@@ -99,6 +99,23 @@ class Entity(db.Model):
 import unittest
 from flask.ext.testing import TestCase
 from datetime import datetime
+# import json
+
+from src.db import *
+from src.app import create_app
+from src.op_exceptions import AttributeRequired
+
+config = {
+    'SQLALCHEMY_DATABASE_URI': ''
+}
+#+END_SRC
+
+*** Imports and Initialization of testcases for REST API
+#+BEGIN_SRC python :tangle tests/test_api.py :eval no
+# -*- coding: utf-8 -*-
+
+import unittest
+from flask.ext.testing import TestCase
 # import json
 
 from src.db import *
@@ -258,17 +275,11 @@ class TestRole(TestCase):
 #+END_SRC
 ***** Test getAll: Nil --> set[Role]
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
-    def test_get_all_roles(self):
-        print "test_get_all_roles"
-        role1 = Role(name="Admin")
-        role1.save()
-        role2 = Role(name="OC")
-        role2.save()
-        r = self.client.get('/roles')
-        result = json.loads(r.data)
-        print result
-        self.assertEquals(len(result), 2)
-
+    def test_role_get_all(self):
+        print "test_role_get_all"
+        role = Role(name="Admin")
+        role.save()
+        self.assertEqual("Admin", role.name)
 #+END_SRC
 ***** getName: Role --> Name
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -429,18 +440,25 @@ class TestUser(TestCase):
 #+END_SRC
 ***** Test getAll: Nil --> set[User]
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
-    def test_get_all_users(self):
-        print "test_get_all_users"
+    def test_user_get_all(self):
+        print "test_user_get_all"
         role = Role(name="Admin")
-        role.save()
-       
-        user1 = User(name="ambika", email="ambika@vlabs.ac.in", role=role)
-        user2 = User(name="madhavi", email="madhavi@vlabs.ac.in", role=role)
-        r = self.client.get('/users')
-        result = json.loads(r.data)
-        print result
-        self.assertEquals(len(result), 2)
+        user_1 = User(name="Thirumal Ravula",
+                      email="travula@gmail.com", role=role)
+        user_2 = User(name="Anon Ray",
+                      email="anon.ray@gmail.com", role=role)
 
+        user_1.save()
+        user_2.save()
+
+        user_list = User.get_all()
+
+        self.assertEqual("travula@gmail.com", user_list[0].email)
+        self.assertEqual("Thirumal Ravula", user_list[0].name)
+        self.assertEqual("Admin", user_list[0].role.name)
+        self.assertEqual("anon.ray@gmail.com", user_list[1].email)
+        self.assertEqual("Anon Ray", user_list[1].name)
+        self.assertEqual("Admin", user_list[1].role.name)
 #+END_SRC
 ***** getUser: Id --> User
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -522,8 +540,21 @@ class TestUser(TestCase):
         user = User(name="ambika", email="ambika@vlabs.ac.in", role=role)
         user.save()
         time = datetime.utcnow()
+        year = time.year
+        month = time.month    
+        day = time.day
+        minute = time.minute
+
         user_toc = user.get_created()
-        self.assertEqual(user_toc, time)
+        user_year = user_toc.year
+        user_month = user_toc.month
+        user_day = user_toc.day
+        user_min = user_toc.minute
+
+        self.assertEqual(user_year, year)
+        self.assertEqual(user_month, month)
+        self.assertEqual(user_day, day)
+        self.assertEqual(user_min, minute)
 #+END_SRC
 
 ***** getLastActive: User --> Datetime
@@ -539,8 +570,23 @@ class TestUser(TestCase):
         role = Role(name="Admin")
         user = User(name="ambika", email="ambika@vlabs.ac.in", role=role)
         user.save()
+        time = datetime.utcnow()
+        year = time.year
+        month = time.month
+        day = time.day
+        minute = time.minute
+
         user_last_act = user.get_last_active()
-        self.assertEqual(user_last_act, datetime.utcnow())
+        user_last_act_year = user_last_act.year
+        user_last_act_month = user_last_act.month
+        user_last_act_day = user_last_act.day
+        user_last_act_min = user_last_act.minute
+
+        self.assertEqual(user_last_act_year, year)
+        self.assertEqual(user_last_act_month, month)
+        self.assertEqual(user_last_act_day, day)
+        self.assertEqual(user_last_act_min, minute)
+
 #+END_SRC
 
 ***** setName: User, Name --> Void
@@ -716,18 +762,11 @@ class TestWorkshopDocument(TestCase):
 
 ***** Test getAll: Nil --> set[WorkshopDocument]
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
-    def test_get_all_workshop_documents(self):
-        print "test_get_all_workshop_documents"
-
-        document1 = WorkshopDocument(name="Attandance Sheet", path="/workshop-documents/admin")
-        document1.save()
-        document2 = WorkshopDocument(name="College Report", path="/workshop-documents/admin")
-        document2.save()
-        r = self.client.get('/workshop_documents')
-        result = json.loads(r.data)
-        print result
-        self.assertEquals(len(result), 2)
-
+    def test_workshop_documents_get_all(self):
+        print "test_workshop_documents_get_all"
+        doc = WorkshopDocument(name="Attendance Sheet", path="/workshop-docs/admin")
+        doc.save()
+        self.assertEqual("Attendance Sheet", doc.name)
 #+END_SRC
 
 ***** getWorkshopDocument: Id --> WorkshopDocument
@@ -822,6 +861,18 @@ class TestWorkshopDocument(TestCase):
         }
 #+END_SRC
       
+***** Test Workshop Document to_client
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_workshop_document_to_client(self):
+        print "test_workshop_document_to_client"
+        doc = WorkshopDocument(name="Feedback", path="/workshop-docs/admin")
+        doc.save()
+        doc = WorkshopDocument.get_by_id(1)
+        doc_dict = doc.to_client()
+        self.assertEqual("Feedback", doc_dict['name'])
+
+#+END_SRC
+
 ** Custom Exceptions
 
 These are some of the custom exceptions used in the application.
@@ -1575,7 +1626,6 @@ interpreter expects them to be.
 <<modify-entity>>
 #+END_SRC
 
-
 **** The API to create new entries
 ***** API route definition
 #+NAME: create-entity
@@ -1621,8 +1671,244 @@ def create_record(entity_name, entity):
 <<create-entity>>
 #+END_SRC
 
-      
+** Testing the REST API
+*** Tests for Role
+#+BEGIN_SRC python :tangle tests/test_api.py :eval no
+class TestRole(TestCase):
 
+    TESTING = True
+
+    def create_app(self):
+        app = create_app(config)
+        return app
+
+    def setUp(self):
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+
+    def test_get_all_roles(self):
+        print "test_get_all_roles"
+        role1 = Role(name="Admin")
+        role1.save()
+        role2 = Role(name="OC")
+        role2.save()
+        r = self.client.get('/roles')
+        result = json.loads(r.data)
+        print result
+        self.assertEquals(len(result), 2)
+
+    def test_get_one_role(self):
+        print "test_get_one_role"
+        role1 = Role(name="Admin")
+        role1.save()
+        role2 = Role(name="OC")
+        role2.save()
+        r = self.client.get('/roles/1')
+        result = json.loads(r.data)
+        print result
+        self.assertEqual(result['name'], "Admin")
+
+    def test_update_existing_role(self):
+        print "test_update_existing_role"
+        role1 = Role(name="Admin")
+        role1.save()
+        role2 = Role(name="OC")
+        role2.save()
+        r = self.client.put('/roles/1',
+                            data=json.dumps({'name': 'NC'}))
+        result = json.loads(r.data)
+        self.assertEqual(result['name'], "NC")
+
+    def test_create_new_role(self):
+        print "test_create_new_institute"
+        r = self.client.post('/roles',
+                             data=json.dumps({'name': 'Outreach Coordinator'}))
+        result = json.loads(r.data)
+        self.assertEqual(result['name'], "Outreach Coordinator")
+
+    def test_delete_role(self):
+        print "test_delete_role"
+        role1 = Role(name="Admin")
+        role1.save()
+        role2 = Role(name="NC")
+        role2.save()
+        r = self.client.delete('/roles/1')
+        r = self.client.get('/roles')
+        result = json.loads(r.data)
+        self.assertEqual(len(result), 1)
+
+#+END_SRC
+
+*** Tests for User
+#+BEGIN_SRC python :tangle tests/test_api.py :eval no
+class TestUser(TestCase):
+
+    TESTING = True
+
+    def create_app(self):
+        app = create_app(config)
+        return app
+
+    def setUp(self):
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+
+    def test_get_all_users(self):
+        print "test_get_all_users"
+        role = Role(name="Admin")
+        role.save()
+        user1 = User(name="Joe Smith",
+                     email="joe@smith.com",
+                     role=role)
+        user1.save()
+        user2 = User(name="Will Smith",
+                     email="will@smith.com",
+                     role=role)
+        user2.save()
+        r = self.client.get('/users')
+        result = json.loads(r.data)
+        print result
+        self.assertEquals(len(result), 2)
+
+    def test_get_one_user(self):
+        print "test_get_one_user"
+        role = Role(name="OC")
+        role.save()
+        user1 = User(name="Joe Smith",
+                     email="joe@smith.com",
+                     role=role)
+        user1.save()
+        user2 = User(name="Will Smith",
+                     email="will@smith.com",
+                     role=role)
+        user2.save()
+        r = self.client.get('/users/1')
+        result = json.loads(r.data)
+        print result
+        self.assertEqual(result['name'], "Joe Smith")
+
+    def test_update_existing_user(self):
+        print "test_update_existing_user"
+        role = Role(name="OC")
+        role.save()
+        user1 = User(name="Joe Smith",
+                     email="joe@smith.com",
+                     role=role)
+        user1.save()
+        r = self.client.put('/users/1',
+                            data=json.dumps({'email': 'joe@mit.edu'}))
+        result = json.loads(r.data)
+        self.assertEqual(result['email'], "joe@mit.edu")
+
+    def test_create_new_user(self):
+        print "test_create_new_user"
+        role = Role(name="OC")
+        role.save()
+        r = self.client.post('/users',
+                             data=json.dumps({'name': 'Joe Smith',
+                                              'email': 'joe@mit.edu',
+                                              'role': role.to_client()}))
+        result = json.loads(r.data)
+        self.assertEqual(result['name'], "Joe Smith")
+
+    def test_delete_user(self):
+        print "test_delete_user"
+        role = Role(name="OC")
+        role.save()
+        user1 = User(name="Joe Smith",
+                     email="joe@smith.com",
+                     role=role)
+        user1.save()
+
+        user2 = User(name="Will Smith",
+                     email="will@smith.com",
+                     role=role)
+        user2.save()
+        r = self.client.delete('/users/1')
+        r = self.client.get('/users')
+        result = json.loads(r.data)
+        self.assertEqual(len(result), 1)
+
+#+END_SRC
+
+*** Tests for WorkshopDocument
+#+BEGIN_SRC python :tangle tests/test_api.py :eval no
+class TestWorkshopDocument(TestCase):
+
+    TESTING = True
+
+    def create_app(self):
+        app = create_app(config)
+        return app
+
+    def setUp(self):
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+
+    def test_get_all_workshop_documents(self):
+        print "test_get_all_workshop_documents"
+
+        document1 = WorkshopDocument(name="Attendance Sheet", path="/workshop-documents/admin")
+        document1.save()
+        document2 = WorkshopDocument(name="College Report", path="/workshop-documents/admin")
+        document2.save()
+        r = self.client.get('/workshop_documents')
+        result = json.loads(r.data)
+        print result
+        self.assertEquals(len(result), 2)
+
+    def test_get_one_workshop_document(self):
+        print "test_get_one_workshop_document"
+        doc1 = WorkshopDocument(name="College Report", path="/workshop-documents/admin")
+        doc1.save()
+        doc2 = WorkshopDocument(name="Attendance Sheet", path="/workshop-documents/admin")
+        doc2.save()
+        r = self.client.get('/workshop_documents/1')
+        result = json.loads(r.data)
+        print result
+        self.assertEqual(result['name'], "College Report")
+
+    def test_update_existing_workshop_document(self):
+        print "test_update_existing_workshop_document"
+        doc1 = WorkshopDocument(name="College Report", path="/workshop-documents/admin")
+        doc1.save()
+        doc2 = WorkshopDocument(name="Attendance Sheet", path="/workshop-documents/admin")
+        doc2.save()
+        r = self.client.put('/workshop_documents/1',
+                            data=json.dumps({'name': 'Feedback'}))
+        result = json.loads(r.data)
+        self.assertEqual(result['name'], "Feedback")
+
+    def test_create_new_workshop_document(self):
+        print "test_create_new_workshop_document"
+        r = self.client.post('/workshop_documents',
+                             data=json.dumps({'name': 'Feedback',
+                                              'path': '/workshop-docs/admin'}))
+        result = json.loads(r.data)
+        self.assertEqual(result['name'], "Feedback")
+
+    def test_delete_workshop_document(self):
+        print "test_delete_workshop_document"
+        doc1 = WorkshopDocument(name="Feedback", path="/workshop-docs/admin")
+        doc1.save()
+        doc2 = WorkshopDocument(name="College Report", path="/workshop-docs/admin") 
+        doc2.save()
+        r = self.client.delete('/workshop_documents/1')
+        r = self.client.get('/workshop_documents')
+        result = json.loads(r.data)
+        self.assertEqual(len(result), 1)
+
+#+END_SRC
+ 
 * Run the Test Cases
 ** Python DB Tests
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
@@ -1633,3 +1919,9 @@ if __name__ == '__main__':
 #+END_SRC
 
 ** Python REST API Tests
+#+BEGIN_SRC python :tangle tests/test_api.py :eval no
+
+if __name__ == '__main__':
+    unittest.main()
+
+#+END_SRC
