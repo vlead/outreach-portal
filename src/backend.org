@@ -207,7 +207,7 @@ class Role(Entity):
 
 **** Constructor
 #+BEGIN_EXAMPLE
-    role = Role(name=str)
+    role = Role(name=<instance of class Name>)
                     
 #+END_EXAMPLE
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -236,7 +236,7 @@ class TestRole(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_role_constructor(self):
         print "test_role_constructor"
-        name = "Admin"
+        name = Name("Admin")
         role = Role(name=name)
         self.assertEqual(isinstance(role, Role), True)
 
@@ -247,7 +247,7 @@ class TestRole(TestCase):
         # Calling the role constructor with necessary arguments
         # (name) but with wrong type should raise TypeError
         self.assertRaises(TypeError, Role,
-                          **{'name': Name("Admin")
+                          **{'name': "Admin"
                             })
 
 #+END_SRC
@@ -263,7 +263,7 @@ class TestRole(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_get_role_by_id(self):
         print "test_get_role_by_id"
-        role = Role(name="Admin")
+        role = Role(name=Name("Admin"))
         role.save()
         self.assertEqual(role.get_by_id(1).name, "Admin")
 #+END_SRC
@@ -277,7 +277,7 @@ class TestRole(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_role_get_all(self):
         print "test_role_get_all"
-        role = Role(name="Admin")
+        role = Role(name=Name("Admin"))
         role.save()
         self.assertEqual("Admin", role.name)
 #+END_SRC
@@ -290,23 +290,23 @@ class TestRole(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_get_role_name(self):
         print "test_get_role_name"
-        role = Role(name="Admin")
+        role = Role(name=Name("Admin"))
         role_name = role.get_name()
         self.assertEqual(role_name, "Admin")
 #+END_SRC
 
 ***** setName: Role, Name --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(name=str)
+    @typecheck(name=Name)
     def set_name(self, name):
-        self.name = name
+        self.name = name.value
 #+END_SRC
 ***** Test setName: Role, Name --> Void
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_set_role_name(self):
         print "test_set_role_name"
-        role = Role(name="Admin")
-        new_name = "OC"
+        role = Role(name=Name("Admin"))
+        new_name = Name("OC")
         role.set_name(new_name)
         self.assertEqual(role.name, "OC")
 #+END_SRC
@@ -325,7 +325,7 @@ class TestRole(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_role_to_client(self):
         print "test_role_to_client"
-        role = Role(name="Admin")
+        role = Role(name=Name("Admin"))
         role.save()
         role = Role.get_by_id(1)
         role_dict = role.to_client()
@@ -360,8 +360,8 @@ class User(Entity):
 
 **** Constructor
 #+BEGIN_EXAMPLE
-    User = User(name=str,
-                email=str,
+    User = User(name=<instance of class Name>,
+                email=<instance of class Email>,
                 role=<instance of class Role>)
                                             
 #+END_EXAMPLE
@@ -408,11 +408,11 @@ class TestUser(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_user_constructor(self):
         print "test_user_constructor"
-        name = "Admin"
+        name = Name("Admin")
         role = Role(name=name)
         role.save()
          
-        user = User(name="Ambika", email="ambika@vlabs.ac.in", role = role)
+        user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
         user.save()
         self.assertEqual("Ambika", user.name)
         self.assertEqual("ambika@vlabs.ac.in", user.email)
@@ -424,7 +424,7 @@ class TestUser(TestCase):
         # Calling the user constructor with necessary arguments
         # (name, email and role) but with wrong type should raise TypeError
         self.assertRaises(TypeError, User,
-                          **{'name': Name("Admin"),
+                          **{'name': "Admin",
                              'email': "ambika@vlabs.ac.in",
                              'role': role
                             })
@@ -442,11 +442,11 @@ class TestUser(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_user_get_all(self):
         print "test_user_get_all"
-        role = Role(name="Admin")
-        user_1 = User(name="Thirumal Ravula",
-                      email="travula@gmail.com", role=role)
-        user_2 = User(name="Anon Ray",
-                      email="anon.ray@gmail.com", role=role)
+        role = Role(name=Name("Admin"))
+        user_1 = User(name=Name("Thirumal Ravula"),
+                      email=Email("travula@gmail.com"), role=role)
+        user_2 = User(name=Name("Anon Ray"),
+                      email=Email("anon.ray@gmail.com"), role=role)
 
         user_1.save()
         user_2.save()
@@ -471,9 +471,9 @@ class TestUser(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_get_user_by_id(self):
         print "test_get_user_by_id"
-        role = Role(name="Admin")
+        role = Role(name=Name("Admin"))
         role.save()
-        user = User(name="ambika", email="ambika@vlabs.ac.in", role=role)
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
         self.assertEqual(user.get_by_id(1).name, "ambika")
 #+END_SRC
 
@@ -487,8 +487,8 @@ class TestUser(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_get_user_name(self):
         print "test_get_user_name"
-        role = Role(name="Admin")
-        user = User(name="ambika", email="ambika@vlabs.ac.in", role=role)
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
         user_name = user.get_name()
         self.assertEqual(user_name, "ambika")
 #+END_SRC
@@ -503,8 +503,8 @@ class TestUser(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_get_user_email(self):
         print "test_get_user_email"
-        role = Role(name="Admin")
-        user = User(name="ambika", email="ambika@vlabs.ac.in", role=role)
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
         user_email = user.get_email()
         self.assertEqual(user_email, "ambika@vlabs.ac.in")
 #+END_SRC
@@ -520,8 +520,8 @@ class TestUser(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_get_user_role(self):
         print "test_get_user_role"
-        role = Role(name="Admin")
-        user = User(name="ambika", email="ambika@vlabs.ac.in", role=role)
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
         user_role = user.get_role()
         self.assertEqual(user_role, role)
 #+END_SRC
@@ -536,8 +536,8 @@ class TestUser(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_get_user_toc(self):
         print "test_get_user_toc"
-        role = Role(name="Admin")
-        user = User(name="ambika", email="ambika@vlabs.ac.in", role=role)
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
         user.save()
         time = datetime.utcnow()
         year = time.year
@@ -567,8 +567,8 @@ class TestUser(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_get_user_last_act(self):
         print "test_get_user_last_act"
-        role = Role(name="Admin")
-        user = User(name="ambika", email="ambika@vlabs.ac.in", role=role)
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
         user.save()
         time = datetime.utcnow()
         year = time.year
@@ -591,19 +591,19 @@ class TestUser(TestCase):
 
 ***** setName: User, Name --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(name=str)
+    @typecheck(name=Name)
     def set_name(self, name):
-        self.name = name
+        self.name = name.value
 #+END_SRC
 
 ***** Test setName: User, Name --> Void
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_set_user_name(self):
         print "test_set_user_name"
-        role = Role(name="Admin")
-        user = User(name="ambika", email="ambika@vlabs.ac.in", role=role)     
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)     
         user.save()
-        user.set_name("Madhavi")
+        user.set_name(Name("Madhavi"))
         user.save()
         user = User.get_by_id(1)
         self.assertEqual("Madhavi", user.name)
@@ -611,19 +611,19 @@ class TestUser(TestCase):
 
 ***** setEmail: User, Email --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(email=str)
+    @typecheck(email=Email)
     def set_email(self, email):
-        self.email = email
+        self.email = email.value
 #+END_SRC
 
 ***** Test setEmail: User, Email --> Void
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_set_user_email(self):
         print "test_set_user_email"
-        role = Role(name="Admin")
-        user = User(name="ambika", email="ambika@vlabs.ac.in", role=role)     
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)     
         user.save()
-        user.set_email("madhavi@vlabs.ac.in")
+        user.set_email(Email("madhavi@vlabs.ac.in"))
         user.save()
         user = User.get_by_id(1)
         self.assertEqual("madhavi@vlabs.ac.in", user.email)
@@ -641,9 +641,9 @@ class TestUser(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_set_user_role(self):
         print "test_set_user_role"
-        role1 = Role(name="Admin")
-        role2 = Role(name="OC")
-        user = User(name="ambika", email="ambika@vlabs.ac.in", role=role1)
+        role1 = Role(name=Name("Admin"))
+        role2 = Role(name=Name("OC"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role1)
         user.save()     
         user.set_role(role2)
         user.save()
@@ -668,8 +668,8 @@ class TestUser(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_user_to_client(self):
         print "test_user_to_client"
-        role = Role(name="Admin")
-        user = User(name = "madhavi", email = "madhavi@vlabs.ac.in", role = role)
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("madhavi"), email=Email("madhavi@vlabs.ac.in"), role = role)
         user.save()
         user = User.get_by_id(1)
         user_dict = user.to_client()
@@ -700,7 +700,7 @@ class WorkshopDocument(Entity):
 
 **** Constructor
 #+BEGIN_EXAMPLE 
-    workshop_document = WorkshopDocument(name=str,
+    workshop_document = WorkshopDocument(name=<instance of class Name>,
                                          path=str)
                                             
 #+END_EXAMPLE
@@ -735,7 +735,7 @@ class TestWorkshopDocument(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_workshop_document_constructor(self):
         print "test_workshop_document_constructor"
-        name = "Attandance Sheet"
+        name = Name("Attandance Sheet")
         path = "/workshop-documents/admin"
         workshop_document = WorkshopDocument(name=name, path=path)
         self.assertEqual(isinstance(workshop_document, WorkshopDocument), True)
@@ -747,7 +747,7 @@ class TestWorkshopDocument(TestCase):
         # Calling the workshop_document constructor with necessary arguments
         # (name,path) but with wrong type should raise TypeError
         self.assertRaises(TypeError, WorkshopDocument,
-                          **{'name': Name("College Report")
+                          **{'name': "College Report"
                             })
 
 #+END_SRC
@@ -764,7 +764,7 @@ class TestWorkshopDocument(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_workshop_documents_get_all(self):
         print "test_workshop_documents_get_all"
-        doc = WorkshopDocument(name="Attendance Sheet", path="/workshop-docs/admin")
+        doc = WorkshopDocument(name=Name("Attendance Sheet"), path="/workshop-docs/admin")
         doc.save()
         self.assertEqual("Attendance Sheet", doc.name)
 #+END_SRC
@@ -781,7 +781,7 @@ class TestWorkshopDocument(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no 
     def test_get_workshop_document_by_id(self):
         print "test_get_document_by_id"
-        workshop_document = WorkshopDocument(name="Attendance Sheet", path="/workshop-documents/admin")
+        workshop_document = WorkshopDocument(name=Name("Attendance Sheet"), path="/workshop-documents/admin")
         workshop_document.save()
         self.assertEqual(workshop_document.get_by_id(1).name, "Attendance Sheet")
 
@@ -797,7 +797,7 @@ class TestWorkshopDocument(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_get_workshop_document_name(self):
         print "test_get_document_name"
-        workshop_document = WorkshopDocument(name="Attendance Sheet", path="/workshop-documents/admin")
+        workshop_document = WorkshopDocument(name=Name("Attendance Sheet"), path="/workshop-documents/admin")
         workshop_document_name = workshop_document.get_name()
         self.assertEqual(workshop_document_name, "Attendance Sheet")
 #+END_SRC
@@ -812,24 +812,24 @@ class TestWorkshopDocument(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_get_workshop_document_path(self):
         print "test_get_document_path"
-        workshop_document = WorkshopDocument(name="Attendance Sheet", path="/workshop-documents/admin")
+        workshop_document = WorkshopDocument(name=Name("Attendance Sheet"), path="/workshop-documents/admin")
         workshop_document_path = workshop_document.get_path()
         self.assertEqual(workshop_document_path, "/workshop-documents/admin")
 #+END_SRC
      
 ***** setName: WorkshopDocument, Name --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(name=str)
+    @typecheck(name=Name)
     def set_name(self, name):
-        self.name = name
+        self.name = name.value
 #+END_SRC
 
 ***** Test setName: WorkshopDocument, Name --> Void
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_set_workshop_document_name(self):
         print "test_set_document_name"
-        workshop_document = WorkshopDocument(name="Attandance Sheet", path="/workshop-documents/admin")
-        workshop_document.set_name("College Report")
+        workshop_document = WorkshopDocument(name=Name("Attandance Sheet"), path="/workshop-documents/admin")
+        workshop_document.set_name(Name("College Report"))
         self.assertEqual(workshop_document.name, "College Report")
 #+END_SRC
 
@@ -844,13 +844,13 @@ class TestWorkshopDocument(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_set_workshop_document_path(self):
         print "test_set_document_path"
-        workshop_document = WorkshopDocument(name="Attandance Sheet", path="/workshop-documents/admin")
+        workshop_document = WorkshopDocument(name=Name("Attandance Sheet"), path="/workshop-documents/admin")
         workshop_document.set_path("/workshop-documents/OC")
         workshop_document.save()
         doc = workshop_document.get_by_id(1)
         self.assertEqual(doc.path, "/workshop-documents/OC")
 #+END_SRC
-     
+      
 ***** to_client
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def to_client(self):
@@ -865,7 +865,7 @@ class TestWorkshopDocument(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_workshop_document_to_client(self):
         print "test_workshop_document_to_client"
-        doc = WorkshopDocument(name="Feedback", path="/workshop-docs/admin")
+        doc = WorkshopDocument(name=Name("Feedback"), path="/workshop-docs/admin")
         doc.save()
         doc = WorkshopDocument.get_by_id(1)
         doc_dict = doc.to_client()
@@ -1412,14 +1412,14 @@ entity_map_types = {
     'roles': {
         'entity': Role,
         'types': {
-            'name': str
+            'name': Name
           }
     },
     'users': {
         'entity': User,
         'types': {
-            'name': str,
-            'email': str,
+            'name': Name,
+            'email': Email,
             'role': Role,
             'last_active': datetime,
             'created': datetime
@@ -1428,7 +1428,7 @@ entity_map_types = {
     'workshop_documents': {
         'entity': WorkshopDocument,
         'types': {
-            'name': str,
+            'name': Name,
             'path': str
           }
     }
@@ -1691,35 +1691,35 @@ class TestRole(TestCase):
 
     def test_get_all_roles(self):
         print "test_get_all_roles"
-        role1 = Role(name="Admin")
+        role1 = Role(name=Name("Admin"))
         role1.save()
-        role2 = Role(name="OC")
+        role2 = Role(name=Name("OC"))
         role2.save()
         r = self.client.get('/roles')
         result = json.loads(r.data)
-        print result
         self.assertEquals(len(result), 2)
 
     def test_get_one_role(self):
         print "test_get_one_role"
-        role1 = Role(name="Admin")
+        role1 = Role(name=Name("Admin"))
         role1.save()
-        role2 = Role(name="OC")
+        role2 = Role(name=Name("OC"))
         role2.save()
         r = self.client.get('/roles/1')
         result = json.loads(r.data)
-        print result
         self.assertEqual(result['name'], "Admin")
 
     def test_update_existing_role(self):
         print "test_update_existing_role"
-        role1 = Role(name="Admin")
+        role1 = Role(name=Name("Admin"))
         role1.save()
-        role2 = Role(name="OC")
+        role2 = Role(name=Name("OC"))
         role2.save()
         r = self.client.put('/roles/1',
                             data=json.dumps({'name': 'NC'}))
         result = json.loads(r.data)
+        print "result"
+        print result
         self.assertEqual(result['name'], "NC")
 
     def test_create_new_role(self):
@@ -1731,9 +1731,9 @@ class TestRole(TestCase):
 
     def test_delete_role(self):
         print "test_delete_role"
-        role1 = Role(name="Admin")
+        role1 = Role(name=Name("Admin"))
         role1.save()
-        role2 = Role(name="NC")
+        role2 = Role(name=Name("NC"))
         role2.save()
         r = self.client.delete('/roles/1')
         r = self.client.get('/roles')
@@ -1761,14 +1761,14 @@ class TestUser(TestCase):
 
     def test_get_all_users(self):
         print "test_get_all_users"
-        role = Role(name="Admin")
+        role = Role(name=Name("Admin"))
         role.save()
-        user1 = User(name="Joe Smith",
-                     email="joe@smith.com",
+        user1 = User(name=Name("Joe Smith"),
+                     email=Email("joe@smith.com"),
                      role=role)
         user1.save()
-        user2 = User(name="Will Smith",
-                     email="will@smith.com",
+        user2 = User(name=Name("Will Smith"),
+                     email=Email("will@smith.com"),
                      role=role)
         user2.save()
         r = self.client.get('/users')
@@ -1778,14 +1778,14 @@ class TestUser(TestCase):
 
     def test_get_one_user(self):
         print "test_get_one_user"
-        role = Role(name="OC")
+        role = Role(name=Name("OC"))
         role.save()
-        user1 = User(name="Joe Smith",
-                     email="joe@smith.com",
+        user1 = User(name=Name("Joe Smith"),
+                     email=Email("joe@smith.com"),
                      role=role)
         user1.save()
-        user2 = User(name="Will Smith",
-                     email="will@smith.com",
+        user2 = User(name=Name("Will Smith"),
+                     email=Email("will@smith.com"),
                      role=role)
         user2.save()
         r = self.client.get('/users/1')
@@ -1795,10 +1795,10 @@ class TestUser(TestCase):
 
     def test_update_existing_user(self):
         print "test_update_existing_user"
-        role = Role(name="OC")
+        role = Role(name=Name("OC"))
         role.save()
-        user1 = User(name="Joe Smith",
-                     email="joe@smith.com",
+        user1 = User(name=Name("Joe Smith"),
+                     email=Email("joe@smith.com"),
                      role=role)
         user1.save()
         r = self.client.put('/users/1',
@@ -1808,7 +1808,7 @@ class TestUser(TestCase):
 
     def test_create_new_user(self):
         print "test_create_new_user"
-        role = Role(name="OC")
+        role = Role(name=Name("OC"))
         role.save()
         r = self.client.post('/users',
                              data=json.dumps({'name': 'Joe Smith',
@@ -1819,15 +1819,15 @@ class TestUser(TestCase):
 
     def test_delete_user(self):
         print "test_delete_user"
-        role = Role(name="OC")
+        role = Role(name=Name("OC"))
         role.save()
-        user1 = User(name="Joe Smith",
-                     email="joe@smith.com",
+        user1 = User(name=Name("Joe Smith"),
+                     email=Email("joe@smith.com"),
                      role=role)
         user1.save()
 
-        user2 = User(name="Will Smith",
-                     email="will@smith.com",
+        user2 = User(name=Name("Will Smith"),
+                     email=Email("will@smith.com"),
                      role=role)
         user2.save()
         r = self.client.delete('/users/1')
@@ -1857,9 +1857,9 @@ class TestWorkshopDocument(TestCase):
     def test_get_all_workshop_documents(self):
         print "test_get_all_workshop_documents"
 
-        document1 = WorkshopDocument(name="Attendance Sheet", path="/workshop-documents/admin")
+        document1 = WorkshopDocument(name=Name("Attendance Sheet"), path="/workshop-documents/admin")
         document1.save()
-        document2 = WorkshopDocument(name="College Report", path="/workshop-documents/admin")
+        document2 = WorkshopDocument(name=Name("College Report"), path="/workshop-documents/admin")
         document2.save()
         r = self.client.get('/workshop_documents')
         result = json.loads(r.data)
@@ -1868,9 +1868,9 @@ class TestWorkshopDocument(TestCase):
 
     def test_get_one_workshop_document(self):
         print "test_get_one_workshop_document"
-        doc1 = WorkshopDocument(name="College Report", path="/workshop-documents/admin")
+        doc1 = WorkshopDocument(name=Name("College Report"), path="/workshop-documents/admin")
         doc1.save()
-        doc2 = WorkshopDocument(name="Attendance Sheet", path="/workshop-documents/admin")
+        doc2 = WorkshopDocument(name=Name("Attendance Sheet"), path="/workshop-documents/admin")
         doc2.save()
         r = self.client.get('/workshop_documents/1')
         result = json.loads(r.data)
@@ -1879,9 +1879,9 @@ class TestWorkshopDocument(TestCase):
 
     def test_update_existing_workshop_document(self):
         print "test_update_existing_workshop_document"
-        doc1 = WorkshopDocument(name="College Report", path="/workshop-documents/admin")
+        doc1 = WorkshopDocument(name=Name("College Report"), path="/workshop-documents/admin")
         doc1.save()
-        doc2 = WorkshopDocument(name="Attendance Sheet", path="/workshop-documents/admin")
+        doc2 = WorkshopDocument(name=Name("Attendance Sheet"), path="/workshop-documents/admin")
         doc2.save()
         r = self.client.put('/workshop_documents/1',
                             data=json.dumps({'name': 'Feedback'}))
@@ -1898,9 +1898,9 @@ class TestWorkshopDocument(TestCase):
 
     def test_delete_workshop_document(self):
         print "test_delete_workshop_document"
-        doc1 = WorkshopDocument(name="Feedback", path="/workshop-docs/admin")
+        doc1 = WorkshopDocument(name=Name("Feedback"), path="/workshop-docs/admin")
         doc1.save()
-        doc2 = WorkshopDocument(name="College Report", path="/workshop-docs/admin") 
+        doc2 = WorkshopDocument(name=Name("College Report"), path="/workshop-docs/admin") 
         doc2.save()
         r = self.client.delete('/workshop_documents/1')
         r = self.client.get('/workshop_documents')
