@@ -4,13 +4,6 @@ app = Flask(__name__)
 app.secret_key = 'djfjsdkjXXS7979dfdfd'
 app.config['SESSION_TYPE'] = 'filesystem'
 
-@app.before_request
-def get_current_user():
-    g.user = None
-    email = session.get('email')
-    if email is not None:
-        g.user = email
-
 @app.route("/")
 def index():
 	return render_template("index.html")

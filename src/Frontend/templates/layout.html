@@ -33,8 +33,8 @@
           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-form navbar-right">
 	      
-	      {% if g.user %}
-	      <li>Logged in as <strong>{{ g.user }}</strong>
+	      {% if session.email %}
+	      <li>Logged in as <strong>{{ session.email }}</strong>
 	      <button class="btn btn-primary" id="btn-signout">Log out</button></li>
 	      {% else %}
 	      
