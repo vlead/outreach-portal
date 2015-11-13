@@ -23,30 +23,32 @@
         </div>
       </div>
       <div class="container">
-        <div class="section-one" ng-controller="mapCtrl">
-          <div class="row">
-            <div class="col-md-12" id="map">
+	<div ng-controller="mapCtrl">
+          <div class="section-one">
+            <div class="row">
+              <div class="col-md-12" id="map">
 
-            </div> 
+              </div> 
+            </div>
           </div>
-        </div>
 
-        <div class="section-two" ng-controller="upcomingController as upcomingList">
-          <div class="row">
-            <div class="title">Upcoming Workshops</div>
+          <div class="section-two">
+            <div class="row">
+              <div class="title">Upcoming Workshops</div>
+            </div>
+	    
+            <div class="row workshop-row" ng-repeat="workshop in upcoming">
+              <div class="col-md-4 workshop-date">
+		{{ workshop.date }}
+              </div>
+              <div class="col-md-4 workshop-location">
+		{{ workshop.city }}
+              </div>
+              <div class="col-md-4 workshop-coordinator">
+		{{workshop.coordinator}}
+              </div>
+            </div>
           </div>
-          <div class="row workshop-row" ng-repeat="workshop in upcomingList.workshops">
-            <div class="col-md-4 workshop-date">
-              {{ workshop.date }}
-            </div>
-            <div class="col-md-4 workshop-location">
-              {{ workshop.location }}
-            </div>
-            <div class="col-md-4 workshop-coordinator">
-              {{workshop.coordinator}}
-            </div>
-          </div>
-        </div>
         </div>
 
       </div>
