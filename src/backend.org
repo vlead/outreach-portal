@@ -1054,7 +1054,8 @@ import config
 def create_app(config):
     # init our app
     app = Flask(__name__)
-
+    app.secret_key = 'djfjsdkjXXS7979dfdfd'
+    
     # load config values from the config file
     app.config.from_object(config)
 
@@ -1152,14 +1153,13 @@ WHITELIST_IPS = ["127.0.0.1"]
 import os
 import csv
 
-from flask import Blueprint, request, jsonify, abort, current_app, redirect,\
-    url_for
+from flask import session, render_template, Blueprint, request, jsonify, abort,\
+    current_app, redirect, url_for
 
 from db import *
 from utils import parse_request, jsonify_list
 from maps import *
 api = Blueprint('APIs', __name__)
-
 #+END_SRC
 
 ** REST APIs to read and query data
@@ -1326,77 +1326,105 @@ entity_pairs = {
 
 **** GET APIS
 #+BEGIN_SRC python :tangle src/api.py :eval no
+
+@api.route("/")
+def index():
+    return render_template("index.html")
+
+@api.route("/auth/login", methods=['GET','POST'])
+def login():
+	if request.method == 'POST':
+		if 'assertion' not in request.form:
+			abort(400)
+		data = {'assertion': request.form['assertion'], 'audience': 'http://localhost:5000/'}
+		resp = requests.post('https://verifier.login.persona.org/verify', data=data, verify=True)
+
+		if resp.ok:
+			verification_data = resp.json()
+
+		if verification_data['status'] == 'okay':
+                        session['email'] =  verification_data['email']
+                        backend_resp = requests.get("http://10.2.58.114:5000/users?email="+session['email'])
+#                        print backend_resp.json()
+                        return 'Okay'
+
+@api.route('/auth/logout', methods=['POST'])
+def logout_handler():
+        session.pop('email', None)
+        return "Ok"
+        
+
 # query an entity
 # =/<:entity>s?query_param1=val1&query_param2=val2&..query_paramn=valn=
 @api.route('/<entity>', methods=['GET'])
 def query_an_entity(entity):
     if entity not in entity_pairs:
-        abort(400, 'Entity %s is not valid.' % entity)
+	abort(400, 'Entity %s is not valid.' % entity)
 
     curr_entity = entity_pairs[entity]['entity_class']
     arg_tuple_list = request.args.lists()
     if not arg_tuple_list:
-        print "data: %s" % [i.to_client() for i in curr_entity.get_all()]
-        return jsonify_list([i.to_client() for i in curr_entity.get_all()])
+	print "data: %s" % [i.to_client() for i in curr_entity.get_all()]
+	return jsonify_list([i.to_client() for i in curr_entity.get_all()])
     else:
-        query = curr_entity.query
-        filters = []
-        for arg_tuple in arg_tuple_list:
-            args = arg_tuple[0].split('.')
-            values = arg_tuple[1][0].split(',')
-            filters.append(create_filters(entity_pairs[entity],
-                                          curr_entity,
-                                          args,
-                                          values))
-        for filter in filters:
-            query = query.filter(filter)
-        entities = query.all()
-        print "data: %s" % [ent.to_client() for ent in entities]
-        return jsonify_list([ent.to_client() for ent in entities])
+	query = curr_entity.query
+	filters = []
+	for arg_tuple in arg_tuple_list:
+	    args = arg_tuple[0].split('.')
+	    values = arg_tuple[1][0].split(',')
+	    filters.append(create_filters(entity_pairs[entity],
+					  curr_entity,
+					  args,
+					  values))
+	for filter in filters:
+	    query = query.filter(filter)
+	entities = query.all()
+	print "data: %s" % [ent.to_client() for ent in entities]
+	return jsonify_list([ent.to_client() for ent in entities])
 
 
 def create_filters(entity_map, curr_entity, args, values):
     if len(args) == 1:
-        try:
-            return getattr(curr_entity, args[0]).in_(values)
-        except Exception, e:
-            abort(400, 'error is %s' % (str(e)))
+	try:
+	    return getattr(curr_entity, args[0]).in_(values)
+	except Exception, e:
+	    abort(400, 'error is %s' % (str(e)))
     else:
-        result = filter(lambda item: item['name'] == args[0],
-                        entity_map['attributes'])
-        if not result:
-            abort(400, '%s is not attribute of %s' %
-                  (args[0], str(entity_map['entity_class'])))
+	result = filter(lambda item: item['name'] == args[0],
+			entity_map['attributes'])
+	if not result:
+	    abort(400, '%s is not attribute of %s' %
+		  (args[0], str(entity_map['entity_class'])))
 
-        entity_map = args[0]
-        if result[0]['relationship'] == 'one':
-            try:
-                return getattr(curr_entity, args[0]).has(
-                    create_filters(entity_map,
-                                   result[0]['class'],
-                                   args[1:],
-                                   values))
-            except Exception, e:
-                abort(400, 'error is %s' % (str(e)))
-        else:
-            try:
-                return getattr(curr_entity, args[0]).any(
-                    create_filters(entity_map,
-                                   result[0]['class'],
-                                   args[1:],
-                                   values))
-            except Exception, e:
-                abort(400, 'error is %s' % (str(e)))
+	entity_map = args[0]
+	if result[0]['relationship'] == 'one':
+	    try:
+		return getattr(curr_entity, args[0]).has(
+		    create_filters(entity_map,
+				   result[0]['class'],
+				   args[1:],
+				   values))
+	    except Exception, e:
+		abort(400, 'error is %s' % (str(e)))
+	else:
+	    try:
+		return getattr(curr_entity, args[0]).any(
+		    create_filters(entity_map,
+				   result[0]['class'],
+				   args[1:],
+				   values))
+	    except Exception, e:
+		abort(400, 'error is %s' % (str(e)))
 
 
 @api.route('/<entity>/<id>', methods=['GET'])
 def get_specific_entity(entity, id):
     if entity not in entity_pairs:
-        abort(400, 'Entity %s is not valid.' % entity)
+	abort(400, 'Entity %s is not valid.' % entity)
     curr_entity = entity_pairs[entity]['entity_class']
     record = curr_entity.get_by_id(id)
     if not record:
-        abort(404, "No entry for %s with id: %s found." % (entity, id))
+	abort(404, "No entry for %s with id: %s found." % (entity, id))
 
     return jsonify(record.to_client())
 
