@@ -1152,7 +1152,7 @@ WHITELIST_IPS = ["127.0.0.1"]
 
 import os
 import csv
-
+import requests
 from flask import session, render_template, Blueprint, request, jsonify, abort,\
     current_app, redirect, url_for
 
@@ -1256,7 +1256,7 @@ api = Blueprint('APIs', __name__)
 
    **TODO**: usage documentation of all REST APIs for the consumers of
    data service has to be written down somewhere and published.
-
+   
 *** Implementation
 **** Attributes of an entity and their relationship
      All the attributes of an entity and the relationship between the entity
@@ -1344,8 +1344,8 @@ def login():
 
 		if verification_data['status'] == 'okay':
                         session['email'] =  verification_data['email']
-                        backend_resp = requests.get("http://10.2.58.114:5000/users?email="+session['email'])
-#                        print backend_resp.json()
+                        #backend_resp = requests.get("http://10.2.58.114:5000/users?email="+session['email'])
+                        #print backend_resp.json()
                         return 'Okay'
 
 @api.route('/auth/logout', methods=['POST'])
