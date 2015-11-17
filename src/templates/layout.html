@@ -37,10 +37,8 @@
 	      <li>Logged in as <strong>{{ session.email }}</strong>
 	      <button class="btn btn-primary" id="btn-signout">Log out</button></li>
 	      {% else %}
-	      
-              <li><button class="btn btn-primary" id="btn-signin">Log In</button></li>
-	      
-	      {% endif %}
+	      <div class= "error">  </div>&emsp;
+              <li><button class="btn btn-primary" id="btn-signin">Log In</button></li>	      {% endif %}
 
 	      
             </ul>
@@ -86,7 +84,16 @@
       type: 'POST',
       url: '/auth/login', // This is a URL on your website.
       data: {assertion: assertion},
-      success: function(res, status, xhr) { window.location.reload(); },
+                    success: function(res, status, xhr) {
+                    if (res == 'Okay')
+                    {
+                      window.location.reload();
+                    }
+                    else
+                    {
+                       $('.error').append("Invalid Email");
+                    }                    
+                    },
       error: function(xhr, status, err) {
         navigator.id.logout();
         alert("Login failure: " + err);

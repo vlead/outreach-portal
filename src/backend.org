@@ -1076,7 +1076,7 @@ def create_app(config):
 
 if __name__ == "__main__":
     app = create_app(config)
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=True, host='0.0.0.0', threaded=True)
 
 #+END_SRC
 
@@ -1326,33 +1326,35 @@ entity_pairs = {
 
 **** GET APIS
 #+BEGIN_SRC python :tangle src/api.py :eval no
-
 @api.route("/")
 def index():
     return render_template("index.html")
 
-@api.route("/auth/login", methods=['GET','POST'])
+@api.route("/auth/login", methods=['GET', 'POST'])
 def login():
-	if request.method == 'POST':
-		if 'assertion' not in request.form:
-			abort(400)
-		data = {'assertion': request.form['assertion'], 'audience': 'http://localhost:5000/'}
-		resp = requests.post('https://verifier.login.persona.org/verify', data=data, verify=True)
-
-		if resp.ok:
-			verification_data = resp.json()
-
-		if verification_data['status'] == 'okay':
-                        session['email'] =  verification_data['email']
-                        #backend_resp = requests.get("http://10.2.58.114:5000/users?email="+session['email'])
-                        #print backend_resp.json()
-                        return 'Okay'
-
+    if request.method == 'POST':
+        if 'assertion' not in request.form:
+            abort(400)
+        data = {'assertion': request.form['assertion'],
+                'audience': 'http://localhost:5000/'}
+        resp = requests.post('https://verifier.login.persona.org/verify',
+                             data=data, verify=True)
+        if resp.ok:
+            verification_data = resp.json()
+        if verification_data['status'] == 'okay':
+            backend_resp = requests.get("http://localhost:5000/users?email="
+                                        +verification_data['email'])
+            if (len(backend_resp.text.encode('ascii')) != 2):
+                session['email'] = verification_data['email']
+                if backend_resp.json()[0]['email'].encode('ascii') == str(session['email']):
+                    return 'Okay'
+            else:
+                return 'Invalid'
+            
 @api.route('/auth/logout', methods=['POST'])
 def logout_handler():
-        session.pop('email', None)
-        return "Ok"
-        
+    session.pop('email', None)
+    return "Ok"
 
 # query an entity
 # =/<:entity>s?query_param1=val1&query_param2=val2&..query_paramn=valn=
