@@ -1087,7 +1087,7 @@ Below is the configuration for the application
 # example DB URI:
 # mysql+oursql://scott:tiger@localhost/mydatabase
 # postgresql+psycopg2://scott:tiger@localhost/mydatabase
-SQLALCHEMY_DATABASE_URI = 'mysql+oursql://<userid>:<password>@<servername>/<db_name>'
+SQLALCHEMY_DATABASE_URI = 'mysql+oursql://root:root@localhost/outreach'
 # example
 #SQLALCHEMY_DATABASE_URI = 'mysql+oursql://root:mysql@localhost/outreach'
 
@@ -1336,6 +1336,30 @@ entity_pairs = {
 def index():
     return render_template("index.html")
 
+@api.route("/admin")
+def admin():
+
+    if ('email' in session) and (session['role'] == 'admin'):
+        return render_template("admin.html")
+    else:
+        return redirect("/")
+
+@api.route("/oc")
+def outreach_coordinator():
+
+    if ('email' in session) and (session['role'] == 'OC'):
+        return render_template("oc.html")
+    else:
+        return redirect("/")
+
+@api.route("/nc")
+def nodal_coordinator():
+
+    if ('email' in session) and (session['role'] == 'NC'):
+        return render_template("nc.html")
+    else:
+        return redirect("/")
+
 @api.route("/auth/login", methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -1352,14 +1376,20 @@ def login():
                                         +verification_data['email'])
             if (len(backend_resp.text.encode('ascii')) != 2):
                 session['email'] = verification_data['email']
+                role = backend_resp.json()[0]['role']['name'].encode('ascii')
+                name = backend_resp.json()[0]['name'].encode('ascii')
+                session['role'] = role
+                session['name'] = name
                 if backend_resp.json()[0]['email'].encode('ascii') == str(session['email']):
-                    return 'Okay'
+                    return role
             else:
                 return 'Invalid'
             
 @api.route('/auth/logout', methods=['POST'])
 def logout_handler():
     session.pop('email', None)
+    session.pop('name', None)
+    session.pop('role', None)
     return "Ok"
 
 # query an entity

@@ -34,7 +34,7 @@
             <ul class="nav navbar-form navbar-right">
 	      
 	      {% if session.email %}
-	      <li>Hello  <strong>{{ session.email }}</strong>
+	      <li><strong> Welcome {{ session.name }}</strong>&emsp;&emsp;
 	      <button class="btn btn-primary" id="btn-signout">Log out</button></li>
 	      {% else %}
 	      <div class= "error">  </div>&emsp;
@@ -85,14 +85,29 @@
       url: '/auth/login', // This is a URL on your website.
       data: {assertion: assertion},
                     success: function(res, status, xhr) {
-                    if (res == 'Okay')
+                    if (res == 'admin')
                     {
-                      window.location.reload();
+                    window.location.href = '/admin'; //Will take you to Google.
+                    //window.location.reload();
                     }
+                    else if (res == 'OC')
+                    {
+                    window.location.href = '/oc'; //Will take you to Google.
+                    
+                    }
+
+                    else if (res == 'NC')
+                    {
+                    window.location.href = '/nc'; //Will take you to Google.
+                    
+                    }
+                    
                     else
                     {
-                       $('.error').append("Invalid Email");
+                    $('.error').append("Invalid Email");
+                    window.location.reload();
                     }                    
+                    
                     },
       error: function(xhr, status, err) {
         navigator.id.logout();
@@ -108,7 +123,7 @@
     $.ajax({
       type: 'POST',
       url: '/auth/logout', // This is a URL on your website.
-      success: function(res, status, xhr) { window.location.reload(); },
+      success: function(res, status, xhr) { window.location.href = '/';  },
       error: function(xhr, status, err) { alert("Logout failure: " + err); }
     });
   }
