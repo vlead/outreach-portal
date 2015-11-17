@@ -1113,6 +1113,12 @@ WHITELIST_IPS = ["127.0.0.1"]
 # allowed file extensions that can be uploaded
 #ALLOWED_EXTENSIONS = set(['csv'])
 
+#APP_URL
+APP_URL = "http://localhost:5000"
+
+#Persona Verifier URL
+PERSONA_VERIFIER_URL = "https://verifier.login.persona.org/verify"
+
 #+END_SRC
 
 ** Model Diagram
@@ -1155,7 +1161,7 @@ import csv
 import requests
 from flask import session, render_template, Blueprint, request, jsonify, abort,\
     current_app, redirect, url_for
-
+from config import *
 from db import *
 from utils import parse_request, jsonify_list
 from maps import *
@@ -1336,13 +1342,13 @@ def login():
         if 'assertion' not in request.form:
             abort(400)
         data = {'assertion': request.form['assertion'],
-                'audience': 'http://localhost:5000/'}
-        resp = requests.post('https://verifier.login.persona.org/verify',
+                'audience': APP_URL}
+        resp = requests.post(PERSONA_VERIFIER_URL,
                              data=data, verify=True)
         if resp.ok:
             verification_data = resp.json()
         if verification_data['status'] == 'okay':
-            backend_resp = requests.get("http://localhost:5000/users?email="
+            backend_resp = requests.get(APP_URL + "/users?email="
                                         +verification_data['email'])
             if (len(backend_resp.text.encode('ascii')) != 2):
                 session['email'] = verification_data['email']
