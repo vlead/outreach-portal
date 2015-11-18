@@ -47,9 +47,7 @@
 ** High Level Design
 #+CAPTION: High Level Design Diagram
   [[./diagrams/outreach.svg]]
-<<<<<<< HEAD
 ** [[./frontend.org][View & Controller]]
->>>>>>> master
 ** [[./backend.org][REST API & DB Layer]]
 * Test Cases
 * Provisioning
@@ -65,5 +63,3 @@
    This release will satisfy requirements 3, 4.2, 4.3, 5.2, 6, 7, 8, 9, 10, 11
    and 12
    Release Date :: [2015-12-04 Fri]
-
->>>>>>> master
