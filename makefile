@@ -16,7 +16,7 @@ LINT_FILE=${PWD}/${CODE_DIR}/lint_output
 EXIT_FILE=${PWD}/exit.txt
 STATUS=0
 
-all:  clean build-with-lint
+all:  build-with-lint
 
 clean-literate:
 	rm -rf ${ELISP_DIR}
@@ -43,6 +43,7 @@ else
 endif
 
 init: pull-literate-tools
+	rm -rf ${BUILD_DEST}
 	mkdir -p ${BUILD_DEST} ${CODE_DEST}
 
 build: init write-version
