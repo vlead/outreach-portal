@@ -47,7 +47,7 @@
 ** High Level Design
 #+CAPTION: High Level Design Diagram
   [[./diagrams/outreach.svg]]
-** [[View%20&%20Controller][View & Controller]]
+** [[./frontend.org][View & Controller]]
 ** [[./backend.org][REST API & DB Layer]]
 * Test Cases
 * Provisioning
@@ -55,11 +55,12 @@
 ** Admin Release - v2.1.0
    This release will satisfy requirements 2, 4.1, 5.1
    Release Date :: [2015-11-13 Fri]
+   The release data is moved to [2015-11-20 Fri].
 ** Nodal Coordinator Release - v2.2.0
    This release will satisfy requirements  4.4, 5.3, 13, 14, 15
-   Release Date :: [2015-11-20 Fri]
+   Release Date :: [2015-11-27 Fri]
 ** Outreach Coordinator Release - v2.3.0
    This release will satisfy requirements 3, 4.2, 4.3, 5.2, 6, 7, 8, 9, 10, 11
    and 12
-   Release Date :: [2015-11-27 Fri]
+   Release Date :: [2015-12-04 Fri]
 
