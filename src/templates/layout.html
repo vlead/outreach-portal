@@ -34,11 +34,14 @@
             <ul class="nav navbar-form navbar-right">
 	      
 	      {% if session.email %}
-	      <li><strong> Welcome {{ session.name }}</strong>&emsp;&emsp;
-	      <button class="btn btn-primary" id="btn-signout">Log out</button></li>
+	      <li>
+		<span> Welcome {{ session.name }}</span> &emsp;<button class="btn btn-primary btn-signin" id="btn-signout">Log out</button>
+	      </li>
 	      {% else %}
-	      <div class= "error">  </div>&emsp;
-              <li><button class="btn btn-primary" id="btn-signin">Log In</button></li>	      {% endif %}
+	     
+              <li>
+		<span class= "error">  </span>&emsp; <button class="btn btn-primary btn-signin" id="btn-signin">Log In</button>
+	      </li>	      {% endif %}
 
 	      
             </ul>
@@ -104,8 +107,8 @@
                     
                     else
                     {
-                    $('.error').append("Invalid Email");
-                    window.location.reload();
+                    $('.error').append("Unauthorized Email!");
+                     // window.location.reload();
                     }                    
                     
                     },

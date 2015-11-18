@@ -2,7 +2,7 @@
 @import url(https://fonts.googleapis.com/css?family=Lato:400,300);
 
 body{
-	font-family: 'Raleway', sans-serif;
+    font-family: 'Raleway', sans-serif;
 }
 .navbar-custom{
 	min-height: 90px;
@@ -47,9 +47,14 @@ body{
 	border: solid 1px #ccc;
 	height: 350px;
 }
-#btn-signin{
-	margin-top: 20px;
+.error{
+    color: red;
+    font-weight: 400;
+}
+.btn-signin{
+        margin-top: 20px;
 	border-radius: 3px;
+	vertical-align: 0px;
 }
 .section-two{
 	margin-top: 30px;
@@ -72,3 +77,28 @@ body{
 	background: #eee;
 }
 
+/* admin.html Styles */
+
+.nav-pills > li.active > a,.nav-pills > li.active > a:focus,.nav-pills > li.active > a:hover{
+    border-radius: 0px;
+    padding-left: 40px;
+}
+.nav-pills > li > a, .nav-pills > li > a:focus, .nav-pills > li > a:hover{
+    border-radius: 0;
+    padding-left: 40px;
+}
+.admin{
+    margin: 0;
+}							   
+.side-pane{
+    background-color: #eee;
+    padding: 0;
+    padding-top: 40px;
+    min-height: 600px;
+}
+.content{
+    padding: 40px 40px; 
+}
+
+
+ 
