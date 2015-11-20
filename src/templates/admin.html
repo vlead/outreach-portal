@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div ng-app="outreachApp">
+  <div class="row admin">
+    <div class="col-md-3 side-pane">
+      <ul class="nav nav-pills nav-stacked">
+	<li class="active"><a data-toggle="pill"  href="#dashboard">Dashboard</a></li>
+	<li><a data-toggle="pill" href="#manageoc">Manage OC</a></li>
+	<li><a data-toggle="pill" href="#documents">Documents</a></li>
+	<li><a data-toggle="pill" href="#profile">My Profile</a></li>
+      </ul>
+    </div>
+    <div class="col-md-9 content">
+      <div class="tab-content">
+	  <div role="tabpanel" class="tab-pane active" id="dashboard">Dashboard</div>
+	  <div role="tabpanel" class="tab-pane" id="manageoc">Manage O.C</div>
+	  <div role="tabpanel" class="tab-pane" id="documents">Documents</div>
+	  <div role="tabpanel" class="tab-pane" id="profile">My Profile</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

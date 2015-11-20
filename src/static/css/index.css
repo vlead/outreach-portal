@@ -1,0 +1,104 @@
+@import url(https://fonts.googleapis.com/css?family=Raleway:400,300);
+@import url(https://fonts.googleapis.com/css?family=Lato:400,300);
+
+body{
+    font-family: 'Raleway', sans-serif;
+}
+.navbar-custom{
+	min-height: 90px;
+	margin-bottom: 0;
+}
+.navbar-brand{
+	padding-top: 5px; 
+}
+.logo-img{
+	width: 150px;
+	height: auto;
+}
+.analytics-band{
+	text-align: center;
+	background: #196B9E;
+	margin: 0;
+	color: #fff;
+}
+.analytics-band .analytics{
+	padding: 10px 20px;
+	font-size:12px;
+	font-weight: 300;
+}
+.analytics-band .workshops-run{
+	background: #C76135;
+}
+.analytics-band .labs-taken{
+	background: #99A819;
+}
+.analytics-band .nodal-centers{
+	background: #2F3F3A;
+}
+.number{
+	font-family: 'Lato', sans-serif;
+	font-weight: 400;
+	font-size: 24px;
+}
+.section-one{
+	margin-top: 20px;
+}
+#map{
+	border: solid 1px #ccc;
+	height: 350px;
+}
+.error{
+    color: red;
+    font-weight: 400;
+}
+.btn-signin{
+        margin-top: 20px;
+	border-radius: 3px;
+	vertical-align: 0px;
+}
+.section-two{
+	margin-top: 30px;
+	color: #404040;
+	font-size: 16px;
+}
+.section-two .title{
+	font-size: 20px;
+	padding-bottom: 10px;
+	border-bottom: solid 1px #ccc;
+}
+.section-two .workshop-row{
+	border-bottom: solid 1px #ccc; 
+	padding-top: 20px;
+	padding-bottom: 20px;
+
+}
+
+.section-two .workshop-row:hover{
+	background: #eee;
+}
+
+/* admin.html Styles */
+
+.nav-pills > li.active > a,.nav-pills > li.active > a:focus,.nav-pills > li.active > a:hover{
+    border-radius: 0px;
+    padding-left: 40px;
+}
+.nav-pills > li > a, .nav-pills > li > a:focus, .nav-pills > li > a:hover{
+    border-radius: 0;
+    padding-left: 40px;
+}
+.admin{
+    margin: 0;
+}							   
+.side-pane{
+    background-color: #eee;
+    padding: 0;
+    padding-top: 40px;
+    min-height: 600px;
+}
+.content{
+    padding: 40px 40px; 
+}
+
+
+ 

@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+      {% raw %}
+      <div ng-app="outreachApp">
+      <div class="analytics-band">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-4 analytics workshops-run">
+              WORKSHOPS RUN<br>
+              <span class="number">36</span>
+            </div>
+            <div class="col-md-4 analytics labs-taken">
+              LABS TAKEN<br>
+              <span class="number">72021</span>
+            </div>
+            <div class="col-md-4 analytics nodal-centers">
+              NODAL CENTERS<br>
+              <span class="number">34</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="container">
+	<div ng-controller="mapCtrl">
+          <div class="section-one">
+            <div class="row">
+              <div class="col-md-12" id="map">
+
+              </div> 
+            </div>
+          </div>
+
+          <div class="section-two">
+            <div class="row">
+              <div class="title">Upcoming Workshops</div>
+            </div>
+	    
+            <div class="row workshop-row" ng-repeat="workshop in upcoming">
+              <div class="col-md-4 workshop-date">
+		{{ workshop.date }}
+              </div>
+              <div class="col-md-4 workshop-location">
+		{{ workshop.city }}
+              </div>
+              <div class="col-md-4 workshop-coordinator">
+		{{workshop.coordinator}}
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      {% endraw %}
+{% endblock %}
+    

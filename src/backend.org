@@ -1,0 +1,2102 @@
+#+TITLE: Back end for Outreach Portal 
+#+AUTHOR: VLEAD
+#+DATE: [2015-10-27 Tue]
+#+PROPERTY: results output
+#+PROPERTY: exports code
+#+SETUPFILE: ../org-templates/level-0.org
+#+options: ^:nil
+
+* Introduction
+  This document captures the DB layer and REST APIs of the outreach
+  portal. 
+
+* Requirements
+  This release (outreach portal - admin release), fulfills the
+  following requirements:
+
+  1. Python API that acts as a wrapper to make CRUD operations on the
+     entities - users, roles and workshop_documents.
+  2. REST API for various applications to perform CRUD operations on
+     the entities - users, roles and workshop_documents.
+  
+* Design & Implementation  
+** Some initialization and boilerplate code
+*** __init__
+#+BEGIN_SRC python :tangle src/__init__.py :eval no
+print "src package"
+import db
+import app
+import config
+#+END_SRC
+*** __init__ for Tests
+#+BEGIN_SRC python :tangle tests/__init__.py :eval no
+#something
+print "test package"
+#+END_SRC
+
+*** Imports for Python API
+#+BEGIN_SRC python :tangle src/db.py :eval no
+# -*- coding: utf-8 -*-
+
+from collections import OrderedDict
+
+from flask.ext.sqlalchemy import SQLAlchemy
+from flask import current_app, request
+
+import sqlalchemy.types as types
+
+import os
+import re
+from urlparse import urlparse
+from datetime import datetime
+import json
+
+from op_exceptions import AttributeRequired
+from utils import typecheck
+
+
+db = SQLAlchemy()
+
+
+# Abstract class to hold common methods
+class Entity(db.Model):
+
+    __abstract__ = True
+
+    # save a db.Model to the database. commit it.
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    # update the object, and commit to the database
+    def update(self, **kwargs):
+        for attr, val in kwargs.iteritems():
+            setter_method = "set_" + attr
+            try:
+                self.__getattribute__(setter_method)(val)
+            except Exception as e:
+                raise e
+
+        self.save()
+
+    #print "Setting new val"
+    #print "Calling %s on %s" % (method_to_set, curr_entity)
+    #try:
+    #    getattr(record, method_to_set)(new_val)
+    #except Exception as e:
+    #pass
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+#+END_SRC
+
+*** Imports for REST API
+   The Python code to have the imports, boilerplate code etc. for the
+   APIs.  We are using Flask blueprints to make the API, and then we
+   can plug this blueprint in our main application. [[http://flask.pocoo.org/docs/0.10/blueprints/][More on Flask
+   blueprints]].
+#+BEGIN_SRC python :tangle src/api.py :eval no :noweb yes
+# -*- coding: utf-8 -*-
+
+import os
+import csv
+import requests
+from flask import session, render_template, Blueprint, request, jsonify, abort,\
+    current_app, redirect, url_for
+from config import *
+
+from db import *
+from utils import parse_request, jsonify_list
+from maps import *
+api = Blueprint('APIs', __name__)
+#+END_SRC
+*** Imports and Initialization of testcases for Python API
+
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+# -*- coding: utf-8 -*-
+
+import unittest
+from flask.ext.testing import TestCase
+from datetime import datetime
+# import json
+
+from src.db import *
+from src.app import create_app
+from src.op_exceptions import AttributeRequired
+
+config = {
+    'SQLALCHEMY_DATABASE_URI': ''
+}
+
+#+END_SRC
+
+*** Imports and Initialization of testcases for REST API
+#+BEGIN_SRC python :tangle tests/test_api.py :eval no
+# -*- coding: utf-8 -*-
+
+import unittest
+from flask.ext.testing import TestCase
+# import json
+
+from src.db import *
+from src.app import create_app
+from src.op_exceptions import AttributeRequired
+
+config = {
+    'SQLALCHEMY_DATABASE_URI': ''
+}
+
+#+END_SRC
+
+** The Data Model
+*** Name
+     
+    Name is an alphabetical string.
+
+#+BEGIN_SRC python :tangle src/db.py :eval no
+class Name(object):
+    def __init__(self, value):
+        # if the string contains any non-alphabet and non-space character, raise
+        # a type error
+        if re.search('[^a-zA-Z. ]+', value):
+            raise TypeError('%s is not a Name!' % value)
+
+        self.value = value
+
+#+END_SRC
+    
+*** Email
+
+     Email is a type as defined in RFC [[https://tools.ietf.org/html/rfc5321][5321]], [[https://tools.ietf.org/html/rfc5322][5322]] and [[https://tools.ietf.org/html/rfc6531][6531]].  Following
+     is the constructor for this class.
+
+#+BEGIN_SRC python :tangle src/db.py :eval no
+class Email(object):
+    def __init__(self, value):
+        if not re.search('[^@]+@[^@]+\.[^@]+', value):
+            raise TypeError('%s is not an email!' % value)
+        self.value = value
+        
+#+END_SRC
+     
+*** Tests for Custom Types
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+
+class TestCustomTypes(TestCase):
+    TESTING = True
+
+    def create_app(self):
+        app = create_app(config)
+        return app
+
+    # Test the Name type
+    def test_name_type(self):
+        print "test_name_type"
+        new_name = Name("John")
+        # correct name
+        self.assertEqual(new_name.value, "John")
+        # incorrect name
+        self.assertRaises(TypeError, Name, "123dasd")
+
+    # Test the Email type
+    def test_email_type(self):
+        print "test_email_type"
+        new_email = Email("smith@gmail.com")
+        # correct name
+        self.assertEqual(new_email.value, "smith@gmail.com")
+        # incorrect name
+        self.assertRaises(TypeError, Email, "@@@@smithgmail.com")
+        
+#+END_SRC
+
+*** Role
+**** Immutable data
+     + Id
+
+**** Mutable data
+     + Role Name
+
+**** Definition
+#+BEGIN_SRC python :tangle src/db.py :eval no
+class Role(Entity):
+
+    __tablename__ = 'roles'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128), nullable=False)
+
+    users = db.relationship('User', backref='role')
+    
+#+END_SRC
+
+**** Constructor
+#+BEGIN_EXAMPLE
+    role = Role(name=<instance of class Name>)
+                    
+#+END_EXAMPLE
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def __init__(self, **kwargs):
+        if 'name' not in kwargs:
+            raise AttributeRequired("mandatory attribute `name` is missing")
+        self.set_name(kwargs['name'])
+
+#+END_SRC
+**** Tests for Role Constructor
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+class TestRole(TestCase):
+    TESTING = True
+
+    def create_app(self):
+        app = create_app(config)
+        return app
+
+    def setUp(self):
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+        
+#+END_SRC
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_role_constructor(self):
+        print "test_role_constructor"
+        name = Name("Admin")
+        role = Role(name=name)
+        self.assertEqual(isinstance(role, Role), True)
+
+        # Calling the institute constructor without any arguments should
+        # raise AttributeRequired exception
+        self.assertRaises(AttributeRequired, Role)
+
+        # Calling the role constructor with necessary arguments
+        # (name) but with wrong type should raise TypeError
+        self.assertRaises(TypeError, Role,
+                          ,**{'name': "Admin"
+                            })
+
+#+END_SRC
+**** Functions that operate on the Workshop Document domain
+***** getRole: Id --> Role
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @staticmethod
+    def get_by_id(id):
+        return Role.query.get(id)
+
+#+END_SRC
+***** Test getRole: Id --> Role
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_role_by_id(self):
+        print "test_get_role_by_id"
+        role = Role(name=Name("Admin"))
+        role.save()
+        self.assertEqual(role.get_by_id(1).name, "Admin")
+
+#+END_SRC
+***** getAll: Nil --> set[Role]
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @staticmethod
+    def get_all():
+        return Role.query.all()
+#+END_SRC
+***** Test getAll: Nil --> set[Role]
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_role_get_all(self):
+        print "test_role_get_all"
+        role = Role(name=Name("Admin"))
+        role.save()
+        self.assertEqual("Admin", role.name)
+#+END_SRC
+***** getName: Role --> Name
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_name(self):
+        return self.name
+#+END_SRC
+***** Test getName: Role --> Name 
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_role_name(self):
+        print "test_get_role_name"
+        role = Role(name=Name("Admin"))
+        role_name = role.get_name()
+        self.assertEqual(role_name, "Admin")
+#+END_SRC
+
+***** setName: Role, Name --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(name=Name)
+    def set_name(self, name):
+        self.name = name.value
+#+END_SRC
+***** Test setName: Role, Name --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_set_role_name(self):
+        print "test_set_role_name"
+        role = Role(name=Name("Admin"))
+        new_name = Name("OC")
+        role.set_name(new_name)
+        self.assertEqual(role.name, "OC")
+#+END_SRC
+
+***** to_client
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def to_client(self):
+        return {
+            'id': self.id,
+            'name': self.name
+        }
+
+#+END_SRC
+
+***** Test Role to_client
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_role_to_client(self):
+        print "test_role_to_client"
+        role = Role(name=Name("Admin"))
+        role.save()
+        role = Role.get_by_id(1)
+        role_dict = role.to_client()
+        self.assertEqual("Admin", role_dict['name'])
+#+END_SRC
+*** User
+**** Immutable data
+     + Id
+     + Created
+     + Last Active
+
+**** Mutable data
+     + Name
+     + Email
+     + Role --> Id
+  
+**** Definition
+#+BEGIN_SRC python :tangle src/db.py :eval no
+class User(Entity):
+
+    __tablename__ = 'users'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128), nullable=False)
+    email = db.Column(db.String(128), unique=True)
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
+    workshop_documents = db.relationship('WorkshopDocument', backref='user')
+    created = db.Column(db.DateTime(), default=datetime.utcnow)
+    last_active = db.Column(db.DateTime(), default=datetime.utcnow)
+    
+ #+END_SRC
+
+**** Constructor
+#+BEGIN_EXAMPLE
+    User = User(name=<instance of class Name>,
+                email=<instance of class Email>,
+                role=<instance of class Role>)
+                                            
+#+END_EXAMPLE
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def __init__(self, **kwargs):
+        if 'name' not in kwargs:
+            raise AttributeRequired("mandatory attribute `name` is missing")
+        self.set_name(kwargs['name'])
+
+        if 'email' not in kwargs:
+            raise AttributeRequired("mandatory attribute `email` is missing")
+        self.set_email(kwargs['email'])
+
+        if 'role' not in kwargs:
+            raise AttributeRequired("mandatory attribute `role` is missing")
+        self.set_role(kwargs['role'])
+        
+    def __str__(self):
+        return "Name = %s, e-mail id = %s, role = %s" % \
+            (self.name, self.email, self.role.name)
+
+    def __repr__(self):
+        return "Name = %s, e-mail id = %s, role = %s" % \
+            (self.name, self.email, self.role.name)
+
+#+END_SRC
+     
+**** Tests for User Constructor
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+class TestUser(TestCase):
+    TESTING = True
+
+    def create_app(self):
+        app = create_app(config)
+        return app
+
+    def setUp(self):
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+        
+#+END_SRC
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_user_constructor(self):
+        print "test_user_constructor"
+        name = Name("Admin")
+        role = Role(name=name)
+        role.save()
+         
+        user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
+        user.save()
+        self.assertEqual("Ambika", user.name)
+        self.assertEqual("ambika@vlabs.ac.in", user.email)
+
+        # Calling the user constructor without any arguments should
+        # raise AttributeRequired exception
+        self.assertRaises(AttributeRequired, User)
+
+        # Calling the user constructor with necessary arguments
+        # (name, email and role) but with wrong type should raise TypeError
+        self.assertRaises(TypeError, User,
+                          ,**{'name': "Admin",
+                             'email': "ambika@vlabs.ac.in",
+                             'role': role
+                            })
+
+#+END_SRC
+**** Functions that operate on the Workshop Document domain
+***** getAll: Nil --> set[User]
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @staticmethod
+    def get_all():
+        return User.query.all()
+
+#+END_SRC
+***** Test getAll: Nil --> set[User]
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_user_get_all(self):
+        print "test_user_get_all"
+        role = Role(name=Name("Admin"))
+        user_1 = User(name=Name("Thirumal Ravula"),
+                      email=Email("travula@gmail.com"), role=role)
+        user_2 = User(name=Name("Anon Ray"),
+                      email=Email("anon.ray@gmail.com"), role=role)
+
+        user_1.save()
+        user_2.save()
+
+        user_list = User.get_all()
+
+        self.assertEqual("travula@gmail.com", user_list[0].email)
+        self.assertEqual("Thirumal Ravula", user_list[0].name)
+        self.assertEqual("Admin", user_list[0].role.name)
+        self.assertEqual("anon.ray@gmail.com", user_list[1].email)
+        self.assertEqual("Anon Ray", user_list[1].name)
+        self.assertEqual("Admin", user_list[1].role.name)
+#+END_SRC
+***** getUser: Id --> User
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @staticmethod
+    def get_by_id(id):
+        return User.query.get(id)
+
+#+END_SRC
+***** Test getUser: Id --> User
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_user_by_id(self):
+        print "test_get_user_by_id"
+        role = Role(name=Name("Admin"))
+        role.save()
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        self.assertEqual(user.get_by_id(1).name, "ambika")
+#+END_SRC
+
+***** getName: User --> Name
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_name(self):
+        return self.name
+#+END_SRC
+
+***** Test getName: User --> Name 
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_user_name(self):
+        print "test_get_user_name"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        user_name = user.get_name()
+        self.assertEqual(user_name, "ambika")
+#+END_SRC
+
+***** getEmail: User --> Email
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_email(self):
+        return self.email
+#+END_SRC
+
+***** Test getEmail: User --> Email
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_user_email(self):
+        print "test_get_user_email"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        user_email = user.get_email()
+        self.assertEqual(user_email, "ambika@vlabs.ac.in")
+#+END_SRC
+
+***** getRole: User --> Role
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_role(self):
+        return self.role
+
+#+END_SRC
+
+***** Test getRole: User --> Role
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_user_role(self):
+        print "test_get_user_role"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        user_role = user.get_role()
+        self.assertEqual(user_role, role)
+#+END_SRC
+
+***** timeOfCreation: User --> Datetime
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_created(self):
+        return self.created
+#+END_SRC
+
+***** Test timeOfCreation: User --> Datetime
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_user_toc(self):
+        print "test_get_user_toc"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        user.save()
+        time = datetime.utcnow()
+        year = time.year
+        month = time.month    
+        day = time.day
+        minute = time.minute
+
+        user_toc = user.get_created()
+        user_year = user_toc.year
+        user_month = user_toc.month
+        user_day = user_toc.day
+        user_min = user_toc.minute
+
+        self.assertEqual(user_year, year)
+        self.assertEqual(user_month, month)
+        self.assertEqual(user_day, day)
+        self.assertEqual(user_min, minute)
+#+END_SRC
+
+***** getLastActive: User --> Datetime
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_last_active(self):
+        return self.last_active
+#+END_SRC
+
+***** Test getLastActive: User --> Datetime
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_user_last_act(self):
+        print "test_get_user_last_act"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        user.save()
+        time = datetime.utcnow()
+        year = time.year
+        month = time.month
+        day = time.day
+        minute = time.minute
+
+        user_last_act = user.get_last_active()
+        user_last_act_year = user_last_act.year
+        user_last_act_month = user_last_act.month
+        user_last_act_day = user_last_act.day
+        user_last_act_min = user_last_act.minute
+
+        self.assertEqual(user_last_act_year, year)
+        self.assertEqual(user_last_act_month, month)
+        self.assertEqual(user_last_act_day, day)
+        self.assertEqual(user_last_act_min, minute)
+
+#+END_SRC
+
+***** setName: User, Name --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(name=Name)
+    def set_name(self, name):
+        self.name = name.value
+#+END_SRC
+
+***** Test setName: User, Name --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_set_user_name(self):
+        print "test_set_user_name"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)     
+        user.save()
+        user.set_name(Name("Madhavi"))
+        user.save()
+        user = User.get_by_id(1)
+        self.assertEqual("Madhavi", user.name)
+#+END_SRC
+
+***** setEmail: User, Email --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(email=Email)
+    def set_email(self, email):
+        self.email = email.value
+#+END_SRC
+
+***** Test setEmail: User, Email --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_set_user_email(self):
+        print "test_set_user_email"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)     
+        user.save()
+        user.set_email(Email("madhavi@vlabs.ac.in"))
+        user.save()
+        user = User.get_by_id(1)
+        self.assertEqual("madhavi@vlabs.ac.in", user.email)
+#+END_SRC
+
+***** setRole: User, Role --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(role=Role)
+    def set_role(self, role):
+        self.role = role
+
+#+END_SRC
+
+***** Test setRole: User, Role --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_set_user_role(self):
+        print "test_set_user_role"
+        role1 = Role(name=Name("Admin"))
+        role2 = Role(name=Name("OC"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role1)
+        user.save()     
+        user.set_role(role2)
+        user.save()
+        user = User.get_by_id(1)
+        self.assertEqual(user.role, role2)
+#+END_SRC
+
+***** to_client
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def to_client(self):
+        return {
+            'id': self.id,
+            'email': self.email,
+            'name': self.name,
+            'role': self.role.to_client(),
+            'last_active': self.last_active.isoformat(),
+            'created': self.created.isoformat()
+        }
+#+END_SRC
+      
+***** Test User to_client
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_user_to_client(self):
+        print "test_user_to_client"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("madhavi"), email=Email("madhavi@vlabs.ac.in"), role = role)
+        user.save()
+        user = User.get_by_id(1)
+        user_dict = user.to_client()
+        self.assertEqual("madhavi@vlabs.ac.in", user_dict['email'])
+        self.assertEqual("madhavi", user_dict['name'])
+        self.assertEqual("Admin", user_dict['role']['name'])
+#+END_SRC
+
+*** Workshop Document
+**** Immutable data
+     + Id
+  
+**** Mutable data
+     + Name
+     + Path
+     + Created By 
+
+**** Definition
+#+BEGIN_SRC python :tangle src/db.py :eval no
+class WorkshopDocument(Entity):
+
+    __tablename__ = 'workshop_documents'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128), nullable=False)
+    path = db.Column(db.String(128))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    
+#+END_SRC
+
+**** Constructor
+#+BEGIN_EXAMPLE 
+    workshop_document = WorkshopDocument(name=<instance of class Name>,
+                                         path=str,
+                                         user=<instance of class User>)
+                                            
+#+END_EXAMPLE
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def __init__(self, **kwargs):
+        if 'name' not in kwargs:
+            raise AttributeRequired("mandatory attribute `name` is missing")
+        self.set_name(kwargs['name'])
+
+        if 'user' not in kwargs:
+            raise AttributeRequired("mandatory attribute `user` is missing")
+        self.set_user(kwargs['user'])
+        
+        if 'path' in kwargs:
+            self.set_path(kwargs['path'])
+
+    def __str__(self):
+        return "Name = %s, user = %s" % \
+            (self.name, self.user.name)
+
+    def __repr__(self):
+        return "Name = %s, user = %s" % \
+            (self.name, self.user.name)
+
+#+END_SRC
+
+**** Tests for Workshop Document Constructor
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+class TestWorkshopDocument(TestCase):
+    TESTING = True
+
+    def create_app(self):
+        app = create_app(config)
+        return app
+
+    def setUp(self):
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+        
+#+END_SRC
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_workshop_document_constructor(self):
+        print "test_workshop_document_constructor"
+
+        name = Name("Admin")
+        role = Role(name=name)
+        role.save()
+         
+        user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
+        user.save()
+
+        name = Name("Attandance Sheet")
+        workshop_document = WorkshopDocument(name=name, user=user)
+        self.assertEqual(isinstance(workshop_document, WorkshopDocument), True)
+
+        # Calling the workshop_document constructor without any arguments should
+        # raise AttributeRequired exception
+        self.assertRaises(AttributeRequired, WorkshopDocument)
+
+        # Calling the workshop_document constructor with necessary arguments
+        # (name,path) but with wrong type should raise TypeError
+        self.assertRaises(TypeError, WorkshopDocument,
+                          ,**{'name': "College Report",
+                             'user': user
+                            })
+
+#+END_SRC
+**** Functions that operate on the Workshop Document domain
+***** getAll: Nil --> set[WorkshopDocument]
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @staticmethod
+    def get_all():
+        return WorkshopDocument.query.all()
+
+#+END_SRC
+
+***** Test getAll: Nil --> set[WorkshopDocument]
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_workshop_documents_get_all(self):
+        print "test_workshop_documents_get_all"
+
+        name = Name("Admin")
+        role = Role(name=name)
+        role.save()
+         
+        user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
+        user.save()
+
+        doc = WorkshopDocument(name=Name("Attendance Sheet"), user=user)
+        doc.save()
+        self.assertEqual("Attendance Sheet", doc.name)
+#+END_SRC
+
+***** getWorkshopDocument: Id --> WorkshopDocument
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @staticmethod
+    def get_by_id(id):
+        return WorkshopDocument.query.get(id)
+
+#+END_SRC
+
+***** Test getWorkshopDocument: Id --> WorkshopDocument
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no 
+    def test_get_workshop_document_by_id(self):
+        print "test_get_document_by_id"
+
+        name = Name("Admin")
+        role = Role(name=name)
+        role.save()
+         
+        user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
+        user.save()
+
+        workshop_document = WorkshopDocument(name=Name("Attendance Sheet"), user=user)
+        workshop_document.save()
+        self.assertEqual(workshop_document.get_by_id(1).name, "Attendance Sheet")
+
+#+END_SRC
+     
+***** getName: WorkshopDocument --> Name
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_name(self):
+        return self.name
+#+END_SRC
+
+***** Test getName: WorkshopDocument --> Name
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_workshop_document_name(self):
+        print "test_get_document_name"
+
+        name = Name("Admin")
+        role = Role(name=name)
+        role.save()
+         
+        user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
+        user.save()
+
+        workshop_document = WorkshopDocument(name=Name("Attendance Sheet"), user=user)
+        workshop_document_name = workshop_document.get_name()
+        self.assertEqual(workshop_document_name, "Attendance Sheet")
+#+END_SRC
+
+***** getPath: WorkshopDocument --> String
+#+BEGIN_SRC python :tangle src/db.py :eval no 
+    def get_path(self):
+        return self.path
+#+END_SRC
+
+***** Test getPath: WorkshopDocument --> String
+#+BEGIN_SRC 
+    def test_get_workshop_document_path(self):
+        print "test_get_document_path"
+        name = Name("Admin")
+
+        role = Role(name=name)
+        role.save()
+         
+        user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
+        user.save()
+
+        workshop_document = WorkshopDocument(name=Name("Attendance Sheet"), user=user)
+        workshop_document_path = workshop_document.get_path()
+        self.assertEqual(workshop_document_path, "/workshop-documents/admin")
+#+END_SRC
+     
+***** getUser: WorkshopDocument --> User
+#+BEGIN_SRC python :tangle src/db.py :eval no 
+    def get_user(self):
+        return self.user
+#+END_SRC
+***** TestUser: WorkshopDocument --> User
+***** setName: WorkshopDocument, Name --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(name=Name)
+    def set_name(self, name):
+        self.name = name.value
+#+END_SRC
+
+***** Test setName: WorkshopDocument, Name --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_set_workshop_document_name(self):
+        print "test_set_document_name"
+
+        name = Name("Admin")
+        role = Role(name=name)
+        role.save()
+         
+        user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
+        user.save()
+
+        workshop_document = WorkshopDocument(name=Name("Attandance Sheet"), user=user)
+        workshop_document.set_name(Name("College Report"))
+        self.assertEqual(workshop_document.name, "College Report")
+#+END_SRC
+
+***** setPath: WorkshopDocument, String --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no 
+ #   @typecheck(path=str)
+    def set_path(self, path):
+        file = open(kwargs['path'], 'rb')
+        file_name = secure_filename(file.name)
+        print file_name
+        file.write("/home/vlead/Desktop/uploads/")
+        self.path = UPLOAD_DIR_PATH + file_name
+#+END_SRC
+
+***** Test setPath: WorkshopDocument, String --> Void
+#+BEGIN_SRC 
+    def test_set_workshop_document_path(self):
+        print "test_set_document_path"
+
+        name = Name("Admin")
+        role = Role(name=name)
+        role.save()
+         
+        user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
+        user.save()
+
+        workshop_document = WorkshopDocument(name=Name("Attandance Sheet"), user=user)
+        workshop_document.set_path("/workshop-documents/OC")
+        workshop_document.save()
+        doc = workshop_document.get_by_id(1)
+        self.assertEqual(doc.path, "/workshop-documents/OC")
+#+END_SRC
+      
+***** setUser: WorkshopDocument, User --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(user=User)
+    def set_user(self, user):
+        self.user = user
+
+#+END_SRC
+***** to_client
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def to_client(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'path': self.path,
+            'user': self.user.to_client()
+        }
+#+END_SRC
+      
+***** Test Workshop Document to_client
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_workshop_document_to_client(self):
+        print "test_workshop_document_to_client"
+
+        name = Name("Admin")
+        role = Role(name=name)
+        role.save()
+         
+        user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
+        user.save()
+
+        doc = WorkshopDocument(name=Name("Feedback"), user=user)
+        doc.save()
+        doc = WorkshopDocument.get_by_id(1)
+        doc_dict = doc.to_client()
+        self.assertEqual("Feedback", doc_dict['name'])
+
+#+END_SRC
+
+** Custom Exceptions
+These are some of the custom exceptions used in the application.
+*** AttributeRequired
+#+BEGIN_SRC python :tangle src/op_exceptions.py :eval no
+class AttributeRequired(Exception):
+    str = None
+
+    def __init__(self, str):
+        self.str = str
+
+    def __str__(self):
+        return repr(self.str)
+
+#+END_SRC
+
+** Utility Functions
+#+BEGIN_SRC python :tangle src/utils.py :eval no
+# module to hold all utilities/helper functions
+
+import json
+
+from flask import make_response, current_app
+
+
+# return a list of dicts as json with correct mime types
+# flask does not provide a jsonify for lists; hence this method
+def jsonify_list(data):
+    if type(data) is not list:
+        raise Exception('jsonify_list function accepts only a list')
+
+    return make_response(json.dumps(data), 200,
+                         {'content-type': 'application/json'})
+
+
+# take in a flask request object and try to parse out a dictionary from the
+# request
+# try to find if request is as JSON first, then look into forms, finally force
+# find it.
+# If not found return a dict; else return the parsed data
+def parse_request(request):
+    if request.json:
+        # print 'found in request.json'
+        data = request.get_json()
+
+    elif request.data:
+        # print 'found in request.data'
+        data = json.loads(request.data)
+
+    elif request.form:
+        # print 'found in request.form'
+        data = request.form.to_dict()
+        # try to detect if form contains integers and boolean data and attempt
+        # to convert them
+        # FIXME: is this a good idea? Fix this to do it in a better way?
+        for k in data:
+            if is_number(data[k]):
+                data[k] = int(data[k])
+            if is_bool_in_str(data[k]):
+                data[k] = str_to_bool(data[k])
+
+            # print k, data[k]
+
+    else:
+        data = request.get_json(force=True)
+
+    if not data:
+        return False
+
+    return data
+
+
+# check if a given string is a number
+def is_number(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
+
+
+# check if in a given string python bool types are represented
+def is_bool_in_str(s):
+    if s == "True" or s == "False":
+        return True
+    return False
+
+
+# convert python bool types in string to native bool types
+def str_to_bool(s):
+    if s == "True":
+        return True
+    if s == "False":
+        return False
+    return None
+
+
+# decorator to do typechecking of arguments passed to functions
+# usage: @typecheck(var1=<type>, var2=(<type1>, <type2>), ..)
+#        def yourfunc(var1, var2, ..):
+#           ....
+def typecheck(**typemap):
+    """
+    Decorator to do typechecking of arguments passed to functions. Similar to
+    function annotations in Python 3, but this also does strict type checking
+    when a function is called.
+    The type to an argument can be single or multiple types. Mutiple types are
+    to be specified in a tuple.
+    Usage:
+        @typecheck(var1=<type>, var2=(<type1>, <type2>), ..)
+        def yourfunc(var1, var2, ..):
+            ....
+    """
+    # print "all valid types: %s" % typemap
+
+    def make_wrapper(decorated_func):
+
+        def wrapper(*arg_vals, **kw_vals):
+            # TODO: have more comments to better describe each line
+            arg_names = decorated_func.func_code.co_varnames
+            # print arg_names
+            # if not arg_vals:
+            #     print kw_vals
+            #     # arg_vals = kw_vals
+            # print arg_vals
+
+            # iterate over the typemap passed to the typecheck decorator and
+            # compare with the actual arguments passed to the function
+            for key, val in typemap.iteritems():
+                arg_name = key
+                idx = arg_names.index(arg_name)
+                arg = arg_vals[idx]
+                # print "arg_name: %s, arg: %s, typemap[arg_name]: %s" %\
+                #    (arg_name, arg, typemap[arg_name])
+
+                # if the passed type is a list throw an error
+                if typemap[arg_name] is list:
+                    raise SyntaxError("The types of %s has to be a tuple, "
+                                      "not list. \n See usage of `typecheck`" %
+                                      arg_name)
+
+                # check if the passed type is a tuple, if not make it
+                if typemap[arg_name] is not tuple:
+                    types = (typemap[arg_name],)
+                else:
+                    types = typemap[arg_name]
+
+                # iterate over the `types` tuple to see the arg matches any of
+                # the type provided in the tuple
+                if True not in map(lambda type: isinstance(arg, type), types):
+                    # print "types are not fine"
+                    raise TypeError("For %s type should have been %s. But "
+                                    "provided: %s" % (arg_name,
+                                                      typemap[arg_name],
+                                                      type(arg)))
+
+            return decorated_func(*arg_vals, **kw_vals)
+        return wrapper
+
+    return make_wrapper
+
+#+END_SRC
+
+** The web application
+#+BEGIN_SRC python :tangle src/app.py :eval no
+# -*- coding: utf-8 -*-
+
+import os
+
+from flask import Flask, jsonify, make_response
+# from flask.ext.cors import CORS
+
+from db import db
+from api import api
+# import config file
+import config
+
+
+def create_app(config):
+    # init our app
+    app = Flask(__name__)
+    app.secret_key = 'djfjsdkjXXS7979dfdfd'
+    # load config values from the config file
+    app.config.from_object(config)
+
+    # init sqlalchemy db instance
+    db.init_app(app)
+    db.app = app
+
+    # register blueprints
+    app.register_blueprint(api)
+
+ #   configure_errorhandlers(app)
+ #   configure_cors(app)
+ #   configure_logging(app)
+
+    # all set; return app object
+    return app
+
+
+if __name__ == "__main__":
+    app = create_app(config)
+    app.run(debug=True, host='0.0.0.0', threaded=True)
+
+#+END_SRC
+
+** Configuring the application
+Below is the configuration for the application
+#+BEGIN_SRC python :tangle src/config.py :eval no
+# DB URI
+# example DB URI:
+# mysql+oursql://scott:tiger@localhost/mydatabase
+# postgresql+psycopg2://scott:tiger@localhost/mydatabase
+SQLALCHEMY_DATABASE_URI = 'mysql+oursql://root:root@localhost/outreach'
+# example
+#SQLALCHEMY_DATABASE_URI = 'mysql+oursql://root:mysql@localhost/outreach'
+
+# Debug from SQLAlchemy
+# Turn this to False on production
+SQLALCHEMY_ECHO = True
+
+# List of allowed origins for CORS
+ALLOWED_ORIGINS = "['*']"
+
+# List of allowed IPs
+WHITELIST_IPS = ["127.0.0.1"]
+
+# Configure your log paths
+#LOG_FILE = 'outreach.log'
+
+# Log level for the application
+#LOG_LEVEL = 'DEBUG'
+
+# destination for uploaded files
+UPLOAD_DIR_PATH = '/home/vlead/Desktop/uploads/'
+
+# allowed file extensions that can be uploaded
+ALLOWED_FILE_EXTENSIONS = ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'csv']
+
+#APP_URL
+APP_URL = "http://localhost:5000"
+
+#Persona Verifier URL
+PERSONA_VERIFIER_URL = "https://verifier.login.persona.org/verify"
+
+#+END_SRC
+
+** Model Diagram
+    The model-diagram can be found below. This gives an overview of the
+    relationships between different entities.
+
+    [[https://github.com/vlead/outreach-portal/blob/develop/src/diagrams/outreach-model-diagram.jpg][Model-diagram]] 
+
+** REST APIs to read and query data
+   These are the set of REST APIs for read operations.
+
+*** Design
+   The REST APIs to get and query data are designed in a generic
+   way. That is, APIs for each entity is not designed and implemented
+   specifically, rather three generic API patterns are designed which,
+   presumably, will capture all kinds of query patterns.
+
+   The three API patterns are:
+   1. =/<:entity>s?query_param1=val1&query_param2=val2&..query_paramn=valn=
+   2. =/<:entity>s/<:id>?fields=field1,field2,field3=
+
+   =<:entity>s= are defined in the corresponding look up table.
+
+   Let's explain each URL pattern:
+   1. The first URL pattern is to get record(s) of an entity which
+      satisfies some query parameters. Note, if one does not pass any
+      query parameter, it returns all records of that entity.  For
+      example:
+      1. To get all workshops that are completed and where labs_planned
+         are 5.
+        #+BEGIN_EXAMPLE
+	GET /workshops?status=completed&labs_planned=5
+	#+END_EXAMPLE
+      2. To get all roles in the system:
+         #+BEGIN_EXAMPLE
+	 GET /roles
+	 #+END_EXAMPLE
+      3. To get all the workshops where status is completed:
+         #+BEGIN_EXAMPLE
+	 GET /workshops?status=completed
+	 #+END_EXAMPLE
+   2. The second URL pattern is to get details of a particular record,
+      identified by a unique identifier =id=. The records can be
+      further filtered down with only desired attributes.  For example:
+      1. Get only few details of a particular workshop (where the workshop id
+         is known before):
+         #+BEGIN_EXAMPLE
+	 GET /workshops/2?fields=name, conducted_by, participants_attended, status
+	 #+END_EXAMPLE
+      2. Get all the details of particular user (presuming the id
+         is known beforehand):
+         #+BEGIN_EXAMPLE
+	 GET /users/2
+	 #+END_EXAMPLE
+
+   Note that, nesting of entities in the URL API is only allowed till
+   2nd level. Arbitrary nesting of entities might have the problem of
+   falling into infinite loop while querying.
+
+   Also note that, attributes with multiple values are
+   comma-separated; and the default action is to use AND operation
+   among them. If the OR operation is needed, they need to be
+   substituted by '+'. Example: To get all experiments of a lab which
+   uses Java3D OR Flash:
+   #+BEGIN_EXAMPLE
+   GET /labs/cse02/experiments?technologies=java3d+flash
+   #+END_EXAMPLE
+
+   In the above, a valid =<:entity>s= can be any of the keywords
+   defined in the look up table. Like, =roles=, =users=,
+   =workshop_documents=. Note that the entity name is always
+   plural, but the look up table maps the plural keyword to a
+   particular entity (which is usually in singular form).
+
+   Look up table would be like (this is an example, not the
+   implementation):
+#+BEGIN_SRC python
+  entity_map = {
+      'roles': Role,
+      'users': User,
+      'workshop_documents': WorkshopDocument
+    }
+#+END_SRC
+
+*** Implementation
+**** Attributes of an entity and their relationship
+     All the attributes of an entity and the relationship between the entity
+     and the attribute is captured to facilitate run time creation of queries.
+
+#+BEGIN_SRC python :tangle src/maps.py :eval no
+from db import *
+role = {'entity_class': Role,
+        'attributes': [
+            {'name': 'id',
+             'class': None,
+             'relationship': 'one'},
+            {'name': 'name',
+             'class': None,
+             'relationship': 'one'},
+            {'name': 'users',
+             'class': User,
+             'relationship': 'many'}
+            ]}
+
+user = {'entity_class': User,
+        'attributes': [
+            {'name': 'id',
+             'class': None,
+             'relationship': 'one'},
+            {'name': 'name',
+             'class': None,
+             'relationship': 'one'},
+            {'name': 'email',
+             'class': None,
+             'relationship': 'one'},
+            {'name': 'created',
+             'class': None,
+             'relationship': 'one'},
+            {'name': 'last_active',
+             'class': None,
+             'relationship': 'one'},
+            {'name': 'role',
+             'class': Role,
+             'relationship': 'many'},
+            {'name': 'workshop_documents',
+             'class': WorkshopDocument,
+             'relationship': 'many'}
+             ]}
+
+workshop_document = {'entity_class': WorkshopDocument,
+                     'attributes': [
+                         {'name': 'id',
+                          'class': None,
+                          'relationship': 'one'},
+                         {'name': 'name',
+                          'class': None,
+                          'relationship': 'one'},
+                         {'name': 'path',
+                          'class': None,
+                          'relationship': 'one'},
+                         {'name': 'user',
+                          'class': User,
+                          'relationship': 'one'}
+                          ]}
+
+roles = role
+users = user
+workshop_documents = workshop_document
+
+entity_pairs = {
+    'roles': role,
+    'users': user,
+    'workshop_documents': workshop_document
+}
+                   
+#+END_SRC
+
+**** GET APIS
+#+BEGIN_SRC python :tangle src/api.py :eval no
+@api.route("/")
+def index():
+    return render_template("index.html")
+
+@api.route("/admin")
+def admin():
+
+    if ('email' in session) and (session['role'] == 'admin'):
+        return render_template("admin.html")
+    else:
+        return redirect("/")
+
+@api.route("/oc")
+def outreach_coordinator():
+
+    if ('email' in session) and (session['role'] == 'OC'):
+        return render_template("oc.html")
+    else:
+        return redirect("/")
+
+@api.route("/nc")
+def nodal_coordinator():
+
+    if ('email' in session) and (session['role'] == 'NC'):
+        return render_template("nc.html")
+    else:
+        return redirect("/")
+
+@api.route("/auth/login", methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        if 'assertion' not in request.form:
+            abort(400)
+        data = {'assertion': request.form['assertion'],
+                'audience': APP_URL}
+        resp = requests.post(PERSONA_VERIFIER_URL,
+                             data=data, verify=True)
+        if resp.ok:
+            verification_data = resp.json()
+        if verification_data['status'] == 'okay':
+            backend_resp = requests.get(APP_URL + "/users?email="
+                                        +verification_data['email'])
+            if (len(backend_resp.text.encode('ascii')) != 2):
+                session['email'] = verification_data['email']
+                role = backend_resp.json()[0]['role']['name'].encode('ascii')
+                name = backend_resp.json()[0]['name'].encode('ascii')
+                session['role'] = role
+                session['name'] = name
+                if backend_resp.json()[0]['email'].encode('ascii') == \
+                   str(session['email']):
+                    return role
+            else:
+                return 'Invalid'
+
+@api.route('/auth/logout', methods=['POST'])
+def logout_handler():
+    session.pop('email', None)
+    session.pop('name', None)
+    session.pop('role', None)
+    return "Ok"
+
+# query an entity
+# =/<:entity>s?query_param1=val1&query_param2=val2&..query_paramn=valn=
+@api.route('/<entity>', methods=['GET'])
+def query_an_entity(entity):
+    if entity not in entity_pairs:
+        abort(400, 'Entity %s is not valid.' % entity)
+
+    curr_entity = entity_pairs[entity]['entity_class']
+    arg_tuple_list = request.args.lists()
+    if not arg_tuple_list:
+        print "data: %s" % [i.to_client() for i in curr_entity.get_all()]
+        return jsonify_list([i.to_client() for i in curr_entity.get_all()])
+    else:
+        query = curr_entity.query
+        filters = []
+        for arg_tuple in arg_tuple_list:
+            args = arg_tuple[0].split('.')
+            values = arg_tuple[1][0].split(',')
+            filters.append(create_filters(entity_pairs[entity], \
+                                          curr_entity, args, values))
+        for filter in filters:
+            query = query.filter(filter)
+        entities = query.all()
+        print "data: %s" % [ent.to_client() for ent in entities]
+        return jsonify_list([ent.to_client() for ent in entities])
+
+
+def create_filters(entity_map, curr_entity, args, values):
+    if len(args) == 1:
+        try:
+            return getattr(curr_entity, args[0]).in_(values)
+        except Exception, e:
+            abort(400, 'error is %s' % (str(e)))
+    else:
+        result = filter(lambda item: item['name'] == args[0],
+                        entity_map['attributes'])
+        if not result:
+            abort(400, '%s is not attribute of %s' %
+                  (args[0], str(entity_map['entity_class'])))
+
+        entity_map = args[0]
+        if result[0]['relationship'] == 'one':
+            try:
+                return getattr(curr_entity, args[0]).has(
+                    create_filters(entity_map, result[0]['class'], \
+                                   args[1:], values))
+            except Exception, e:
+                abort(400, 'error is %s' % (str(e)))
+        else:
+            try:
+                return getattr(curr_entity, args[0]).any(
+                    create_filters(entity_map, result[0]['class'], \
+                                   args[1:], values))
+            except Exception, e:
+                abort(400, 'error is %s' % (str(e)))
+
+
+@api.route('/<entity>/<id>', methods=['GET'])
+def get_specific_entity(entity, id):
+    if entity not in entity_pairs:
+        abort(400, 'Entity %s is not valid.' % entity)
+    curr_entity = entity_pairs[entity]['entity_class']
+    record = curr_entity.get_by_id(id)
+    if not record:
+        abort(404, "No entry for %s with id: %s found." % (entity, id))
+
+    return jsonify(record.to_client())
+
+#+END_SRC
+
+** REST API to create/update/delete data
+*** Implementation
+**** The entity look up table with corresponding types of their attributes
+#+NAME: entity-map-types
+#+BEGIN_SRC python
+entity_map_types = {
+    'roles': {
+        'entity': Role,
+        'types': {
+            'name': Name
+        }
+    },
+    'users': {
+        'entity': User,
+        'types': {
+            'name': Name,
+            'email': Email,
+            'role': Role,
+            'last_active': datetime,
+            'created': datetime
+        }
+    },
+    'workshop_documents': {
+        'entity': WorkshopDocument,
+        'types': {
+            'name': Name,
+            'path': str,
+            'user': User
+        }
+    }
+}
+
+#+END_SRC
+
+**** The API to update/delete entries
+***** API route definition
+The API route definitions. Defining the =/entity/id= API for update and delete
+operations. The following API handler first checks if the requested URL is a
+valid entity. If not it sends back a HTTP 400. If it is a valid entity, then
+it looks at the HTTP method, and calls the appropriate function to actually
+delete or update an existing record.
+#+NAME: modify-entity
+#+BEGIN_SRC python
+@api.route('/<entity>/<id>', methods=['PUT', 'DELETE'])
+def modify_entity(entity, id):
+    if entity not in entity_map_types:
+        abort(400, 'Entity %s is not valid.' % entity)
+
+    curr_entity = entity_map_types[entity]['entity']
+
+    if request.method == 'DELETE':
+        status = delete_record(curr_entity, id)
+        return status
+
+    if request.method == 'PUT':
+        status = update_record(entity, curr_entity, id)
+        return status
+    
+#+END_SRC
+
+***** Delete Record function
+The function to delete a record given an entity and a id. On success, it
+returns the =id= and a ~status=success~ as a JSON. If no such record with the
+given =id= is found, it return a HTTP 404 not found error. If the record is
+found, but there was error deleting the record, it sends back a HTTP 500 with
+corresponding error.
+#+NAME: delete-record
+#+BEGIN_SRC python
+def delete_record(entity, id):
+    record = entity.get_by_id(id)
+    if not record:
+        abort(404, 'No %s with id %s' % (entity, id))
+    else:
+        try:
+            record.delete()
+            #db.session.delete(record)
+            #db.session.commit()
+        except Exception, e:
+            print e
+            abort(500, str(e))
+
+    return jsonify(id=id, status="success")
+
+#+END_SRC
+
+***** Update Record function
+The function to update an record given the entity name, the actual entity,
+=id= of the record and the request object which has the data to be updated.
+Following steps:
+1. Check if the record with given =id= exist.
+   1. If record doesn't exist, send back a HTTP 404 error.
+2. If record exist, parse the request data into a =dict=, if the =dict= is
+   empty or malformed send back a HTTP 400 error.
+3. Now the request =dict= contains the request data, but they are all in
+   strings. To handover the data to actually operate on to update, the data
+   has to be converted to correct types, looking at the lookup table which has
+   the type information. This type conversion is handled by the function
+   =typecast_data=.
+4. Once, the data is type converted, it calls the =update= method on the
+   record.
+5. If the =update= is not successful, it will send back a HTTP 500 with
+   corresponding error.
+6. If success, it will send back a JSON with the updated record.
+#+NAME: update-record
+#+BEGIN_SRC python
+def update_record(entity_name, entity, id):
+    record = entity.get_by_id(id)
+
+    if not record:
+        abort(404, 'No %s with id %s' % (entity_name, id))
+
+    data = parse_request(request)
+    if not data or type(data) is not dict:
+        abort(400, "The data should be in JSON format")
+
+    data = typecast_data(entity_name, data)
+    print "updated, typecasted data: %s" % data
+
+    try:
+        print "Updating record: %s with data: %s" % (record, data)
+        record.update(**data)
+    except Exception, e:
+        print e
+        abort(500, str(e))
+
+    return jsonify(record.to_client())
+
+#+END_SRC
+
+****** Typecast Data function
+The method to typecast the data. It takes in an entity, and the data in a
+=dict= format; and returns another =dict= with all the values having correct
+types, based on the passed entity (this information is stored in the lookup
+table with entity, its attributes and their type information). The following
+functions just takes each item in the data =dict=, finds out its corresponding
+constructor from the type information and calls the =typecast_item= function
+over it.
+#+NAME: typecast-data
+#+BEGIN_SRC python
+def typecast_data(entity, data):
+    updated_data = {}
+    for attr, val in data.iteritems():
+        print "attr: %s, val: %s" % (attr, val)
+        if attr not in entity_map_types[entity]['types']:
+            abort(400, '%s attribute not in %s' % (attr, entity))
+        const = entity_map_types[entity]['types'][attr]
+        print "const for %s is %s" % (attr, const)
+
+        if type(val) is list:
+            new_val = map(lambda item: typecast_item(const, attr, item), val)
+        else:
+            new_val = typecast_item(const, attr, val)
+
+        updated_data[attr] = new_val
+
+    return updated_data
+
+#+END_SRC
+
+The function takes in a constructor, the attribute name and the actual
+attribute value, and returns the new value typecasted to its correct type.
+If the attribute is a compound item (like that itself is a =dict=), then it
+calls the =typecast_compound_item= function. Else if it is a simple attribute
+it just calls the constructor over the value. If the constructor throws an
+error, the function returns a HTTP 400 error.
+#+NAME: typecast-item
+#+BEGIN_SRC python
+# take a constructor, and attr name and the actual attribute and convert the
+# attribute value to its actual type
+def typecast_item(const, attr, val):
+    if type(val) is dict:
+        new_val = typecast_compound_item(const, attr, val)
+        return new_val
+
+    try:
+        new_val = const(val)
+    except TypeError:
+        abort(400, '%s is not a valid %s' % (val, attr))
+
+    print "new val after const: %s" % new_val
+    return new_val
+
+#+END_SRC
+
+The function takes in a constructor, the attribute name and the actual
+attribute value, and returns the new value typecasted to its correct type.
+Here the assumption is, that the value that it has been passed is of type
+=dict=, and the =dict= contains an =id= field, which means this value is an
+existing record. Hence, this function calls the =get_by_id= method of the
+constructor (or the type). If there is an error it sends back appropriate HTTP
+error codes.
+#+NAME: typecast-compound-item
+#+BEGIN_SRC python
+# take a constructor, and attr name and the actual attribute and convert the
+# attribute value to its actual type
+def typecast_compound_item(const, attr, val):
+    if 'id' not in val:
+        abort(400, "id attr has to be present in %s:%s" % (attr,
+                                                           val))
+    try:
+        new_val = const.get_by_id(val['id'])
+    except TypeError:
+        abort(400, '%s is not a valid %s' % (val, attr))
+
+    if not new_val:
+        abort(404, 'id %s of %s is not found' % (val['id'], attr))
+    print "new val after const: %s" % new_val
+    return new_val
+
+#+END_SRC
+
+***** Code tangle
+In the below, all the above code blocks are arranged in the order the python
+interpreter expects them to be.
+#+BEGIN_SRC python :tangle src/api.py :eval no :noweb yes
+<<entity-map-types>>
+
+<<delete-record>>
+
+<<typecast-compound-item>>
+
+<<typecast-item>>
+
+<<typecast-data>>
+
+<<update-record>>
+
+<<modify-entity>>
+#+END_SRC
+
+**** The API to create new entries
+***** API route definition
+#+NAME: create-entity
+#+BEGIN_SRC python
+@api.route('/<entity>', methods=['POST'])
+def create_entity(entity):
+    if entity not in entity_map_types:
+        abort(400, 'Entity %s is not valid.' % entity)
+
+    curr_entity = entity_map_types[entity]['entity']
+
+    status = create_record(entity, curr_entity)
+    return status
+
+#+END_SRC
+***** Create Record function
+#+NAME: create-record
+#+BEGIN_SRC python
+def create_record(entity_name, entity):
+
+    data = parse_request(request)
+    if not data or type(data) is not dict:
+        abort(400, "The data should be in JSON format")
+
+    data = typecast_data(entity_name, data)
+    print "creating new, typecasted data: %s" % data
+
+    try:
+        print "Creating record: %s with data: %s" % (entity_name, data)
+        new_record = entity(**data)
+        new_record.save()
+    except Exception, e:
+        print e
+        abort(500, str(e))
+
+    return jsonify(new_record.to_client())
+
+#+END_SRC
+
+
+***** Code tangle
+#+BEGIN_SRC python :tangle src/api.py :eval no :noweb yes
+<<create-record>>
+<<create-entity>>
+#+END_SRC
+
+** Testing the REST API
+*** Tests for Role
+#+BEGIN_SRC python :tangle tests/test_api.py :eval no
+class TestRole(TestCase):
+
+    TESTING = True
+
+    def create_app(self):
+        app = create_app(config)
+        return app
+
+    def setUp(self):
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+
+    def test_get_all_roles(self):
+        print "test_get_all_roles"
+        role1 = Role(name=Name("Admin"))
+        role1.save()
+        role2 = Role(name=Name("OC"))
+        role2.save()
+        r = self.client.get('/roles')
+        result = json.loads(r.data)
+        self.assertEquals(len(result), 2)
+
+    def test_get_one_role(self):
+        print "test_get_one_role"
+        role1 = Role(name=Name("Admin"))
+        role1.save()
+        role2 = Role(name=Name("OC"))
+        role2.save()
+        r = self.client.get('/roles/1')
+        result = json.loads(r.data)
+        self.assertEqual(result['name'], "Admin")
+
+    def test_update_existing_role(self):
+        print "test_update_existing_role"
+        role1 = Role(name=Name("Admin"))
+        role1.save()
+        role2 = Role(name=Name("OC"))
+        role2.save()
+        r = self.client.put('/roles/1',
+                            data=json.dumps({'name': 'NC'}))
+        result = json.loads(r.data)
+        print "result"
+        print result
+        self.assertEqual(result['name'], "NC")
+
+    def test_create_new_role(self):
+        print "test_create_new_institute"
+        r = self.client.post('/roles',
+                             data=json.dumps({'name': 'Outreach Coordinator'}))
+        result = json.loads(r.data)
+        self.assertEqual(result['name'], "Outreach Coordinator")
+
+    def test_delete_role(self):
+        print "test_delete_role"
+        role1 = Role(name=Name("Admin"))
+        role1.save()
+        role2 = Role(name=Name("NC"))
+        role2.save()
+        r = self.client.delete('/roles/1')
+        r = self.client.get('/roles')
+        result = json.loads(r.data)
+        self.assertEqual(len(result), 1)
+
+#+END_SRC
+
+*** Tests for User
+#+BEGIN_SRC python :tangle tests/test_api.py :eval no
+class TestUser(TestCase):
+
+    TESTING = True
+
+    def create_app(self):
+        app = create_app(config)
+        return app
+
+    def setUp(self):
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+
+    def test_get_all_users(self):
+        print "test_get_all_users"
+        role = Role(name=Name("Admin"))
+        role.save()
+        user1 = User(name=Name("Joe Smith"),
+                     email=Email("joe@smith.com"),
+                     role=role)
+        user1.save()
+        user2 = User(name=Name("Will Smith"),
+                     email=Email("will@smith.com"),
+                     role=role)
+        user2.save()
+        r = self.client.get('/users')
+        result = json.loads(r.data)
+        print result
+        self.assertEquals(len(result), 2)
+
+    def test_get_one_user(self):
+        print "test_get_one_user"
+        role = Role(name=Name("OC"))
+        role.save()
+        user1 = User(name=Name("Joe Smith"),
+                     email=Email("joe@smith.com"),
+                     role=role)
+        user1.save()
+        user2 = User(name=Name("Will Smith"),
+                     email=Email("will@smith.com"),
+                     role=role)
+        user2.save()
+        r = self.client.get('/users/1')
+        result = json.loads(r.data)
+        print result
+        self.assertEqual(result['name'], "Joe Smith")
+
+    def test_update_existing_user(self):
+        print "test_update_existing_user"
+        role = Role(name=Name("OC"))
+        role.save()
+        user1 = User(name=Name("Joe Smith"),
+                     email=Email("joe@smith.com"),
+                     role=role)
+        user1.save()
+        r = self.client.put('/users/1',
+                            data=json.dumps({'email': 'joe@mit.edu'}))
+        result = json.loads(r.data)
+        self.assertEqual(result['email'], "joe@mit.edu")
+
+    def test_create_new_user(self):
+        print "test_create_new_user"
+        role = Role(name=Name("OC"))
+        role.save()
+        r = self.client.post('/users',
+                             data=json.dumps({'name': 'Joe Smith',
+                                              'email': 'joe@mit.edu',
+                                              'role': role.to_client()}))
+        result = json.loads(r.data)
+        self.assertEqual(result['name'], "Joe Smith")
+
+    def test_delete_user(self):
+        print "test_delete_user"
+        role = Role(name=Name("OC"))
+        role.save()
+        user1 = User(name=Name("Joe Smith"),
+                     email=Email("joe@smith.com"),
+                     role=role)
+        user1.save()
+
+        user2 = User(name=Name("Will Smith"),
+                     email=Email("will@smith.com"),
+                     role=role)
+        user2.save()
+        r = self.client.delete('/users/1')
+        r = self.client.get('/users')
+        result = json.loads(r.data)
+        self.assertEqual(len(result), 1)
+
+#+END_SRC
+    
+*** Tests for WorkshopDocument
+#+BEGIN_SRC python :tangle tests/test_api.py :eval no
+class TestWorkshopDocument(TestCase):
+
+    TESTING = True
+
+    def create_app(self):
+        app = create_app(config)
+        return app
+
+    def setUp(self):
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+
+    def test_get_all_workshop_documents(self):
+        print "test_get_all_workshop_documents"
+
+        role = Role(name=Name("OC"))
+        role.save()
+        user1 = User(name=Name("Joe Smith"),
+                     email=Email("joe@smith.com"),
+                     role=role)
+        user1.save()
+
+        document1 = WorkshopDocument(name=Name("Attendance Sheet"), user=user1)
+        document1.save()
+        document2 = WorkshopDocument(name=Name("College Report"), user=user1)
+        document2.save()
+        r = self.client.get('/workshop_documents')
+        result = json.loads(r.data)
+        print result
+        self.assertEquals(len(result), 2)
+
+    def test_get_one_workshop_document(self):
+        print "test_get_one_workshop_document"
+
+        role = Role(name=Name("OC"))
+        role.save()
+        user1 = User(name=Name("Joe Smith"),
+                     email=Email("joe@smith.com"),
+                     role=role)
+        user1.save()
+
+        doc1 = WorkshopDocument(name=Name("College Report"), user=user1)
+        doc1.save()
+        doc2 = WorkshopDocument(name=Name("Attendance Sheet"), user=user1)
+        doc2.save()
+        r = self.client.get('/workshop_documents/1')
+        result = json.loads(r.data)
+        print result
+        self.assertEqual(result['name'], "College Report")
+
+    def test_update_existing_workshop_document(self):
+        print "test_update_existing_workshop_document"
+
+        role = Role(name=Name("OC"))
+        role.save()
+        user1 = User(name=Name("Joe Smith"),
+                     email=Email("joe@smith.com"),
+                     role=role)
+        user1.save()
+
+        doc1 = WorkshopDocument(name=Name("College Report"), user=user1)
+        doc1.save()
+        r = self.client.put('/workshop_documents/1',
+                            data=json.dumps({'name': 'Feedback'}))
+        result = json.loads(r.data)
+        self.assertEqual(result['name'], "Feedback")
+
+    def test_create_new_workshop_document(self):
+        print "test_create_new_workshop_document"
+
+        role = Role(name=Name("OC"))
+        role.save()
+        user1 = User(name=Name("Joe Smith"),
+                     email=Email("joe@smith.com"),
+                     role=role)
+        user1.save()
+
+        r = self.client.post('/workshop_documents',
+                             data=json.dumps({'name': 'Feedback',
+                                              'user': user1.to_client()}))
+        result = json.loads(r.data)
+        self.assertEqual(result['name'], "Feedback")
+
+    def test_delete_workshop_document(self):
+        print "test_delete_workshop_document"
+
+        role = Role(name=Name("OC"))
+        role.save()
+        user1 = User(name=Name("Joe Smith"),
+                     email=Email("joe@smith.com"),
+                     role=role)
+        user1.save()
+
+        doc1 = WorkshopDocument(name=Name("Feedback"), user=user1)
+        doc1.save()
+        doc2 = WorkshopDocument(name=Name("College Report"), user=user1)
+        doc2.save()
+        r = self.client.delete('/workshop_documents/1')
+        r = self.client.get('/workshop_documents')
+        result = json.loads(r.data)
+        self.assertEqual(len(result), 1)
+
+#+END_SRC
+ 
+* Run the Test Cases
+** Python DB Tests
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+
+if __name__ == '__main__':
+    unittest.main()
+
+#+END_SRC
+
+** Python REST API Tests
+#+BEGIN_SRC python :tangle tests/test_api.py :eval no
+
+if __name__ == '__main__':
+    unittest.main()
+
+#+END_SRC
