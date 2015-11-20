@@ -7,9 +7,8 @@
 #+options: ^:nil
 
 * Introduction
-  Outreach portal keeps track of all the outreach activities done to
-  promote Virtual Labs. It also acts as a central place where all the
-  documents related to workshops/trainings are stored.
+  This document captures the DB layer and REST APIs of the outreach
+  portal. 
 
 * Requirements
   This release (outreach portal - admin release), fulfills the
@@ -35,17 +34,18 @@ import config
 print "test package"
 #+END_SRC
 
-*** imports
+*** Imports for Python API
 #+BEGIN_SRC python :tangle src/db.py :eval no
 # -*- coding: utf-8 -*-
 
 from collections import OrderedDict
 
 from flask.ext.sqlalchemy import SQLAlchemy
-from flask import current_app
+from flask import current_app, request
 
 import sqlalchemy.types as types
 
+import os
 import re
 from urlparse import urlparse
 from datetime import datetime
@@ -53,6 +53,7 @@ import json
 
 from op_exceptions import AttributeRequired
 from utils import typecheck
+
 
 db = SQLAlchemy()
 
@@ -91,6 +92,26 @@ class Entity(db.Model):
 
 #+END_SRC
 
+*** Imports for REST API
+   The Python code to have the imports, boilerplate code etc. for the
+   APIs.  We are using Flask blueprints to make the API, and then we
+   can plug this blueprint in our main application. [[http://flask.pocoo.org/docs/0.10/blueprints/][More on Flask
+   blueprints]].
+#+BEGIN_SRC python :tangle src/api.py :eval no :noweb yes
+# -*- coding: utf-8 -*-
+
+import os
+import csv
+import requests
+from flask import session, render_template, Blueprint, request, jsonify, abort,\
+    current_app, redirect, url_for
+from config import *
+
+from db import *
+from utils import parse_request, jsonify_list
+from maps import *
+api = Blueprint('APIs', __name__)
+#+END_SRC
 *** Imports and Initialization of testcases for Python API
 
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
@@ -143,7 +164,7 @@ class Name(object):
         self.value = value
 
 #+END_SRC
-
+    
 *** Email
 
      Email is a type as defined in RFC [[https://tools.ietf.org/html/rfc5321][5321]], [[https://tools.ietf.org/html/rfc5322][5322]] and [[https://tools.ietf.org/html/rfc6531][6531]].  Following
@@ -353,7 +374,8 @@ class User(Entity):
     email = db.Column(db.String(128), unique=True)
     
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
- 
+
+    workshop_documents = db.relationship('WorkshopDocument', backref='user') 
     created = db.Column(db.DateTime(), default=datetime.utcnow)
     last_active = db.Column(db.DateTime(), default=datetime.utcnow)
  #+END_SRC
@@ -681,10 +703,11 @@ class TestUser(TestCase):
 *** Workshop Document
 **** Immutable data
      + Id
-
+  
 **** Mutable data
      + Name
      + Path
+     + Created By 
 
 **** Definition
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -694,14 +717,16 @@ class WorkshopDocument(Entity):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), nullable=False)
-    path = db.Column(db.String(128), nullable=False)
+    path = db.Column(db.String(128))
 
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 #+END_SRC
 
 **** Constructor
 #+BEGIN_EXAMPLE 
     workshop_document = WorkshopDocument(name=<instance of class Name>,
-                                         path=str)
+                                         path=str,
+                                         user=<instance of class User>)
                                             
 #+END_EXAMPLE
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -710,9 +735,20 @@ class WorkshopDocument(Entity):
             raise AttributeRequired("mandatory attribute `name` is missing")
         self.set_name(kwargs['name'])
 
-        if 'path' not in kwargs:
-            raise AttributeRequired("mandatory attribute `path` is missing")
-        self.set_path(kwargs['path'])
+        if 'user' not in kwargs:
+            raise AttributeRequired("mandatory attribute `user` is missing")
+        self.set_user(kwargs['user'])
+        
+        if 'path' in kwargs:
+            self.set_path(kwargs['path'])
+
+    def __str__(self):
+        return "Name = %s, user = %s" % \
+            (self.name, self.user.name)
+
+    def __repr__(self):
+        return "Name = %s, user = %s" % \
+            (self.name, self.user.name)
 
 #+END_SRC
 
@@ -735,9 +771,16 @@ class TestWorkshopDocument(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_workshop_document_constructor(self):
         print "test_workshop_document_constructor"
+
+        name = Name("Admin")
+        role = Role(name=name)
+        role.save()
+         
+        user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
+        user.save()
+
         name = Name("Attandance Sheet")
-        path = "/workshop-documents/admin"
-        workshop_document = WorkshopDocument(name=name, path=path)
+        workshop_document = WorkshopDocument(name=name, user=user)
         self.assertEqual(isinstance(workshop_document, WorkshopDocument), True)
 
         # Calling the workshop_document constructor without any arguments should
@@ -747,7 +790,8 @@ class TestWorkshopDocument(TestCase):
         # Calling the workshop_document constructor with necessary arguments
         # (name,path) but with wrong type should raise TypeError
         self.assertRaises(TypeError, WorkshopDocument,
-                          **{'name': "College Report"
+                          ,**{'name': "College Report",
+                             'user': user
                             })
 
 #+END_SRC
@@ -764,7 +808,15 @@ class TestWorkshopDocument(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_workshop_documents_get_all(self):
         print "test_workshop_documents_get_all"
-        doc = WorkshopDocument(name=Name("Attendance Sheet"), path="/workshop-docs/admin")
+
+        name = Name("Admin")
+        role = Role(name=name)
+        role.save()
+         
+        user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
+        user.save()
+
+        doc = WorkshopDocument(name=Name("Attendance Sheet"), user=user)
         doc.save()
         self.assertEqual("Attendance Sheet", doc.name)
 #+END_SRC
@@ -781,7 +833,15 @@ class TestWorkshopDocument(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no 
     def test_get_workshop_document_by_id(self):
         print "test_get_document_by_id"
-        workshop_document = WorkshopDocument(name=Name("Attendance Sheet"), path="/workshop-documents/admin")
+
+        name = Name("Admin")
+        role = Role(name=name)
+        role.save()
+         
+        user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
+        user.save()
+
+        workshop_document = WorkshopDocument(name=Name("Attendance Sheet"), user=user)
         workshop_document.save()
         self.assertEqual(workshop_document.get_by_id(1).name, "Attendance Sheet")
 
@@ -797,7 +857,15 @@ class TestWorkshopDocument(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_get_workshop_document_name(self):
         print "test_get_document_name"
-        workshop_document = WorkshopDocument(name=Name("Attendance Sheet"), path="/workshop-documents/admin")
+
+        name = Name("Admin")
+        role = Role(name=name)
+        role.save()
+         
+        user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
+        user.save()
+
+        workshop_document = WorkshopDocument(name=Name("Attendance Sheet"), user=user)
         workshop_document_name = workshop_document.get_name()
         self.assertEqual(workshop_document_name, "Attendance Sheet")
 #+END_SRC
@@ -809,14 +877,28 @@ class TestWorkshopDocument(TestCase):
 #+END_SRC
 
 ***** Test getPath: WorkshopDocument --> String
-#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+#+BEGIN_SRC 
     def test_get_workshop_document_path(self):
         print "test_get_document_path"
-        workshop_document = WorkshopDocument(name=Name("Attendance Sheet"), path="/workshop-documents/admin")
+        name = Name("Admin")
+
+        role = Role(name=name)
+        role.save()
+         
+        user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
+        user.save()
+
+        workshop_document = WorkshopDocument(name=Name("Attendance Sheet"), user=user)
         workshop_document_path = workshop_document.get_path()
         self.assertEqual(workshop_document_path, "/workshop-documents/admin")
 #+END_SRC
      
+***** getUser: WorkshopDocument --> User
+#+BEGIN_SRC python :tangle src/db.py :eval no 
+    def get_user(self):
+        return self.user
+#+END_SRC
+***** TestCreatedBy: WorkshopDocument --> User
 ***** setName: WorkshopDocument, Name --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(name=Name)
@@ -828,36 +910,64 @@ class TestWorkshopDocument(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_set_workshop_document_name(self):
         print "test_set_document_name"
-        workshop_document = WorkshopDocument(name=Name("Attandance Sheet"), path="/workshop-documents/admin")
+
+        name = Name("Admin")
+        role = Role(name=name)
+        role.save()
+         
+        user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
+        user.save()
+
+        workshop_document = WorkshopDocument(name=Name("Attandance Sheet"), user=user)
         workshop_document.set_name(Name("College Report"))
         self.assertEqual(workshop_document.name, "College Report")
 #+END_SRC
 
 ***** setPath: WorkshopDocument, String --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no 
-    @typecheck(path=str)
+ #   @typecheck(path=str)
     def set_path(self, path):
-        self.path = path
+        file = open(kwargs['path'], 'rb')
+        file_name = secure_filename(file.name)
+        print file_name
+        file.write("/home/vlead/Desktop/uploads/")
+        self.path = UPLOAD_DIR_PATH + file_name
 #+END_SRC
 
 ***** Test setPath: WorkshopDocument, String --> Void
-#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+#+BEGIN_SRC 
     def test_set_workshop_document_path(self):
         print "test_set_document_path"
-        workshop_document = WorkshopDocument(name=Name("Attandance Sheet"), path="/workshop-documents/admin")
+
+        name = Name("Admin")
+        role = Role(name=name)
+        role.save()
+         
+        user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
+        user.save()
+
+        workshop_document = WorkshopDocument(name=Name("Attandance Sheet"), user=user)
         workshop_document.set_path("/workshop-documents/OC")
         workshop_document.save()
         doc = workshop_document.get_by_id(1)
         self.assertEqual(doc.path, "/workshop-documents/OC")
 #+END_SRC
       
+***** setUser: WorkshopDocument, User --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(user=User)
+    def set_user(self, user):
+        self.user = user
+
+#+END_SRC
 ***** to_client
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def to_client(self):
         return {
             'id': self.id,
             'name': self.name,
-            'path': self.path
+            'path': self.path,
+            'user': self.user.to_client()
         }
 #+END_SRC
       
@@ -865,7 +975,15 @@ class TestWorkshopDocument(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_workshop_document_to_client(self):
         print "test_workshop_document_to_client"
-        doc = WorkshopDocument(name=Name("Feedback"), path="/workshop-docs/admin")
+
+        name = Name("Admin")
+        role = Role(name=name)
+        role.save()
+         
+        user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
+        user.save()
+
+        doc = WorkshopDocument(name=Name("Feedback"), user=user)
         doc.save()
         doc = WorkshopDocument.get_by_id(1)
         doc_dict = doc.to_client()
@@ -874,7 +992,6 @@ class TestWorkshopDocument(TestCase):
 #+END_SRC
 
 ** Custom Exceptions
-
 These are some of the custom exceptions used in the application.
 *** AttributeRequired
 #+BEGIN_SRC python :tangle src/op_exceptions.py :eval no
@@ -1108,10 +1225,10 @@ WHITELIST_IPS = ["127.0.0.1"]
 #LOG_LEVEL = 'DEBUG'
 
 # destination for uploaded files
-#UPLOAD_FOLDER = 'src/static/temp'
+UPLOAD_DIR_PATH = '/home/vlead/Desktop/uploads/'
 
 # allowed file extensions that can be uploaded
-#ALLOWED_EXTENSIONS = set(['csv'])
+ALLOWED_FILE_EXTENSIONS = ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'csv']
 
 #APP_URL
 APP_URL = "http://localhost:5000"
@@ -1127,47 +1244,6 @@ PERSONA_VERIFIER_URL = "https://verifier.login.persona.org/verify"
 
     [[https://github.com/vlead/outreach-portal/blob/develop/src/diagrams/outreach-model-diagram.jpg][Model-diagram]] 
 
-    This diagram highlights the following facts:
-
-    + An outreach coordinator can have multiple nodal coordinators
-      associated with it.
-
-    + An outreach coordinator can conduct multiple nodal coordinator
-      trainings.
-
-    + Each nodal centre is assigned to a unique nodal coordinator.
-  
-    + A nodal coordinator can conduct multiple workshops.
-
-    + A workshop report is unique to a workshop and there can not be
-      multiple reports for a single workshop.
-
-    + Each workshop report can have multiple workshop photos.
-
-    + The workshop document is a separate entity and is only used by an
-      admin.
-
-** REST APIs
-*** Some code..
-   The Python code to have the imports, boilerplate code etc. for the
-   APIs.  We are using Flask blueprints to make the API, and then we
-   can plug this blueprint in our main application. [[http://flask.pocoo.org/docs/0.10/blueprints/][More on Flask
-   blueprints]].
-#+BEGIN_SRC python :tangle src/api.py :eval no :noweb yes
-# -*- coding: utf-8 -*-
-
-import os
-import csv
-import requests
-from flask import session, render_template, Blueprint, request, jsonify, abort,\
-    current_app, redirect, url_for
-from config import *
-from db import *
-from utils import parse_request, jsonify_list
-from maps import *
-api = Blueprint('APIs', __name__)
-#+END_SRC
-
 ** REST APIs to read and query data
    These are the set of REST APIs for read operations.
 
@@ -1180,7 +1256,6 @@ api = Blueprint('APIs', __name__)
    The three API patterns are:
    1. =/<:entity>s?query_param1=val1&query_param2=val2&..query_paramn=valn=
    2. =/<:entity>s/<:id>?fields=field1,field2,field3=
-   3. =/<:entity>s/<:id>/<entity>s?query_param1=val1&query_param2=val2=
 
    =<:entity>s= are defined in the corresponding look up table.
 
@@ -1189,47 +1264,32 @@ api = Blueprint('APIs', __name__)
       satisfies some query parameters. Note, if one does not pass any
       query parameter, it returns all records of that entity.  For
       example:
-      1. To get all labs of IIIT-H at integration level 6 and hosted on
-         AWS:
+      1. To get all workshops that are completed and where labs_planned
+         are 5.
         #+BEGIN_EXAMPLE
-	GET /labs?integration_level=6&institute=iiith&hosted_on=AWS
+	GET /workshops?status=completed&labs_planned=5
 	#+END_EXAMPLE
       2. To get all roles in the system:
          #+BEGIN_EXAMPLE
 	 GET /roles
 	 #+END_EXAMPLE
-      3. To get all the developers associated with IIIT-H:
+      3. To get all the workshops where status is completed:
          #+BEGIN_EXAMPLE
-	 GET /developers?institute=iiith
+	 GET /workshops?status=completed
 	 #+END_EXAMPLE
    2. The second URL pattern is to get details of a particular record,
       identified by a unique identifier =id=. The records can be
       further filtered down with only desired attributes.  For example:
-      1. Get only few details the Data Structures lab (where the lab
-         id is known before):
+      1. Get only few details of a particular workshop (where the workshop id
+         is known before):
          #+BEGIN_EXAMPLE
-	 GET /labs/cse02?fields=name,institute, hosted_url
+	 GET /workshops/2?fields=name, conducted_by, participants_attended, status
 	 #+END_EXAMPLE
       2. Get all the details of particular user (presuming the id
          is known beforehand):
          #+BEGIN_EXAMPLE
 	 GET /users/2
 	 #+END_EXAMPLE
-   3. The third URL pattern is to get record(s) of an entity which is
-      part of another entity. Like to get experiments / technologies /
-      developers of a lab, or to get labs of an institute. The
-      record(s) can also be filtered on some query parameters. Like to
-      get all the technologies of a lab which are non FOSS.  For
-      example:
-      1. Get all technologies of a lab which are non FOSS:
-         #+BEGIN_EXAMPLE
-	 GET /labs/cse02/technologies?foss=false
-	 #+END_EXAMPLE
-      2. Get all experiments of a lab which uses Java3D and Flash:
-         #+BEGIN_EXAMPLE
-	 GET /labs/cse02/experiments?technologies=java3d,flash
-	 #+END_EXAMPLE
-
 
    Note that, nesting of entities in the URL API is only allowed till
    2nd level. Arbitrary nesting of entities might have the problem of
@@ -1260,9 +1320,6 @@ api = Blueprint('APIs', __name__)
     }
 #+END_SRC
 
-   **TODO**: usage documentation of all REST APIs for the consumers of
-   data service has to be written down somewhere and published.
-   
 *** Implementation
 **** Attributes of an entity and their relationship
      All the attributes of an entity and the relationship between the entity
@@ -1302,6 +1359,9 @@ user = {'entity_class': User,
              'relationship': 'one'},
             {'name': 'role',
              'class': Role,
+             'relationship': 'many'},
+            {'name': 'workshop_documents',
+             'class': WorkshopDocument,
              'relationship': 'many'}
              ]}
 
@@ -1315,6 +1375,9 @@ workshop_document = {'entity_class': WorkshopDocument,
                           'relationship': 'one'},
                          {'name': 'path',
                           'class': None,
+                          'relationship': 'one'},
+                         {'name': 'user',
+                          'class': User,
                           'relationship': 'one'}
                           ]}
 
@@ -1469,7 +1532,6 @@ def get_specific_entity(entity, id):
 #+END_SRC
 
 ** REST API to create/update/delete data
-*** Design
 *** Implementation
 **** The entity look up table with corresponding types of their attributes
 #+NAME: entity-map-types
@@ -1495,7 +1557,8 @@ entity_map_types = {
         'entity': WorkshopDocument,
         'types': {
             'name': Name,
-            'path': str
+            'path': str,
+            'user': User
           }
     }
 }
@@ -1902,7 +1965,7 @@ class TestUser(TestCase):
         self.assertEqual(len(result), 1)
 
 #+END_SRC
-
+    
 *** Tests for WorkshopDocument
 #+BEGIN_SRC python :tangle tests/test_api.py :eval no
 class TestWorkshopDocument(TestCase):
@@ -1923,9 +1986,16 @@ class TestWorkshopDocument(TestCase):
     def test_get_all_workshop_documents(self):
         print "test_get_all_workshop_documents"
 
-        document1 = WorkshopDocument(name=Name("Attendance Sheet"), path="/workshop-documents/admin")
+        role = Role(name=Name("OC"))
+        role.save()
+        user1 = User(name=Name("Joe Smith"),
+                     email=Email("joe@smith.com"),
+                     role=role)
+        user1.save()
+
+        document1 = WorkshopDocument(name=Name("Attendance Sheet"), user=user1)
         document1.save()
-        document2 = WorkshopDocument(name=Name("College Report"), path="/workshop-documents/admin")
+        document2 = WorkshopDocument(name=Name("College Report"), user=user1)
         document2.save()
         r = self.client.get('/workshop_documents')
         result = json.loads(r.data)
@@ -1934,9 +2004,17 @@ class TestWorkshopDocument(TestCase):
 
     def test_get_one_workshop_document(self):
         print "test_get_one_workshop_document"
-        doc1 = WorkshopDocument(name=Name("College Report"), path="/workshop-documents/admin")
+
+        role = Role(name=Name("OC"))
+        role.save()
+        user1 = User(name=Name("Joe Smith"),
+                     email=Email("joe@smith.com"),
+                     role=role)
+        user1.save()
+
+        doc1 = WorkshopDocument(name=Name("College Report"), user=user1)
         doc1.save()
-        doc2 = WorkshopDocument(name=Name("Attendance Sheet"), path="/workshop-documents/admin")
+        doc2 = WorkshopDocument(name=Name("Attendance Sheet"), user=user1)
         doc2.save()
         r = self.client.get('/workshop_documents/1')
         result = json.loads(r.data)
@@ -1945,10 +2023,16 @@ class TestWorkshopDocument(TestCase):
 
     def test_update_existing_workshop_document(self):
         print "test_update_existing_workshop_document"
-        doc1 = WorkshopDocument(name=Name("College Report"), path="/workshop-documents/admin")
+
+        role = Role(name=Name("OC"))
+        role.save()
+        user1 = User(name=Name("Joe Smith"),
+                     email=Email("joe@smith.com"),
+                     role=role)
+        user1.save()
+
+        doc1 = WorkshopDocument(name=Name("College Report"), user=user1)
         doc1.save()
-        doc2 = WorkshopDocument(name=Name("Attendance Sheet"), path="/workshop-documents/admin")
-        doc2.save()
         r = self.client.put('/workshop_documents/1',
                             data=json.dumps({'name': 'Feedback'}))
         result = json.loads(r.data)
@@ -1956,17 +2040,33 @@ class TestWorkshopDocument(TestCase):
 
     def test_create_new_workshop_document(self):
         print "test_create_new_workshop_document"
+
+        role = Role(name=Name("OC"))
+        role.save()
+        user1 = User(name=Name("Joe Smith"),
+                     email=Email("joe@smith.com"),
+                     role=role)
+        user1.save()
+
         r = self.client.post('/workshop_documents',
                              data=json.dumps({'name': 'Feedback',
-                                              'path': '/workshop-docs/admin'}))
+                                              'user': user1.to_client()}))
         result = json.loads(r.data)
         self.assertEqual(result['name'], "Feedback")
 
     def test_delete_workshop_document(self):
         print "test_delete_workshop_document"
-        doc1 = WorkshopDocument(name=Name("Feedback"), path="/workshop-docs/admin")
+
+        role = Role(name=Name("OC"))
+        role.save()
+        user1 = User(name=Name("Joe Smith"),
+                     email=Email("joe@smith.com"),
+                     role=role)
+        user1.save()
+
+        doc1 = WorkshopDocument(name=Name("Feedback"), user=user1)
         doc1.save()
-        doc2 = WorkshopDocument(name=Name("College Report"), path="/workshop-docs/admin") 
+        doc2 = WorkshopDocument(name=Name("College Report"), user=user1) 
         doc2.save()
         r = self.client.delete('/workshop_documents/1')
         r = self.client.get('/workshop_documents')
