@@ -8,6 +8,8 @@
       <tr>
         <th>Name</th>
         <th>Email</th>
+         <th>Last Active</th>
+         <th>Created On</th>
         <th>Manage</th>
       </tr>
     </thead>
@@ -15,6 +17,8 @@
       <tr ng-repeat="oc in message">
         <td>{{ oc.name }}</td>
         <td>{{ oc.email }}</td>
+        <td>{{ oc.last_active }}</td>
+        <td>{{ oc.created }}</td>
         <td><a href="#/editoc/{{oc.id}}">Edit</a></td>
         <td><a href="#/manageoc">Delete</a></td>
         
