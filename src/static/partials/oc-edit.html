@@ -1,0 +1,11 @@
+<!-- contact.html -->
+    <div class="jumbotron text-center">
+        <h1>OC {{ message[0].name }} Details</h1>
+        
+        <form ng-submit="submit()">
+        <p>Name <input type="text" ng-model="message[0].name" name="text">
+        <p>Email <input type="text" ng-model="message[0].email" name="email"/><p>
+            <input type="submit" id="submit" value="Submit" />
+            <input type="reset" value="Reset" \><a href="#/manageoc">Cancel</a> {{ status }}
+        </form>
+    </div>

@@ -25,7 +25,13 @@
 	    </div>
 	  </div>
 	</div>
-	  <div role="tabpanel" class="tab-pane" id="manageoc">Manage O.C</div>
+	<div role="tabpanel" class="tab-pane" id="manageoc">
+          <div ng-controller="mainController">
+              <div ng-view>
+              </div>
+            </div>
+        
+        </div>
 	  <div role="tabpanel" class="tab-pane" id="documents">Documents</div>
 	  <div role="tabpanel" class="tab-pane" id="profile">
 	    <div class="row">

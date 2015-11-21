@@ -1,0 +1,28 @@
+<!-- home.html -->
+    <div class="jumbotron text-center" >
+        <h1>Home Page</h1>
+        
+          <table border="1">
+            <th align="center"><a href="#/addoc">Add OC</a></th>
+            <tr>
+               <td>Name</td>
+              <td>Email</td>
+               <td>Role</td>
+               <td>Edit  </td>
+              
+             
+            </tr>
+           
+            <tr ng-repeat="oc in message">
+              
+              <td>{{ oc.name }}</td>
+              <td>{{ oc.email }}</td>
+              <td>{{ oc.role['name'] }}
+              <td><a href="#/editoc/{{oc.id}}">Edit</a></td>
+              
+             
+            </tr>
+           
+          </table>
+        
+    </div>

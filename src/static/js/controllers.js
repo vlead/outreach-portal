@@ -103,5 +103,86 @@ angular.module('outreachApp.controllers',[]).controller('mapCtrl', function ($sc
             });
         }  
 	
+}).controller("mainController", function($scope, $http) {
+  $http.get('/users?role_id=3').
+    success(function(data, status, headers, config) {
+      //$scope.message= data.records[0]['Name'];
+      //alert(status);
+      
+      $scope.message= data;
+      console.log(headers);
+      
+    }).
+    error(function(data, status, headers, config) {
+      console.log(data);
+      
     });
+}).controller("editoc", function($scope, $http, $routeParams) {
+  $http.get('/users?id='+$routeParams.id).
+    success(function(data, status, headers, config) {
+      //$scope.message= data.records[0]['Name'];
+      //alert(status);
+      
+      $scope.message= data;
+      console.log('/users?id='+$routeParams.id);
+      
+    }).
+    error(function(data, status, headers, config) {
+      console.log(data);
+      
+    });
+    $scope.submit = function () {
+        console.log(typeof($scope.message[0].email));
+        if($scope.message[0].name != "" & $scope.message[0].email != "")
+        {
+            $http.put('/users/'+$routeParams.id, {'name' : $scope.message[0].name, 'email' : $scope.message[0].email}).
+                success(function(data, status, headers, config) {
+                    
+                    $scope.status = "Success";
+                    window.location.href = "#/manageoc";
+                    //$scope.message= $routeParams.id;
+                    
+                }).
+                error(function(data, status, headers, config) {
+                    if(status == 500){
+                        alert(status);
+                        $scope.status = "Duplicate Entry";}
+                    else
+                    {$scope.status = "Failed"}
+                    
+                });
+        }
+        else
+        {$scope.status = "Not empty"}
+        
+    }
+
+
+}).controller("addoc", function($scope, $http, $routeParams) {
+
+    $scope.submit = function()
+    {
+        
+        $http.post('/users',{'name' : $scope.name,'email' : $scope.email,'role' : { 'id' : 3 } } ).
+            success(function(data, status, headers, config) {
+                $scope.status = "Success";
+                window.location.href = "#/manageoc";
+                //$scope.message= $routeParams.id;
+                
+            }).
+            error(function(data, status, headers, config) {
+                if(status == 500){
+                    $scope.status = "Duplicate Entry";}
+                else
+                {$scope.status = "Failed"}
+                
+            });
+  
+        
+    }
+
+
+});
+
+
 
