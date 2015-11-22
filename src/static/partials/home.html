@@ -1,14 +1,47 @@
-<!-- home.html -->
+
+<div class="container">
+  <h2>OC DETAILS</h2>
+  <a href="#/addoc" role="button" class="btn btn-success btn-large">ADD OC</a>
+  <table class="table table-bordered">
+    <thead>
+      
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Manage</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="oc in message">
+        <td>{{ oc.name }}</td>
+        <td>{{ oc.email }}</td>
+        <td><a href="#/editoc/{{oc.id}}">Edit</a></td>
+        <td><a href="#/manageoc">Delete</a></td>
+        
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+
+
+
+
+
+
+
+<!-- home.html
     <div class="jumbotron text-center" >
         <h1>Home Page</h1>
         
           <table border="1">
-            <th align="center"><a href="#/addoc">Add OC</a></th>
+            <th align="center"></th>
             <tr>
                <td>Name</td>
               <td>Email</td>
-               <td>Role</td>
-               <td>Edit  </td>
+               <td>Edit</td>
+               <td>Delete</td>
               
              
             </tr>
@@ -17,8 +50,8 @@
               
               <td>{{ oc.name }}</td>
               <td>{{ oc.email }}</td>
-              <td>{{ oc.role['name'] }}
               <td><a href="#/editoc/{{oc.id}}">Edit</a></td>
+              <td><a href="#/deloc/{{oc.id}}">Delete</a></td>
               
              
             </tr>
@@ -26,3 +59,4 @@
           </table>
         
     </div>
+-->

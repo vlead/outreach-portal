@@ -1,4 +1,47 @@
-<!-- contact.html -->
+<!DOCTYPE html>
+<html>
+<script src= "http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>  
+<body>
+
+<h2>Edit {{ message[0].name }} DETAILS</h2>
+{{ status }}
+<form name="myForm" novalidate ng-submit="submit()">
+
+<p>Username:<br>
+<input type="text" name="user" ng-model="message[0].name" required>
+<span style="color:red" ng-show="myForm.user.$dirty && myForm.user.$invalid">
+<span ng-show="myForm.user.$error.required">Username is required.</span>
+</span>
+</p>
+
+<p>Email:<br>
+<input type="email" name="email" ng-model="message[0].email" required>
+<span style="color:red" ng-show="myForm.email.$dirty && myForm.email.$invalid">
+<span ng-show="myForm.email.$error.required">Email is required.</span>
+<span ng-show="myForm.email.$error.email">Invalid email address.</span>
+</span>
+</p>
+
+<p>
+<input type="submit" value="Save" ng-disabled="myForm.user.$dirty && myForm.user.$invalid ||
+                                  myForm.email.$dirty &&
+                                  myForm.email.$invalid">
+<a href="#/manageoc">Cancel</a>
+</p>
+
+</form>
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+<!-- contact.html
     <div class="jumbotron text-center">
         <h1>OC {{ message[0].name }} Details</h1>
         
@@ -9,3 +52,4 @@
             <input type="reset" value="Reset" \><a href="#/manageoc">Cancel</a> {{ status }}
         </form>
     </div>
+-->
