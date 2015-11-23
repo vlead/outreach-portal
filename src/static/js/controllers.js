@@ -99,17 +99,83 @@ angular.module('outreachApp.controllers',[])
             });
     }  
 	
-}).controller("mainController", function($scope, $http) {
+}).controller("mainController", function($scope, $http, $routeParams) {
   $http.get('/users?role_id=3').success(function(data, status, headers, config)
     {
         $scope.message= data;
-        console.log(headers);
+        
       
     }).error(function(data, status, headers, config)
     {
       console.log(data);
       
     });
+    $scope.del =  function(a)
+    {
+        $http.delete('/users/'+a).
+            success(function(data, status, headers, config) 
+                    {
+                      
+                           window.location.href = "#/manageoc";
+                      
+                    }).
+            error(function(data, status, headers, config)
+                  {
+                      console.log(data);
+                      
+                  });
+
+        
+    }
+    
+}).controller("mainController", function($scope, $http, $routeParams) {
+  $http.get('/users?role_id=3').success(function(data, status, headers, config)
+    {
+        $scope.message= data;
+        
+      
+    }).error(function(data, status, headers, config)
+    {
+      console.log(data);
+      
+    });
+    /*
+    $scope.del =  function(a)
+    {
+        $http.delete('/users/'+a).
+            success(function(data, status, headers, config) 
+                    {
+                      
+                           window.location.href = "#/manageoc";
+                      
+                    }).
+            error(function(data, status, headers, config)
+                  {
+                      console.log(data);
+                      
+                  });
+
+        
+    }
+    */
+}).controller("deloc", function($scope, $http, $routeParams) {
+  
+        $http.delete('/users/'+$routeParams.id).
+            success(function(data, status, headers, config) 
+                    {
+                      
+                           window.location.href = "#/manageoc";
+                      
+                    }).
+            error(function(data, status, headers, config)
+                  {
+                      console.log(data);
+                      
+                  });
+
+        
+  
+
 
 }).controller("editoc", function($scope, $http, $routeParams) {
   $http.get('/users?id='+$routeParams.id).

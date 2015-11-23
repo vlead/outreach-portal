@@ -4,6 +4,9 @@
 body{
     font-family: 'Raleway', sans-serif;
 }
+h1,h2,h3{
+    font-family: 'Raleway' !important;
+}
 .navbar-custom{
 	min-height: 90px;
 	margin-bottom: 0;
