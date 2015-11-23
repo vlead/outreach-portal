@@ -1241,7 +1241,8 @@ WHITELIST_IPS = ["127.0.0.1"]
 #LOG_LEVEL = 'DEBUG'
 
 # destination for uploaded files
-UPLOAD_DIR_PATH = '/home/vlead/Desktop/outreach-docs/users/'
+# example value - '/home/vlead/Desktop/outreach-docs/'
+UPLOAD_DIR_PATH = '/home/vlead/Desktop/outreach-docs/'
 
 # allowed file extensions that can be uploaded
 ALLOWED_FILE_EXTENSIONS = ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'csv']
@@ -1472,22 +1473,8 @@ def logout_handler():
     session.pop('role', None)
     return "Ok"
 
-@api.route("/upload_document", methods=['POST'])
-def get_parameters():
-    if request.method == 'POST':
-        data = parse_request(request)
-        print "data is parsed %s" % data
-        response = {
-            'base_url': "upload_document",
-            'name': data['name'],
-            'created_by': data['created_by']
-        }
-        return jsonify(response)
-
-
 @api.route('/upload_document/<id>', methods=['GET', 'POST'])
 def save_file(id):
-    print id
     if request.method == 'GET':
         return '''
         <!doctype html>
@@ -1500,19 +1487,23 @@ def save_file(id):
         '''
     if request.method == 'POST':
         file = request.files['file']
-        filename = secure_filename(file.filename)
-        dir_path = "%s" % ("/home/vlead/Desktop/outreach-docs/")
-        file_path = "%s%s" % (dir_path, filename)
-        file.save(file_path)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            current_time = datetime.utcnow()
+            dir_path = "%s" % (UPLOAD_DIR_PATH)
+            file_path = "%s%s" % (dir_path, filename)
+            file.save(file_path)
 
         path = {'path': file_path}
-        print path
-        print "http://localhost:5000/workshop_documents/"\
-                                + id
-        response = requests.put("http://localhost:5000/workshop_documents/"\
-                                + id, data=path)
-        print response
+        url = APP_URL + "/workshop_documents/"\
+              + id
+        response = requests.put(url, data=path)
         return file_path
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in set(ALLOWED_FILE_EXTENSIONS)
+
 
 # query an entity
 # =/<:entity>s?query_param1=val1&query_param2=val2&..query_paramn=valn=
