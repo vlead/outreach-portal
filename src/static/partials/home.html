@@ -1,33 +1,36 @@
 
-<div class="container">
-  <h2>OC DETAILS</h2>
-  <a href="#/addoc" role="button" class="btn btn-success btn-large">ADD OC</a>
-  <table class="table table-bordered">
-    <thead>
-      
-      <tr>
-        <th>Name</th>
-        <th>Email</th>
-         <th>Last Active</th>
-         <th>Created On</th>
-        <th>Manage</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr ng-repeat="oc in message">
-        <td>{{ oc.name }}</td>
-        <td>{{ oc.email }}</td>
-        <td>{{ oc.last_active }}</td>
-        <td>{{ oc.created }}</td>
-        <td><a href="#/editoc/{{oc.id}}">Edit</a></td>
-        <td><a href="#/manageoc">Delete</a></td>
-        
-      </tr>
-    </tbody>
-  </table>
+
+<div class="row">
+  <div class="col-md-10"><h2>OC DETAILS</h2></div>
+  <div class="col-md-2">
+     <a href="#/addoc" role="button" class="btn btn-success btn-large">ADD OC</a>
+  </div>
 </div>
-
-
+<div class="row">
+  <div class="col-md-12">
+    <table class="table table-hover">
+      <thead>
+	<tr>
+	  <th>Name</th>
+	  <th>Email</th>
+	  <th>Last Active</th>
+	  <th>Created On</th>
+          <th>Manage</th>
+	</tr>
+      </thead>
+      <tbody>
+	<tr ng-repeat="oc in message">
+          <td>{{ oc.name }}</td>
+          <td>{{ oc.email }}</td>
+          <td>{{ oc.last_active }}</td>
+          <td>{{ oc.created }}</td>
+          <td><a href="#/editoc/{{oc.id}}" class="btn btn-primary">Edit</a></td>
+          <td><a href="#/manageoc" class="btn btn-danger">Delete</a></td>
+	</tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 
 
 
