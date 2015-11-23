@@ -107,7 +107,7 @@ from flask import session, render_template, Blueprint, request, jsonify, abort,\
     current_app, redirect, url_for
 from config import *
 
-from flask import Flask, request, redirect, url_for
+from flask import Flask, redirect, url_for
 from werkzeug import secure_filename
 
 from db import *
@@ -761,12 +761,12 @@ class WorkshopDocument(Entity):
             self.set_path(kwargs['path'])
 
     def __str__(self):
-        return "Name = %s, user = %s" % \
-            (self.name, self.user.name)
+        return "Name = %s, user = %s, path = %s" % \
+            (self.name, self.user.name, self.path)
 
     def __repr__(self):
-        return "Name = %s, user = %s" % \
-            (self.name, self.user.name)
+        return "Name = %s, user = %s, path = %s" % \
+            (self.name, self.user.name, self.path)
 
 #+END_SRC
 
@@ -945,13 +945,9 @@ class TestWorkshopDocument(TestCase):
 
 ***** setPath: WorkshopDocument, String --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no 
- #   @typecheck(path=str)
+    @typecheck(path=str)
     def set_path(self, path):
-        file = open(kwargs['path'], 'rb')
-        file_name = secure_filename(file.name)
-        print file_name
-        file.write("/home/vlead/Desktop/uploads/")
-        self.path = UPLOAD_DIR_PATH + file_name
+        self.path = path
 #+END_SRC
 
 ***** Test setPath: WorkshopDocument, String --> Void
@@ -1489,13 +1485,9 @@ def get_parameters():
         return jsonify(response)
 
 
-@api.route('/upload_document/<string>', methods=['GET', 'POST'])
-def save_file(string):
-    print string
-    named_arguments = string.split(";")
-    name = named_arguments[0].split("=")[1]
-    user_id = named_arguments[1].split("=")[1]
-
+@api.route('/upload_document/<id>', methods=['GET', 'POST'])
+def save_file(id):
+    print id
     if request.method == 'GET':
         return '''
         <!doctype html>
@@ -1509,25 +1501,18 @@ def save_file(string):
     if request.method == 'POST':
         file = request.files['file']
         filename = secure_filename(file.filename)
-        dir_path = "%s%s" % ("/home/vlead/Desktop/outreach-docs/", user_id)
+        dir_path = "%s" % ("/home/vlead/Desktop/outreach-docs/")
         file_path = "%s%s" % (dir_path, filename)
         file.save(file_path)
 
-        response = {
-            'file_path': file_path,
-            'name': name,
-            'created_by': user_id
-        }
-
-        workshop_document = WorkshopDocument(name=response['name'],\
-                                             user=response['created_by'],\
-                                             path=response['file_path'])
-        # workshop_document.save()
-        db.session.add(record)
-        db.session.commit()
-        return jsonify(response)
-
-
+        path = {'path': file_path}
+        print path
+        print "http://localhost:5000/workshop_documents/"\
+                                + id
+        response = requests.put("http://localhost:5000/workshop_documents/"\
+                                + id, data=path)
+        print response
+        return file_path
 
 # query an entity
 # =/<:entity>s?query_param1=val1&query_param2=val2&..query_paramn=valn=
