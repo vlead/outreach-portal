@@ -107,6 +107,9 @@ from flask import session, render_template, Blueprint, request, jsonify, abort,\
     current_app, redirect, url_for
 from config import *
 
+from flask import Flask, request, redirect, url_for
+from werkzeug import secure_filename
+
 from db import *
 from utils import parse_request, jsonify_list
 from maps import *
@@ -382,7 +385,7 @@ class User(Entity):
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     workshop_documents = db.relationship('WorkshopDocument', backref='user')
     created = db.Column(db.DateTime(), default=datetime.utcnow)
-    last_active = db.Column(db.DateTime(), default=datetime.utcnow)
+    last_active = db.Column(db.String(128))
     
  #+END_SRC
 
@@ -406,14 +409,18 @@ class User(Entity):
         if 'role' not in kwargs:
             raise AttributeRequired("mandatory attribute `role` is missing")
         self.set_role(kwargs['role'])
+
+        if 'last_active' in kwargs:
+            self.set_last_active(kwargs['last_active'])
+        
         
     def __str__(self):
-        return "Name = %s, e-mail id = %s, role = %s" % \
-            (self.name, self.email, self.role.name)
+        return "Name = %s, e-mail id = %s, role = %s, last_active = %s" % \
+            (self.name, self.email, self.role.name, self.last_active)
 
     def __repr__(self):
-        return "Name = %s, e-mail id = %s, role = %s" % \
-            (self.name, self.email, self.role.name)
+        return "Name = %s, e-mail id = %s, role = %s, last_active = %s" % \
+            (self.name, self.email, self.role.name, self.last_active)
 
 #+END_SRC
      
@@ -591,30 +598,16 @@ class TestUser(TestCase):
     def get_last_active(self):
         return self.last_active
 #+END_SRC
-
+      
 ***** Test getLastActive: User --> Datetime
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_get_user_last_act(self):
         print "test_get_user_last_act"
         role = Role(name=Name("Admin"))
-        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role,\
+                    last_active="Mon Nov 23 2015 06:18:26 GMT-0500 (EST)")
         user.save()
-        time = datetime.utcnow()
-        year = time.year
-        month = time.month
-        day = time.day
-        minute = time.minute
-
-        user_last_act = user.get_last_active()
-        user_last_act_year = user_last_act.year
-        user_last_act_month = user_last_act.month
-        user_last_act_day = user_last_act.day
-        user_last_act_min = user_last_act.minute
-
-        self.assertEqual(user_last_act_year, year)
-        self.assertEqual(user_last_act_month, month)
-        self.assertEqual(user_last_act_day, day)
-        self.assertEqual(user_last_act_min, minute)
+        self.assertEqual(user.last_active, "Mon Nov 23 2015 06:18:26 GMT-0500 (EST)")
 
 #+END_SRC
 
@@ -658,6 +651,24 @@ class TestUser(TestCase):
         self.assertEqual("madhavi@vlabs.ac.in", user.email)
 #+END_SRC
 
+***** setLastActive: User, Time --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def set_last_active(self, last_active):
+        self.last_active = last_active
+#+END_SRC
+
+***** Test setLastActive: User, Time --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_set_user_last_active(self):
+        print "test_set_user_last_active"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)     
+        user.save()
+        user.set_last_active("Mon Nov 23 2015 06:18:26 GMT-0500 (EST)")
+        user.save()
+        self.assertEqual("Mon Nov 23 2015 06:18:26 GMT-0500 (EST)", user.last_active)
+#+END_SRC
+
 ***** setRole: User, Role --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(role=Role)
@@ -688,7 +699,7 @@ class TestUser(TestCase):
             'email': self.email,
             'name': self.name,
             'role': self.role.to_client(),
-            'last_active': self.last_active.isoformat(),
+            'last_active': self.last_active,
             'created': self.created.isoformat()
         }
 #+END_SRC
@@ -896,7 +907,8 @@ class TestWorkshopDocument(TestCase):
         user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
         user.save()
 
-        workshop_document = WorkshopDocument(name=Name("Attendance Sheet"), user=user)
+        workshop_document = WorkshopDocument(name=Name("Attendance Sheet"), user=user,\
+                                             path="/workshop-documents/admin")
         workshop_document_path = workshop_document.get_path()
         self.assertEqual(workshop_document_path, "/workshop-documents/admin")
 #+END_SRC
@@ -954,7 +966,8 @@ class TestWorkshopDocument(TestCase):
         user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
         user.save()
 
-        workshop_document = WorkshopDocument(name=Name("Attandance Sheet"), user=user)
+        workshop_document = WorkshopDocument(name=Name("Attandance Sheet"), user=user,\
+                                             path="/workshop-documents/OC")
         workshop_document.set_path("/workshop-documents/OC")
         workshop_document.save()
         doc = workshop_document.get_by_id(1)
@@ -1232,7 +1245,7 @@ WHITELIST_IPS = ["127.0.0.1"]
 #LOG_LEVEL = 'DEBUG'
 
 # destination for uploaded files
-UPLOAD_DIR_PATH = '/home/vlead/Desktop/uploads/'
+UPLOAD_DIR_PATH = '/home/vlead/Desktop/outreach-docs/users/'
 
 # allowed file extensions that can be uploaded
 ALLOWED_FILE_EXTENSIONS = ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'csv']
@@ -1463,6 +1476,59 @@ def logout_handler():
     session.pop('role', None)
     return "Ok"
 
+@api.route("/upload_document", methods=['POST'])
+def get_parameters():
+    if request.method == 'POST':
+        data = parse_request(request)
+        print "data is parsed %s" % data
+        response = {
+            'base_url': "upload_document",
+            'name': data['name'],
+            'created_by': data['created_by']
+        }
+        return jsonify(response)
+
+
+@api.route('/upload_document/<string>', methods=['GET', 'POST'])
+def save_file(string):
+    print string
+    named_arguments = string.split(";")
+    name = named_arguments[0].split("=")[1]
+    user_id = named_arguments[1].split("=")[1]
+
+    if request.method == 'GET':
+        return '''
+        <!doctype html>
+        <title>Upload new File</title>
+        <h1>Upload new File</h1>
+        <form action="" method=post enctype=multipart/form-data>
+        <p><input type=file name=file>
+        <input type=submit value=Upload>
+        </form>
+        '''
+    if request.method == 'POST':
+        file = request.files['file']
+        filename = secure_filename(file.filename)
+        dir_path = "%s%s" % ("/home/vlead/Desktop/outreach-docs/", user_id)
+        file_path = "%s%s" % (dir_path, filename)
+        file.save(file_path)
+
+        response = {
+            'file_path': file_path,
+            'name': name,
+            'created_by': user_id
+        }
+
+        workshop_document = WorkshopDocument(name=response['name'],\
+                                             user=response['created_by'],\
+                                             path=response['file_path'])
+        # workshop_document.save()
+        db.session.add(record)
+        db.session.commit()
+        return jsonify(response)
+
+
+
 # query an entity
 # =/<:entity>s?query_param1=val1&query_param2=val2&..query_paramn=valn=
 @api.route('/<entity>', methods=['GET'])
@@ -1551,7 +1617,7 @@ entity_map_types = {
             'name': Name,
             'email': Email,
             'role': Role,
-            'last_active': datetime,
+            'last_active': str,
             'created': datetime
         }
     },
