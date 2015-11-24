@@ -1,0 +1,613 @@
+#+TITLE: Outreach Portal API wiki 
+#+AUTHOR: VLEAD
+#+DATE: [2015-11-24 Tue]
+#+PROPERTY: results output
+#+PROPERTY: exports code
+#+SETUPFILE: ../org-templates/level-0.org
+#+options: ^:nil
+
+* Introduction
+  This document explains the different endpoints through which an application
+  can communicate with the back-end service of =Outreach Portal=. This document
+  is a work in progress and is updated regularly as the service is evolving
+  continuously over the course of time.
+
+* REST APIs
+- All API access is over HTTP and data is sent and received as JSON. 
+- To use the API layer, your application will make an HTTP request and parse the response. 
+- The response format is JSON.
+- Your methods will be the standard HTTP methods like GET, PUT and POST.
+
+- Appropriate *HTTP verbs* for each action are listed below:
+|--------+----------------------------------------------|
+| *Verb* | *Description*                                |
+|--------+----------------------------------------------|
+| GET    | Used for retrieving resources.               |
+|--------+----------------------------------------------|
+| PUT    | Used for replacing resources or collections. |
+|--------+----------------------------------------------|
+| POST   | Used for creating resources.                 |
+|--------+----------------------------------------------|
+
+
+** Resources
+Following is the list of current REST APIs provided by outreach portal:
+#+BEGIN_SRC 
+- /roles [GET, POST]
+- /roles/<int:id> [GET, PUT, DELETE]
+- /roles/<int:id>?fields=field1,field2 [GET]
+- /roles?query_param1=val1&query_param2=val2&..query_paramn=valn [GET]
+- /users [GET, POST]
+- /users/<int:id> [GET, PUT, DELETE]
+- /users/<int:id>?fields=field1,field2 [GET]
+- /users?query_param1=val1&query_param2=val2&..query_paramn=valn [GET]
+- /workshop_documents [GET, POST]
+- /workshop_documents/<int:id> [GET, PUT, DELETE]
+- /workshop_documents/<int:id>?fields=field1,field2 [GET]
+- /workshop_documents?query_param1=val1&query_param2=val2&..query_paramn=valn [GET]
+- /upload_document/<id> [POST]
+#+END_SRC
+
+*** /roles
+- Parameters
+|--------+---------------------------------------------------------|
+| *Name* | *Description*                                           |
+|--------+---------------------------------------------------------|
+| *id*   | Indicates the unique id of the role. *Example Value:* 2 |
+|--------+---------------------------------------------------------|
+| *name* | Specifies the name of role. *Example Value:*  Admin     |
+|--------+---------------------------------------------------------|
+
+- *GET* 
+ + Example Request
+  #+BEGIN_SRC
+  /roles
+  #+END_SRC
+
+ + Example Result
+  #+BEGIN_SRC
+ [{"id": 1, "name": "admin"}, {"id": 2, "name": "OC"}, {"id": 3, "name": "NC"}]
+  #+END_SRC
+
+- *POST* 
+ + Example Request
+  #+BEGIN_SRC
+ json =  {
+    "name" : "Admin"
+}
+  #+END_SRC
+
+ + Example Result
+
+  #+BEGIN_SRC
+{
+  "id": 1, 
+  "name": "Admin"
+}
+ #+END_SRC
+
+*** /roles/<int:id>
+- Parameters
+
+|--------+---------------------------------------------------------|
+| *Name* | *Description*                                           |
+|--------+---------------------------------------------------------|
+| *id*   | Indicates the unique id of the role. *Example Value:* 2 |
+|--------+---------------------------------------------------------|
+| *name* | Specifies the name of role. *Example Value:*  Admin     |
+|--------+---------------------------------------------------------|
+
+- *GET* - 
+ + Example Request
+  #+BEGIN_EXAMPLE
+   /roles/1 
+   #+END_EXAMPLE
+
+ + Example Result
+  #+BEGIN_SRC
+ {
+  "id": 1, 
+  "name": "Admin"
+ }
+  #+END_SRC
+
+- *PUT*
+ + Example Request
+   #+BEGIN_SRC
+     name = {"name":"Outreach Coordinator"}
+   #+END_SRC
+
+ + Example Result
+   #+BEGIN_SRC
+ {
+  "id": 1, 
+  "name": "Outreach Coordinator"
+ }
+    #+END_SRC
+- *DELETE*
+ + Example Result
+   #+BEGIN_SRC
+{
+  "id": "4", 
+  "status": "success"
+}
+    #+END_SRC
+
+*** /roles/<int:id>?fields=field1,field2 
+
+- Parameters
+|--------+--------------------------------------------|
+| *Name* | *Description*                              |
+|--------+--------------------------------------------|
+| *name* | Returns the name of the role               |
+|--------+--------------------------------------------|
+| *id*   | Indicates a unique id assigned to the role |
+|--------+--------------------------------------------|
+
+- *GET* -
+ + Example Request
+   #+BEGIN_SRC
+   /roles/2?fields=name,id
+   #+END_SRC
+ 
+ + Example Result
+   #+BEGIN_SRC
+{
+  "id": 2, 
+  "name": "OC"
+}
+   #+END_SRC
+
+*** /roles?query_param1=val1&query_param2=val2&..query_paramn=valn
+- Parameters
+|--------+--------------------------------------------|
+| *Name* | *Description*                              |
+|--------+--------------------------------------------|
+| *name* | Returns the name of the role               |
+|--------+--------------------------------------------|
+| *id*   | Indicates a unique id assigned to the role |
+|--------+--------------------------------------------|
+
+- *GET* -
+ + Example Request
+   #+BEGIN_SRC
+   /roles?name=OC
+   #+END_SRC
+ 
+ + Example Result
+   #+BEGIN_SRC
+[{"id": 2, "name": "OC"}]
+   #+END_SRC
+
+*** /users
+- Parameters
+|---------------+--------------------------------------------------------------------------------------------------|
+| *Name*        | *Description*                                                                                    |
+|---------------+--------------------------------------------------------------------------------------------------|
+| *id*          | Indicates the unique id of the user. *Example Value:* 2                                          |
+|---------------+--------------------------------------------------------------------------------------------------|
+| *name*        | Specifies the name of user. *Example Value:*  John                                               |
+|---------------+--------------------------------------------------------------------------------------------------|
+| *email*       | Specifies the email of user. *Example Value:*  John@gmail.com                                    |
+|---------------+--------------------------------------------------------------------------------------------------|
+| *role*        | Indicates the role of the user. *Example Value:*  Admin, OC, NC                                  |
+|---------------+--------------------------------------------------------------------------------------------------|
+| *last_active* | Indicates when the user last logged in. *Example Value:* Mon Nov 23 2015 06:18:26 GMT-0500 (EST) |
+|---------------+--------------------------------------------------------------------------------------------------|
+- *GET* 
+ + Example Request
+  #+BEGIN_SRC
+  /users
+  #+END_SRC
+
+ + Example Result
+  #+BEGIN_SRC
+ [{"name": "John", "last_active": "2015-11-17T09:31:29", "created":
+ "2015-11-17T09:31:29", "email": "john@gmil.com", "role": {"id": 1, "name":
+ "Admin"}, "id": 1}]
+  #+END_SRC
+
+- *POST* 
+ + Example Request
+  #+BEGIN_SRC
+ json =  {
+ "name" : "John",
+ "email" : "john@gmail.com",
+ "role" : { "id" : 1 },
+ "last_active" : "2015-11-17T09:31:29"  
+  }
+  #+END_SRC
+ + Example Result
+  #+BEGIN_SRC
+{
+  "created": "2015-11-17T09:31:29", 
+  "email": "john@gmil.com", 
+  "id": 1, 
+  "last_active": "2015-11-17T09:31:29", 
+  "name": "John", 
+  "role": {
+    "id": 1, 
+    "name": "Admin"
+  }
+}
+ #+END_SRC
+*** /users/<int:id>
+- Parameters
+|---------------+--------------------------------------------------------------------------------------------------|
+| *Name*        | *Description*                                                                                    |
+|---------------+--------------------------------------------------------------------------------------------------|
+| *id*          | Indicates the unique id of the user. *Example Value:* 2                                          |
+|---------------+--------------------------------------------------------------------------------------------------|
+| *name*        | Specifies the name of user. *Example Value:*  John                                               |
+|---------------+--------------------------------------------------------------------------------------------------|
+| *email*       | Specifies the email of user. *Example Value:*  John@gmail.com                                    |
+|---------------+--------------------------------------------------------------------------------------------------|
+| *role*        | Indicates the role of the user. *Example Value:*  Admin, OC, NC                                  |
+|---------------+--------------------------------------------------------------------------------------------------|
+| *last_active* | Indicates when the user last logged in. *Example Value:* Mon Nov 23 2015 06:18:26 GMT-0500 (EST) |
+|---------------+--------------------------------------------------------------------------------------------------|
+
+- *GET* - 
+ + Example Request
+  #+BEGIN_EXAMPLE
+   /users/1 
+   #+END_EXAMPLE
+
+ + Example Result
+  #+BEGIN_SRC
+{
+  "created": "2015-11-17T09:31:29", 
+  "email": "john@gmil.com", 
+  "id": 1, 
+  "last_active": "2015-11-17T09:31:29", 
+  "name": "John", 
+  "role": {
+    "id": 1, 
+    "name": "Admin"
+  }
+}
+  #+END_SRC
+
+- *PUT*
+ + Example Request
+   #+BEGIN_SRC
+     name = {"name":"jane"}
+   #+END_SRC
+
+ + Example Result
+   #+BEGIN_SRC
+
+  "created": "2015-11-17T09:31:29", 
+  "email": "john@gmil.com", 
+  "id": 1, 
+  "last_active": "2015-11-17T09:31:29", 
+  "name": "Jane", 
+  "role": {
+    "id": 1, 
+    "name": "Admin"
+  }
+}
+    #+END_SRC
+- *DELETE*
+ + Example Result
+   #+BEGIN_SRC
+{
+  "id": "1", 
+  "status": "success"
+}
+    #+END_SRC
+*** /users/<int:id>?fields=field1,field2
+- Parameters
+|---------------+--------------------------------------------------------------------------------------------------|
+| *Name*        | *Description*                                                                                    |
+|---------------+--------------------------------------------------------------------------------------------------|
+| *id*          | Indicates the unique id of the user. *Example Value:* 2                                          |
+|---------------+--------------------------------------------------------------------------------------------------|
+| *name*        | Specifies the name of user. *Example Value:*  John                                               |
+|---------------+--------------------------------------------------------------------------------------------------|
+| *email*       | Specifies the email of user. *Example Value:*  John@gmail.com                                    |
+|---------------+--------------------------------------------------------------------------------------------------|
+| *role*        | Indicates the role of the user. *Example Value:*  Admin, OC, NC                                  |
+|---------------+--------------------------------------------------------------------------------------------------|
+| *last_active* | Indicates when the user last logged in. *Example Value:* Mon Nov 23 2015 06:18:26 GMT-0500 (EST) |
+|---------------+--------------------------------------------------------------------------------------------------|
+
+- *GET* -
+ + Example Request
+   #+BEGIN_SRC
+   /users/4?fields=name,email
+   #+END_SRC
+ 
+ + Example Result
+   #+BEGIN_SRC
+{
+  "created": "2015-11-17T09:41:20", 
+  "email": "john@gmail.com", 
+  "id": 4, 
+  "last_active": "2015-11-17T09:41:20", 
+  "name": "John", 
+  "role": {
+    "id": 1, 
+    "name": "Admin"
+  }
+}
+   #+END_SRC
+
+*** /users?query_param1=val1&query_param2=val2&..query_paramn=valn
+- Parameters
+|---------------+--------------------------------------------------------------------------------------------------|
+| *Name*        | *Description*                                                                                    |
+|---------------+--------------------------------------------------------------------------------------------------|
+| *id*          | Indicates the unique id of the user. *Example Value:* 2                                          |
+|---------------+--------------------------------------------------------------------------------------------------|
+| *name*        | Specifies the name of user. *Example Value:*  John                                               |
+|---------------+--------------------------------------------------------------------------------------------------|
+| *email*       | Specifies the email of user. *Example Value:*  John@gmail.com                                    |
+|---------------+--------------------------------------------------------------------------------------------------|
+| *role*        | Indicates the role of the user. *Example Value:*  Admin, OC, NC                                  |
+|---------------+--------------------------------------------------------------------------------------------------|
+| *last_active* | Indicates when the user last logged in. *Example Value:* Mon Nov 23 2015 06:18:26 GMT-0500 (EST) |
+|---------------+--------------------------------------------------------------------------------------------------|
+
+- *GET* -
+ + Example Request
+   #+BEGIN_SRC
+   /roles?name=John&email=john@gmail.com
+   #+END_SRC
+ 
+ + Example Result
+   #+BEGIN_SRC
+[{"name": "John", "last_active": "2015-11-17T09:41:20", "created":
+"2015-11-17T09:41:20", "email": "john@gmail.com", "role": {"id": 1, "name":
+"Admin"}, "id": 1}]
+   #+END_SRC
+*** /workshop_documents
+- Parameters
+|--------+------------------------------------------------------------------------------------------------------------|
+| *Name* | *Description*                                                                                              |
+|--------+------------------------------------------------------------------------------------------------------------|
+| *id*   | Indicates the unique id of the workshop_document. *Example Value:* 2                                       |
+|--------+------------------------------------------------------------------------------------------------------------|
+| *name* | Specifies the name of workshop_document. *Example Value:*  Attendance Sheet, Feedback Form, College Report |
+|--------+------------------------------------------------------------------------------------------------------------|
+| *user* | Specifies the user who uploaded the document. *Example Value:* {"id" : 1 }                                 |
+|--------+------------------------------------------------------------------------------------------------------------|
+| *path* | Specifies the path of workshop_document. *Example Value:* /outreach-portal/workshop-docs/admin             |
+|--------+------------------------------------------------------------------------------------------------------------|
+- *GET* 
+ + Example Request
+  #+BEGIN_SRC
+  /workshop_documents
+  #+END_SRC
+
+ + Example Result
+  #+BEGIN_SRC
+[{"path": "/home/vlead/Desktop/outreach-docs/sign1.jpg", "user": {"name":
+"John", "last_active": null, "created": "2015-11-23T06:02:24", "email":
+"john@gmail.com", "role": {"id": 1, "name": "Admin"}, "id": 1}, "id": 7,
+"name": "Feedback Form"}, {"path":
+"/home/vlead/Desktop/outreach-docs/madhavi.jpg", "user": {"name": "John",
+"last_active": null, "created": "2015-11-23T06:02:24", "email":
+"john@gmail.com", "role": {"id": 1, "name": "Admin"}, "id": 1}, "id": 8,
+"name": "Attendance"}, {"path": null, "user": {"name": "John", "last_active":
+null, "created": "2015-11-23T06:02:24", "email": "john@gmail.com", "role":
+{"id": 1, "name": "Admin"}, "id": 1}, "id": 9, "name": "New Report"}]
+  #+END_SRC
+
+- *POST* 
+ + Example Request
+  #+BEGIN_SRC
+ json =  {
+  "name" : "Attendance Sheet",
+  "user" : { "id" : 1 }
+}
+  #+END_SRC
+
+ + Example Result
+
+  #+BEGIN_SRC
+{
+  "id": 10, 
+  "name": "Attendance Sheet", 
+  "path": null, 
+  "user": {
+    "created": "2015-11-23T06:02:24", 
+    "email": "john@gmail.com", 
+    "id": 1, 
+    "last_active": null, 
+    "name": "John", 
+    "role": {
+      "id": 1, 
+      "name": "Admin"
+    }
+  }
+}
+ #+END_SRC
+   
+*** /workshop_documents/<int:id>
+- Parameters
+|--------+------------------------------------------------------------------------------------------------------------|
+| *Name* | *Description*                                                                                              |
+|--------+------------------------------------------------------------------------------------------------------------|
+| *id*   | Indicates the unique id of the workshop_document. *Example Value:* 2                                       |
+|--------+------------------------------------------------------------------------------------------------------------|
+| *name* | Specifies the name of workshop_document. *Example Value:*  Attendance Sheet, Feedback Form, College Report |
+|--------+------------------------------------------------------------------------------------------------------------|
+| *user* | Specifies the user who uploaded the document. *Example Value:* {"id" : 1 }                                 |
+|--------+------------------------------------------------------------------------------------------------------------|
+| *path* | Specifies the path of workshop_document. *Example Value:* /outreach-portal/workshop-docs/admin             |
+|--------+------------------------------------------------------------------------------------------------------------|
+
+- *GET* - 
+ + Example Request
+  #+BEGIN_EXAMPLE
+   /workshop_documents/10 
+   #+END_EXAMPLE
+
+ + Example Result
+  #+BEGIN_SRC
+ {
+  "id": 10, 
+  "name": "Attendance Sheet", 
+  "path": null, 
+  "user": {
+    "created": "2015-11-23T06:02:24", 
+    "email": "john@gmail.com", 
+    "id": 1, 
+    "last_active": null, 
+    "name": "John", 
+    "role": {
+      "id": 1, 
+      "name": "Admin"
+    }
+  }
+}
+  #+END_SRC
+
+- *PUT*
+  This *PUT* is valid for fields =name= and =user=. For updating the path or the
+  file, see here. 
+ + Example Request
+   #+BEGIN_SRC
+    {"name":"Feedback Form"}
+   #+END_SRC
+
+ + Example Result
+   #+BEGIN_SRC
+{
+  "id": 10, 
+  "name": "Feedback Form", 
+  "path": null, 
+  "user": {
+    "created": "2015-11-23T06:02:24", 
+    "email": "john@gmail.com", 
+    "id": 1, 
+    "last_active": null, 
+    "name": "John", 
+    "role": {
+      "id": 1, 
+      "name": "Admin"
+    }
+  }
+}
+   #+END_SRC
+
++ Example Request
+   #+BEGIN_SRC
+    {"user": {"id" : 2} }
+   #+END_SRC
+
+ + Example Result
+   #+BEGIN_SRC
+{
+  "id": 10, 
+  "name": "Feedback Form", 
+  "path": null, 
+  "user": {
+    "created": "2015-11-23T06:06:25", 
+    "email": "jane@abc.com", 
+    "id": 2, 
+    "last_active": "Tue Nov 23 2015 07:18:26 GMT-0500 (EST)", 
+    "name": "Jane", 
+    "role": {
+      "id": 1, 
+      "name": "Admin"
+    }
+  }
+}
+   #+END_SRC
+
+- *DELETE*
+ + Example Result
+   #+BEGIN_SRC
+{
+  "id": "1", 
+  "status": "success"
+}
+    #+END_SRC
+
+*** /workshop_documents/<int:id>?fields=field1,field2 
+
+- Parameters
+|--------+------------------------------------------------------------------------------------------------------------|
+| *Name* | *Description*                                                                                              |
+|--------+------------------------------------------------------------------------------------------------------------|
+| *id*   | Indicates the unique id of the workshop_document. *Example Value:* 2                                       |
+|--------+------------------------------------------------------------------------------------------------------------|
+| *name* | Specifies the name of workshop_document. *Example Value:*  Attendance Sheet, Feedback Form, College Report |
+|--------+------------------------------------------------------------------------------------------------------------|
+| *user* | Specifies the user who uploaded the document. *Example Value:* {"id" : 1 }                                 |
+|--------+------------------------------------------------------------------------------------------------------------|
+| *path* | Specifies the path of workshop_document. *Example Value:* /outreach-portal/workshop-docs/admin             |
+|--------+------------------------------------------------------------------------------------------------------------|
+
+- *GET* -
+ + Example Request
+   #+BEGIN_SRC
+   /workshop_documents/10?fields=name,path
+   #+END_SRC
+ 
+ + Example Result
+   #+BEGIN_SRC
+{
+  "id": 10, 
+  "name": "Feedback Form", 
+  "path": null, 
+  "user": {
+    "created": "2015-11-23T06:06:25", 
+    "email": "jane@abc.com", 
+    "id": 2, 
+    "last_active": "Tue Nov 23 2015 07:18:26 GMT-0500 (EST)", 
+    "name": "Jane", 
+    "role": {
+      "id": 1, 
+      "name": "Admin"
+    }
+  }
+}
+   #+END_SRC
+
+
+*** /workshop_documents?query_param1=val1&query_param2=val2&..query_paramn=valn
+- Parameters
+|--------+------------------------------------------------------------------------------------------------------------|
+| *Name* | *Description*                                                                                              |
+|--------+------------------------------------------------------------------------------------------------------------|
+| *id*   | Indicates the unique id of the workshop_document. *Example Value:* 2                                       |
+|--------+------------------------------------------------------------------------------------------------------------|
+| *name* | Specifies the name of workshop_document. *Example Value:*  Attendance Sheet, Feedback Form, College Report |
+|--------+------------------------------------------------------------------------------------------------------------|
+| *user* | Specifies the user who uploaded the document. *Example Value:* {"id" : 1 }                                 |
+|--------+------------------------------------------------------------------------------------------------------------|
+| *path* | Specifies the path of workshop_document. *Example Value:* /outreach-portal/workshop-docs/admin             |
+|--------+------------------------------------------------------------------------------------------------------------|
+
+- *GET* -
+ + Example Request
+   #+BEGIN_SRC
+   /workshop_documents?name=Feedback Form
+   #+END_SRC
+ 
+ + Example Result
+   #+BEGIN_SRC
+[{"path": "/home/vlead/Desktop/outreach-docs/sign1.jpg", "user": {"name":
+"John", "last_active": null, "created": "2015-11-23T06:02:24", "email":
+"john@gmail.com", "role": {"id": 1, "name": "Admin"}, "id": 1}, "id": 7,
+"name": "Feedback Form"}, {"path": null, "user": {"name": "Jane",
+"last_active": "Tue Nov 23 2015 07:18:26 GMT-0500 (EST)", "created":
+"2015-11-23T06:06:25", "email": "jane@abc.com", "role": {"id": 1, "name":
+"Admin"}, "id": 2}, "id": 10, "name": "Feedback Form"}]
+   #+END_SRC
+
+*** /upload_document/<id>
+
+- *POST* -
+ + Example Request
+   #+BEGIN_SRC
+   /upload_document/10
+   #+END_SRC
+ 
+ + Example Result
+   #+BEGIN_SRC
+   /home/vlead/Desktop/outreach-docs/feedback-form.pdf  
+   #+END_SRC
