@@ -32,7 +32,25 @@
             </div>
         
         </div>
-	  <div role="tabpanel" class="tab-pane" id="documents">Documents</div>
+	<div role="tabpanel" class="tab-pane" id="documents">
+	  <div class="row">
+	    <div class="col-md-2"></div>
+	    <div class="col-md-4">
+	      <form method="post" action="" style="margin-top:30px"  enctype="multipart/form-data">
+		<input class="form-control" type="text" name="name" placeholder="Enter the type of the file"/><br>
+		<input type="file" name="file"/><br>
+		<input type="submit" value="Upload" class="btn btn-primary"/>
+	      </form>
+	      <br><br>
+	      <ul>
+		{% for document in documents%}
+		  <li> {{ document.path }}</li>
+		{% endfor %}
+	      </ul>
+	    </div>
+	    <div class="col-md-6"></div>
+	  </div>
+	</div>
 	  <div role="tabpanel" class="tab-pane" id="profile">
 	    <div class="row">
 	      <div class="col-md-2"></div>
