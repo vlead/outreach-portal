@@ -112,20 +112,25 @@ angular.module('outreachApp.controllers',[])
     });
     $scope.del =  function(a)
     {
-        $http.delete('/users/'+a).
-            success(function(data, status, headers, config) 
-                    {
-                      
+        if(confirm("Are you sure!") == true)
+        {
+            $http.delete('/users/'+a).
+                success(function(data, status, headers, config) 
+                        {
+                            
                            window.location.href = "#/manageoc";
+                            
+                        }).
+                error(function(data, status, headers, config)
+                      {
+                          console.log(data);
                       
-                    }).
-            error(function(data, status, headers, config)
-                  {
-                      console.log(data);
-                      
-                  });
-
-        
+                      });
+            
+        }
+        else
+            return;
+         
     }
     
 }).controller("mainController", function($scope, $http, $routeParams) {
@@ -262,4 +267,62 @@ angular.module('outreachApp.controllers',[])
             $scope.status = "Not empty"
         }
     }
+}).controller("doclist", function($scope, $http, $routeParams, $route) {
+    
+    $http.get('/workshop_documents').
+    success(function(data, status, headers, config) 
+    {
+        $scope.documents= data;
+              
+    }).
+    error(function(data, status, headers, config)
+    {
+      console.log(data);
+      
+    });
+    $scope.deldoc =  function(id)
+    {
+        $http.delete('/workshop_documents/'+id).
+            success(function(data, status, headers, config) 
+                    {
+                        $scope.status= "Deleted";
+                        $route.reload();
+              
+                    }).
+            error(function(data, status, headers, config)
+                  {
+                      console.log(data);
+                      
+                  });
+        
+        
+        
+    }
+
+
+}).controller("adddoc", function($scope, $http, $routeParams, $route) {
+    
+    
+
+}).controller("dashboard", function($scope, $http, $routeParams, $route) {
+    
+    
+
+}).controller("profile", function($scope, $http, $routeParams, $route) {
+    
+    $http.get('/users?role_id=1').
+    success(function(data, status, headers, config) 
+    {
+        $scope.users = data;
+              
+    }).
+    error(function(data, status, headers, config)
+    {
+      console.log(data);
+      
+    });
+    
+
 });
+
+

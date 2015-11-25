@@ -13,57 +13,13 @@
     </div>
     <div class="col-md-9 content">
       <div class="tab-content">
-	<div role="tabpanel" class="tab-pane active" id="dashboard">
-	  <div class="row">
-	    <div class="col-md-4">
-	      <div class="box">Workshops Run</div>
-	      <div class="box">O.C</div>
-	    </div>
-	    <div class="col-md-4">
-	      <div class="box">N.C</div>
-	      <div class="box">Usage/Institute</div>
-	    </div>
-	  </div>
-	</div>
-	<div role="tabpanel" class="tab-pane" id="manageoc">
-          <div ng-controller="mainController">
-              <div ng-view>
-              </div>
-            </div>
-        
+	<div ng-view>
         </div>
-	<div role="tabpanel" class="tab-pane" id="documents">
-	  <div class="row">
-	    <div class="col-md-2"></div>
-	    <div class="col-md-4">
-	      <form method="post" action="" style="margin-top:30px"  enctype="multipart/form-data">
-		<input class="form-control" type="text" name="name" placeholder="Enter the type of the file"/><br>
-		<input type="file" name="file"/><br>
-		<input type="submit" value="Upload" class="btn btn-primary"/>
-	      </form>
-	      <br><br>
-	      <ul>
-		{% for document in documents%}
-		  <li> {{ document.path }}</li>
-		{% endfor %}
-	      </ul>
-	    </div>
-	    <div class="col-md-6"></div>
-	  </div>
-	</div>
-	  <div role="tabpanel" class="tab-pane" id="profile">
-	    <div class="row">
-	      <div class="col-md-2"></div>
-	      <div class="col-md-4 profile">
-	       <div class="name">{{session.name}}</div>
-	       <div class="email">{{session.email}}</div>
-	      </div>
-	      <div class="col-md-6"></div>
-	    </div>
-	  </div>
       </div>
     </div>
   </div>
 </div>
-
+<script type="text/javascript">
+window.location.href = "#dashboard" ;
+</script>
 {% endblock %}
