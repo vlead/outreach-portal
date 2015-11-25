@@ -209,8 +209,8 @@ angular.module('outreachApp.controllers',[])
                 {
                     if(status == 500)
                     {
-                        alert(status);
-                        $scope.status = "Duplicate Entry";
+                        
+                        $scope.status = "Duplicate Email";
                     }
                     else if(status == 400)
                     {
@@ -233,9 +233,9 @@ angular.module('outreachApp.controllers',[])
 
 }).controller("addoc", function($scope, $http, $routeParams) {
 
-    $scope.submit = function()
+    $scope.submit = function(isvalid)
     {
-        if($scope.name != "" & $scope.email != "")
+        if(isvalid)
         {
             $http.post('/users',{'name' : $scope.name,'email' : $scope.email,'role' : { 'id' : 3 } } ).
             success(function(data, status, headers, config)
@@ -249,7 +249,7 @@ angular.module('outreachApp.controllers',[])
             {
                 if(status == 500)
                 {
-                    $scope.status = "Filup all details";
+                    $scope.status = "Duplicate Entry";
                 }
                 else if(status == 400)
                 {
@@ -264,7 +264,7 @@ angular.module('outreachApp.controllers',[])
         }
         else
         {
-            $scope.status = "Not empty"
+            $scope.status = "Fill Details"
         }
     }
 }).controller("doclist", function($scope, $http, $routeParams, $route) {
