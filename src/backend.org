@@ -366,12 +366,12 @@ class TestRole(TestCase):
 **** Immutable data
      + Id
      + Created
-     + Last Active
 
 **** Mutable data
      + Name
      + Email
      + Role --> Id
+     + Last Active
   
 **** Definition
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -386,6 +386,7 @@ class User(Entity):
     workshop_documents = db.relationship('WorkshopDocument', backref='user')
     created = db.Column(db.DateTime(), default=datetime.utcnow)
     last_active = db.Column(db.String(128))
+    workshops = db.relationship('Workshop', backref='user') 
     
  #+END_SRC
 
@@ -393,7 +394,8 @@ class User(Entity):
 #+BEGIN_EXAMPLE
     User = User(name=<instance of class Name>,
                 email=<instance of class Email>,
-                role=<instance of class Role>)
+                role=<instance of class Role>
+                [,last_active=str])
                                             
 #+END_EXAMPLE
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -593,13 +595,13 @@ class TestUser(TestCase):
         self.assertEqual(user_min, minute)
 #+END_SRC
 
-***** getLastActive: User --> Datetime
+***** getLastActive: User --> String
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_last_active(self):
         return self.last_active
 #+END_SRC
       
-***** Test getLastActive: User --> Datetime
+***** Test getLastActive: User --> String
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_get_user_last_act(self):
         print "test_get_user_last_act"
@@ -1008,6 +1010,1230 @@ class TestWorkshopDocument(TestCase):
 
 #+END_SRC
 
+*** Workshop
+**** Immutable data
+     + Id
+     + Created
+       
+**** Mutable data
+     + Name
+     + Location
+     + Last Updated
+     + User --> Id
+     + Participating Institutes 
+     + Date
+     + No Of Participants Expected
+     + Participants Attended
+     + No Of Sessions
+     + Duration Of Sessions
+     + Discipline(s)
+     + Labs Planned
+     + Experiments Conducted
+     + Other Details
+     + Status
+     + Cancellation Reason
+     + Not Approval Reason
+       
+**** Definition
+#+BEGIN_SRC python :tangle src/db.py :eval no
+class Workshop(Entity):
+
+    __tablename__ = 'workshops'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128), nullable=False)
+    location = db.Column(db.String(128))
+
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+    date = db.Column(db.String(128), nullable=False)
+    created = db.Column(db.DateTime(), default=datetime.utcnow)
+    last_updated = db.Column(db.String(128))
+    participating_institutes = db.Column(db.String(128))
+    no_of_participants_expected = db.Column(db.Integer)
+    participants_attended = db.Column(db.Integer)
+    no_of_sessions = db.Column(db.Integer)
+    duration_of_sessions = db.Column(db.Integer)
+    labs_planned = db.Column(db.Integer)
+    disciplines = db.Column(db.String(128))
+    experiments_conducted = db.Column(db.Integer)
+    other_details = db.Column(db.String(128))
+    status = db.Column(db.String(128))
+    cancellation_reason = db.Column(db.String(128))
+    not_approval_reason = db.Column(db.String(128))
+    
+#+END_SRC
+
+**** Constructor
+#+BEGIN_EXAMPLE
+  Workshop = Workshop(name=str,
+                      location=str,
+                      user=<instance of class User>,
+                      participating_institutes=str,
+                      date=str,
+                      no_of_participants_expected=int
+                      [,participants_attended=int],
+                      no_of_sessions=int
+                      [,duration_of_sessions=int]
+                      [,disciplines=str],
+                      labs_planned=int
+                      [,experiments_conducted=int]
+                      [,other_details=str],
+                      status=str
+                      [,cancellation_reason=str]
+                      [,not_approval_reason=str]
+                      [,last_updated=str])                                                                           
+                                          
+#+END_EXAMPLE
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def __init__(self, **kwargs):
+        if 'name' not in kwargs:
+            raise AttributeRequired("mandatory attribute `name` is missing")
+        self.set_name(kwargs['name'])
+
+        if 'location' not in kwargs:
+            raise AttributeRequired("mandatory attribute `location` is missing")
+        self.set_location(kwargs['location'])
+
+        if 'user' not in kwargs:
+            raise AttributeRequired("mandatory attribute `user` is missing")
+        self.set_user(kwargs['user'])
+
+        if 'participating_institutes' not in kwargs:
+            raise AttributeRequired("mandatory attribute `participating_institutes` is missing")
+        self.set_participating_institutes(kwargs['participating_institutes'])
+
+        if 'no_of_participants_expected' not in kwargs:
+            raise AttributeRequired("mandatory attribute `no_of_participants_\
+            expected` is missing")
+        self.set_no_of_participants_expected(kwargs['no_of_participants_expected'])
+
+        if 'no_of_sessions' not in kwargs:
+            raise AttributeRequired("mandatory attribute `no_of_sessions` is\
+            missing")
+        self.set_no_of_sessions(kwargs['no_of_sessions'])
+
+        if 'labs_planned' not in kwargs:
+            raise AttributeRequired("mandatory attribute `labs_planned` is\
+            missing")
+        self.set_labs_planned(kwargs['labs_planned'])
+
+        if 'status' not in kwargs:
+            raise AttributeRequired("mandatory attribute `status` is missing")
+        self.set_status(kwargs['status'])
+
+        if 'date' not in kwargs:
+            raise AttributeRequired("mandatory attribute `date` is missing")
+        self.set_date(kwargs['date'])
+
+        if 'participants_attended' in kwargs:
+            self.set_participants_attended(kwargs['participants_attended'])
+
+        if 'duration_of_sessions' in kwargs:
+            self.set_duration_of_sessions(kwargs['duration_of_sessions'])
+
+        if 'experiments_conducted' in kwargs:
+            self.set_experiments_conducted(kwargs['experiments_conducted'])
+
+        if 'disciplines' in kwargs:
+            self.set_disciplines(kwargs['disciplines'])
+
+        if 'other_details' in kwargs:
+            self.set_other_details(kwargs['other_details'])
+
+        if 'cancellation_reason' in kwargs:
+            self.set_cancellation_reason(kwargs['cancellation_reason'])
+
+        if 'not_approval_reason' in kwargs:
+            self.set_not_approval_reason(kwargs['not_approval_reason'])
+
+        if 'last_updated' in kwargs:
+            self.set_last_updated(kwargs['last_updated'])
+
+        
+    def __str__(self):
+        return "Name = %s, location = %s, user = %s, participating_institutes = %s,\
+        no_of_participants_expected = %s, no_of_sessions = %s, labs_planned = %s,\
+        status = %s, date = %s, participants_attended = %s, duration_of_sessions = %s,\
+        experiments_conducted = %s, disciplines = %s, other_details = %s,\
+        cancellation_reason = %s, not_approval_reason = %s, last_updated = %s"\
+            % (self.name, self.location, self.user.name,\
+               self.participating_institutes, self.no_of_participants_expected,\
+               self.no_of_sessions, self.labs_planned, self.status, self.date,\
+               self.participants_attended, self.duration_of_sessions,\
+               self.experiments_conducted, self.disciplines,\
+               self.other_details, self.cancellation_reason,\
+               self.not_approval_reason, self.last_updated)
+
+    
+    def __repr__(self):
+        return "Name = %s, location = %s, user = %s, participating_institutes = %s,\
+        no_of_participants_expected = %s, no_of_sessions = %s, labs_planned = %s,\
+        status = %s, date = %s, participants_attended = %s, duration_of_sessions = %s,\
+        experiments_conducted = %s, disciplines = %s, other_details = %s,\
+        cancellation_reason = %s, not_approval_reason = %s, last_updated = %s"\
+            % (self.name, self.location, self.user.name,\
+               self.participating_institutes, self.no_of_participants_expected,\
+               self.no_of_sessions, self.labs_planned, self.status, self.date,\
+               self.participants_attended, self.duration_of_sessions,\
+               self.experiments_conducted, self.disciplines,\
+               self.other_details, self.cancellation_reason,\
+               self.not_approval_reason, self.last_updated)
+
+#+END_SRC
+     
+**** Tests for Workshop Constructor
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+class TestWorkshop(TestCase):
+    TESTING = True
+
+    def create_app(self):
+        app = create_app(config)
+        return app
+
+    def setUp(self):
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+#+END_SRC
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_workshop_constructor(self):
+        print "test_workshop_constructor"
+        role = Role(name=Name("Admin"))
+        role.save()
+    
+        user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"),
+                    role = role)
+        user.save()
+
+        workshop = Workshop(name="Coordinators Training", location="IIIT-Hyd",
+                            user=user, participating_institutes="HCU,\
+                            IIIT-Hyd", no_of_participants_expected=100,
+                            no_of_sessions=3, labs_planned=4,
+                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            GMT-0500 (EST)")
+        self.assertEqual("Coordinators Training", workshop.name)
+        self.assertEqual("Upcoming", workshop.status)
+        self.assertEqual(user, workshop.user)                        
+    
+        # Calling the workshop constructor without any arguments should
+        # raise AttributeRequired exception
+        self.assertRaises(AttributeRequired, Workshop)
+
+        # Calling the workshop constructor with necessary arguments
+        # but with wrong type should raise TypeError
+        self.assertRaises(TypeError, User,
+                          ,**{'name': "Coordinators Training",
+                             'location': "IIIT-Hyd",
+                             'user': user,
+                             'participating_institutes': "HCU, IIIT-Hyd",
+                             'no_of_participants_expected': 100,
+                             'no_of_sessions': "three",
+                             'labs_planned': 4,
+                             'status': "Upcoming",
+                             'date': "Mon Nov 23 2015 06:18:26 GMT-0500 (EST)"
+                         })
+
+#+END_SRC
+**** Functions that operate on the Workshop Document domain
+***** getAll: Nil --> set[Workshop]
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @staticmethod
+    def get_all():
+        return Workshop.query.all()
+
+#+END_SRC
+***** Test getAll: Nil --> set[Workshop]
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_workshop_get_all(self):
+        print "test_workshop_get_all"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("Thirumal Ravula"),
+                    email=Email("travula@gmail.com"), role=role)
+        
+        workshop_1 = Workshop(name="Coordinators Training",
+                              location="IIIT-Hyd", user=user,
+                              participating_institutes="HCU, IIIT-Hyd",
+                              no_of_participants_expected=100,
+                              no_of_sessions=3, labs_planned=4,
+                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              GMT-0500 (EST)")
+        
+        workshop_1.save() 
+        
+        workshop_2 = Workshop(name="HCU workshop", location="HCU",
+                              user=user, participating_institutes="HCU,\
+                              IIIT-Hyd", no_of_participants_expected=50,
+                              no_of_sessions=2, labs_planned=2,
+                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              GMT-0500 (EST)")
+
+        workshop_2.save()
+                          
+        workshop_list = Workshop.get_all()
+        
+        self.assertEqual(4, workshop_list[0].labs_planned)
+        self.assertEqual("Coordinators Training", workshop_list[0].name)
+        self.assertEqual("Thirumal Ravula", workshop_list[0].user.name)
+        self.assertEqual(2, workshop_list[1].labs_planned)
+        self.assertEqual("HCU workshop", workshop_list[1].name)
+        self.assertEqual("Thirumal Ravula", workshop_list[1].user.name)
+#+END_SRC
+***** getWorkshop: Id --> Workshop
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @staticmethod
+    def get_by_id(id):
+        return Workshop.query.get(id)
+
+#+END_SRC
+***** Test getWorkshop: Id --> Workshop
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_workshop_by_id(self):
+        print "test_get_workshop_by_id"
+        role = Role(name=Name("Admin"))
+        role.save()
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"),\
+                    role=role)
+        
+        workshop_1 = Workshop(name="Coordinators Training",
+                              location="IIIT-Hyd", user=user,
+                              participating_institutes="HCU, IIIT-Hyd",
+                              no_of_participants_expected=100,
+                              no_of_sessions=3, labs_planned=4,
+                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              GMT-0500 (EST)")
+        
+        self.assertEqual(workshop_1.get_by_id(1).name, "Coordinators Training")
+#+END_SRC
+
+***** getName: Workshop --> Name
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_name(self):
+        return self.name
+#+END_SRC
+
+***** Test getName: Workshop --> Name 
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_workshop_name(self):
+        print "test_get_workshop_name"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        workshop_1 = Workshop(name="Coordinators Training",
+                              location="IIIT-Hyd", user=user,
+                              participating_institutes="HCU, IIIT-Hyd",
+                              no_of_participants_expected=100,
+                              no_of_sessions=3, labs_planned=4,
+                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              GMT-0500 (EST)")
+
+        workshop_name = workshop_1.get_name()
+        self.assertEqual(workshop_name, "Coordinators Training")
+#+END_SRC
+
+***** getLocation: Workshop --> Location
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_location(self):
+        return self.location
+#+END_SRC
+
+***** Test getLocation: Workshop --> Location
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_workshop_location(self):
+        print "test_get_workshop_location"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        workshop_1 = Workshop(name="Coordinators Training",
+                              location="IIIT-Hyd", user=user,
+                              participating_institutes="HCU, IIIT-Hyd",
+                              no_of_participants_expected=100,
+                              no_of_sessions=3, labs_planned=4,
+                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              GMT-0500 (EST)")
+
+
+        workshop_location = workshop_1.get_location()
+        self.assertEqual(workshop_location, "IIIT-Hyd")
+#+END_SRC
+
+***** getDate: Workshop --> String
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_date(self):
+        return self.date
+#+END_SRC
+***** Test getDate: Workshop --> String
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_workshop_date(self):
+        print "test_get_workshop_date"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        workshop_1 = Workshop(name="Coordinators Training",
+                              location="IIIT-Hyd", user=user,
+                              participating_institutes="HCU, IIIT-Hyd",
+                              no_of_participants_expected=100,
+                              no_of_sessions=3, labs_planned=4,
+                              status="Upcoming",
+                              date="Mon Nov 23 2015 06:18:26 GMT-0500 (EST)")
+
+
+        workshop_date = workshop_1.get_date()
+        self.assertEqual(workshop_date, "Mon Nov 23 2015 06:18:26 GMT-0500 (EST)")
+#+END_SRC
+
+***** getUser: Workshop --> User
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_user(self):
+        return self.user
+
+#+END_SRC
+
+***** Test getUser: Workshop --> User
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_workshop_user(self):
+        print "test_get_workshop_user"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        workshop_1 = Workshop(name="Coordinators Training",
+                              location="IIIT-Hyd", user=user,
+                              participating_institutes="HCU, IIIT-Hyd",
+                              no_of_participants_expected=100,
+                              no_of_sessions=3, labs_planned=4,
+                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              GMT-0500 (EST)")
+
+        workshop_user = workshop_1.get_user()
+        self.assertEqual("ambika", workshop_user.name )
+#+END_SRC
+
+***** timeOfCreation: Workshop --> Datetime
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_created(self):
+        return self.created
+#+END_SRC
+
+***** Test timeOfCreation: Workshop --> Datetime
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_workshop_toc(self):
+        print "test_get_workshop_toc"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        workshop = Workshop(name="Coordinators Training", location="IIIT-Hyd",
+                            user=user, participating_institutes="HCU,\
+                            IIIT-Hyd", no_of_participants_expected=100,
+                            no_of_sessions=3, labs_planned=4,
+                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            GMT-0500 (EST)")
+        
+        workshop.save()
+        time = datetime.utcnow()
+        year = time.year
+        month = time.month    
+        day = time.day
+        minute = time.minute
+        
+        workshop_toc = workshop.get_created()
+        workshop_year = workshop_toc.year
+        workshop_month = workshop_toc.month
+        workshop_day = workshop_toc.day
+        workshop_min = workshop_toc.minute
+        
+        self.assertEqual(workshop_year, year)
+        self.assertEqual(workshop_month, month)
+        self.assertEqual(workshop_day, day)
+        self.assertEqual(workshop_min, minute)
+#+END_SRC
+
+***** getLastUpdated: Workshop --> String
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_last_updated(self):
+        return self.last_updated
+#+END_SRC
+      
+***** Test getLastUpdated: Workshop --> String
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_workshop_last_upd(self):
+        print "test_get_workshop_last_upd"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        workshop = Workshop(name="Coordinators Training", location="IIIT-Hyd",
+                            user=user, participating_institutes="HCU,\
+                            IIIT-Hyd", no_of_participants_expected=100,
+                            no_of_sessions=3, labs_planned=4,
+                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            GMT-0500 (EST)", last_updated="Tue Nov 24 2015")
+
+        workshop.save()
+
+        self.assertEqual(workshop.get_last_updated(), "Tue Nov 24 2015")
+
+#+END_SRC
+
+***** getParticipatingInstitutes: Workshop --> ParticipatingInstitutes
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_participating_institutes(self):
+        return self.participating_institutes
+#+END_SRC
+***** Test getParticipatingInstitutes: Workshop --> ParticipatingInstitutes
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_workshop_participating_institutes(self):
+        print "test_get_workshop_participating_institutes"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        workshop_1 = Workshop(name="Coordinators Training",
+                              location="IIIT-Hyd", user=user,
+                              participating_institutes="HCU, IIIT-Hyd",
+                              no_of_participants_expected=100,
+                              no_of_sessions=3, labs_planned=4,
+                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              GMT-0500 (EST)")
+
+
+        participants = workshop_1.get_participating_institutes()
+        self.assertEqual(participants, "HCU, IIIT-Hyd")
+#+END_SRC
+***** getNoOfParticipantsExpected: Workshop --> ParticipantsExpected
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_no_of_participants_expected(self):
+        return self.no_of_participants_expected
+#+END_SRC
+***** Test getNoOfParticipantsExpected: Workshop --> ParticipantsExpected
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_workshop_participants_expected(self):
+        print "test_get_workshop_participants_expected"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        workshop_1 = Workshop(name="Coordinators Training",
+                              location="IIIT-Hyd", user=user,
+                              participating_institutes="HCU, IIIT-Hyd",
+                              no_of_participants_expected=100,
+                              no_of_sessions=3, labs_planned=4,
+                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              GMT-0500 (EST)")
+
+
+        participants_exp = workshop_1.get_no_of_participants_expected()
+        self.assertEqual(participants_exp, 100)
+#+END_SRC
+***** getNoOfParticipantsAttended: Workshop --> NoOfParticipantsAttended
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_no_of_participants_attended(self):
+        return self.participants_attended
+#+END_SRC
+***** Test getNoOfParticipantsAttended: Workshop --> NoOfParticipantsAttended
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_workshop_actual_participants_attended(self):
+        print "test_get_workshop_actual_participants_attended"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        workshop_1 = Workshop(name="Coordinators Training",
+                              location="IIIT-Hyd", user=user,
+                              participating_institutes="HCU, IIIT-Hyd",
+                              no_of_participants_expected=100,
+                              no_of_sessions=3, labs_planned=4,
+                              status="Upcoming", participants_attended=120,
+                              date="Mon Nov 23 2015 06:18:26 GMT-0500 (EST)")
+
+
+        participants_att = workshop_1.get_no_of_participants_attended()
+        self.assertEqual(participants_att, 120)
+#+END_SRC
+***** getOtherDetails: Workshop --> OtherDetails
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_other_details(self):
+        return self.other_details
+#+END_SRC
+***** Test getOtherDetails: Workshop --> OtherDetails
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_workshop_other_details(self):
+        print "test_get_workshop_other_details"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        workshop_1 = Workshop(name="Coordinators Training",
+                              location="IIIT-Hyd", user=user,
+                              participating_institutes="HCU, IIIT-Hyd",
+                              no_of_participants_expected=100,
+                              no_of_sessions=3, labs_planned=4,
+                              status="Upcoming", other_details="Overwhelming response!",
+                              date="Mon Nov 23 2015 06:18:26 GMT-0500 (EST)")
+
+
+        details = workshop_1.get_other_details()
+        self.assertEqual(details, "Overwhelming response!")
+#+END_SRC
+***** getNoOfExptsConducted: Workshop --> NoOfExptsConducted
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_no_of_expts_conducted(self):
+        return self.experiments_conducted
+#+END_SRC
+***** Test getNoOfExptsConducted: Workshop --> NoOfExptsConducted
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_workshop_no_of_expts_conducted(self):
+        print "test_get_workshop_no_of_expts_conducted"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        workshop_1 = Workshop(name="Coordinators Training",
+                              location="IIIT-Hyd", user=user,
+                              participating_institutes="HCU, IIIT-Hyd",
+                              no_of_participants_expected=100,
+                              no_of_sessions=3, labs_planned=4,
+                              status="Upcoming", experiments_conducted=20,
+                              date="Mon Nov 23 2015 06:18:26 GMT-0500 (EST)")
+
+        
+        expts_conducted = workshop_1.get_no_of_expts_conducted()
+        self.assertEqual(expts_conducted, 20)
+#+END_SRC
+***** getDurationOfSessions: Workshop --> DurationOfSessions
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_duration_of_sessions(self):
+        return self.duration_of_sessions
+#+END_SRC
+***** Test getDurationOfSessions: Workshop --> DurationOfSessions
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_workshop_duration_of_sessions(self):
+        print "test_get_workshop_duration_of_sessions"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        workshop_1 = Workshop(name="Coordinators Training",
+                              location="IIIT-Hyd", user=user,
+                              participating_institutes="HCU, IIIT-Hyd",
+                              no_of_participants_expected=100,
+                              no_of_sessions=3, labs_planned=4,
+                              status="Upcoming", duration_of_sessions=1,
+                              date="Mon Nov 23 2015 06:18:26 GMT-0500 (EST)")
+
+
+        duration = workshop_1.get_duration_of_sessions()
+        self.assertEqual(duration, 1)
+#+END_SRC
+***** getDisciplines: Workshop --> Disciplines
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_disciplines(self):
+        return self.disciplines
+#+END_SRC
+***** Test getDisciplines: Workshop --> Disciplines
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_workshop_disciplines(self):
+        print "test_get_workshop_disciplines"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        workshop_1 = Workshop(name="Coordinators Training",
+                              location="IIIT-Hyd", user=user,
+                              participating_institutes="HCU, IIIT-Hyd",
+                              no_of_participants_expected=100,
+                              no_of_sessions=3, labs_planned=4,
+                              status="Upcoming", disciplines="Electronics & Communication",
+                              date="Mon Nov 23 2015 06:18:26 GMT-0500 (EST)")
+
+
+        disc = workshop_1.get_disciplines()
+        self.assertEqual(disc, "Electronics & Communication")
+#+END_SRC
+***** getNoOfSessions: Workshop --> NoOfSessions
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_no_of_sessions(self):
+        return self.no_of_sessions
+#+END_SRC
+***** Test getNoOfSessions: Workshop --> NoOfSessions
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_workshop_no_of_sessions(self):
+        print "test_get_workshop_no_of_sessions"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        workshop_1 = Workshop(name="Coordinators Training",
+                              location="IIIT-Hyd", user=user,
+                              participating_institutes="HCU, IIIT-Hyd",
+                              no_of_participants_expected=100,
+                              no_of_sessions=3, labs_planned=4,
+                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              GMT-0500 (EST)")
+        workshop_1.save()
+      
+        self.assertEqual(3, workshop_1.get_no_of_sessions())
+#+END_SRC
+***** getPlannedLabs: Workshop --> PlannedLabs
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_planned_labs(self):
+        return self.labs_planned
+#+END_SRC
+***** Test getPlannedLabs: Workshop --> PlannedLabs
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_workshop_planned_labs(self):
+        print "test_get_workshop_planned_labs"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        workshop_1 = Workshop(name="Coordinators Training",
+                              location="IIIT-Hyd", user=user,
+                              participating_institutes="HCU, IIIT-Hyd",
+                              no_of_participants_expected=100,
+                              no_of_sessions=3, labs_planned=4,
+                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              GMT-0500 (EST)")
+
+
+        wkshp_labs_plan = workshop_1.get_planned_labs()
+        self.assertEqual(wkshp_labs_plan, 4)
+#+END_SRC
+***** getStatus: Workshop --> Status
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_status(self):
+        return self.status
+#+END_SRC
+***** Test getStatus: Workshop --> Status
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_workshop_status(self):
+        print "test_get_workshop_status"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        workshop_1 = Workshop(name="Coordinators Training",
+                              location="IIIT-Hyd", user=user,
+                              participating_institutes="HCU, IIIT-Hyd",
+                              no_of_participants_expected=100,
+                              no_of_sessions=3, labs_planned=4,
+                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              GMT-0500 (EST)")
+
+
+        wkshp_status = workshop_1.get_status()
+        self.assertEqual(wkshp_status, "Upcoming")
+#+END_SRC
+***** getCancellationReason: Workshop --> Reason
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_cancellation_reason(self):
+        return self.cancellation_reason
+#+END_SRC
+***** Test getCancellationReason: Workshop --> Reason
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_workshop_cancellation_reason(self):
+        print "test_get_workshop_cancellation_reason"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        workshop_1 = Workshop(name="Coordinators Training",
+                              location="IIIT-Hyd", user=user,
+                              participating_institutes="HCU, IIIT-Hyd",
+                              no_of_participants_expected=100,
+                              no_of_sessions=3, labs_planned=4,
+                              status="Upcoming", cancellation_reason="Univ Exams",
+                              date="Mon Nov 23 2015 06:18:26 GMT-0500 (EST)")
+
+
+        reason = workshop_1.get_cancellation_reason()
+        self.assertEqual(reason, "Univ Exams")
+#+END_SRC
+***** getNotApprovalReason: Workshop --> Reason
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_not_approval_reason(self):
+        return self.not_approval_reason
+#+END_SRC
+***** Test getNotApprovalReason: Workshop --> Reason
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_workshop_not_approval_reason(self):
+        print "test_get_workshop_not_approval_reason"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        workshop_1 = Workshop(name="Coordinators Training",
+                              location="IIIT-Hyd", user=user,
+                              participating_institutes="HCU, IIIT-Hyd",
+                              no_of_participants_expected=100,
+                              no_of_sessions=3, labs_planned=4,
+                              status="Upcoming", not_approval_reason="College Report not uploaded",
+                              date="Mon Nov 23 2015 06:18:26 GMT-0500 (EST)")
+
+
+        reason = workshop_1.get_not_approval_reason()
+        self.assertEqual(reason, "College Report not uploaded")
+#+END_SRC
+
+***** setName: Workshop, Name --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(name=str)
+    def set_name(self, name):
+        self.name = name
+#+END_SRC
+      
+***** Test setName: Workshop, Name --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_set_workshop_name(self):
+        print "test_set_workshop_name"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)     
+        workshop = Workshop(name="Training", location="IIIT-Hyd",
+                            user=user, participating_institutes="HCU,\
+                            IIIT-Hyd", no_of_participants_expected=100,
+                            no_of_sessions=3, labs_planned=4,
+                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            GMT-0500 (EST)")
+
+        workshop.save()
+        workshop.set_name("Coordinators Training")
+        workshop.save()
+        workshop = Workshop.get_by_id(1)
+        self.assertEqual("Coordinators Training", workshop.name)
+#+END_SRC
+
+***** setLocation: Workshop, Location --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(location=str)
+    def set_location(self, location):
+        self.location = location
+#+END_SRC
+
+***** Test setLocation: Workshop, Location --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_set_workshop_location(self):
+        print "test_set_workshop_location"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)     
+        workshop = Workshop(name="Training", location="IIIT-Hyd",
+                            user=user, participating_institutes="HCU,\
+                            IIIT-Hyd", no_of_participants_expected=100,
+                            no_of_sessions=3, labs_planned=4,
+                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            GMT-0500 (EST)")
+        
+        workshop.save()
+        workshop.set_location("HCU")
+        workshop.save()
+        workshop = Workshop.get_by_id(1)
+        self.assertEqual("HCU", workshop.location)
+#+END_SRC
+
+***** setUser: Workshop, User --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(user=User)
+    def set_user(self, user):
+        self.user = user
+#+END_SRC
+***** Test setUser: Workshop, User --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_set_workshop_user(self):
+        print "test_set_workshop_user"
+        role = Role(name=Name("Admin"))
+
+        user1 = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        user2 = User(name=Name("madhavi"), email=Email("madhavi@vlabs.ac.in"), role=role)
+        workshop = Workshop(name="Training", location="IIIT-Hyd",
+                            user=user1, participating_institutes="HCU,\
+                            IIIT-Hyd", no_of_participants_expected=100,
+                            no_of_sessions=3, labs_planned=4,
+                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            GMT-0500 (EST)")
+
+
+        workshop.save()     
+        workshop.set_user(user2)
+        workshop.save()
+        self.assertEqual(workshop.user, user2)
+#+END_SRC
+***** setDate: Workshop, String --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(date=str)
+    def set_date(self, date):
+        self.date = date
+#+END_SRC
+***** Test setDate: Workshop, String --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_set_workshop_date(self):
+        print "test_set_workshop_date"
+        role = Role(name=Name("Admin"))
+
+        user1 = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        user2 = User(name=Name("madhavi"), email=Email("madhavi@vlabs.ac.in"), role=role)
+        workshop = Workshop(name="Training", location="IIIT-Hyd",
+                            user=user1, participating_institutes="HCU,\
+                            IIIT-Hyd", no_of_participants_expected=100,
+                            no_of_sessions=3, labs_planned=4,
+                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            GMT-0500 (EST)")
+
+
+        workshop.save()     
+        workshop.set_date("Mon Nov 23 2015 06:18:26\
+                              GMT-0500 (EST)")
+        workshop.save()
+        date = workshop.get_date()
+        self.assertEqual(date, "Mon Nov 23 2015 06:18:26\
+                              GMT-0500 (EST)")
+#+END_SRC
+
+***** setParticipatingInstitutes: Workshop, Institutes --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(participating_institutes=str)
+    def set_participating_institutes(self, participating_institutes):
+        self.participating_institutes = participating_institutes
+#+END_SRC
+***** Test setParticipatingInstitutes: Workshop, Institutes --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_set_participating_institutes(self):
+        print "test_set_participating_institutes"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)     
+        workshop = Workshop(name="Training", location="IIIT-Hyd",
+                            user=user, participating_institutes="HCU,\
+                            IIIT-Hyd", no_of_participants_expected=100,
+                            no_of_sessions=3, labs_planned=4,
+                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            GMT-0500 (EST)")
+        
+        workshop.save()
+        workshop.set_participating_institutes("Osmania Uni")
+        workshop.save()
+        workshop = Workshop.get_by_id(1)
+        self.assertEqual("Osmania Uni", workshop.participating_institutes)
+#+END_SRC
+***** setNoOfParticipantsExpected: Workshop, NoOfParticipants --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(no_of_participants_expected=int)
+    def set_no_of_participants_expected(self, no_of_participants_expected):
+        self.no_of_participants_expected = no_of_participants_expected
+#+END_SRC
+***** Test setNoOfParticipantsExpected: Workshop, NoOfParticipants --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_set_no_of_participants_expected(self):
+        print "test_set_no_of_participants_expected"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)     
+        workshop = Workshop(name="Training", location="IIIT-Hyd",
+                            user=user, participating_institutes="HCU,\
+                            IIIT-Hyd", no_of_participants_expected=100,
+                            no_of_sessions=3, labs_planned=4,
+                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            GMT-0500 (EST)")
+        
+        workshop.save()
+        workshop.set_no_of_participants_expected(120)
+        workshop.save()
+        workshop = Workshop.get_by_id(1)
+        self.assertEqual(120, workshop.no_of_participants_expected)
+#+END_SRC
+***** setParticipantsAttended: Workshop, ParticipantsAttended --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(participants_attended=int)
+    def set_participants_attended(self, participants_attended):
+        self.participants_attended = participants_attended
+#+END_SRC
+***** Test setParticipantsAttended: Workshop, ParticipantsAttended --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_set_participants_attended(self):
+        print "test_set_participants_attended"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)     
+        workshop = Workshop(name="Training", location="IIIT-Hyd",
+                            user=user, participating_institutes="HCU,\
+                            IIIT-Hyd", no_of_participants_expected=100,
+                            no_of_sessions=3, labs_planned=4,
+                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            GMT-0500 (EST)")
+        
+        workshop.save()
+        workshop.set_participants_attended(100)
+        workshop.save()
+        workshop = Workshop.get_by_id(1)
+        self.assertEqual(100, workshop.participants_attended)
+#+END_SRC
+***** setNoOfSessions: Workshop, NoOfSessions --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(no_of_sessions=int)
+    def set_no_of_sessions(self, no_of_sessions):
+        self.no_of_sessions = no_of_sessions
+#+END_SRC
+***** Test setNoOfSessions: Workshop, NoOfSessions --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_set_no_of_sessions(self):
+        print "test_set_no_of_sessions"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)     
+        workshop = Workshop(name="Training", location="IIIT-Hyd",
+                            user=user, participating_institutes="HCU,\
+                            IIIT-Hyd", no_of_participants_expected=100,
+                            no_of_sessions=3, labs_planned=4,
+                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            GMT-0500 (EST)")
+        
+        workshop.save()
+        workshop.set_no_of_sessions(2)
+        workshop.save()
+        no = workshop.get_no_of_sessions()       
+        self.assertEqual(2, no)
+#+END_SRC
+***** setDurationOfSessions: Workshop, DurationOfSessions --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(duration_of_sessions=int)
+    def set_duration_of_sessions(self, duration_of_sessions):
+        self.duration_of_sessions = duration_of_sessions
+#+END_SRC
+***** Test setDurationOfSessions: Workshop, DurationOfSessions --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_set_duration_of_sessions(self):
+        print "test_set_duration_of_sessions"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)     
+        workshop = Workshop(name="Training", location="IIIT-Hyd",
+                            user=user, participating_institutes="HCU,\
+                            IIIT-Hyd", no_of_participants_expected=100,
+                            no_of_sessions=3, labs_planned=4,
+                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            GMT-0500 (EST)")
+        
+        workshop.save()
+        workshop.set_duration_of_sessions(2)
+        workshop.save()
+        workshop = Workshop.get_by_id(1)
+        self.assertEqual(2, workshop.duration_of_sessions)
+#+END_SRC
+
+***** setDisciplines: Workshop, Disciplines --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(disciplines=str)
+    def set_disciplines(self, disciplines):
+        self.disciplines = disciplines
+#+END_SRC
+***** Test setDisciplines: Workshop, Disciplines --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_set_disciplines(self):
+        print "test_set_disciplines"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)     
+        workshop = Workshop(name="Training", location="IIIT-Hyd",
+                            user=user, participating_institutes="HCU,\
+                            IIIT-Hyd", no_of_participants_expected=100,
+                            no_of_sessions=3, labs_planned=4,
+                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            GMT-0500 (EST)")
+        
+        workshop.save()
+        workshop.set_disciplines("Electronics & Communication")
+        workshop.save()
+        workshop = Workshop.get_by_id(1)
+        self.assertEqual("Electronics & Communication", workshop.disciplines)
+#+END_SRC
+***** setLastUpdated: Workshop, String --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(last_updated=str)
+    def set_last_updated(self, last_updated):
+        self.last_updated = last_updated
+#+END_SRC
+
+***** Test setLastUpdated: Workshop, String --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_set_last_updated(self):
+        print "test_set_last_updated"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)     
+        workshop = Workshop(name="Training", location="IIIT-Hyd",
+                            user=user, participating_institutes="HCU,\
+                            IIIT-Hyd", no_of_participants_expected=100,
+                            no_of_sessions=3, labs_planned=4,
+                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            GMT-0500 (EST)")
+        
+        workshop.save()
+        workshop.set_last_updated("Tue Nov 24 2015")
+        workshop.save()
+        workshop = Workshop.get_by_id(1)
+        self.assertEqual("Tue Nov 24 2015", workshop.last_updated)
+#+END_SRC
+
+***** setLabsPlanned: Workshop, LabsPlanned --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(labs_planned=int)
+    def set_labs_planned(self, labs_planned):
+        self.labs_planned = labs_planned
+#+END_SRC
+***** Test setLabsPlanned: Workshop, LabsPlanned --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_set_labs_planned(self):
+        print "test_set_planned_labs"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)     
+        workshop = Workshop(name="Training", location="IIIT-Hyd",
+                            user=user, participating_institutes="HCU,\
+                            IIIT-Hyd", no_of_participants_expected=100,
+                            no_of_sessions=3, labs_planned=4,
+                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            GMT-0500 (EST)")
+        
+        workshop.save()
+        workshop.set_labs_planned(5)
+        workshop.save()
+        workshop = Workshop.get_by_id(1)
+        self.assertEqual(5, workshop.labs_planned)
+#+END_SRC
+***** setExperimentsConducted: Workshop, ExperimentsConducted --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(experiments_conducted=int)
+    def set_experiments_conducted(self, experiments_conducted):
+        self.experiments_conducted = experiments_conducted
+#+END_SRC
+***** Test setExperimentsConducted: Workshop, ExperimentsConducted --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_set_experiments_conducted(self):
+        print "test_set_experiments_conducted"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)     
+        workshop = Workshop(name="Training", location="IIIT-Hyd",
+                            user=user, participating_institutes="HCU,\
+                            IIIT-Hyd", no_of_participants_expected=100,
+                            no_of_sessions=3, labs_planned=4,
+                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            GMT-0500 (EST)")
+        
+        workshop.save()
+        workshop.set_experiments_conducted(20)
+        workshop.save()
+        workshop = Workshop.get_by_id(1)
+        self.assertEqual(20, workshop.experiments_conducted)
+#+END_SRC
+***** setOtherDetails: Workshop, OtherDetails --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(other_details=str)
+    def set_other_details(self, other_details):
+        self.other_details = other_details
+#+END_SRC
+***** Test setOtherDetails: Workshop, OtherDetails --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_set_other_details(self):
+        print "test_set_other_details"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)     
+        workshop = Workshop(name="Training", location="IIIT-Hyd",
+                            user=user, participating_institutes="HCU,\
+                            IIIT-Hyd", no_of_participants_expected=100,
+                            no_of_sessions=3, labs_planned=4,
+                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            GMT-0500 (EST)")
+        
+        workshop.save()
+        workshop.set_other_details("Overwhelming Response!")
+        workshop.save()
+        workshop = Workshop.get_by_id(1)
+        self.assertEqual("Overwhelming Response!", workshop.other_details)
+#+END_SRC
+***** setStatus: Workshop, status --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(status=str)
+    def set_status(self, status):
+        self.status = status
+#+END_SRC
+***** Test setStatus: Workshop, status --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_set_status(self):
+        print "test_set_status"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)     
+        workshop = Workshop(name="Training", location="IIIT-Hyd",
+                            user=user, participating_institutes="HCU,\
+                            IIIT-Hyd", no_of_participants_expected=100,
+                            no_of_sessions=3, labs_planned=4,
+                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            GMT-0500 (EST)")
+        
+        workshop.save()
+        workshop.set_status("Completed")
+        workshop.save()
+        workshop = Workshop.get_by_id(1)
+        self.assertEqual("Completed", workshop.status)
+#+END_SRC
+***** setCancellationReason: Workshop, Reason --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(cancellation_reason=str)
+    def set_cancellation_reason(self, cancellation_reason):
+        self.cancellation_reason = cancellation_reason
+#+END_SRC
+***** Test setCancellationReason: Workshop, Reason --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_set_cancellation_reason(self):
+        print "test_set_cancellation_reason"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)     
+        workshop = Workshop(name="Training", location="IIIT-Hyd",
+                            user=user, participating_institutes="HCU,\
+                            IIIT-Hyd", no_of_participants_expected=100,
+                            no_of_sessions=3, labs_planned=4,
+                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            GMT-0500 (EST)")
+        
+        workshop.save()
+        workshop.set_cancellation_reason("Univ Exams")
+        workshop.save()
+        workshop = Workshop.get_by_id(1)
+        self.assertEqual("Univ Exams", workshop.cancellation_reason)
+#+END_SRC
+***** setNotApprovalReason: Workshop, Reason --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(not_approval_reason=str)
+    def set_not_approval_reason(self, not_approval_reason):
+        self.not_approval_reason = not_approval_reason
+#+END_SRC
+***** Test setNotApprovalReason: Workshop, Reason --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_set_not_approval_reason(self):
+        print "test_set_not_approval_reason"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)     
+        workshop = Workshop(name="Training", location="IIIT-Hyd",
+                            user=user, participating_institutes="HCU,\
+                            IIIT-Hyd", no_of_participants_expected=100,
+                            no_of_sessions=3, labs_planned=4,
+                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            GMT-0500 (EST)")
+        
+        workshop.save()
+        workshop.set_not_approval_reason("Attendance Sheet missing")
+        workshop.save()
+        workshop = Workshop.get_by_id(1)
+        self.assertEqual("Attendance Sheet missing", workshop.not_approval_reason)
+#+END_SRC
+***** to_client
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def to_client(self):
+        return {
+            'id': self.id,
+            'location': self.location,
+            'name': self.name,
+            'user': self.user.to_client(),
+            'last_updated': self.last_updated,
+            'created': self.created.isoformat(),
+            'date': self.date,
+            'participating_institutes': self.participating_institutes,
+            'no_of_participants_expected': self.no_of_participants_expected,
+            'participants_attended': self.participants_attended,
+            'no_of_sessions': self.no_of_sessions,
+            'duration_of_sessions': self.duration_of_sessions,
+            'labs_planned': self.labs_planned,
+            'disciplines': self.disciplines,
+            'experiments_conducted': self.experiments_conducted,
+            'other_details': self.other_details,
+            'status': self.status,
+            'cancellation_reason': self.cancellation_reason,
+            'not_approval_reason': self.not_approval_reason
+        }
+#+END_SRC
+      
+***** Test Workshop to_client
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_Workshop_to_client(self):
+        print "test_workshop_to_client"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("madhavi"), email=Email("madhavi@vlabs.ac.in"), role = role)
+        user.save()
+
+        workshop = Workshop(name="Training", location="IIIT-Hyd",
+                            user=user, participating_institutes="HCU,\
+                            IIIT-Hyd", no_of_participants_expected=100,
+                            no_of_sessions=3, labs_planned=4,
+                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            GMT-0500 (EST)")
+
+        workshop.save()
+        workshop_dict = workshop.to_client()
+        self.assertEqual("Mon Nov 23 2015 06:18:26\
+                            GMT-0500 (EST)", workshop_dict['date'])
+        self.assertEqual("Training", workshop_dict['name'])
+
+#+END_SRC
+
 ** Custom Exceptions
 These are some of the custom exceptions used in the application.
 *** AttributeRequired
@@ -1300,7 +2526,7 @@ PERSONA_VERIFIER_URL = "https://verifier.login.persona.org/verify"
       1. Get only few details of a particular workshop (where the workshop id
          is known before):
          #+BEGIN_EXAMPLE
-	 GET /workshops/2?fields=name, conducted_by, participants_attended, status
+	 GET /workshops/2?fields=name, user, participants_attended, status
 	 #+END_EXAMPLE
       2. Get all the details of particular user (presuming the id
          is known beforehand):
@@ -1315,11 +2541,7 @@ PERSONA_VERIFIER_URL = "https://verifier.login.persona.org/verify"
    Also note that, attributes with multiple values are
    comma-separated; and the default action is to use AND operation
    among them. If the OR operation is needed, they need to be
-   substituted by '+'. Example: To get all experiments of a lab which
-   uses Java3D OR Flash:
-   #+BEGIN_EXAMPLE
-   GET /labs/cse02/experiments?technologies=java3d+flash
-   #+END_EXAMPLE
+   substituted by '+'. 
 
    In the above, a valid =<:entity>s= can be any of the keywords
    defined in the look up table. Like, =roles=, =users=,
@@ -1333,7 +2555,8 @@ PERSONA_VERIFIER_URL = "https://verifier.login.persona.org/verify"
   entity_map = {
       'roles': Role,
       'users': User,
-      'workshop_documents': WorkshopDocument
+      'workshop_documents': WorkshopDocument,
+      'workshop': Workshop
     }
 #+END_SRC
 
@@ -1379,8 +2602,11 @@ user = {'entity_class': User,
              'relationship': 'many'},
             {'name': 'workshop_documents',
              'class': WorkshopDocument,
+             'relationship': 'many'},
+            {'name': 'workshops',
+             'class': Workshop,
              'relationship': 'many'}
-             ]}
+        ]}
 
 workshop_document = {'entity_class': WorkshopDocument,
                      'attributes': [
@@ -1396,16 +2622,80 @@ workshop_document = {'entity_class': WorkshopDocument,
                          {'name': 'user',
                           'class': User,
                           'relationship': 'one'}
-                          ]}
+                     ]}
+
+workshop = {'entity_class': Workshop,
+            'attributes': [
+                {'name': 'id',
+                 'class': None,
+                 'relationship': 'one'},
+                {'name': 'name',
+                 'class': None,
+                 'relationship': 'one'},
+                {'name': 'location',
+                 'class': None,
+                 'relationship': 'one'},
+                {'name': 'user',
+                 'class': User,
+                 'relationship': 'one'},
+                {'name': 'participating_institutes',
+                 'class': None,
+                 'relationship': 'one'},
+                {'name': 'no_of_participants_expected',
+                 'class': None,
+                 'relationship': 'one'},
+                {'name': 'participants_attended',
+                 'class': None,
+                 'relationship': 'one'},
+                {'name': 'no_of_sessions',
+                 'class': None,
+                 'relationship': 'one'},
+                {'name': 'duration_of_sessions',
+                 'class': None,
+                 'relationship': 'one'},
+                {'name': 'disciplines',
+                 'class': None,
+                 'relationship': 'one'},
+                {'name': 'labs_planned',
+                 'class': None,
+                 'relationship': 'one'},
+                {'name': 'experiments_conducted',
+                 'class': None,
+                 'relationship': 'one'},
+                {'name': 'other_details',
+                 'class': None,
+                 'relationship': 'one'},
+                {'name': 'status',
+                 'class': None,
+                 'relationship': 'one'},
+                {'name': 'cancellation_reason',
+                 'class': None,
+                 'relationship': 'one'},
+                {'name': 'not_approval_reason',
+                 'class': None,
+                 'relationship': 'one'},
+                {'name': 'created',
+                 'class': None,
+                 'relationship': 'one'},
+                {'name': 'last_updated',
+                 'class': None,
+                 'relationship': 'one'},
+                {'name': 'date',
+                 'class': None,
+                 'relationship': 'one'}
+            ]}
+
 
 roles = role
 users = user
 workshop_documents = workshop_document
+workshops = workshop
 
 entity_pairs = {
     'roles': role,
     'users': user,
-    'workshop_documents': workshop_document
+    'workshop_documents': workshop_document,
+    'workshops': workshop
 }
                    
 #+END_SRC
@@ -1604,7 +2894,31 @@ entity_map_types = {
             'path': str,
             'user': User
         }
+    },
+    'workshops': {
+        'entity': Workshop,
+        'types': {
+            'name': str,
+            'location': str,
+            'user': User,
+            'participating_institutes': str,
+            'no_of_participants_expected': int,
+            'participants_attended': int,
+            'no_of_sessions': int,
+            'duration_of_sessions': int,
+            'disciplines': str,
+            'labs_planned': int,
+            'experiments_conducted': int,
+            'other_details': str,
+            'status': str,
+            'cancellation_reason': str,
+            'not_approval_reason': str,
+            'created': datetime,
+            'last_updated': str,
+            'date': str
+          }
     }
+
 }
 
 #+END_SRC
