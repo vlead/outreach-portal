@@ -1417,7 +1417,7 @@ def index():
 
 @api.route("/admin", methods=['GET','POST'])
 def admin():
-     if request.method == 'POST':
+    if request.method == 'POST':
         file = request.files['file']
         name = request.form['name']
         name_data = json.dumps({"name": name, "user": {"id":session['id']}})
