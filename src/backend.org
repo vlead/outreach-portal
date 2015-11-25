@@ -3217,7 +3217,7 @@ class TestRole(TestCase):
         self.assertEqual(result['name'], "NC")
 
     def test_create_new_role(self):
-        print "test_create_new_institute"
+        print "test_create_new_role"
         r = self.client.post('/roles',
                              data=json.dumps({'name': 'Outreach Coordinator'}))
         result = json.loads(r.data)
@@ -3440,6 +3440,177 @@ class TestWorkshopDocument(TestCase):
 
 #+END_SRC
  
+*** Tests for Workshop
+#+BEGIN_SRC python :tangle tests/test_api.py :eval no
+class TestWorkshop(TestCase):
+
+    TESTING = True
+
+    def create_app(self):
+        app = create_app(config)
+        return app
+
+    def setUp(self):
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+
+    def test_get_all_workshops(self):
+        print "test_get_all_workshops"
+        role = Role(name=Name("Admin"))
+        role.save()
+        user1 = User(name=Name("Joe Smith"),
+                     email=Email("joe@smith.com"),
+                     role=role)
+        user1.save()
+
+        user2 = User(name=Name("Will Smith"),
+                     email=Email("will@smith.com"),
+                     role=role)
+        user2.save()
+        workshop_1 = Workshop(name="Coordinators Training",
+                              location="IIIT-Hyd", user=user1,
+                              participating_institutes="HCU, IIIT-Hyd",
+                              no_of_participants_expected=100,
+                              no_of_sessions=3, labs_planned=4,
+                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              GMT-0500 (EST)")
+
+        workshop_1.save()
+
+        workshop_2 = Workshop(name="HCU workshop", location="HCU",
+                              user=user2, participating_institutes="HCU,\
+                              IIIT-Hyd", no_of_participants_expected=50,
+                              no_of_sessions=2, labs_planned=2,
+                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              GMT-0500 (EST)")
+
+        workshop_2.save()
+
+        r = self.client.get('/workshops')
+        result = json.loads(r.data)
+
+        self.assertEquals(len(result), 2)
+
+    def test_get_one_workshop(self):
+        print "test_get_one_workshop"
+        role = Role(name=Name("OC"))
+        role.save()
+        user1 = User(name=Name("Joe Smith"),
+                     email=Email("joe@smith.com"),
+                     role=role)
+        user1.save()
+        user2 = User(name=Name("Will Smith"),
+                     email=Email("will@smith.com"),
+                     role=role)
+        user2.save()
+
+        workshop_1 = Workshop(name="Coordinators Training",
+                              location="IIIT-Hyd", user=user1,
+                              participating_institutes="HCU, IIIT-Hyd",
+                              no_of_participants_expected=100,
+                              no_of_sessions=3, labs_planned=4,
+                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              GMT-0500 (EST)")
+
+        workshop_1.save()
+
+        r = self.client.get('/workshops/1')
+        result = json.loads(r.data)
+        print result
+        self.assertEqual(result['name'], "Coordinators Training")
+
+    def test_update_existing_workshop(self):
+        print "test_update_existing_workshop"
+        role = Role(name=Name("OC"))
+        role.save()
+        user1 = User(name=Name("Joe Smith"),
+                     email=Email("joe@smith.com"),
+                     role=role)
+        user1.save()
+
+        workshop_1 = Workshop(name="Coordinators Training",
+                              location="IIIT-Hyd", user=user1,
+                              participating_institutes="HCU, IIIT-Hyd",
+                              no_of_participants_expected=100,
+                              no_of_sessions=3, labs_planned=4,
+                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              GMT-0500 (EST)")
+
+        workshop_1.save()
+
+        r = self.client.put('/workshops/1',
+                            data=json.dumps({'status': 'Completed'}))
+        result = json.loads(r.data)
+        self.assertEqual(result['status'], "Completed")
+
+    def test_create_new_workshop(self):
+        print "test_create_new_workshop"
+        role = Role(name=Name("OC"))
+        role.save()
+
+        user1 = User(name=Name("Joe Smith"),
+                     email=Email("joe@smith.com"),
+                     role=role)
+        user1.save()
+
+
+        r = self.client.post('/workshops',
+                             data=json.dumps({ 'name' : 'HCU workshop',
+                                               'location' : 'HCU', 
+                                               'user': user1.to_client(),
+                                               'participating_institutes' : 'HCU, IIIT-Hyd',
+                                               'no_of_participants_expected' : 50,
+                                               'no_of_sessions' : 2,
+                                               'labs_planned' : 2,
+                                               'status' : 'Upcoming', 
+                                               'date' : 'Mon Nov 23 2015 06:18:26 GMT-0500 (EST)'
+                                           }))
+        result = json.loads(r.data)
+        self.assertEqual(result['name'], "HCU workshop")
+
+    def test_delete_workshop(self):
+        print "test_delete_workshop"
+        role = Role(name=Name("OC"))
+        role.save()
+        user1 = User(name=Name("Joe Smith"),
+                     email=Email("joe@smith.com"),
+                     role=role)
+        user1.save()
+
+        user2 = User(name=Name("Will Smith"),
+                     email=Email("will@smith.com"),
+                     role=role)
+        user2.save()
+
+        workshop_1 = Workshop(name="Coordinators Training",
+                              location="IIIT-Hyd", user=user1,
+                              participating_institutes="HCU, IIIT-Hyd",
+                              no_of_participants_expected=100,
+                              no_of_sessions=3, labs_planned=4,
+                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              GMT-0500 (EST)")
+
+        workshop_1.save()
+
+        workshop_2 = Workshop(name="HCU workshop", location="HCU",
+                              user=user2, participating_institutes="HCU,\
+                              IIIT-Hyd", no_of_participants_expected=50,
+                              no_of_sessions=2, labs_planned=2,
+                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              GMT-0500 (EST)")
+
+        workshop_2.save()
+
+        r = self.client.delete('/workshops/1')
+        r = self.client.get('/workshops')
+        result = json.loads(r.data)
+        self.assertEqual(len(result), 1)
+
+#+END_SRC
+    
 * Run the Test Cases
 ** Python DB Tests
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
