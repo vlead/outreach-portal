@@ -1411,196 +1411,196 @@ entity_pairs = {
 
 **** GET APIS
 #+BEGIN_SRC python :tangle src/api.py :eval no
-  @api.route("/")
-  def index():
-      return render_template("index.html")
+@api.route("/")
+def index():
+    return render_template("index.html")
 
-  @api.route("/admin", methods=['GET','POST'])
-  def admin():
-       if request.method == 'POST':
-          file = request.files['file']
-          name = request.form['name']
-          name_data = json.dumps({"name": name, "user": {"id":session['id']}})
-          r = requests.post(APP_URL+"/workshop_documents",data=name_data)
-          r_json = json.loads(r.text)
-          ID = r_json['id']
-          filename = secure_filename(file.filename)
-          dir_path = "%s" % ("/home/dinnu93/Desktop/outreach-docs/")
-          file_path = "%s%s" % (dir_path, filename)
-          file.save(file_path)
-          path = {'path': file_path}
-          print path
-          print "http://localhost:5000/workshop_documents/"+str(ID)
-          response = requests.put("http://localhost:5000/workshop_documents/"+ str(ID), data=path)
-          return redirect("/admin#documents")
-      else:
-          if ('email' in session) and (session['role'] == 'admin'):
-              rg = requests.get("http://localhost:5000/workshop_documents?user_id="+str(session['id']))
-              rg_json = json.loads(rg.text)
-              documents =  rg_json
-              return render_template("admin.html", documents=documents)
-          else:
-              return redirect("/")
+@api.route("/admin", methods=['GET','POST'])
+def admin():
+     if request.method == 'POST':
+        file = request.files['file']
+        name = request.form['name']
+        name_data = json.dumps({"name": name, "user": {"id":session['id']}})
+        r = requests.post(APP_URL+"/workshop_documents",data=name_data)
+        r_json = json.loads(r.text)
+        ID = r_json['id']
+        filename = secure_filename(file.filename)
+        dir_path = "%s" % ("/home/dinnu93/Desktop/outreach-docs/")
+        file_path = "%s%s" % (dir_path, filename)
+        file.save(file_path)
+        path = {'path': file_path}
+        print path
+        print "http://localhost:5000/workshop_documents/"+str(ID)
+        response = requests.put("http://localhost:5000/workshop_documents/"+ str(ID), data=path)
+        return redirect("/admin#documents")
+    else:
+        if ('email' in session) and (session['role'] == 'admin'):
+            rg = requests.get("http://localhost:5000/workshop_documents?user_id="+str(session['id']))
+            rg_json = json.loads(rg.text)
+            documents =  rg_json
+            return render_template("admin.html", documents=documents)
+        else:
+            return redirect("/")
 
-  @api.route("/oc")
-  def outreach_coordinator():
+@api.route("/oc")
+def outreach_coordinator():
 
-      if ('email' in session) and (session['role'] == 'OC'):
-          return render_template("oc.html")
-      else:
-          return redirect("/")
+    if ('email' in session) and (session['role'] == 'OC'):
+        return render_template("oc.html")
+    else:
+        return redirect("/")
 
-  @api.route("/nc")
-  def nodal_coordinator():
+@api.route("/nc")
+def nodal_coordinator():
 
-      if ('email' in session) and (session['role'] == 'NC'):
-          return render_template("nc.html")
-      else:
-          return redirect("/")
+    if ('email' in session) and (session['role'] == 'NC'):
+        return render_template("nc.html")
+    else:
+        return redirect("/")
 
-  @api.route("/auth/login", methods=['GET', 'POST'])
-  def login():
-      if request.method == 'POST':
-          if 'assertion' not in request.form:
-              abort(400)
-          data = {'assertion': request.form['assertion'],
-                  'audience': APP_URL}
-          resp = requests.post(PERSONA_VERIFIER_URL,
-                               data=data, verify=True)
-          if resp.ok:
-              verification_data = resp.json()
-          if verification_data['status'] == 'okay':
-              backend_resp = requests.get(APP_URL + "/users?email="
-                                          +verification_data['email'])
-              if (len(backend_resp.text.encode('ascii')) != 2):
-                  session['email'] = verification_data['email']
-                  role = backend_resp.json()[0]['role']['name'].encode('ascii')
-                  name = backend_resp.json()[0]['name'].encode('ascii')
-                  session['role'] = role
-                  session['name'] = name
-                  session['id'] = backend_resp.json()[0]['id']
-                  if backend_resp.json()[0]['email'].encode('ascii') == \
-                     str(session['email']):
-                      return role
-              else:
-                  return 'Invalid'
+@api.route("/auth/login", methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        if 'assertion' not in request.form:
+            abort(400)
+        data = {'assertion': request.form['assertion'],
+                'audience': APP_URL}
+        resp = requests.post(PERSONA_VERIFIER_URL,
+                             data=data, verify=True)
+        if resp.ok:
+            verification_data = resp.json()
+        if verification_data['status'] == 'okay':
+            backend_resp = requests.get(APP_URL + "/users?email="
+                                        +verification_data['email'])
+            if (len(backend_resp.text.encode('ascii')) != 2):
+                session['email'] = verification_data['email']
+                role = backend_resp.json()[0]['role']['name'].encode('ascii')
+                name = backend_resp.json()[0]['name'].encode('ascii')
+                session['role'] = role
+                session['name'] = name
+                session['id'] = backend_resp.json()[0]['id']
+                if backend_resp.json()[0]['email'].encode('ascii') == \
+                   str(session['email']):
+                    return role
+            else:
+                return 'Invalid'
 
-  @api.route('/auth/logout', methods=['POST'])
-  def logout_handler():
-      session.pop('email', None)
-      session.pop('name', None)
-      session.pop('role', None)
-      return "Ok"
+@api.route('/auth/logout', methods=['POST'])
+def logout_handler():
+    session.pop('email', None)
+    session.pop('name', None)
+    session.pop('role', None)
+    return "Ok"
 
-  @api.route("/upload_document", methods=['POST'])
-  def get_parameters():
-      if request.method == 'POST':
-          data = parse_request(request)
-          print "data is parsed %s" % data
-          response = {
-              'base_url': "upload_document",
-              'name': data['name'],
-              'created_by': data['created_by']
-          }
-          return jsonify(response)
-
-
-  @api.route('/upload_document/<id>', methods=['GET', 'POST'])
-  def save_file(id):
-      print id
-      if request.method == 'GET':
-          return '''
-          <!doctype html>
-          <title>Upload new File</title>
-          <h1>Upload new File</h1>
-          <form action="" method=post enctype=multipart/form-data>
-          <p><input type=file name=file>
-          <input type=submit value=Upload>
-          </form>
-          '''
-      if request.method == 'POST':
-          file = request.files['file']
-          filename = secure_filename(file.filename)
-          dir_path = "%s" % ("/home/vlead/Desktop/outreach-docs/")
-          file_path = "%s%s" % (dir_path, filename)
-          file.save(file_path)
-
-          path = {'path': file_path}
-          print path
-          print "http://localhost:5000/workshop_documents/"\
-                                  + id
-          response = requests.put("http://localhost:5000/workshop_documents/"\
-                                  + id, data=path)
-          print response
-          return file_path
-
-  # query an entity
-  # =/<:entity>s?query_param1=val1&query_param2=val2&..query_paramn=valn=
-  @api.route('/<entity>', methods=['GET'])
-  def query_an_entity(entity):
-      if entity not in entity_pairs:
-          abort(400, 'Entity %s is not valid.' % entity)
-
-      curr_entity = entity_pairs[entity]['entity_class']
-      arg_tuple_list = request.args.lists()
-      if not arg_tuple_list:
-          print "data: %s" % [i.to_client() for i in curr_entity.get_all()]
-          return jsonify_list([i.to_client() for i in curr_entity.get_all()])
-      else:
-          query = curr_entity.query
-          filters = []
-          for arg_tuple in arg_tuple_list:
-              args = arg_tuple[0].split('.')
-              values = arg_tuple[1][0].split(',')
-              filters.append(create_filters(entity_pairs[entity], \
-                                            curr_entity, args, values))
-          for filter in filters:
-              query = query.filter(filter)
-          entities = query.all()
-          print "data: %s" % [ent.to_client() for ent in entities]
-          return jsonify_list([ent.to_client() for ent in entities])
+@api.route("/upload_document", methods=['POST'])
+def get_parameters():
+    if request.method == 'POST':
+        data = parse_request(request)
+        print "data is parsed %s" % data
+        response = {
+            'base_url': "upload_document",
+            'name': data['name'],
+            'created_by': data['created_by']
+        }
+        return jsonify(response)
 
 
-  def create_filters(entity_map, curr_entity, args, values):
-      if len(args) == 1:
-          try:
-              return getattr(curr_entity, args[0]).in_(values)
-          except Exception, e:
-              abort(400, 'error is %s' % (str(e)))
-      else:
-          result = filter(lambda item: item['name'] == args[0],
-                          entity_map['attributes'])
-          if not result:
-              abort(400, '%s is not attribute of %s' %
-                    (args[0], str(entity_map['entity_class'])))
+@api.route('/upload_document/<id>', methods=['GET', 'POST'])
+def save_file(id):
+    print id
+    if request.method == 'GET':
+        return '''
+        <!doctype html>
+        <title>Upload new File</title>
+        <h1>Upload new File</h1>
+        <form action="" method=post enctype=multipart/form-data>
+        <p><input type=file name=file>
+        <input type=submit value=Upload>
+        </form>
+        '''
+    if request.method == 'POST':
+        file = request.files['file']
+        filename = secure_filename(file.filename)
+        dir_path = "%s" % ("/home/vlead/Desktop/outreach-docs/")
+        file_path = "%s%s" % (dir_path, filename)
+        file.save(file_path)
 
-          entity_map = args[0]
-          if result[0]['relationship'] == 'one':
-              try:
-                  return getattr(curr_entity, args[0]).has(
-                      create_filters(entity_map, result[0]['class'], \
-                                     args[1:], values))
-              except Exception, e:
-                  abort(400, 'error is %s' % (str(e)))
-          else:
-              try:
-                  return getattr(curr_entity, args[0]).any(
-                      create_filters(entity_map, result[0]['class'], \
-                                     args[1:], values))
-              except Exception, e:
-                  abort(400, 'error is %s' % (str(e)))
+        path = {'path': file_path}
+        print path
+        print "http://localhost:5000/workshop_documents/"\
+                                + id
+        response = requests.put("http://localhost:5000/workshop_documents/"\
+                                + id, data=path)
+        print response
+        return file_path
+
+# query an entity
+# =/<:entity>s?query_param1=val1&query_param2=val2&..query_paramn=valn=
+@api.route('/<entity>', methods=['GET'])
+def query_an_entity(entity):
+    if entity not in entity_pairs:
+        abort(400, 'Entity %s is not valid.' % entity)
+
+    curr_entity = entity_pairs[entity]['entity_class']
+    arg_tuple_list = request.args.lists()
+    if not arg_tuple_list:
+        print "data: %s" % [i.to_client() for i in curr_entity.get_all()]
+        return jsonify_list([i.to_client() for i in curr_entity.get_all()])
+    else:
+        query = curr_entity.query
+        filters = []
+        for arg_tuple in arg_tuple_list:
+            args = arg_tuple[0].split('.')
+            values = arg_tuple[1][0].split(',')
+            filters.append(create_filters(entity_pairs[entity], \
+                                          curr_entity, args, values))
+        for filter in filters:
+            query = query.filter(filter)
+        entities = query.all()
+        print "data: %s" % [ent.to_client() for ent in entities]
+        return jsonify_list([ent.to_client() for ent in entities])
 
 
-  @api.route('/<entity>/<id>', methods=['GET'])
-  def get_specific_entity(entity, id):
-      if entity not in entity_pairs:
-          abort(400, 'Entity %s is not valid.' % entity)
-      curr_entity = entity_pairs[entity]['entity_class']
-      record = curr_entity.get_by_id(id)
-      if not record:
-          abort(404, "No entry for %s with id: %s found." % (entity, id))
+def create_filters(entity_map, curr_entity, args, values):
+    if len(args) == 1:
+        try:
+            return getattr(curr_entity, args[0]).in_(values)
+        except Exception, e:
+            abort(400, 'error is %s' % (str(e)))
+    else:
+        result = filter(lambda item: item['name'] == args[0],
+                        entity_map['attributes'])
+        if not result:
+            abort(400, '%s is not attribute of %s' %
+                  (args[0], str(entity_map['entity_class'])))
 
-      return jsonify(record.to_client())
+        entity_map = args[0]
+        if result[0]['relationship'] == 'one':
+            try:
+                return getattr(curr_entity, args[0]).has(
+                    create_filters(entity_map, result[0]['class'], \
+                                   args[1:], values))
+            except Exception, e:
+                abort(400, 'error is %s' % (str(e)))
+        else:
+            try:
+                return getattr(curr_entity, args[0]).any(
+                    create_filters(entity_map, result[0]['class'], \
+                                   args[1:], values))
+            except Exception, e:
+                abort(400, 'error is %s' % (str(e)))
+
+
+@api.route('/<entity>/<id>', methods=['GET'])
+def get_specific_entity(entity, id):
+    if entity not in entity_pairs:
+        abort(400, 'Entity %s is not valid.' % entity)
+    curr_entity = entity_pairs[entity]['entity_class']
+    record = curr_entity.get_by_id(id)
+    if not record:
+        abort(404, "No entry for %s with id: %s found." % (entity, id))
+
+    return jsonify(record.to_client())
 
 #+END_SRC
 
