@@ -388,7 +388,7 @@ class User(Entity):
     last_active = db.Column(db.String(128))
     workshops = db.relationship('Workshop', backref='user')
     nodal_coordinator_details = db.relationship('NodalCoordinatorDetail', backref='user') 
-    #created_by = db.relationship('NodalCoordinatorDetail', backref='user') 
+   # created_by = db.relationship('NodalCoordinatorDetail', backref='user') 
  #+END_SRC
 
 **** Constructor
@@ -2303,18 +2303,17 @@ class NodalCoordinatorDetail(Entity):
 
         
     def __str__(self):
-        return "user = %s, last_updated = %s, target_workshops = %s, target_participants = %s,\
-        target_experiments =\ %s" % (self.user.name, self.last_updated,
-                                     self.user.name, self.target_workshops,
-                                     self.target_participants,\
-                                     self.target_experiments)
+        return "user = %s, last_updated = %s, target_workshops = %s, \
+        target_participants = %s, target_experiments = %s"\
+            % (self.user.name, self.last_updated, self.target_workshops,\
+               self.target_participants, self.target_experiments)
 
     def __repr__(self):
-        return "user = %s, last_updated = %s, target_workshops = %s, target_participants = %s,\
-        target_experiments =\ %s" % (self.user.name, self.last_updated,
-                                     self.user.name, self.target_workshops,
-                                     self.target_participants,\
-                                     self.target_experiments)
+        return "user = %s, last_updated = %s, target_workshops = %s, \
+        target_participants = %s, target_experiments = %s"\
+            % (self.user.name, self.last_updated, self.target_workshops,\
+               self.target_participants, self.target_experiments)
+
 
 #+END_SRC
      
@@ -3787,7 +3786,7 @@ def create_record(entity_name, entity):
 
 #+END_SRC
 
-
+      
 ***** Code tangle
 #+BEGIN_SRC python :tangle src/api.py :eval no :noweb yes
 <<create-record>>
@@ -4240,6 +4239,140 @@ class TestWorkshop(TestCase):
 
 #+END_SRC
     
+*** Tests for Nodal Coordinator Details
+#+BEGIN_SRC python :tangle tests/test_api.py :eval no
+class TestNodalCoordinatorDetail(TestCase):
+
+    TESTING = True
+
+    def create_app(self):
+        app = create_app(config)
+        return app
+
+    def setUp(self):
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+
+    def test_get_all_nc_details(self):
+        print "test_get_all_nc_details"
+        role = Role(name=Name("Admin"))
+        role.save()
+        user1 = User(name=Name("Joe Smith"),
+                     email=Email("joe@smith.com"),
+                     role=role)
+        user1.save()
+
+        user2 = User(name=Name("Will Smith"),
+                     email=Email("will@smith.com"),
+                     role=role)
+        user2.save()
+
+        nc_details1 = NodalCoordinatorDetail(user=user1, target_workshops=100,\
+                                             target_participants=1000)
+        nc_details1.save()
+
+        nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,\
+                                             target_participants=2000)
+        nc_details2.save()
+
+        r = self.client.get('/nodal_coordinator_details')
+        result = json.loads(r.data)
+
+        self.assertEquals(len(result), 2)
+
+    def test_get_one_nc_detail(self):
+        print "test_get_one_nc_detail"
+        role = Role(name=Name("OC"))
+        role.save()
+        user1 = User(name=Name("Joe Smith"),
+                     email=Email("joe@smith.com"),
+                     role=role)
+        user1.save()
+        user2 = User(name=Name("Will Smith"),
+                     email=Email("will@smith.com"),
+                     role=role)
+        user2.save()
+
+        nc_details1 = NodalCoordinatorDetail(user=user1, target_workshops=100,\
+                                             target_participants=1000)
+        nc_details1.save()
+
+        r = self.client.get('/nodal_coordinator_details/1')
+        result = json.loads(r.data)
+
+        self.assertEqual(result['target_workshops'], 100)
+
+    def test_update_existing_nc_details(self):
+        print "test_update_existing_nc_details"
+        role = Role(name=Name("OC"))
+        role.save()
+        user1 = User(name=Name("Joe Smith"),
+                     email=Email("joe@smith.com"),
+                     role=role)
+        user1.save()
+
+        nc_details1 = NodalCoordinatorDetail(user=user1, target_workshops=100,\
+                                             target_participants=1000)
+        nc_details1.save()
+
+
+        r = self.client.put('/nodal_coordinator_details/1',
+                            data=json.dumps({'target_workshops': 200}))
+        result = json.loads(r.data)
+        self.assertEqual(result['target_workshops'], 200)
+
+    def test_create_new_nc_details(self):
+        print "test_create_new_nc_details"
+        role = Role(name=Name("OC"))
+        role.save()
+
+        user1 = User(name=Name("Joe Smith"),
+                     email=Email("joe@smith.com"),
+                     role=role)
+        user1.save()
+
+
+        r = self.client.post('/nodal_coordinator_details',
+                             data=json.dumps({ 'user': user1.to_client(),
+                                               'target_workshops':100,
+                                               'target_participants':1000
+                                           }))
+        result = json.loads(r.data)
+        self.assertEqual(result['target_workshops'], 100)
+
+    def test_delete_nc_details(self):
+        print "test_delete_nc_details"
+        role = Role(name=Name("OC"))
+        role.save()
+        user1 = User(name=Name("Joe Smith"),
+                     email=Email("joe@smith.com"),
+                     role=role)
+        user1.save()
+
+        user2 = User(name=Name("Will Smith"),
+                     email=Email("will@smith.com"),
+                     role=role)
+        user2.save()
+
+        nc_details1 = NodalCoordinatorDetail(user=user1, target_workshops=100,\
+                                             target_participants=1000)
+        nc_details1.save()
+
+        nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,\
+                                             target_participants=2000)
+        nc_details2.save()
+
+
+        r = self.client.delete('/nodal_coordinator_details/1')
+        r = self.client.get('/nodal_coordinator_details')
+        result = json.loads(r.data)
+        self.assertEqual(len(result), 1)
+
+#+END_SRC
+
 * Run the Test Cases
 ** Python DB Tests
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
