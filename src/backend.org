@@ -42,7 +42,7 @@ from collections import OrderedDict
 
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask import current_app, request
-
+from sqlalchemy.orm import relationship
 import sqlalchemy.types as types
 
 import os
@@ -387,8 +387,8 @@ class User(Entity):
     created = db.Column(db.DateTime(), default=datetime.utcnow)
     last_active = db.Column(db.String(128))
     workshops = db.relationship('Workshop', backref='user')
-    nodal_coordinator_details = db.relationship('NodalCoordinatorDetail', backref='user') 
-   # created_by = db.relationship('NodalCoordinatorDetail', backref='user') 
+
+    
  #+END_SRC
 
 **** Constructor
@@ -2256,24 +2256,29 @@ class NodalCoordinatorDetail(Entity):
     __tablename__ = 'nodal_coordinator_details'
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-   # created_by_user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
     created = db.Column(db.DateTime(), default=datetime.utcnow)
     last_updated = db.Column(db.String(128))
     target_workshops = db.Column(db.Integer)
     target_participants = db.Column(db.Integer)
     target_experiments = db.Column(db.Integer)
-    
+
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    created_by_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+    user = relationship('User', foreign_keys=[user_id])
+    created_by = relationship('User', foreign_keys=[user_id])
+
  #+END_SRC
 
 **** Constructor
 #+BEGIN_EXAMPLE
     nodal_coordinator_detail = NodalCoordinatorDetail(user=<instance of class User>,
-                                                       created_by=<instance of class User>,                  
-                                                       target_workshops=int,  
-                                                       target_participants=int
-                                                       [,target_experiments=int]
-                                                       [,last_updated=str])
+                                                      created_by=<instance of class User>,                  
+                                                      target_workshops=int,  
+                                                      target_participants=int
+                                                      [,target_experiments=int]
+                                                      [,last_updated=str])
                                             
 #+END_EXAMPLE
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -2286,9 +2291,9 @@ class NodalCoordinatorDetail(Entity):
         if 'last_updated' in kwargs:
             self.set_last_updated(kwargs['last_updated'])
 
- #       if 'created_by' not in kwargs:
- #           raise AttributeRequired("mandatory attribute `created_by` is missing")
- #       self.set_created_by(kwargs['created_by'])
+        if 'created_by' in kwargs:
+          #  raise AttributeRequired("mandatory attribute `created_by` is missing")
+            self.set_created_by(kwargs['created_by'])
 
         if 'target_workshops' not in kwargs:
             raise AttributeRequired("mandatory attribute `target_workshops` is missing")
@@ -2304,15 +2309,16 @@ class NodalCoordinatorDetail(Entity):
         
     def __str__(self):
         return "user = %s, last_updated = %s, target_workshops = %s, \
-        target_participants = %s, target_experiments = %s"\
+        target_participants = %s, target_experiments = %s, created_by = %s"\
             % (self.user.name, self.last_updated, self.target_workshops,\
-               self.target_participants, self.target_experiments)
+               self.target_participants, self.target_experiments, self.created_by.name)
 
     def __repr__(self):
         return "user = %s, last_updated = %s, target_workshops = %s, \
-        target_participants = %s, target_experiments = %s"\
+        target_participants = %s, target_experiments = %s, created_by = %s"\
             % (self.user.name, self.last_updated, self.target_workshops,\
-               self.target_participants, self.target_experiments)
+               self.target_participants, self.target_experiments, self.created_by.name)
+
 
 
 #+END_SRC
@@ -2447,7 +2453,7 @@ class TestNodalCoordinatorDetail(TestCase):
         user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
         user.save()
         nc_details = NodalCoordinatorDetail(user=user, target_workshops=100,\
-                                             target_participants=1000)
+                                            target_participants=1000)
         nc_details.save()
         
        
@@ -2458,14 +2464,14 @@ class TestNodalCoordinatorDetail(TestCase):
 #+END_SRC
 
 ***** getCreatedBy: NodalCoordinatorDetail --> User
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     def get_created_by(self):
         return self.created_by
 
 #+END_SRC
 
 ***** Test getCreatedBy: NodalCoordinatorDetail --> User
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_get_nc_created_by(self):
         print "test_get_nc_created_by"
         role = Role(name=Name("OC"))
@@ -2473,8 +2479,8 @@ class TestNodalCoordinatorDetail(TestCase):
         user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
         user.save()
         nc_details = NodalCoordinatorDetail(user=user, created_by=user,\
-                                             target_workshops=100,\
-                                             target_participants=1000)
+                                            target_workshops=100,\
+                                            target_participants=1000)
         nc_details.save()
         
        
@@ -2657,7 +2663,7 @@ class TestNodalCoordinatorDetail(TestCase):
         user2.save()
      
         nc_details = NodalCoordinatorDetail(user=user1, target_workshops=100,\
-                                             target_participants=1000)
+                                            target_participants=1000)
 
         nc_details.save()
 
@@ -2668,15 +2674,15 @@ class TestNodalCoordinatorDetail(TestCase):
 #+END_SRC
 
 ***** setCreatedBy: NodalCoordinatorDetail, User --> Void
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(created_by=User)
-    def set_created_by(self, user):
+    def set_created_by(self, created_by):
         self.created_by = created_by
 
 #+END_SRC
 
 ***** Test setCreatedBy: NodalCoordinatorDetail, User --> Void
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_set_nc_created_by(self):
         print "test_set_nc_created_by"
         role1 = Role(name=Name("Admin"))
@@ -2687,8 +2693,8 @@ class TestNodalCoordinatorDetail(TestCase):
         user2.save()
      
         nc_details = NodalCoordinatorDetail(user=user2, created_by=user1,\
-                                             target_workshops=100,\
-                                             target_participants=1000)
+                                            target_workshops=100,\
+                                            target_participants=1000)
 
         nc_details.save()
 
@@ -2771,7 +2777,7 @@ class TestNodalCoordinatorDetail(TestCase):
         return {
             'id': self.id,
             'user': self.user.to_client(),
-            #'created_by': self.user.to_client(),
+            'created_by': self.user.to_client(),
             'last_updated': self.last_updated,
             'created': self.created.isoformat(),
             'target_workshops': self.target_workshops,
@@ -2789,8 +2795,8 @@ class TestNodalCoordinatorDetail(TestCase):
                     role = role)
         user.save()
         nc_details = NodalCoordinatorDetail(user=user, created_by=user,\
-                                             target_workshops=100,\
-                                             target_participants=1000)
+                                            target_workshops=100,\
+                                            target_participants=1000)
 
         nc_details.save()
         saved_nc = NodalCoordinatorDetail.get_by_id(1)
@@ -3172,7 +3178,13 @@ user = {'entity_class': User,
              'relationship': 'many'},
             {'name': 'workshops',
              'class': Workshop,
-             'relationship': 'many'}
+             'relationship': 'many'},
+            {'name': 'user_id',
+             'class': NodalCoordinatorDetail,
+             'relationship': 'one'},
+            {'name': 'created_by_user_id',
+             'class': NodalCoordinatorDetail,
+             'relationship': 'one'}
         ]}
 
 workshop_document = {'entity_class': WorkshopDocument,
@@ -3260,9 +3272,9 @@ nodal_coordinator_detail = {'entity_class': NodalCoordinatorDetail,
                                 {'name': 'user',
                                  'class': User,
                                  'relationship': 'one'},
-                               # {'name': 'created_by',
-                                # 'class': User,
-                                # 'relationship': 'one'},
+                                {'name': 'created_by',
+                                 'class': User,
+                                 'relationship': 'one'},
                                 {'name': 'target_workshops',
                                  'class': None,
                                  'relationship': 'one'},
@@ -3519,7 +3531,7 @@ entity_map_types = {
         'entity': NodalCoordinatorDetail,
         'types': {
             'user': User,
-            #'created_by': User,
+            'created_by': User,
             'last_updated': str,
             'created': datetime,
             'target_workshops': int,
