@@ -323,6 +323,10 @@ angular.module('outreachApp.controllers',[])
     });
     
 
+}).controller("nc-dashboard", function($scope, $http, $routeParams, $route) {
+    $scope.message = "hello"
+    
+
 });
 
 
