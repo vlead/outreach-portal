@@ -112,20 +112,25 @@ angular.module('outreachApp.controllers',[])
     });
     $scope.del =  function(a)
     {
-        $http.delete('/users/'+a).
-            success(function(data, status, headers, config) 
-                    {
-                      
+        if(confirm("Are you sure!") == true)
+        {
+            $http.delete('/users/'+a).
+                success(function(data, status, headers, config) 
+                        {
+                            
                            window.location.href = "#/manageoc";
+                            
+                        }).
+                error(function(data, status, headers, config)
+                      {
+                          console.log(data);
                       
-                    }).
-            error(function(data, status, headers, config)
-                  {
-                      console.log(data);
-                      
-                  });
-
-        
+                      });
+            
+        }
+        else
+            return;
+         
     }
     
 }).controller("mainController", function($scope, $http, $routeParams) {
@@ -204,8 +209,8 @@ angular.module('outreachApp.controllers',[])
                 {
                     if(status == 500)
                     {
-                        alert(status);
-                        $scope.status = "Duplicate Entry";
+                        
+                        $scope.status = "Duplicate Email";
                     }
                     else if(status == 400)
                     {
@@ -228,9 +233,9 @@ angular.module('outreachApp.controllers',[])
 
 }).controller("addoc", function($scope, $http, $routeParams) {
 
-    $scope.submit = function()
+    $scope.submit = function(isvalid)
     {
-        if($scope.name != "" & $scope.email != "")
+        if(isvalid)
         {
             $http.post('/users',{'name' : $scope.name,'email' : $scope.email,'role' : { 'id' : 3 } } ).
             success(function(data, status, headers, config)
@@ -244,7 +249,7 @@ angular.module('outreachApp.controllers',[])
             {
                 if(status == 500)
                 {
-                    $scope.status = "Filup all details";
+                    $scope.status = "Duplicate Entry";
                 }
                 else if(status == 400)
                 {
@@ -259,7 +264,69 @@ angular.module('outreachApp.controllers',[])
         }
         else
         {
-            $scope.status = "Not empty"
+            $scope.status = "Fill Details"
         }
     }
+}).controller("doclist", function($scope, $http, $routeParams, $route) {
+    
+    $http.get('/workshop_documents').
+    success(function(data, status, headers, config) 
+    {
+        $scope.documents= data;
+              
+    }).
+    error(function(data, status, headers, config)
+    {
+      console.log(data);
+      
+    });
+    $scope.deldoc =  function(id)
+    {
+        $http.delete('/workshop_documents/'+id).
+            success(function(data, status, headers, config) 
+                    {
+                        $scope.status= "Deleted";
+                        $route.reload();
+              
+                    }).
+            error(function(data, status, headers, config)
+                  {
+                      console.log(data);
+                      
+                  });
+        
+        
+        
+    }
+
+
+}).controller("adddoc", function($scope, $http, $routeParams, $route) {
+    
+    
+
+}).controller("dashboard", function($scope, $http, $routeParams, $route) {
+    
+    
+
+}).controller("profile", function($scope, $http, $routeParams, $route) {
+    
+    $http.get('/users?role_id=1').
+    success(function(data, status, headers, config) 
+    {
+        $scope.users = data;
+              
+    }).
+    error(function(data, status, headers, config)
+    {
+      console.log(data);
+      
+    });
+    
+
+}).controller("nc-dashboard", function($scope, $http, $routeParams, $route) {
+    $scope.message = "hello"
+    
+
 });
+
+
