@@ -1,7 +1,7 @@
 {
   "lab": {
     "description": {
-      "name": "Data Service",
+      "name": "Outreach Portal",
       "id": "data",
       "status": "Work in Progress",
       "discipline": [],
@@ -10,7 +10,7 @@
       "integration_level": 6,
       "developer": [
         {
-          "name": "Anon Ray",
+          "name": "Madhavi Puliraju",
           "title": "",
           "role": "Software Engineer",
           "organization": "VLEAD",
@@ -18,8 +18,8 @@
           "web": "",
           "department": "Software Engg Research Lab (SERL)",
           "contact": {
-            "email": "anon@vlabs.ac.in",
-            "alternate_email": "rayanon004@gmail.com",
+            "email": "madhavi@vlabs.ac.in",
+	    "alternate_email": "",
             "mobile_number": "",
             "office_number": ""
           }
@@ -53,6 +53,36 @@
             "mobile_number": "",
             "office_number": ""
           }
+        },
+	{
+          "name": "Sripathi",
+          "title": "",
+          "role": "Software Engineer",
+          "organization": "VLEAD",
+          "institute": "IIIT Hyderabad",
+          "web": "",
+          "department": "Software Engg Research Lab (SERL)",
+          "contact": {
+            "email": "sripathi@vlabs.ac.in",
+            "alternate_email": "",
+            "mobile_number": "",
+            "office_number": ""
+          }
+        },
+        {
+          "name": "Dinesh",
+          "title": "",
+          "role": "Software Engineer",
+          "organization": "VLEAD",
+          "institute": "IIIT Hyderabad",
+          "web": "",
+          "department": "Software Engg Research Lab (SERL)",
+          "contact": {
+            "email": "dinesh@vlabs.ac.in",
+            "alternate_email": "",
+            "mobile_number": "",
+            "office_number": ""
+          }
         }
       ]
     },
@@ -67,7 +97,7 @@
         "build_steps": {
           "configure": [],
           "pre_build": [
-            "bash ./install_emacs24.sh"
+            "git checkout develop;bash ./install_emacs24.sh"
           ],
           "build": [
             "cd ../;make build"
@@ -96,8 +126,9 @@
         },
         "installer": [
           "bash /var/www/setup.sh",
+          "python /var/www/setup.py",
           "bash /var/www/configure.sh",
-          "bash /var/www/migrate.sh"
+          "python /var/www/db_setup.py"
         ],
         "lab_actions": {
           "init"    : [],
