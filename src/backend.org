@@ -1242,7 +1242,7 @@ WHITELIST_IPS = ["127.0.0.1"]
 
 # destination for uploaded files
 # example value - '/home/vlead/Desktop/outreach-docs/'
-UPLOAD_DIR_PATH = '/home/vlead/Desktop/outreach-docs/'
+UPLOAD_DIR_PATH = 'static/uploads/'
 
 # allowed file extensions that can be uploaded
 ALLOWED_FILE_EXTENSIONS = ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'csv']
@@ -1426,7 +1426,7 @@ def admin():
         r_json = json.loads(r.text)
         ID = r_json['id']
         filename = secure_filename(file.filename)
-        dir_path = "%s" % ("/home/dinnu93/Desktop/outreach-docs/")
+        dir_path = "%s" % (UPLOAD_DIR_PATH)
         file_path = "%s%s" % (dir_path, filename)
         file.save(file_path)
         path = {'path': file_path}
