@@ -176,8 +176,8 @@ update_app_config () {
 }
 
 update_apache_config() {
-  PROC_NAME="dataservice"
-  WSGI_SCRIPT="dataservice.wsgi"
+  PROC_NAME="outreach"
+  WSGI_SCRIPT="outreach.wsgi"
   APACHE_VHOST_FILE="/etc/apache2/sites-available/default"
 
   sed -i "/<\/VirtualHost>/i \
@@ -213,7 +213,7 @@ if [[ $? -ne 0 ]]; then
   echo "FATAL: Failed to update application config.py"
   exit 1;
 fi
-#update_apache_config
+update_apache_config
 if [[ $? -ne 0 ]]; then
   echo "FATAL: Failed to update apache config"
   exit 1;
