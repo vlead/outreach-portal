@@ -1,3 +1,4 @@
+
 angular.module('outreachApp.controllers',[])
 .controller('mapCtrl', function ($scope)
 {
@@ -323,8 +324,30 @@ angular.module('outreachApp.controllers',[])
     });
     
 
-}).controller("nc-dashboard", function($scope, $http, $routeParams, $route) {
-    $scope.message = "hello"
+}).controller("nc-dashboard", function($scope, $http, $routeParams, $route, $window) {
+//   alert($window.number);
+    $http.get('/workshops?user_id='+$window.number).
+    success(function(data, status, headers, config) 
+            {
+                var count = 0;
+                var participants = 0;
+                for(i=0;i<data.length;i++)
+                {
+                    count = count +1;
+                    participants = data[i].participants_attended + participants;
+                    alert(typeof(data[i].participants_attended));
+                }
+               
+                $scope.count = count
+                
+                
+    }).
+    error(function(data, status, headers, config)
+    {
+      console.log(data);
+      
+    });
+    
     
 
 });
