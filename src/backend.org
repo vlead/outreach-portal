@@ -2238,13 +2238,12 @@ class TestWorkshop(TestCase):
 *** Nodal Coordinator Details
 **** Immutable data
      + Id
+     + Created
      
 **** Mutable data
      + User --> Id
-     + Created
-     + Last Active
+     + Last Updated
      + Created By 
-     + Last Active
      + Target Workshops
      + Target Participants
      + Target Experiments
@@ -2267,7 +2266,7 @@ class NodalCoordinatorDetail(Entity):
     created_by_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     user = relationship('User', foreign_keys=[user_id])
-    created_by = relationship('User', foreign_keys=[user_id])
+    created_by = relationship('User', foreign_keys=[created_by_id])
 
  #+END_SRC
 
@@ -2311,15 +2310,15 @@ class NodalCoordinatorDetail(Entity):
         return "user = %s, last_updated = %s, target_workshops = %s, \
         target_participants = %s, target_experiments = %s, created_by = %s"\
             % (self.user.name, self.last_updated, self.target_workshops,\
-               self.target_participants, self.target_experiments, self.created_by.name)
+               self.target_participants, self.target_experiments,\
+               self.created_by.name)
 
     def __repr__(self):
         return "user = %s, last_updated = %s, target_workshops = %s, \
         target_participants = %s, target_experiments = %s, created_by = %s"\
             % (self.user.name, self.last_updated, self.target_workshops,\
-               self.target_participants, self.target_experiments, self.created_by.name)
-
-
+               self.target_participants, self.target_experiments,\
+               self.created_by.name)
 
 #+END_SRC
      
@@ -3308,7 +3307,7 @@ entity_pairs = {
 }
                    
 #+END_SRC
-
+     
 **** GET APIS
 #+BEGIN_SRC python :tangle src/api.py :eval no
 @api.route("/")
