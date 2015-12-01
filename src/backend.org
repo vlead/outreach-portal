@@ -2309,18 +2309,20 @@ class NodalCoordinatorDetail(Entity):
 
         
     def __str__(self):
-        return "user = %s, last_updated = %s, target_workshops = %s, \
-        target_participants = %s, target_experiments = %s, created_by = %s"\
-            % (self.user.name, self.last_updated, self.target_workshops,\
-               self.target_participants, self.target_experiments,\
-               self.created_by.name)
+        return "last_updated = %s, user = %s, created_by = %s, target_workshops = %s, \
+        target_participants = %s, target_experiments = %s" % \
+            (self.last_updated, self.user, self.created_by,\
+             self.target_workshops, self.target_participants,\
+             self.target_experiments)
+
 
     def __repr__(self):
-        return "user = %s, last_updated = %s, target_workshops = %s, \
-        target_participants = %s, target_experiments = %s, created_by = %s"\
-            % (self.user.name, self.last_updated, self.target_workshops,\
-               self.target_participants, self.target_experiments,\
-               self.created_by.name)
+        return "last_updated = %s, user = %s, created_by = %s, target_workshops = %s, \
+        target_participants = %s, target_experiments = %s" % \
+            (self.last_updated, self.user, self.created_by,\
+             self.target_workshops, self.target_participants,\
+             self.target_experiments)
+
 
 #+END_SRC
      
@@ -2862,11 +2864,11 @@ class NodalCentre(Entity):
         
     def __str__(self):
         return "Name = %s, location = %s, created_by = %s, coordinators = %s" % \
-            (self.name, self.location, self.created_by.name, self.coordinators.name)
+            (self.name, self.location, self.created_by, self.coordinators)
 
     def __repr__(self):
         return "Name = %s, location = %s, created_by = %s, coordinators = %s" % \
-            (self.name, self.location, self.created_by.name, self.coordinators.name)
+            (self.name, self.location, self.created_by, self.coordinators)
 
 #+END_SRC
 
@@ -2905,8 +2907,8 @@ class TestNodalCentre(TestCase):
         nodal_centre = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
                                    created_by=user1, coordinators=nc_details)
 
+        nodal_centre.save()
         self.assertEqual(user1.name, nodal_centre.created_by.name)
-        self.assertEqual(nc_details.user.name, nodal_centre.coordinators.name)
         self.assertEqual("IIIT-Hyd", nodal_centre.name)
         self.assertEqual("Gachibowli", nodal_centre.location)                        
     
@@ -2917,8 +2919,8 @@ class TestNodalCentre(TestCase):
         # Calling the nodal_centre constructor with necessary arguments but with
         # wrong type should raise TypeError
         self.assertRaises(TypeError, NodalCentre,
-                          ,**{'name': Name("IIIT-Hyd"),
-                              'location': "Gachibowli",
+                          ,**{'name': "IIIT-Hyd",
+                              'location': 123,
                               'created_by': user1,
                               'coordinators': nc_details
                          })
@@ -2960,18 +2962,21 @@ class TestNodalCentre(TestCase):
         nc_details2.save()
 
         nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli", \
-                                    created_by=user2, coordinators=nc_details1)
+                                    created_by=user_2, coordinators=nc_details1)
+        nodal_centre1.save()
 
-        nodal_centre2 = NodalCentre(name="HCU", location="Gachibowli", \
-                                    created_by=user2, coordinators=nc_details2)               
-
+        nodal_centre2 = NodalCentre(name="HCU", location="Lingampalli", \
+                                    created_by=user_2, coordinators=nc_details2)               
+        nodal_centre2.save()
+        
         nodal_centres_list = NodalCentre.get_all()
 
-        self.assertEqual(user2, nodal_centres_list[0].created_by)
+        print nodal_centres_list
         self.assertEqual("IIIT-Hyd", nodal_centres_list[0].name)
-
-        self.assertEqual(nc_details2, nodal_centres_list[1].coordinators)
         self.assertEqual("HCU", nodal_centres_list[1].name)
+
+        self.assertEqual("Gachibowli", nodal_centres_list[0].location)
+        self.assertEqual("Lingampalli", nodal_centres_list[1].location)
 
 #+END_SRC
 ***** getNodalCentre: Id --> NodalCentre
@@ -3147,7 +3152,8 @@ class TestNodalCentre(TestCase):
         nodal_centre.save()
 
         nodal_centre.set_created_by(user2)
-        nc_details.save()
+        nodal_centre.save()
+
         centre = NodalCentre.get_by_id(1)
         self.assertEqual(centre.created_by, user2)
 #+END_SRC
@@ -3258,14 +3264,13 @@ class TestNodalCentre(TestCase):
         self.assertEqual(centre.coordinators, nc_details2)
 #+END_SRC
 
-
 ***** to_client
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def to_client(self):
         return {
             'id': self.id,
-            'created_by': self.user.to_client(),
-            'coordinators': self.nodal_coordinator_detail.to_client(),
+            'created_by': self.created_by.to_client(),
+            'coordinators': self.coordinators.to_client(),
             'name': self.name,
             'location': self.location
         }
@@ -4096,7 +4101,7 @@ entity_map_types = {
             'target_experiments': int
         }
     },
-    'nodal_centre': {
+    'nodal_centres': {
         'entity': NodalCentre,
         'types': {
             'created_by': User,
@@ -4191,7 +4196,7 @@ def update_record(entity_name, entity, id):
         abort(400, "The data should be in JSON format")
 
     data = typecast_data(entity_name, data)
-    print "updated, typecasted data: %s" % data
+    print "typecasted data: %s" % data
 
     try:
         print "Updating record: %s with data: %s" % (record, data)
@@ -4353,7 +4358,7 @@ def create_record(entity_name, entity):
 
 ** Testing the REST API
 *** Tests for Role
-#+BEGIN_SRC python :tangle tests/test_api.py :eval no
+#+BEGIN_SRC python :tangle tests/test_api.py :eval no 
 class TestRole(TestCase):
 
     TESTING = True
@@ -4421,9 +4426,9 @@ class TestRole(TestCase):
         self.assertEqual(len(result), 1)
 
 #+END_SRC
-
+    
 *** Tests for User
-#+BEGIN_SRC python :tangle tests/test_api.py :eval no
+#+BEGIN_SRC python :tangle tests/test_api.py :eval no 
 class TestUser(TestCase):
 
     TESTING = True
@@ -4518,7 +4523,7 @@ class TestUser(TestCase):
 #+END_SRC
     
 *** Tests for WorkshopDocument
-#+BEGIN_SRC python :tangle tests/test_api.py :eval no
+#+BEGIN_SRC python :tangle tests/test_api.py :eval no 
 class TestWorkshopDocument(TestCase):
 
     TESTING = True
@@ -4627,7 +4632,7 @@ class TestWorkshopDocument(TestCase):
 #+END_SRC
  
 *** Tests for Workshop
-#+BEGIN_SRC python :tangle tests/test_api.py :eval no
+#+BEGIN_SRC python :tangle tests/test_api.py :eval no 
 class TestWorkshop(TestCase):
 
     TESTING = True
@@ -4836,17 +4841,7 @@ class TestNodalCoordinatorDetail(TestCase):
                                              target_participants=2000)
         nc_details2.save()
 
-        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli", \
-                                    created_by=user1, coordinators=nc_details1)
-
-        nodal_centre1.save()
-
-        nodal_centre2 = NodalCentre(name="HCU", location="Gachibowli", \
-                                    created_by=user2, coordinators=nc_details2)               
-
-        nodal_centre2.save()
-      
-        r = self.client.get('/nodal_centres')
+        r = self.client.get('/nodal_coordinator_details')
         result = json.loads(r.data)
 
         self.assertEquals(len(result), 2)
@@ -4877,6 +4872,7 @@ class TestNodalCoordinatorDetail(TestCase):
         print "test_update_existing_nc_details"
         role = Role(name=Name("OC"))
         role.save()
+
         user1 = User(name=Name("Joe Smith"),
                      email=Email("joe@smith.com"),
                      role=role)
@@ -4886,10 +4882,11 @@ class TestNodalCoordinatorDetail(TestCase):
                                              target_participants=1000)
         nc_details1.save()
 
-
         r = self.client.put('/nodal_coordinator_details/1',
                             data=json.dumps({'target_workshops': 200}))
+        print r.data
         result = json.loads(r.data)
+        print result
         self.assertEqual(result['target_workshops'], 200)
 
     def test_create_new_nc_details(self):
@@ -4901,7 +4898,6 @@ class TestNodalCoordinatorDetail(TestCase):
                      email=Email("joe@smith.com"),
                      role=role)
         user1.save()
-
 
         r = self.client.post('/nodal_coordinator_details',
                              data=json.dumps({ 'user': user1.to_client(),
@@ -4942,7 +4938,7 @@ class TestNodalCoordinatorDetail(TestCase):
 #+END_SRC
 
 *** Tests for Nodal Centre
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle tests/test_api.py :eval no 
 class TestNodalCentre(TestCase):
 
     TESTING = True
@@ -5087,9 +5083,10 @@ class TestNodalCentre(TestCase):
 
         nodal_centre1.save()   
 
-        r = self.client.delete('/nodal_centres/1')
-        r = self.client.get('/nodal_centres')
-        result = json.loads(r.data)
+        r1 = self.client.delete('/nodal_centres/1')
+
+        r2 = self.client.get('/nodal_centres')
+        result = json.loads(r2.data)
         self.assertEqual(len(result), 0)
 
 #+END_SRC
