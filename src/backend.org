@@ -3852,13 +3852,32 @@ entity_pairs = {
 def index():
     return render_template("index.html")
 
-@api.route("/admin")
+@api.route("/admin", methods=['GET','POST'])
 def admin():
-
-    if ('email' in session) and (session['role'] == 'admin'):
-        return render_template("admin.html")
+    if request.method == 'POST':
+        file = request.files['file']
+        name = request.form['name']
+        name_data = json.dumps({"name": name, "user": {"id":session['id']}})
+        r = requests.post(APP_URL+"/workshop_documents",data=name_data)
+        r_json = json.loads(r.text)
+        ID = r_json['id']
+        filename = secure_filename(file.filename)
+        dir_path = "%s" % ("/home/dinnu93/Desktop/outreach-docs/")
+        file_path = "%s%s" % (dir_path, filename)
+        file.save(file_path)
+        path = {'path': file_path}
+        print path
+        print "http://localhost:5000/workshop_documents/"+str(ID)
+        response = requests.put("http://localhost:5000/workshop_documents/"+ str(ID), data=path)
+        return redirect("/admin#documents")
     else:
-        return redirect("/")
+        if ('email' in session) and (session['role'] == 'admin'):
+            rg = requests.get("http://localhost:5000/workshop_documents?user_id="+str(session['id']))
+            rg_json = json.loads(rg.text)
+            documents =  rg_json
+            return render_template("admin.html", documents=documents)
+        else:
+            return redirect("/")
 
 @api.route("/oc")
 def outreach_coordinator():
@@ -3896,6 +3915,7 @@ def login():
                 name = backend_resp.json()[0]['name'].encode('ascii')
                 session['role'] = role
                 session['name'] = name
+                session['id'] = backend_resp.json()[0]['id']
                 if backend_resp.json()[0]['email'].encode('ascii') == \
                    str(session['email']):
                     return role

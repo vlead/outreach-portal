@@ -4,6 +4,9 @@
 body{
     font-family: 'Raleway', sans-serif;
 }
+h1,h2,h3{
+    font-family: 'Raleway' !important;
+}
 .navbar-custom{
 	min-height: 90px;
 	margin-bottom: 0;
@@ -100,5 +103,31 @@ body{
     padding: 40px 40px; 
 }
 
+
+/* Sub-tabs in admin  */
+.box{
+    background: #3799FA;
+    width: 250px;
+    border-radius: 10px;
+    height: 250px;
+    font-size: 18px;
+    margin: 0 20px 30px 20px;
+    text-align: center;
+    padding: 20px 30px;
+    color: #fff;
+}
+
+.profile{
+    background-color: #3799FA;
+    font-size: 16px;
+    color: #fff;
+    margin-top: 30px;
+    border-radius: 10px ;
+    padding: 30px 40px;
+}
+.profile .name, .profile .email{
+    border-bottom: dashed 1px #ccc;
+    padding: 10px 0;
+}
 
  
