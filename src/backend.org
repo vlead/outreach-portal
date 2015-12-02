@@ -3877,7 +3877,7 @@ WHITELIST_IPS = ["127.0.0.1"]
 
 # destination for uploaded files
 # example value - '/home/vlead/Desktop/outreach-docs/'
-UPLOAD_DIR_PATH = '/home/vlead/Desktop/outreach-docs/'
+UPLOAD_DIR_PATH = 'static/uploads/'
 
 # allowed file extensions that can be uploaded
 ALLOWED_FILE_EXTENSIONS = ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'csv']
@@ -4222,17 +4222,16 @@ def admin():
         r_json = json.loads(r.text)
         ID = r_json['id']
         filename = secure_filename(file.filename)
-        dir_path = "%s" % ("/home/dinnu93/Desktop/outreach-docs/")
-        file_path = "%s%s" % (dir_path, filename)
-        file.save(file_path)
+        dir_path = "%s" % (UPLOAD_DIR_PATH)
+        file_path = "%s%s" % (dir_path, filename)  
+        file.save(os.getcwd()+"/build/code/src/"+file_path)
         path = {'path': file_path}
         print path
-        print "http://localhost:5000/workshop_documents/"+str(ID)
-        response = requests.put("http://localhost:5000/workshop_documents/"+ str(ID), data=path)
+        response = requests.put(APP_URL + "/workshop_documents/"+ str(ID), data=path)
         return redirect("/admin#documents")
     else:
         if ('email' in session) and (session['role'] == 'admin'):
-            rg = requests.get("http://localhost:5000/workshop_documents?user_id="+str(session['id']))
+            rg = requests.get(APP_URL + "/workshop_documents?user_id="+str(session['id']))
             rg_json = json.loads(rg.text)
             documents =  rg_json
             return render_template("admin.html", documents=documents)
