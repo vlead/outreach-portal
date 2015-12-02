@@ -1065,6 +1065,7 @@ class Workshop(Entity):
     cancellation_reason = db.Column(db.String(128))
     not_approval_reason = db.Column(db.String(128))
     
+#    college_reports = db.relationship('CollegeReport', backref='Workshop')
 #+END_SRC
 
 **** Constructor
@@ -3302,6 +3303,346 @@ class TestNodalCentre(TestCase):
 
 #+END_SRC
 
+*** College Reports
+**** Immutable data
+     + Id
+  
+**** Mutable data
+     + Path
+     + Workshop Id
+
+**** Definition
+#+BEGIN_SRC 
+class CollegeReport(Entity):
+
+    __tablename__ = 'college_reports'
+
+    id = db.Column(db.Integer, primary_key=True)
+    path = db.Column(db.String(128))
+    workshop_id = db.Column(db.Integer, db.ForeignKey('workshops.id'))
+    
+#+END_SRC
+
+**** Constructor
+#+BEGIN_EXAMPLE 
+    college_report = CollegeReport(path=str,  workshop=<instance of class Workshop>)
+                                            
+#+END_EXAMPLE
+#+BEGIN_SRC 
+    def __init__(self, **kwargs):
+
+        if 'workshop' not in kwargs:
+            raise AttributeRequired("mandatory attribute `workshop` is missing")
+        self.set_user(kwargs['workshop'])
+        
+        if 'path' in kwargs:
+            self.set_path(kwargs['path'])
+
+    def __str__(self):
+        return "workshop = %s, path = %s" % \
+            (self.workshop.name, self.path)
+
+    def __repr__(self):
+        return "workshop = %s, path = %s" % \
+            (self.workshop.name, self.path)
+
+#+END_SRC
+
+**** Tests for College Report Constructor
+#+BEGIN_SRC 
+class TestCollegeReport(TestCase):
+    TESTING = True
+
+    def create_app(self):
+        app = create_app(config)
+        return app
+
+    def setUp(self):
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+        
+#+END_SRC
+#+BEGIN_SRC 
+    def test_college_report_constructor(self):
+        print "test_college_report_constructor"
+
+        name = Name("Admin")
+        role = Role(name=name)
+        role.save()
+         
+        user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
+        user.save()
+
+        workshop = Workshop(name="Coordinators Training", location="IIIT-Hyd",
+                            user=user, participating_institutes="HCU,\
+                            IIIT-Hyd", no_of_participants_expected=100,
+                            no_of_sessions=3, labs_planned=4,
+                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            GMT-0500 (EST)")
+        workshop.save()
+            
+        college_report = CollegeReport(workshop=workshop)
+        college_report.save()
+         
+        # Calling the college_report constructor without any arguments should
+        # raise AttributeRequired exception
+        self.assertRaises(AttributeRequired, CollegeReport)
+
+        # Calling the college_report constructor with necessary arguments
+        # (workshop,path) but with wrong type should raise TypeError
+        self.assertRaises(TypeError, CollegeReport,
+                          ,**{'path': 12
+                             'workshop': workshop
+                            })
+
+#+END_SRC
+**** Functions that operate on the College Report domain
+***** getAll: Nil --> set[CollegeReport]
+#+BEGIN_SRC 
+    @staticmethod
+    def get_all():
+        return CollegeReport.query.all()
+
+#+END_SRC
+
+***** Test getAll: Nil --> set[CollegeReport]
+#+BEGIN_SRC 
+    def test_college_reports_get_all(self):
+        print "test_college_reports_get_all"
+
+        name = Name("Admin")
+        role = Role(name=name)
+        role.save()
+         
+        user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
+        user.save()
+           
+        workshop = Workshop(name="Coordinators Training", location="IIIT-Hyd",
+                            user=user, participating_institutes="HCU,\
+                            IIIT-Hyd", no_of_participants_expected=100,
+                            no_of_sessions=3, labs_planned=4,
+                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            GMT-0500 (EST)")
+        workshop.save()
+        
+        doc = CollegeReport(path="/static/uploads/college-reports/file.pdf" workshop=workshop)
+        doc.save()
+
+        self.assertEqual("/static/uploads/college-reports/file.pdf", doc.path)
+#+END_SRC
+
+***** getCollegeReport: Id --> CollegeReport
+#+BEGIN_SRC 
+    @staticmethod
+    def get_by_id(id):
+        return CollegeReport.query.get(id)
+
+#+END_SRC
+
+***** Test getCollegeReport: Id --> CollegeReport
+#+BEGIN_SRC 
+    def test_get_college_report_by_id(self):
+        print "test_get_document_by_id"
+
+        name = Name("Admin")
+        role = Role(name=name)
+        role.save()
+         
+        user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
+        user.save()
+
+        workshop = Workshop(name="Coordinators Training", location="IIIT-Hyd",
+                            user=user, participating_institutes="HCU,\
+                            IIIT-Hyd", no_of_participants_expected=100,
+                            no_of_sessions=3, labs_planned=4,
+                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            GMT-0500 (EST)")
+        workshop.save()
+        
+        college_report = CollegeReport(path="/static/uploads/college-reports/file.pdf" workshop=workshop)
+        college_report.save()
+
+        self.assertEqual(college_report.get_by_id(1).path, "/static/uploads/college-reports/file.pdf" )
+
+#+END_SRC
+     
+***** getPath: CollegeReport --> String
+#+BEGIN_SRC 
+    def get_path(self):
+        return self.path
+#+END_SRC
+
+***** Test getPath: CollegeReport --> String
+#+BEGIN_SRC 
+    def test_get_college_report_path(self):
+        print "test_get_college_report_path"
+        name = Name("Admin")
+
+        role = Role(name=name)
+        role.save()
+         
+        user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
+        user.save()
+
+        workshop = Workshop(name="Coordinators Training", location="IIIT-Hyd",
+                            user=user, participating_institutes="HCU,\
+                            IIIT-Hyd", no_of_participants_expected=100,
+                            no_of_sessions=3, labs_planned=4,
+                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            GMT-0500 (EST)")
+        workshop.save()
+
+        college_report = CollegeReport(path="/static/uploads/college-reports/file.pdf" workshop=workshop)
+        college_report.save()
+
+        college_report_path = college_report.get_path()
+        self.assertEqual(college_report_path, "/static/uploads/college-reports/file.pdf")
+#+END_SRC
+     
+***** getWorkshop: CollegeReport --> Workshop
+#+BEGIN_SRC 
+    def get_workshop(self):
+        return self.workshop
+#+END_SRC
+***** TestWorkshop: CollegeReport --> Workshop
+#+BEGIN_SRC 
+def test_get_workshop(self):
+        print "test_get_workshop"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        workshop_1 = Workshop(name="Coordinators Training",
+                              location="IIIT-Hyd", user=user,
+                              participating_institutes="HCU, IIIT-Hyd",
+                              no_of_participants_expected=100,
+                              no_of_sessions=3, labs_planned=4,
+                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              GMT-0500 (EST)")
+
+        workshop = workshop_1.get_workshop()
+        self.assertEqual("Coordinators Training", workshop.name )
+
+#+END_SRC
+***** setPath: CollegeReport, String --> Void
+#+BEGIN_SRC 
+    @typecheck(path=str)
+    def set_path(self, path):
+        self.path = path
+#+END_SRC
+
+***** Test setPath: CollegeReport, String --> Void
+#+BEGIN_SRC 
+    def test_set_college_report_path(self):
+        print "test_set_college_report_path"
+
+        name = Name("Admin")
+        role = Role(name=name)
+        role.save()
+         
+        user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
+        user.save()
+
+        workshop = Workshop(name="Coordinators Training", location="IIIT-Hyd",
+                            user=user, participating_institutes="HCU,\
+                            IIIT-Hyd", no_of_participants_expected=100,
+                            no_of_sessions=3, labs_planned=4,
+                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            GMT-0500 (EST)")
+        workshop.save()
+        
+        college_report = CollegeReport(path="/static/uploads/college-reports/file.pdf" workshop=workshop)
+        college_report.save()
+
+        college_report.set_path("/static/uploads/college-reports/file.doc")
+        college_report.save()
+
+        doc = college_report.get_by_id(1)
+        self.assertEqual(doc.path, "/static/uploads/college-reports/file.doc")
+#+END_SRC
+      
+***** setWorkshop: CollegeReport, Workshop --> Void
+#+BEGIN_SRC 
+    @typecheck(user=User)
+    def set_workshop(self, workshop):
+        self.workshop = workshop
+
+#+END_SRC
+***** Test setWorkshop: CollegeReport, Workshop --> Void
+#+BEGIN_SRC 
+    def test_set_workshop(self):
+        print "test_set_workshop"
+        role = Role(name=Name("Admin"))
+
+        user1 = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        user2 = User(name=Name("madhavi"), email=Email("madhavi@vlabs.ac.in"), role=role)
+
+        workshop1 = Workshop(name="Training", location="IIIT-Hyd",
+                            user=user1, participating_institutes="HCU,\
+                            IIIT-Hyd", no_of_participants_expected=100,
+                            no_of_sessions=3, labs_planned=4,
+                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            GMT-0500 (EST)")
+
+
+        workshop1.save()
+
+        workshop2 = Workshop(name="Training", location="IIT-D",
+                            user=user, participating_institutes="HCU,\
+                            IIIT-Hyd", no_of_participants_expected=100,
+                            no_of_sessions=3, labs_planned=4,
+                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            GMT-0500 (EST)")
+        
+        workshop2.save()
+
+        college_report = CollegeReport(path="/static/uploads/college-reports/file.pdf" workshop=workshop1)
+        college_report.save()
+     
+        college_report.set_workshop(workshop2)
+        college_report.save()
+        self.assertEqual(college_report.workshop.location, "IIT-D")
+#+END_SRC
+***** to_client
+#+BEGIN_SRC 
+    def to_client(self):
+        return {
+            'id': self.id,
+            'path': self.path,
+            'wokshop': self.workshop.to_client()
+        }
+#+END_SRC
+      
+***** Test CollegeReport to_client
+#+BEGIN_SRC 
+    def test_college_report_to_client(self):
+        print "test_college_report_to_client"
+
+        name = Name("Admin")
+        role = Role(name=name)
+        role.save()
+         
+        user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
+        user.save()
+
+        workshop = Workshop(name="Coordinators Training", location="IIIT-Hyd",
+                            user=user, participating_institutes="HCU,\
+                            IIIT-Hyd", no_of_participants_expected=100,
+                            no_of_sessions=3, labs_planned=4,
+                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            GMT-0500 (EST)")
+        workshop.save()
+
+        college_report = CollegeReport(path="/static/uploads/college-reports/file.pdf" workshop=workshop)
+        college_report.save()
+
+        doc = college_report.get_by_id(1)
+        doc_dict = doc.to_client()
+        self.assertEqual("/static/uploads/college-reports/file.pdf", doc_dict['path'])
+
+#+END_SRC
+
 ** Custom Exceptions
 These are some of the custom exceptions used in the application.
 *** AttributeRequired
@@ -3832,6 +4173,18 @@ nodal_centre = {'entity_class': NodalCentre,
                      'relationship': 'one'}
             ]}
 
+#college_report = {'entity_class': CollegeReport,
+#                     'attributes': [
+ #                        {'name': 'id',
+  #                        'class': None,
+   #                       'relationship': 'one'},
+    #                     {'name': 'path',
+     #                     'class': None,
+      #                    'relationship': 'one'},
+       #                  {'name': 'workshop',
+       #                   'class': Workshop,
+        #                  'relationship': 'one'}
+         #            ]}
 
 roles = role
 users = user
@@ -3839,6 +4192,7 @@ workshop_documents = workshop_document
 workshops = workshop
 nodal_coordinator_details = nodal_coordinator_detail
 nodal_centres = nodal_centre
+#college_reports = college_report
 
 entity_pairs = {
     'roles': role,
@@ -3847,6 +4201,7 @@ entity_pairs = {
     'workshops': workshop,
     'nodal_coordinator_details': nodal_coordinator_detail,
     'nodal_centres': nodal_centre
+#    'college_reports': college_report
 }
                    
 #+END_SRC
@@ -3960,11 +4315,6 @@ def save_file(id):
               + id
         response = requests.put(url, data=path)
         return file_path
-
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1] in set(ALLOWED_FILE_EXTENSIONS)
-
 
 # query an entity
 # =/<:entity>s?query_param1=val1&query_param2=val2&..query_paramn=valn=
@@ -4349,7 +4699,6 @@ def create_record(entity_name, entity):
 
 #+END_SRC
 
-      
 ***** Code tangle
 #+BEGIN_SRC python :tangle src/api.py :eval no :noweb yes
 <<create-record>>

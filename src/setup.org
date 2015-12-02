@@ -41,11 +41,21 @@ import src.config as config
 
 
 def create_roles():
-    new_role = Role(name="admin")
-    new_role.save()
+    role1 = Role(name=Name("admin"))
+    role1.save()
+
+    role2 = Role(name=Name("OC"))
+    role2.save()
+
+    role3 = Role(name=Name("NC"))
+    role3.save()
+
+    user = User(name=Name("Sripathi"), email=Email("kammari.sripathi@gmail.com"), role = role1)
+    user.save()
 
 if __name__ == "__main__":
     db.create_all(app=create_app(config))
+    create_roles()
   #+END_SRC
 * Install all dependencies and setup the software
 Install all dependencies, including the OS related packages, Python packages,
