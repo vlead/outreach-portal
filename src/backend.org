@@ -3319,12 +3319,11 @@ def admin():
         file.save(os.getcwd()+"/build/code/src/"+file_path)
         path = {'path': file_path}
         print path
-        print "http://localhost:5000/workshop_documents/"+str(ID)
-        response = requests.put("http://localhost:5000/workshop_documents/"+ str(ID), data=path)
+        response = requests.put(APP_URL + "/workshop_documents/"+ str(ID), data=path)
         return redirect("/admin#documents")
     else:
         if ('email' in session) and (session['role'] == 'admin'):
-            rg = requests.get("http://localhost:5000/workshop_documents?user_id="+str(session['id']))
+            rg = requests.get(APP_URL + "/workshop_documents?user_id="+str(session['id']))
             rg_json = json.loads(rg.text)
             documents =  rg_json
             return render_template("admin.html", documents=documents)
