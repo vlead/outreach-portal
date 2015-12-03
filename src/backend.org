@@ -4307,7 +4307,7 @@ def save_file(id):
             current_time = datetime.utcnow()
             dir_path = "%s" % (UPLOAD_DIR_PATH)
             file_path = "%s%s" % (dir_path, filename)
-            file.save(file_path)
+            file.save(os.getcwd()+"/build/code/src/"+file_path)
 
         path = {'path': file_path}
         url = APP_URL + "/workshop_documents/"\
