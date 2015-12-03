@@ -4315,6 +4315,9 @@ def save_file(id):
         response = requests.put(url, data=path)
         return file_path
 
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in set(ALLOWED_FILE_EXTENSIONS)
 # query an entity
 # =/<:entity>s?query_param1=val1&query_param2=val2&..query_paramn=valn=
 @api.route('/<entity>', methods=['GET'])
