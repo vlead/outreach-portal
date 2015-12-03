@@ -46,6 +46,12 @@ Following is the list of current REST APIs provided by outreach portal:
 - /workshop_documents/<int:id>?fields=field1,field2 [GET]
 - /workshop_documents?query_param1=val1&query_param2=val2&..query_paramn=valn [GET]
 - /upload_document/<id> [POST]
+- /workshops [GET, POST]
+- /workshops/<int:id> [GET, PUT, DELETE]
+- /nodal_coordinator_details [GET, POST]
+- /nodal_coordinator_details/<int:id> [GET, PUT, DELETE]
+- /nodal_centres [GET, POST]
+- /nodal_centres/<int:id> [GET, PUT, DELETE]
 #+END_SRC
 
 *** /roles
