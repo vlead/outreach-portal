@@ -2385,39 +2385,35 @@ class TestNodalCoordinatorDetail(TestCase):
 #+END_SRC
 ***** Test getAll: Nil --> set[NodalCoordinatorDetail]
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
-    def test_nc_details_get_all(self):
-        print "test_nc_details_get_all"
-        role1 = Role(name=Name("OC"))
-        role1.save()
-        
-        role2 = Role(name=Name("NC"))
-        role2.save()
-        
-        user_1 = User(name=Name("Ambika"),
-                      email=Email("ambika@vlabs.ac.in"), role=role1)
-        user_2 = User(name=Name("Madhavi"),
-                      email=Email("madhavi@vlabs.ac.in"), role=role2)
+    def test_get_all_nc_details(self):
+        print "test_get_all_nc_details"
+        role = Role(name=Name("OC"))
+        role.save()
+        user1 = User(name=Name("Joe Smith"),
+                     email=Email("joe@smith.com"),
+                     role=role)
+        user1.save()
 
-        user_1.save()
-        user_2.save()
+        user2 = User(name=Name("Will Smith"),
+                     email=Email("will@smith.com"),
+                     role=Role(name=Name("NC")))
+        user2.save()
 
-        nc_details1 = NodalCoordinatorDetail(user=user_1, target_workshops=100,\
+        nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
+                                             created_by=user1,
                                              target_participants=1000)
         nc_details1.save()
 
-        nc_details2 = NodalCoordinatorDetail(user=user_2, target_workshops=200,\
+        nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
+                                             created_by=user1,
                                              target_participants=2000)
         nc_details2.save()
 
-        
-        nc_details_list = NodalCoordinatorDetail.get_all()
-
-        self.assertEqual("ambika@vlabs.ac.in", nc_details_list[0].user.email)
-        self.assertEqual("Ambika", nc_details_list[0].user.name)
-
-        self.assertEqual("madhavi@vlabs.ac.in", nc_details_list[1].user.email)
-        self.assertEqual("Madhavi", nc_details_list[1].user.name)
-
+        r = self.client.get('/nodal_coordinator_details')
+        result = json.loads(r.data)
+        print "Result, NC Deatils = "
+        print result
+        self.assertEquals(len(result), 2)
 #+END_SRC
 ***** getNodalCoordinatorDetail: Id --> NodalCoordinatorDetail
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -2781,7 +2777,7 @@ class TestNodalCoordinatorDetail(TestCase):
         return {
             'id': self.id,
             'user': self.user.to_client(),
-            'created_by': self.user.to_client(),
+            'created_by': self.created_by.to_client(),
             'last_updated': self.last_updated,
             'created': self.created.isoformat(),
             'target_workshops': self.target_workshops,
@@ -2874,7 +2870,7 @@ class NodalCentre(Entity):
 #+END_SRC
 
 **** Tests for Nodal Centre Constructor
-#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+#+BEGIN_SRC 
 class TestNodalCentre(TestCase):
     TESTING = True
 
@@ -2890,7 +2886,7 @@ class TestNodalCentre(TestCase):
         db.drop_all()
         
 #+END_SRC
-#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+#+BEGIN_SRC 
     def test_nodal_centre_constructor(self):
         print "test_nodal_centre_constructor"
         role = Role(name=Name("Admin"))
@@ -2930,14 +2926,14 @@ class TestNodalCentre(TestCase):
 
 **** Functions that operate on the Nodal Centre domain
 ***** getAll: Nil --> set[NodalCentre]
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC 
     @staticmethod
     def get_all():
         return NodalCentre.query.all()
 
 #+END_SRC
 ***** Test getAll: Nil --> set[NodalCentre]
-#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+#+BEGIN_SRC 
     def test_nodal_centres_get_all(self):
         print "test_nodal_centres_get_all"
         role1 = Role(name=Name("OC"))
@@ -2981,14 +2977,14 @@ class TestNodalCentre(TestCase):
 
 #+END_SRC
 ***** getNodalCentre: Id --> NodalCentre
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC 
     @staticmethod
     def get_by_id(id):
         return NodalCentre.query.get(id)
 
 #+END_SRC
 ***** Test getNodalCentre: Id --> NodalCentre
-#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+#+BEGIN_SRC 
     def test_get_nodal_centre_by_id(self):
         print "test_get_nodal_centre_by_id"
         role = Role(name=Name("OC"))
@@ -3007,14 +3003,14 @@ class TestNodalCentre(TestCase):
         self.assertEqual(nodal_centre.get_by_id(1).name, "IIIT-Hyd")
 #+END_SRC
 ***** getCreatedBy: NodalCentre --> User
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC 
     def get_created_by(self):
         return self.created_by
 
 #+END_SRC
 
 ***** Test getCreatedBy: NodalCentre --> User
-#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+#+BEGIN_SRC 
     def test_get_nodal_centre_created_by(self):
         print "test_get_nc_created_by"
         role = Role(name=Name("OC"))
@@ -3038,13 +3034,13 @@ class TestNodalCentre(TestCase):
 #+END_SRC
 
 ***** getName: NodalCentre --> Name
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC 
     def get_name(self):
         return self.name
 #+END_SRC
 
 ***** Test getName: NodalCentre --> Name 
-#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+#+BEGIN_SRC 
     def test_get_nodal_centre_name(self):
         print "test_get_nodal_centre_name"
         role = Role(name=Name("Admin"))
@@ -3065,13 +3061,13 @@ class TestNodalCentre(TestCase):
 #+END_SRC
 
 ***** getLocation: NodalCentre --> Location
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC 
     def get_location(self):
         return self.location
 #+END_SRC
       
 ***** Test getLocation: NodalCentre --> Location
-#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+#+BEGIN_SRC 
     def test_get_nodal_centre_location(self):
         print "test_get_nodal_centre_location"
         role = Role(name=Name("Admin"))
@@ -3092,14 +3088,14 @@ class TestNodalCentre(TestCase):
 #+END_SRC
 
 ***** getCoordinators: NodalCentre --> NodalCoordinatorDetails
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC 
     def get_coordinators(self):
         return self.coordinators
 
 #+END_SRC
 
 ***** Test getCoordinators: NodalCentre --> NodalCoordinatorDetails
-#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+#+BEGIN_SRC 
     def test_get_nodal_centre_coordinators(self):
         print "test_get_nodal_centre_coordinators"
         role = Role(name=Name("OC"))
@@ -3123,7 +3119,7 @@ class TestNodalCentre(TestCase):
 #+END_SRC
 
 ***** setCreatedBy: NodalCentre, User --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC 
     @typecheck(created_by=User)
     def set_created_by(self, created_by):
         self.created_by = created_by
@@ -3131,7 +3127,7 @@ class TestNodalCentre(TestCase):
 #+END_SRC
 
 ***** Test setCreatedBy: NodalCentre, User --> Void
-#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+#+BEGIN_SRC 
     def test_set_nc_created_by(self):
         print "test_set_nc_created_by"
         role1 = Role(name=Name("Admin"))
@@ -3160,14 +3156,14 @@ class TestNodalCentre(TestCase):
 #+END_SRC
 
 ***** setName: NodalCentre, Name --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC 
     @typecheck(name=str)
     def set_name(self, name):
         self.name = name
 #+END_SRC
       
 ***** Test setName: NodalCentre, Name --> Void
-#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+#+BEGIN_SRC 
     def test_set_nodal_centre_name(self):
         print "test_set_nodal_centre_name"
         role = Role(name=Name("Admin"))
@@ -3192,14 +3188,14 @@ class TestNodalCentre(TestCase):
 #+END_SRC
 
 ***** setLocation: NodalCentre, Location --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC 
     @typecheck(location=str)
     def set_location(self, location):
         self.location = location
 #+END_SRC
 
 ***** Test setLocation: NodalCentre, Location --> Void
-#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+#+BEGIN_SRC 
     def test_set_nodal_centre_location(self):
         print "test_set_nodal_centre_location"
         role = Role(name=Name("Admin"))
@@ -3224,7 +3220,7 @@ class TestNodalCentre(TestCase):
 #+END_SRC
 
 ***** setCoordinators: NodalCentre, NodalCoordinatorDetail --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC 
     @typecheck(coordinators=NodalCoordinatorDetail)
     def set_coordinators(self, coordinators):
         self.coordinators = coordinators
@@ -3232,7 +3228,7 @@ class TestNodalCentre(TestCase):
 #+END_SRC
 
 ***** Test setCoordinators: NodalCentre, NodalCoordinatorDetail --> Void
-#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+#+BEGIN_SRC 
     def test_set_nodal_centre_coordinators(self):
         print "test_set_nodal_centre_coordinators"
         role1 = Role(name=Name("Admin"))
@@ -3266,7 +3262,7 @@ class TestNodalCentre(TestCase):
 #+END_SRC
 
 ***** to_client
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC 
     def to_client(self):
         return {
             'id': self.id,
@@ -3278,7 +3274,7 @@ class TestNodalCentre(TestCase):
 #+END_SRC
       
 ***** Test Nodal Centre to_client
-#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+#+BEGIN_SRC 
     def test_nodal_centre_to_client(self):
         print "test_nodal_centre_to_client"
         role = Role(name=Name("Admin"))
@@ -4315,6 +4311,9 @@ def save_file(id):
         response = requests.put(url, data=path)
         return file_path
 
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in set(ALLOWED_FILE_EXTENSIONS)
 # query an entity
 # =/<:entity>s?query_param1=val1&query_param2=val2&..query_paramn=valn=
 @api.route('/<entity>', methods=['GET'])
@@ -5167,9 +5166,10 @@ class TestNodalCoordinatorDetail(TestCase):
         db.session.remove()
         db.drop_all()
 
+
     def test_get_all_nc_details(self):
         print "test_get_all_nc_details"
-        role = Role(name=Name("Admin"))
+        role = Role(name=Name("OC"))
         role.save()
         user1 = User(name=Name("Joe Smith"),
                      email=Email("joe@smith.com"),
@@ -5178,20 +5178,23 @@ class TestNodalCoordinatorDetail(TestCase):
 
         user2 = User(name=Name("Will Smith"),
                      email=Email("will@smith.com"),
-                     role=role)
+                     role=Role(name=Name("NC")))
         user2.save()
 
-        nc_details1 = NodalCoordinatorDetail(user=user1, target_workshops=100,\
+        nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
+                                             created_by=user1,
                                              target_participants=1000)
         nc_details1.save()
 
-        nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,\
+        nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
+                                             created_by=user1,
                                              target_participants=2000)
         nc_details2.save()
 
         r = self.client.get('/nodal_coordinator_details')
         result = json.loads(r.data)
-
+        print "Result, NC Deatils = "
+        print result
         self.assertEquals(len(result), 2)
 
     def test_get_one_nc_detail(self):
@@ -5202,14 +5205,21 @@ class TestNodalCoordinatorDetail(TestCase):
                      email=Email("joe@smith.com"),
                      role=role)
         user1.save()
+
         user2 = User(name=Name("Will Smith"),
                      email=Email("will@smith.com"),
-                     role=role)
+                     role=Role(name=Name("NC")))
         user2.save()
 
-        nc_details1 = NodalCoordinatorDetail(user=user1, target_workshops=100,\
+        nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
+                                             created_by=user1,
                                              target_participants=1000)
         nc_details1.save()
+
+        nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
+                                             created_by=user1,
+                                             target_participants=2000)
+        nc_details2.save()
 
         r = self.client.get('/nodal_coordinator_details/1')
         result = json.loads(r.data)
@@ -5217,18 +5227,23 @@ class TestNodalCoordinatorDetail(TestCase):
         self.assertEqual(result['target_workshops'], 100)
 
     def test_update_existing_nc_details(self):
-        print "test_update_existing_nc_details"
         role = Role(name=Name("OC"))
         role.save()
-
         user1 = User(name=Name("Joe Smith"),
                      email=Email("joe@smith.com"),
                      role=role)
         user1.save()
 
-        nc_details1 = NodalCoordinatorDetail(user=user1, target_workshops=100,\
+        user2 = User(name=Name("Will Smith"),
+                     email=Email("will@smith.com"),
+                     role=Role(name=Name("NC")))
+        user2.save()
+
+        nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
+                                             created_by=user1,
                                              target_participants=1000)
         nc_details1.save()
+
 
         r = self.client.put('/nodal_coordinator_details/1',
                             data=json.dumps({'target_workshops': 200}))
@@ -5241,15 +5256,21 @@ class TestNodalCoordinatorDetail(TestCase):
         print "test_create_new_nc_details"
         role = Role(name=Name("OC"))
         role.save()
-
         user1 = User(name=Name("Joe Smith"),
                      email=Email("joe@smith.com"),
                      role=role)
         user1.save()
 
+        user2 = User(name=Name("Will Smith"),
+                     email=Email("will@smith.com"),
+                     role=Role(name=Name("NC")))
+        user2.save()
+
+
         r = self.client.post('/nodal_coordinator_details',
-                             data=json.dumps({ 'user': user1.to_client(),
+                             data=json.dumps({ 'user': user2.to_client(),
                                                'target_workshops':100,
+                                               'created_by':user1.to_client(),
                                                'target_participants':1000
                                            }))
         result = json.loads(r.data)
@@ -5269,11 +5290,13 @@ class TestNodalCoordinatorDetail(TestCase):
                      role=role)
         user2.save()
 
-        nc_details1 = NodalCoordinatorDetail(user=user1, target_workshops=100,\
+        nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
+                                             created_by=user1,
                                              target_participants=1000)
         nc_details1.save()
 
-        nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,\
+        nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
+                                             created_by=user1,
                                              target_participants=2000)
         nc_details2.save()
 
@@ -5283,10 +5306,11 @@ class TestNodalCoordinatorDetail(TestCase):
         result = json.loads(r.data)
         self.assertEqual(len(result), 1)
 
+
 #+END_SRC
 
 *** Tests for Nodal Centre
-#+BEGIN_SRC python :tangle tests/test_api.py :eval no 
+#+BEGIN_SRC 
 class TestNodalCentre(TestCase):
 
     TESTING = True
