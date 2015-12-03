@@ -42,7 +42,16 @@ angular.module('outreachApp',['ngRoute','outreachApp.controllers']).config
          .when('/nc-dashboard', {
 	     templateUrl : '/static/partials/nc-dashboard.html',
 	     controller  : 'nc-dashboard'
+	 })
+         .when('/manage-workshops', {
+	     templateUrl : '/static/partials/manage_workshops.html',
+	     controller  : 'manage-workshops'
+	 })
+         .when('/contactoc', {
+	     templateUrl : '/static/partials/contactoc.html',
+	     controller  : 'contactoc'
 	 });
+     
 	 
 	    
 		
