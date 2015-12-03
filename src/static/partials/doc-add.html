@@ -4,7 +4,7 @@
     <span style="color:red" ng-show="myForm.name.$dirty && myForm.name.$invalid">
       <span ng-show="myForm.name.$error.required">File name required</span>
     </span>
-    <input type="file" name="file" id="file" ng-model="file" required/><br>
+    <input type="file" name="file" id="file" ng-model="file" required multiple/><br>
     <span style="color:red" ng-show="myForm.file.$dirty && myForm.file.$invalid">
       <span ng-show="myForm.file.$error.required">Document is required</span>
     </span>
@@ -18,12 +18,31 @@
         var name = $('#name').val();
         console.log(number);
         console.log(name);
-        var form_data = new FormData();
+        data = {name: name, user: {id : number}};
         fileups = document.getElementById('file');
-        form_data.append('file', fileups.files[0], fileups.files[0].name);
+        for (var i = 0; i < fileups.files.length; i++){
+        var jqxhr = $.ajax({
+            url: '/workshop_documents',
+            type: 'POST',
+            global: false,
+            async:false,
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function (data){
+                return data ;
+            },
+        }).responseText;
+
+        var documentId = JSON.parse(jqxhr).id;
+        console.log(documentId);
+        var form_data = new FormData();
+       
+        form_data.append('file', fileups.files[i], fileups.files[i].name);
+        var url = '/upload_document/' + documentId ;
+   
         $.ajax({
             type: 'POST',
-            url: '/upload_document/57',
+            url: url,
             data: form_data,
             contentType: false,
             cache: false,
@@ -32,7 +51,9 @@
             success: function(data) {
                 console.log('Success');
             },
-        });
+       });
+     }
+      window.history.back();                                  
     });
 });
  </script>
