@@ -208,7 +208,7 @@ angular.module('outreachApp.controllers',[])
     {
         if(isvalid)
         {
-            $http.post('/users',{'name' : $scope.name,'email' : $scope.email,'role' : { 'id' : 3 } } ).
+            $http.post('/users',{'name' : $scope.name,'email' : $scope.email,'role' : { 'id' : 2 } } ).
             success(function(data, status, headers, config)
             {
                 $scope.status = "Success";
