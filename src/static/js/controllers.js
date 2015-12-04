@@ -325,20 +325,55 @@ angular.module('outreachApp.controllers',[])
     
 
 }).controller("nc-dashboard", function($scope, $http, $routeParams, $route, $window) {
-//   alert($window.number);
+   // alert($window.number);
     $http.get('/workshops?user_id='+$window.number).
     success(function(data, status, headers, config) 
             {
                 var count = 0;
                 var participants = 0;
+                var experiments = 0;
                 for(i=0;i<data.length;i++)
                 {
                     count = count +1;
                     participants = data[i].participants_attended + participants;
-                    alert(typeof(data[i].participants_attended));
+                    experiments = data[i].experiments_conducted + experiments;
+                    
+                    //    alert(typeof(data[i].participants_attended));
+                   
                 }
-               
-                $scope.count = count
+                $scope.participants = participants;
+                $scope.experiments = experiments;
+                $scope.count = count;
+                
+                
+    }).
+    error(function(data, status, headers, config)
+    {
+      console.log(data);
+      
+    });
+    $http.get('/nodal_coordinator_details?user_id='+$window.number).
+    success(function(data, status, headers, config) 
+            {
+
+                var target_workshops = 0;
+                var target_experiments = 0;
+                var target_participants = 0;
+                
+                for(i=0;i<data.length;i++)
+                {
+
+                    target_workshops = data[i].target_workshops + target_workshops;
+                    target_experiments = data[i].target_experiments + target_experiments;
+                    target_participants = data[i].target_participants + target_participants;
+                    
+                   
+                }
+                $scope.target_workshops = target_workshops;
+                $scope.target_experiments = target_experiments;
+                $scope.target_participants = target_participants;
+                
+                
                 
                 
     }).
@@ -350,6 +385,80 @@ angular.module('outreachApp.controllers',[])
     
     
 
+}).controller("manage-workshops", function($scope, $http, $routeParams, $route, $window) {
+   
+    $http.get('/workshops?user_id='+$window.number).
+    success(function(data, status, headers, config) 
+            {
+                
+                today = new Date();
+                var upcoming = 0;
+                var ups = [];
+                var history = [];
+	        for(i=0;i<data.length;i++)
+	        {
+                    
+                    workshop_date = new Date(data[i].date);
+                    if( (today <= workshop_date) ||(today.getDate() == workshop_date.getDate() & (today.getMonth() == workshop_date.getMonth()) 
+                                                    & (today.getFullYear() == workshop_date.getFullYear())))
+                    {
+                        ups.push(data[i]);
+		        upcoming = upcoming + 1;
+	            }
+	        
+                else
+                {
+                    history.push(data[i]);
+                }
+                }
+                $scope.history = history;
+                $scope.ups = ups;
+                $scope.upcoming = upcoming;
+                $scope.experiments = experiments;
+                $scope.count = count;
+                
+                
+    }).
+    error(function(data, status, headers, config)
+    {
+      console.log(data);
+      
+    });
+  
+}).controller("contactoc", function($scope, $http, $routeParams, $route, $window) {
+   
+    $http.get('/nodal_coordinator_details?user_id='+$window.number).
+    success(function(data, status, headers, config) 
+            {
+                $scope.oc = data;
+                
+                
+    }).
+    error(function(data, status, headers, config)
+    {
+      console.log(data);
+      
+    });
+  
+}).controller("ncdocuments", function($scope, $http, $routeParams, $route, $window) {
+   
+    $http.get('/workshop_documents').
+    success(function(data, status, headers, config) 
+            {
+                $scope.docs = data;
+                
+                
+    }).
+    error(function(data, status, headers, config)
+    {
+      console.log(data);
+      
+    });
+  
 });
+
+
+
+
 
 
