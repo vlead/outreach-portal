@@ -386,7 +386,7 @@ class User(Entity):
     name = db.Column(db.String(128), nullable=False)
     email = db.Column(db.String(128), unique=True)
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
-    workshop_documents = db.relationship('WorkshopDocument', backref='user')
+    reference_documents = db.relationship('ReferenceDocument', backref='user')
     created = db.Column(db.DateTime(), default=datetime.utcnow)
     last_active = db.Column(db.String(128))
     workshops = db.relationship('Workshop', backref='user')
@@ -723,7 +723,7 @@ class TestUser(TestCase):
         self.assertEqual("Admin", user_dict['role']['name'])
 #+END_SRC
 
-*** Workshop Document
+*** Reference Document
 **** Immutable data
      + Id
   
@@ -734,9 +734,9 @@ class TestUser(TestCase):
 
 **** Definition
 #+BEGIN_SRC python :tangle src/db.py :eval no
-class WorkshopDocument(Entity):
+class ReferenceDocument(Entity):
 
-    __tablename__ = 'workshop_documents'
+    __tablename__ = 'reference_documents'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), nullable=False)
@@ -747,7 +747,7 @@ class WorkshopDocument(Entity):
 
 **** Constructor
 #+BEGIN_EXAMPLE 
-    workshop_document = WorkshopDocument(name=<instance of class Name>,
+    reference_document = ReferenceDocument(name=<instance of class Name>,
                                          path=str,
                                          user=<instance of class User>)
                                             
@@ -775,9 +775,9 @@ class WorkshopDocument(Entity):
 
 #+END_SRC
 
-**** Tests for Workshop Document Constructor
+**** Tests for Reference Document Constructor
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
-class TestWorkshopDocument(TestCase):
+class TestReferenceDocument(TestCase):
     TESTING = True
 
     def create_app(self):
@@ -793,8 +793,8 @@ class TestWorkshopDocument(TestCase):
         
 #+END_SRC
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
-    def test_workshop_document_constructor(self):
-        print "test_workshop_document_constructor"
+    def test_reference_document_constructor(self):
+        print "test_reference_document_constructor"
 
         name = Name("Admin")
         role = Role(name=name)
@@ -804,34 +804,34 @@ class TestWorkshopDocument(TestCase):
         user.save()
 
         name = Name("Attandance Sheet")
-        workshop_document = WorkshopDocument(name=name, user=user)
-        self.assertEqual(isinstance(workshop_document, WorkshopDocument), True)
+        reference_document = ReferenceDocument(name=name, user=user)
+        self.assertEqual(isinstance(reference_document, ReferenceDocument), True)
 
-        # Calling the workshop_document constructor without any arguments should
+        # Calling the reference_document constructor without any arguments should
         # raise AttributeRequired exception
-        self.assertRaises(AttributeRequired, WorkshopDocument)
+        self.assertRaises(AttributeRequired, ReferenceDocument)
 
-        # Calling the workshop_document constructor with necessary arguments
+        # Calling the reference_document constructor with necessary arguments
         # (name,path) but with wrong type should raise TypeError
-        self.assertRaises(TypeError, WorkshopDocument,
+        self.assertRaises(TypeError, ReferenceDocument,
                           ,**{'name': "College Report",
                              'user': user
                             })
 
 #+END_SRC
-**** Functions that operate on the Workshop Document domain
-***** getAll: Nil --> set[WorkshopDocument]
+**** Functions that operate on the Reference Document domain
+***** getAll: Nil --> set[ReferenceDocument]
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_all():
-        return WorkshopDocument.query.all()
+        return ReferenceDocument.query.all()
 
 #+END_SRC
 
-***** Test getAll: Nil --> set[WorkshopDocument]
+***** Test getAll: Nil --> set[ReferenceDocument]
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
-    def test_workshop_documents_get_all(self):
-        print "test_workshop_documents_get_all"
+    def test_reference_documents_get_all(self):
+        print "test_reference_documents_get_all"
 
         name = Name("Admin")
         role = Role(name=name)
@@ -840,22 +840,22 @@ class TestWorkshopDocument(TestCase):
         user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
         user.save()
 
-        doc = WorkshopDocument(name=Name("Attendance Sheet"), user=user)
+        doc = ReferenceDocument(name=Name("Attendance Sheet"), user=user)
         doc.save()
         self.assertEqual("Attendance Sheet", doc.name)
 #+END_SRC
 
-***** getWorkshopDocument: Id --> WorkshopDocument
+***** getReferenceDocument: Id --> ReferenceDocument
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_by_id(id):
-        return WorkshopDocument.query.get(id)
+        return ReferenceDocument.query.get(id)
 
 #+END_SRC
 
-***** Test getWorkshopDocument: Id --> WorkshopDocument
+***** Test getReferenceDocument: Id --> ReferenceDocument
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no 
-    def test_get_workshop_document_by_id(self):
+    def test_get_reference_document_by_id(self):
         print "test_get_document_by_id"
 
         name = Name("Admin")
@@ -865,21 +865,21 @@ class TestWorkshopDocument(TestCase):
         user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
         user.save()
 
-        workshop_document = WorkshopDocument(name=Name("Attendance Sheet"), user=user)
-        workshop_document.save()
-        self.assertEqual(workshop_document.get_by_id(1).name, "Attendance Sheet")
+        reference_document = ReferenceDocument(name=Name("Attendance Sheet"), user=user)
+        reference_document.save()
+        self.assertEqual(reference_document.get_by_id(1).name, "Attendance Sheet")
 
 #+END_SRC
      
-***** getName: WorkshopDocument --> Name
+***** getName: ReferenceDocument --> Name
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_name(self):
         return self.name
 #+END_SRC
 
-***** Test getName: WorkshopDocument --> Name
+***** Test getName: ReferenceDocument --> Name
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
-    def test_get_workshop_document_name(self):
+    def test_get_reference_document_name(self):
         print "test_get_document_name"
 
         name = Name("Admin")
@@ -889,20 +889,20 @@ class TestWorkshopDocument(TestCase):
         user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
         user.save()
 
-        workshop_document = WorkshopDocument(name=Name("Attendance Sheet"), user=user)
-        workshop_document_name = workshop_document.get_name()
-        self.assertEqual(workshop_document_name, "Attendance Sheet")
+        reference_document = ReferenceDocument(name=Name("Attendance Sheet"), user=user)
+        reference_document_name = reference_document.get_name()
+        self.assertEqual(reference_document_name, "Attendance Sheet")
 #+END_SRC
 
-***** getPath: WorkshopDocument --> String
+***** getPath: ReferenceDocument --> String
 #+BEGIN_SRC python :tangle src/db.py :eval no 
     def get_path(self):
         return self.path
 #+END_SRC
 
-***** Test getPath: WorkshopDocument --> String
+***** Test getPath: ReferenceDocument --> String
 #+BEGIN_SRC 
-    def test_get_workshop_document_path(self):
+    def test_get_reference_document_path(self):
         print "test_get_document_path"
         name = Name("Admin")
 
@@ -912,28 +912,28 @@ class TestWorkshopDocument(TestCase):
         user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
         user.save()
 
-        workshop_document = WorkshopDocument(name=Name("Attendance Sheet"), user=user,\
-                                             path="/workshop-documents/admin")
-        workshop_document_path = workshop_document.get_path()
-        self.assertEqual(workshop_document_path, "/workshop-documents/admin")
+        reference_document = ReferenceDocument(name=Name("Attendance Sheet"), user=user,\
+                                             path="/reference-documents/admin")
+        reference_document_path = reference_document.get_path()
+        self.assertEqual(reference_document_path, "/reference-documents/admin")
 #+END_SRC
      
-***** getUser: WorkshopDocument --> User
+***** getUser: ReferenceDocument --> User
 #+BEGIN_SRC python :tangle src/db.py :eval no 
     def get_user(self):
         return self.user
 #+END_SRC
-***** TestUser: WorkshopDocument --> User
-***** setName: WorkshopDocument, Name --> Void
+***** TestUser: ReferenceDocument --> User
+***** setName: ReferenceDocument, Name --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(name=Name)
     def set_name(self, name):
         self.name = name.value
 #+END_SRC
 
-***** Test setName: WorkshopDocument, Name --> Void
+***** Test setName: ReferenceDocument, Name --> Void
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
-    def test_set_workshop_document_name(self):
+    def test_set_reference_document_name(self):
         print "test_set_document_name"
 
         name = Name("Admin")
@@ -943,21 +943,21 @@ class TestWorkshopDocument(TestCase):
         user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
         user.save()
 
-        workshop_document = WorkshopDocument(name=Name("Attandance Sheet"), user=user)
-        workshop_document.set_name(Name("College Report"))
-        self.assertEqual(workshop_document.name, "College Report")
+        reference_document = ReferenceDocument(name=Name("Attandance Sheet"), user=user)
+        reference_document.set_name(Name("College Report"))
+        self.assertEqual(reference_document.name, "College Report")
 #+END_SRC
 
-***** setPath: WorkshopDocument, String --> Void
+***** setPath: ReferenceDocument, String --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no 
     @typecheck(path=str)
     def set_path(self, path):
         self.path = path
 #+END_SRC
 
-***** Test setPath: WorkshopDocument, String --> Void
+***** Test setPath: ReferenceDocument, String --> Void
 #+BEGIN_SRC 
-    def test_set_workshop_document_path(self):
+    def test_set_reference_document_path(self):
         print "test_set_document_path"
 
         name = Name("Admin")
@@ -967,15 +967,15 @@ class TestWorkshopDocument(TestCase):
         user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
         user.save()
 
-        workshop_document = WorkshopDocument(name=Name("Attandance Sheet"), user=user,\
-                                             path="/workshop-documents/OC")
-        workshop_document.set_path("/workshop-documents/OC")
-        workshop_document.save()
-        doc = workshop_document.get_by_id(1)
-        self.assertEqual(doc.path, "/workshop-documents/OC")
+        reference_document = ReferenceDocument(name=Name("Attandance Sheet"), user=user,\
+                                             path="/reference-documents/OC")
+        reference_document.set_path("/reference-documents/OC")
+        reference_document.save()
+        doc = reference_document.get_by_id(1)
+        self.assertEqual(doc.path, "/reference-documents/OC")
 #+END_SRC
       
-***** setUser: WorkshopDocument, User --> Void
+***** setUser: ReferenceDocument, User --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(user=User)
     def set_user(self, user):
@@ -993,10 +993,10 @@ class TestWorkshopDocument(TestCase):
         }
 #+END_SRC
       
-***** Test Workshop Document to_client
+***** Test Reference Document to_client
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
-    def test_workshop_document_to_client(self):
-        print "test_workshop_document_to_client"
+    def test_reference_document_to_client(self):
+        print "test_reference_document_to_client"
 
         name = Name("Admin")
         role = Role(name=name)
@@ -1005,9 +1005,9 @@ class TestWorkshopDocument(TestCase):
         user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
         user.save()
 
-        doc = WorkshopDocument(name=Name("Feedback"), user=user)
+        doc = ReferenceDocument(name=Name("Feedback"), user=user)
         doc.save()
-        doc = WorkshopDocument.get_by_id(1)
+        doc = ReferenceDocument.get_by_id(1)
         doc_dict = doc.to_client()
         self.assertEqual("Feedback", doc_dict['name'])
 
@@ -4468,7 +4468,7 @@ application = create_app(config)
 
    In the above, a valid =<:entity>s= can be any of the keywords
    defined in the look up table. Like, =roles=, =users=,
-   =workshop_documents=. Note that the entity name is always
+   =reference_documents=. Note that the entity name is always
    plural, but the look up table maps the plural keyword to a
    particular entity (which is usually in singular form).
 
@@ -4478,7 +4478,7 @@ application = create_app(config)
   entity_map = {
       'roles': Role,
       'users': User,
-      'workshop_documents': WorkshopDocument,
+      'reference_documents': ReferenceDocument,
       'workshop': Workshop,
       'nodal_coordinator_detail': NodalCoordinatorDetail,
       'nodal_centre': NodalCentre
@@ -4525,8 +4525,8 @@ user = {'entity_class': User,
             {'name': 'role',
              'class': Role,
              'relationship': 'many'},
-            {'name': 'workshop_documents',
-             'class': WorkshopDocument,
+            {'name': 'reference_documents',
+             'class': ReferenceDocument,
              'relationship': 'many'},
             {'name': 'workshops',
              'class': Workshop,
@@ -4542,7 +4542,7 @@ user = {'entity_class': User,
              'relationship': 'many'}
         ]}
 
-workshop_document = {'entity_class': WorkshopDocument,
+reference_document = {'entity_class': ReferenceDocument,
                      'attributes': [
                          {'name': 'id',
                           'class': None,
@@ -4684,7 +4684,7 @@ nodal_centre = {'entity_class': NodalCentre,
 
 roles = role
 users = user
-workshop_documents = workshop_document
+reference_documents = reference_document
 workshops = workshop
 nodal_coordinator_details = nodal_coordinator_detail
 nodal_centres = nodal_centre
@@ -4693,7 +4693,7 @@ nodal_centres = nodal_centre
 entity_pairs = {
     'roles': role,
     'users': user,
-    'workshop_documents': workshop_document,
+    'reference_documents': reference_document,
     'workshops': workshop,
     'nodal_coordinator_details': nodal_coordinator_detail,
     'nodal_centres': nodal_centre
@@ -4714,7 +4714,7 @@ def admin():
         file = request.files['file']
         name = request.form['name']
         name_data = json.dumps({"name": name, "user": {"id":session['id']}})
-        r = requests.post(APP_URL+"/workshop_documents",data=name_data)
+        r = requests.post(APP_URL+"/reference_documents",data=name_data)
         r_json = json.loads(r.text)
         ID = r_json['id']
         filename = secure_filename(file.filename)
@@ -4723,11 +4723,11 @@ def admin():
         file.save(os.getcwd()+"/build/code/src/"+file_path)
         path = {'path': file_path}
         print path
-        response = requests.put(APP_URL + "/workshop_documents/"+ str(ID), data=path)
+        response = requests.put(APP_URL + "/reference_documents/"+ str(ID), data=path)
         return redirect("/admin#documents")
     else:
         if ('email' in session) and (session['role'] == 'admin'):
-            rg = requests.get(APP_URL + "/workshop_documents?user_id="+str(session['id']))
+            rg = requests.get(APP_URL + "/reference_documents?user_id="+str(session['id']))
             rg_json = json.loads(rg.text)
             documents =  rg_json
             return render_template("admin.html", documents=documents)
@@ -4806,7 +4806,7 @@ def save_file(id):
             file.save(os.getcwd()+"/build/code/src/"+file_path)
 
         path = {'path': file_path}
-        url = APP_URL + "/workshop_documents/"\
+        url = APP_URL + "/reference_documents/"\
               + id
         response = requests.put(url, data=path)
         return file_path
@@ -4906,8 +4906,8 @@ entity_map_types = {
             'created': datetime
         }
     },
-    'workshop_documents': {
-        'entity': WorkshopDocument,
+    'reference_documents': {
+        'entity': ReferenceDocument,
         'types': {
             'name': Name,
             'path': str,
@@ -5369,9 +5369,9 @@ class TestUser(TestCase):
 
 #+END_SRC
     
-*** Tests for WorkshopDocument
+*** Tests for ReferenceDocument
 #+BEGIN_SRC python :tangle tests/test_api.py :eval no 
-class TestWorkshopDocument(TestCase):
+class TestReferenceDocument(TestCase):
 
     TESTING = True
 
@@ -5386,8 +5386,8 @@ class TestWorkshopDocument(TestCase):
         db.session.remove()
         db.drop_all()
 
-    def test_get_all_workshop_documents(self):
-        print "test_get_all_workshop_documents"
+    def test_get_all_reference_documents(self):
+        print "test_get_all_reference_documents"
 
         role = Role(name=Name("OC"))
         role.save()
@@ -5396,17 +5396,17 @@ class TestWorkshopDocument(TestCase):
                      role=role)
         user1.save()
 
-        document1 = WorkshopDocument(name=Name("Attendance Sheet"), user=user1)
+        document1 = ReferenceDocument(name=Name("Attendance Sheet"), user=user1)
         document1.save()
-        document2 = WorkshopDocument(name=Name("College Report"), user=user1)
+        document2 = ReferenceDocument(name=Name("College Report"), user=user1)
         document2.save()
-        r = self.client.get('/workshop_documents')
+        r = self.client.get('/reference_documents')
         result = json.loads(r.data)
         print result
         self.assertEquals(len(result), 2)
 
-    def test_get_one_workshop_document(self):
-        print "test_get_one_workshop_document"
+    def test_get_one_reference_document(self):
+        print "test_get_one_reference_document"
 
         role = Role(name=Name("OC"))
         role.save()
@@ -5415,17 +5415,17 @@ class TestWorkshopDocument(TestCase):
                      role=role)
         user1.save()
 
-        doc1 = WorkshopDocument(name=Name("College Report"), user=user1)
+        doc1 = ReferenceDocument(name=Name("College Report"), user=user1)
         doc1.save()
-        doc2 = WorkshopDocument(name=Name("Attendance Sheet"), user=user1)
+        doc2 = ReferenceDocument(name=Name("Attendance Sheet"), user=user1)
         doc2.save()
-        r = self.client.get('/workshop_documents/1')
+        r = self.client.get('/reference_documents/1')
         result = json.loads(r.data)
         print result
         self.assertEqual(result['name'], "College Report")
 
-    def test_update_existing_workshop_document(self):
-        print "test_update_existing_workshop_document"
+    def test_update_existing_reference_document(self):
+        print "test_update_existing_reference_document"
 
         role = Role(name=Name("OC"))
         role.save()
@@ -5434,15 +5434,15 @@ class TestWorkshopDocument(TestCase):
                      role=role)
         user1.save()
 
-        doc1 = WorkshopDocument(name=Name("College Report"), user=user1)
+        doc1 = ReferenceDocument(name=Name("College Report"), user=user1)
         doc1.save()
-        r = self.client.put('/workshop_documents/1',
+        r = self.client.put('/reference_documents/1',
                             data=json.dumps({'name': 'Feedback'}))
         result = json.loads(r.data)
         self.assertEqual(result['name'], "Feedback")
 
-    def test_create_new_workshop_document(self):
-        print "test_create_new_workshop_document"
+    def test_create_new_reference_document(self):
+        print "test_create_new_reference_document"
 
         role = Role(name=Name("OC"))
         role.save()
@@ -5451,14 +5451,14 @@ class TestWorkshopDocument(TestCase):
                      role=role)
         user1.save()
 
-        r = self.client.post('/workshop_documents',
+        r = self.client.post('/reference_documents',
                              data=json.dumps({'name': 'Feedback',
                                               'user': user1.to_client()}))
         result = json.loads(r.data)
         self.assertEqual(result['name'], "Feedback")
 
-    def test_delete_workshop_document(self):
-        print "test_delete_workshop_document"
+    def test_delete_reference_document(self):
+        print "test_delete_reference_document"
 
         role = Role(name=Name("OC"))
         role.save()
@@ -5467,12 +5467,12 @@ class TestWorkshopDocument(TestCase):
                      role=role)
         user1.save()
 
-        doc1 = WorkshopDocument(name=Name("Feedback"), user=user1)
+        doc1 = ReferenceDocument(name=Name("Feedback"), user=user1)
         doc1.save()
-        doc2 = WorkshopDocument(name=Name("College Report"), user=user1)
+        doc2 = ReferenceDocument(name=Name("College Report"), user=user1)
         doc2.save()
-        r = self.client.delete('/workshop_documents/1')
-        r = self.client.get('/workshop_documents')
+        r = self.client.delete('/reference_documents/1')
+        r = self.client.get('/reference_documents')
         result = json.loads(r.data)
         self.assertEqual(len(result), 1)
 
