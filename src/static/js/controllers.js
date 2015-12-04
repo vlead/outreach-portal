@@ -440,7 +440,23 @@ angular.module('outreachApp.controllers',[])
       
     });
   
+}).controller("ncdocuments", function($scope, $http, $routeParams, $route, $window) {
+   
+    $http.get('/workshop_documents').
+    success(function(data, status, headers, config) 
+            {
+                $scope.docs = data;
+                
+                
+    }).
+    error(function(data, status, headers, config)
+    {
+      console.log(data);
+      
+    });
+  
 });
+
 
 
 
