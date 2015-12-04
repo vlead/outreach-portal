@@ -54,7 +54,12 @@ angular.module('outreachApp',['ngRoute','outreachApp.controllers']).config
          .when('/ncdocuments', {
 	     templateUrl : '/static/partials/ncdocuments.html',
 	     controller  : 'ncdocuments'
+	 })
+         .when('/nodalcenters', {
+	     templateUrl : '/static/partials/nodalcenters.html',
+	     controller  : 'nodalcenters'
 	 });
+     
      
      
 	 

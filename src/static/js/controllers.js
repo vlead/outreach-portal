@@ -425,7 +425,24 @@ angular.module('outreachApp.controllers',[])
       
     });
   
+}).controller("nodalcenters", function($scope, $http, $routeParams, $route, $window) {
+   
+    $http.get('/nodal_centres').
+    success(function(data, status, headers, config) 
+            {
+
+                $scope.centers = data;
+                
+                
+    }).
+    error(function(data, status, headers, config)
+    {
+      console.log(data);
+      
+    });
+  
 });
+
 
 
 
