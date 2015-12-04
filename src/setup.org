@@ -50,7 +50,7 @@ def create_roles():
     role3 = Role(name=Name("NC"))
     role3.save()
 
-    user = User(name=Name("Sripathi"), email=Email("kammari.sripathi@gmail.com"), role = role1)
+    user = User(name=Name("admin"), email=Email("outreach-admin@vlabs.ac.in"), role = role1)
     user.save()
 
 if __name__ == "__main__":
