@@ -1,6 +1,6 @@
 
 <div class="row">
-  <div class="col-md-10"><h2>OC Details</h2></div>
+  <div class="col-md-10"><h2>Contact Details</h2></div>
  
   </div>
 </div>
@@ -10,13 +10,15 @@
       <thead>
 	<tr>
 	  <th>Name</th>
+          <th>Email</th>
 
 	  
 	</tr>
       </thead>
       <tbody>
 	<tr ng-repeat="o in oc">
-          <td>{{ o.created_by['id'] }}</td>
+          <td>{{ o.created_by['name'] }}</td>
+          <td>{{ o.created_by['email'] }}</td>
 
          
          
