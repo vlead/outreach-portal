@@ -101,7 +101,7 @@ angular.module('outreachApp.controllers',[])
     }  
 	
 }).controller("mainController", function($scope, $http, $routeParams) {
-  $http.get('/users?role_id=3').success(function(data, status, headers, config)
+    $http.get('/users?role_id=2').success(function(data, status, headers, config)
     {
         $scope.message= data;
         
@@ -134,36 +134,6 @@ angular.module('outreachApp.controllers',[])
          
     }
     
-}).controller("mainController", function($scope, $http, $routeParams) {
-  $http.get('/users?role_id=3').success(function(data, status, headers, config)
-    {
-        $scope.message= data;
-        
-      
-    }).error(function(data, status, headers, config)
-    {
-      console.log(data);
-      
-    });
-    /*
-    $scope.del =  function(a)
-    {
-        $http.delete('/users/'+a).
-            success(function(data, status, headers, config) 
-                    {
-                      
-                           window.location.href = "#/manageoc";
-                      
-                    }).
-            error(function(data, status, headers, config)
-                  {
-                      console.log(data);
-                      
-                  });
-
-        
-    }
-    */
 }).controller("deloc", function($scope, $http, $routeParams) {
   
         $http.delete('/users/'+$routeParams.id).
@@ -238,7 +208,7 @@ angular.module('outreachApp.controllers',[])
     {
         if(isvalid)
         {
-            $http.post('/users',{'name' : $scope.name,'email' : $scope.email,'role' : { 'id' : 3 } } ).
+            $http.post('/users',{'name' : $scope.name,'email' : $scope.email,'role' : { 'id' : 2 } } ).
             success(function(data, status, headers, config)
             {
                 $scope.status = "Success";
