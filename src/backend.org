@@ -3087,8 +3087,8 @@ class NodalCentre(Entity):
     coordinators_id = db.Column(db.Integer, db.ForeignKey('nodal_coordinator_details.id'))
     created_by_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
-    user = relationship('User', foreign_keys=[created_by_id])
-    nc_detail = relationship('NodalCoordinatorDetail', foreign_keys=[coordinators_id])
+    coordinators = relationship('NodalCoordinatorDetail', foreign_keys=[coordinators_id]) 
+    created_by = relationship('User', foreign_keys=[created_by_id])
 
  #+END_SRC
 
