@@ -58,7 +58,12 @@ angular.module('outreachApp',['ngRoute','outreachApp.controllers']).config
          .when('/nodalcenters', {
 	     templateUrl : '/static/partials/nodalcenters.html',
 	     controller  : 'nodalcenters'
-	 });
+	 })
+         .when('/add-workshop', {
+	     templateUrl : '/static/partials/add-workshop.html',
+	     controller  : 'add-workshop'
+         });
+     
      
      
      

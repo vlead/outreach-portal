@@ -1,0 +1,73 @@
+
+
+
+<div class="row">
+  <div class="col-md-4"></div>
+  <div class="col-md-4">
+    <h2>Create Workshop</h2>
+   <span class="error"> {{ status }}</span>
+    <form name="myForm" novalidate ng-submit="submit(myForm.$valid)">
+      <p>Workshop Name:<br>
+	<input type="text" name="user" ng-model="name"  class="form-control"  placeholder="Workshop Name" required>
+	<span style="color:red" ng-show="myForm.user.$dirty && myForm.user.$invalid">
+	  <span ng-show="myForm.user.$error.required">Workshop name is required.</span>
+	</span>
+      </p>
+      <p>Location:<br>
+	<input type="text" name="location" ng-model="location"  class="form-control"  placeholder="Location" required>
+	<span style="color:red" ng-show="myForm.location.$dirty && myForm.location.$invalid">
+	  <span ng-show="myForm.location.$error.required">Location is required.</span>
+	</span>
+      </p>
+      <p>Participating Institues:<br>
+	<input type="text" name="insts" ng-model="insts"  class="form-control"
+               placeholder="Institute names" required>
+	<span style="color:red" ng-show="myForm.insts.$dirty && myForm.insts.$invalid">
+	  <span ng-show="myForm.insts.$error.required">Institute names required.</span>
+	</span>
+      </p>
+
+      <p>Total Participants:<br>
+	<input type="text" name="parti" ng-model="parti"  class="form-control"
+               placeholder="Participants " required>
+	<span style="color:red" ng-show="myForm.parti.$dirty && myForm.parti.$invalid">
+	  <span ng-show="myForm.parti.$error.required">Participants required.</span>
+	</span>
+      </p>
+      <p>Session:<br>
+	<input type="text" name="sessions" ng-model="sessions"  class="form-control"  placeholder="Sessions" required>
+	<span style="color:red" ng-show="myForm.sessions.$dirty && myForm.session.$invalid">
+	  <span ng-show="myForm.sessions.$error.required">Sessions required.</span>
+	</span>
+      </p>
+
+      <p>Labs Planned:<br>
+	<input type="text" name="labs" ng-model="labs"  class="form-control"
+               placeholder="Labs planned" required>
+	<span style="color:red" ng-show="myForm.labs.$dirty && myForm.labs.$invalid">
+	  <span ng-show="myForm.labs.$error.required">Lab names required.</span>
+	</span>
+      </p>
+
+      <p>Date:<br>
+	<input type="text" name="date" ng-model="date"  class="form-control"  placeholder="YYYY-MM-DD" required>
+	<span style="color:red" ng-show="myForm.date.$dirty && myForm.date.$invalid">
+	  <span ng-show="myForm.date.$error.required">Username is required.</span>
+	</span>
+      </p>
+
+
+
+
+      <p>
+	<input type="submit" value="submit" class="btn btn-primary"  ng-disabled="myForm.user.$dirty && myForm.user.$invalid ||
+                                  myForm.email.$dirty &&
+                                  myForm.email.$invalid">
+	<a href="#/manageoc">Cancel</a>
+      </p>
+
+    </form>
+
+  </div>
+  <div class="col-md-4"></div>
+</div>
