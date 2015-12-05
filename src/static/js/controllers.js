@@ -240,7 +240,7 @@ angular.module('outreachApp.controllers',[])
     }
 }).controller("doclist", function($scope, $http, $routeParams, $route) {
     
-    $http.get('/workshop_documents').
+    $http.get('/reference_documents').
     success(function(data, status, headers, config) 
     {
         $scope.documents= data;
@@ -253,7 +253,7 @@ angular.module('outreachApp.controllers',[])
     });
     $scope.deldoc =  function(id)
     {
-        $http.delete('/workshop_documents/'+id).
+        $http.delete('/reference_documents/'+id).
             success(function(data, status, headers, config) 
                     {
                         $scope.status= "Deleted";
@@ -413,7 +413,7 @@ angular.module('outreachApp.controllers',[])
   
 }).controller("ncdocuments", function($scope, $http, $routeParams, $route, $window) {
    
-    $http.get('/workshop_documents').
+    $http.get('/reference_documents').
     success(function(data, status, headers, config) 
             {
                 $scope.docs = data;
