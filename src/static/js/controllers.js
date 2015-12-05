@@ -240,7 +240,7 @@ angular.module('outreachApp.controllers',[])
     }
 }).controller("doclist", function($scope, $http, $routeParams, $route) {
     
-    $http.get('/workshop_documents').
+    $http.get('/reference_documents').
     success(function(data, status, headers, config) 
     {
         $scope.documents= data;
@@ -253,7 +253,7 @@ angular.module('outreachApp.controllers',[])
     });
     $scope.deldoc =  function(id)
     {
-        $http.delete('/workshop_documents/'+id).
+        $http.delete('/reference_documents/'+id).
             success(function(data, status, headers, config) 
                     {
                         $scope.status= "Deleted";
@@ -360,15 +360,17 @@ angular.module('outreachApp.controllers',[])
     $http.get('/workshops?user_id='+$window.number).
     success(function(data, status, headers, config) 
             {
-                
+
                 today = new Date();
                 var upcoming = 0;
                 var ups = [];
                 var history = [];
+                var pending = [];
 	        for(i=0;i<data.length;i++)
 	        {
                     
                     workshop_date = new Date(data[i].date);
+                    
                     if( (today <= workshop_date) ||(today.getDate() == workshop_date.getDate() & (today.getMonth() == workshop_date.getMonth()) 
                                                     & (today.getFullYear() == workshop_date.getFullYear())))
                     {
@@ -376,12 +378,17 @@ angular.module('outreachApp.controllers',[])
 		        upcoming = upcoming + 1;
 	            }
 	        
-                else
-                {
-                    history.push(data[i]);
-                }
+                    else if(data[i].status == "Approved")
+                    {
+                        history.push(data[i]);
+                    }
+                    else if(data[i].status == "Pending for approval")
+                    {
+                        pending.push(data[i]);
+                    }
                 }
                 $scope.history = history;
+                $scope.pending = pending;
                 $scope.ups = ups;
                 $scope.upcoming = upcoming;
                 $scope.experiments = experiments;
@@ -394,6 +401,25 @@ angular.module('outreachApp.controllers',[])
       console.log(data);
       
     });
+    $scope.cancel = function(id)
+    {
+        if(confirm("Are you sure!") == true)
+        {
+            $http.delete('/workshops/'+id).
+                success(function(data, status, headers, config) 
+                        {
+                            $route.reload();
+                            
+                            
+                        }).
+                error(function(data, status, headers, config)
+                      {
+                          console.log(data);
+                          
+                      });
+            
+        }
+    }
   
 }).controller("contactoc", function($scope, $http, $routeParams, $route, $window) {
    
@@ -412,7 +438,7 @@ angular.module('outreachApp.controllers',[])
   
 }).controller("ncdocuments", function($scope, $http, $routeParams, $route, $window) {
    
-    $http.get('/workshop_documents').
+    $http.get('/reference_documents').
     success(function(data, status, headers, config) 
             {
                 $scope.docs = data;
@@ -425,7 +451,63 @@ angular.module('outreachApp.controllers',[])
       
     });
   
+}).controller("nodalcenters", function($scope, $http, $routeParams, $route, $window) {
+   
+    $http.get('/nodal_centres').
+    success(function(data, status, headers, config) 
+            {
+
+                $scope.centers = data;
+                
+                
+    }).
+    error(function(data, status, headers, config)
+    {
+      console.log(data);
+      
+    });
+  
+}).controller("add-workshop", function($scope, $location, $http, $routeParams, $route, $window) {
+    $scope.submit = function(isvalid)
+    {
+        if(isvalid)
+        {
+            $http.post('/workshops',
+                       { "name" : $scope.name, "location" : $scope.location,  "user" : {"id" : 3 }, "participating_institutes" : $scope.insts,
+                         "no_of_participants_expected" : $scope.parti, "no_of_sessions" : Number($scope.sessions),  "labs_planned" : Number($scope.labs),
+                         "status" : "Upcoming",  "date" : $scope.date }).
+            success(function(data, status, headers, config)
+            {
+                $scope.status = "Success";
+                $location.path("/manage-workshops")
+
+                
+            }).
+            error(function(data, status, headers, config)
+                  {alert(status);
+                if(status == 500)
+                {
+                    $scope.status = "Duplicate Entry";
+                }
+                else if(status == 400)
+                {
+                    $scope.status = "Invalid username"
+                }
+                else
+                {
+                    $scope.status = "Failed"
+                }
+            });
+  
+        }
+        else
+        {
+            $scope.status = "Fill Details"
+        }
+    }
+  
 });
+
 
 
 
