@@ -365,6 +365,7 @@ angular.module('outreachApp.controllers',[])
                 var upcoming = 0;
                 var ups = [];
                 var history = [];
+                var pending = [];
 	        for(i=0;i<data.length;i++)
 	        {
                     
@@ -381,8 +382,13 @@ angular.module('outreachApp.controllers',[])
                     {
                         history.push(data[i]);
                     }
+                    else if(data[i].status == "Pending for approval")
+                    {
+                        pending.push(data[i]);
+                    }
                 }
                 $scope.history = history;
+                $scope.pending = pending;
                 $scope.ups = ups;
                 $scope.upcoming = upcoming;
                 $scope.experiments = experiments;
