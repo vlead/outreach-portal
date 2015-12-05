@@ -2,7 +2,7 @@
 <div class="row">
   <div class="col-md-10"><h2>Up Coming Workshop Details</h2></div>
   <div class="col-md-2">
-     <a href="#/addoc" role="button" class="btn btn-success btn-large">ADD WORKSHOP</a>
+     <a href="#/add-workshop" role="button" class="btn btn-success btn-large">ADD WORKSHOP</a>
   </div>
 </div>
 <div class="row">
@@ -12,7 +12,10 @@
 	<tr>
 	  <th>Name</th>
 	  <th>Location</th>
+          <th>Participants</th>
 	  <th>Date</th>
+          <th>Status</th>
+          <th>Action</th>
 	  
 	</tr>
       </thead>
@@ -20,8 +23,44 @@
 	<tr ng-repeat="workshop in ups">
           <td>{{ workshop.name }}</td>
           <td>{{ workshop.location }}</td>
+          <td>{{ workshop.no_of_participants_expected }}</td>
           <td>{{ workshop.date }}</td>
+          <td>{{ workshop.status }}</td>
+          <td><button class="btn btn-primary"
+                      ng-click="cancel(workshop.id)">Cancel</button></td>
+          
+           <td><a href="#/editworkshop/{{workshop.id}}" class="btn btn-primary">Edit</a></td>
          
+	</tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-10"><h2>Pending Workshop  Details</h2></div>
+ 
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <table class="table table-hover">
+      <thead>
+	<tr>
+	  <th>Name</th>
+	  <th>Location</th>
+          <th>Participants</th>
+	  <th>Date</th>
+          <th>Action</th>
+	  
+	</tr>
+      </thead>
+      <tbody>
+	<tr ng-repeat="workshop in pending">
+          <td>{{ workshop.name }}</td>
+          <td>{{ workshop.location }}</td>
+          <td>{{ workshop.no_of_participants_expected }}</td>
+          <td>{{ workshop.date }}</td>
+          <td><a class="btn btn-primary" href="#/upload_reports/{{workshop.id}}">Upload Reports</a></td>
          
 	</tr>
       </tbody>
@@ -40,6 +79,7 @@
 	<tr>
 	  <th>Name</th>
 	  <th>Location</th>
+          <th>Participants</th>
 	  <th>Date</th>
 	  
 	</tr>
@@ -48,6 +88,7 @@
 	<tr ng-repeat="workshop in history">
           <td>{{ workshop.name }}</td>
           <td>{{ workshop.location }}</td>
+          <td>{{ workshop.no_of_participants_expected }}</td>
           <td>{{ workshop.date }}</td>
          
          
