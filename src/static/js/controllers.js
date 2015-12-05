@@ -377,10 +377,10 @@ angular.module('outreachApp.controllers',[])
 		        upcoming = upcoming + 1;
 	            }
 	        
-                else
-                {
-                    history.push(data[i]);
-                }
+                    else if(data[i].status == "Approved")
+                    {
+                        history.push(data[i]);
+                    }
                 }
                 $scope.history = history;
                 $scope.ups = ups;
@@ -395,6 +395,25 @@ angular.module('outreachApp.controllers',[])
       console.log(data);
       
     });
+    $scope.cancel = function(id)
+    {
+        if(confirm("Are you sure!") == true)
+        {
+            $http.delete('/workshops/'+id).
+                success(function(data, status, headers, config) 
+                        {
+                            $route.reload();
+                            
+                            
+                        }).
+                error(function(data, status, headers, config)
+                      {
+                          console.log(data);
+                          
+                      });
+            
+        }
+    }
   
 }).controller("contactoc", function($scope, $http, $routeParams, $route, $window) {
    
