@@ -4595,8 +4595,8 @@ WHITELIST_IPS = ["127.0.0.1"]
 #LOG_LEVEL = 'DEBUG'
 
 # destination for uploaded files
-# example value - '/home/vlead/Desktop/outreach-docs/'
-UPLOAD_DIR_PATH = 'static/uploads/'
+# example value - '/home/vlead/Desktop/outreach-portal/build/code/src/static/uploads/'
+UPLOAD_DIR_PATH = '/home/vlead/Desktop/outreach-portal/build/code/src/static/uploads/'
 
 # allowed file extensions that can be uploaded
 ALLOWED_FILE_EXTENSIONS = ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'csv']
@@ -5012,8 +5012,8 @@ def logout_handler():
     session.pop('role', None)
     return "Ok"
 
-@api.route('/upload_document/<id>', methods=['GET', 'POST'])
-def save_file(id):
+@api.route('/upload_reference_document/<id>', methods=['GET', 'POST'])
+def save_reference_documents(id):
     if request.method == 'GET':
         return '''
         <!doctype html>
@@ -5031,10 +5031,37 @@ def save_file(id):
             current_time = datetime.utcnow()
             dir_path = "%s" % (UPLOAD_DIR_PATH)
             file_path = "%s%s" % (dir_path, filename)
-            file.save(os.getcwd()+"/build/code/src/"+file_path)
+            file.save(file_path)
 
         path = {'path': file_path}
         url = APP_URL + "/reference_documents/"\
+              + id
+        response = requests.put(url, data=path)
+        return file_path
+
+@api.route('/upload_workshop_document/<id>', methods=['GET', 'POST'])
+def save_workshop_documents(id):
+    if request.method == 'GET':
+        return '''
+        <!doctype html>
+        <title>Upload new File</title>
+        <h1>Upload new File</h1>
+        <form action="" method=post enctype=multipart/form-data>
+        <p><input type=file name=file>
+        <input type=submit value=Upload>
+        </form>
+        '''
+    if request.method == 'POST':
+        file = request.files['file']
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            current_time = datetime.utcnow()
+            dir_path = "%s" % (UPLOAD_DIR_PATH)
+            file_path = "%s%s" % (dir_path, filename)
+            file.save(file_path)
+
+        path = {'path': file_path}
+        url = APP_URL + "/workshop_reports/"\
               + id
         response = requests.put(url, data=path)
         return file_path
