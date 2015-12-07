@@ -1,5 +1,9 @@
-
-<div class="row">
+<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#manage-workshops">Upcoming Workshops</a></li>
+  <li><a data-toggle="tab" href="#manage-workshops/pending-action">Pending Action Workshops</a></li>
+  <li><a data-toggle="tab" href="#manage-workshops/workshop-history">Workshop History</a></li>
+</ul>
+<div class="row" style="margin-top: 30px">
   <div class="col-md-10"><h2>Up Coming Workshop Details</h2></div>
   <div class="col-md-2">
      <a href="#/add-workshop" role="button" class="btn btn-success btn-large">ADD WORKSHOP</a>
@@ -16,7 +20,6 @@
 	  <th>Date</th>
           <th>Status</th>
           <th>Action</th>
-	  
 	</tr>
       </thead>
       <tbody>
@@ -26,110 +29,10 @@
           <td>{{ workshop.no_of_participants_expected }}</td>
           <td>{{ workshop.date }}</td>
           <td>{{ workshop.status }}</td>
-          <td><button class="btn btn-primary"
-                      ng-click="cancel(workshop.id)">Cancel</button></td>
-          
-           <td><a href="#/editworkshop/{{workshop.id}}" class="btn btn-primary">Edit</a></td>
-         
+          <td><button class="btn btn-primary" ng-click="cancel(workshop.id)">Cancel</button></td>
+          <td><a href="#/editworkshop/{{workshop.id}}" class="btn btn-primary">Edit</a></td>
 	</tr>
       </tbody>
     </table>
   </div>
 </div>
-
-<div class="row">
-  <div class="col-md-10"><h2>Pending Workshop  Details</h2></div>
- 
-</div>
-<div class="row">
-  <div class="col-md-12">
-    <table class="table table-hover">
-      <thead>
-	<tr>
-	  <th>Name</th>
-	  <th>Location</th>
-          <th>Participants</th>
-	  <th>Date</th>
-          <th>Action</th>
-	  
-	</tr>
-      </thead>
-      <tbody>
-	<tr ng-repeat="workshop in pending">
-          <td>{{ workshop.name }}</td>
-          <td>{{ workshop.location }}</td>
-          <td>{{ workshop.no_of_participants_expected }}</td>
-          <td>{{ workshop.date }}</td>
-          <td><a class="btn btn-primary" href="#/upload_reports/{{workshop.id}}">Upload Reports</a></td>
-         
-	</tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-md-10"><h2>Workshop History Details</h2></div>
- 
-</div>
-<div class="row">
-  <div class="col-md-12">
-    <table class="table table-hover">
-      <thead>
-	<tr>
-	  <th>Name</th>
-	  <th>Location</th>
-          <th>Participants</th>
-	  <th>Date</th>
-	  
-	</tr>
-      </thead>
-      <tbody>
-	<tr ng-repeat="workshop in history">
-          <td>{{ workshop.name }}</td>
-          <td>{{ workshop.location }}</td>
-          <td>{{ workshop.no_of_participants_expected }}</td>
-          <td>{{ workshop.date }}</td>
-         
-         
-	</tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-
-
-
-
-
-
-
-<!-- home.html
-    <div class="jumbotron text-center" >
-        <h1>Home Page</h1>
-        
-          <table border="1">
-            <th align="center"></th>
-            <tr>
-               <td>Name</td>
-              <td>Email</td>
-               <td>Edit</td>
-               <td>Delete</td>
-              
-             
-            </tr>
-           
-            <tr ng-repeat="oc in message">
-              
-              <td>{{ oc.name }}</td>
-              <td>{{ oc.email }}</td>
-              <td><a href="#/editoc/{{oc.id}}">Edit</a></td>
-              <td><a href="#/deloc/{{oc.id}}">Delete</a></td>
-              
-             
-            </tr>
-           
-          </table>
-        
-    </div>
--->

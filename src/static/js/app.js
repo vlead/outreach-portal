@@ -62,6 +62,14 @@ angular.module('outreachApp',['ngRoute','outreachApp.controllers']).config
          .when('/add-workshop', {
 	     templateUrl : '/static/partials/add-workshop.html',
 	     controller  : 'add-workshop'
+         })
+         .when('/manage-workshops/pending-action',{
+             templateUrl: '/static/partials/pending-workshops.html',
+             controller  : 'manage-workshops'
+         })
+         .when('/manage-workshops/workshop-history',{
+             templateUrl: '/static/partials/workshop-history.html',
+             controller  : 'manage-workshops'
          });
      
      
