@@ -234,7 +234,7 @@ class Role(Entity):
     name = db.Column(db.String(128), nullable=False)
 
     users = db.relationship('User', backref='role')
-    
+        
 #+END_SRC
 
 **** Constructor
@@ -1064,8 +1064,8 @@ class Workshop(Entity):
     status = db.Column(db.String(128))
     cancellation_reason = db.Column(db.String(128))
     not_approval_reason = db.Column(db.String(128))
-    
-#    college_reports = db.relationship('CollegeReport', backref='Workshop')
+
+    workshop_reports = db.relationship('WorkshopReport', backref='workshop')
 #+END_SRC
 
 **** Constructor
@@ -1218,6 +1218,7 @@ class TestWorkshop(TestCase):
                             no_of_sessions=3, labs_planned=4,
                             status="Upcoming", date="Mon Nov 23 2015 06:18:26\
                             GMT-0500 (EST)")
+
         self.assertEqual("Coordinators Training", workshop.name)
         self.assertEqual("Upcoming", workshop.status)
         self.assertEqual(user, workshop.user)                        
@@ -2238,6 +2239,505 @@ class TestWorkshop(TestCase):
 
 #+END_SRC
       
+*** Nodal Centres
+**** Immutable data
+     + Id
+
+**** Mutable data
+     + Name
+     + Location
+     + NodalCoordinatorDetail --> Id
+     + User --> Id
+
+**** Definition
+#+BEGIN_SRC python :tangle src/db.py :eval no
+class NodalCentre(Entity):
+
+    __tablename__ = 'nodal_centres'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128), nullable=False)
+    location = db.Column(db.String(128))
+    created_by_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+    created_by = relationship('User', foreign_keys=[created_by_id])
+
+ #+END_SRC
+
+**** Constructor
+#+BEGIN_EXAMPLE
+    nodal_centre = NodalCentre(name=str,
+                               location=str,                  
+                               created_by=<instance of class User>)
+#+END_EXAMPLE
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def __init__(self, **kwargs):
+        if 'name' not in kwargs:
+            raise AttributeRequired("mandatory attribute `name` is missing")
+        self.set_name(kwargs['name'])
+
+        if 'location' not in kwargs:
+            raise AttributeRequired("mandatory attribute `location` is missing")
+        self.set_location(kwargs['location'])
+
+        if 'created_by' not in kwargs:
+            raise AttributeRequired("mandatory attribute `created_by` is missing")
+        self.set_created_by(kwargs['created_by'])
+
+        
+    def __str__(self):
+        return "Name = %s, location = %s, created_by = %s" % \
+            (self.name, self.location, self.created_by)
+
+    def __repr__(self):
+        return "Name = %s, location = %s, created_by = %s" % \
+            (self.name, self.location, self.created_by)
+
+#+END_SRC
+
+**** Tests for Nodal Centre Constructor
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+class TestNodalCentre(TestCase):
+    TESTING = True
+
+    def create_app(self):
+        app = create_app(config)
+        return app
+
+    def setUp(self):
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+        
+#+END_SRC
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_nodal_centre_constructor(self):
+        print "test_nodal_centre_constructor"
+        role1 = Role(name=Name("OC"))
+        role1.save()
+
+        role2 = Role(name=Name("NC"))
+        role2.save()
+
+        user_1 = User(name=Name("Ambika"),
+                      email=Email("ambika@vlabs.ac.in"), role=role1)
+        user_2 = User(name=Name("Madhavi"),
+                      email=Email("madhavi@vlabs.ac.in"), role=role2)
+        user_3 = User(name=Name("Will Smith"),
+                      email=Email("smith@vlabs.ac.in"), role=role2)
+
+        user_1.save()
+        user_2.save()
+        user_3.save()
+
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
+                                   created_by=user_1)
+
+        nodal_centre1.save()
+
+        self.assertEqual(user_1.name, nodal_centre1.created_by.name)
+        self.assertEqual("IIIT-Hyd", nodal_centre1.name)
+        self.assertEqual("Gachibowli", nodal_centre1.location)                        
+    
+        # Calling the nodal_centre constructor without any arguments should raise
+        # AttributeRequired exception
+        self.assertRaises(AttributeRequired, NodalCentre)
+
+        # Calling the nodal_centre constructor with necessary arguments but with
+        # wrong type should raise TypeError
+        self.assertRaises(TypeError, NodalCentre,
+                          ,**{'name': "IIIT-Hyd",
+                              'location': 123,
+                              'created_by': user_1,
+                         })
+
+#+END_SRC
+
+**** Functions that operate on the Nodal Centre domain
+***** getAll: Nil --> set[NodalCentre]
+#+BEGIN_SRC python :tangle src/db.py :eval no 
+    @staticmethod
+    def get_all():
+        return NodalCentre.query.all()
+
+#+END_SRC
+***** Test getAll: Nil --> set[NodalCentre]
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_nodal_centres_get_all(self):
+        print "test_nodal_centres_get_all"
+        role1 = Role(name=Name("OC"))
+        role1.save()
+
+        role2 = Role(name=Name("NC"))
+        role2.save()
+
+        user_1 = User(name=Name("Ambika"),
+                      email=Email("ambika@vlabs.ac.in"), role=role1)
+        user_2 = User(name=Name("Madhavi"),
+                      email=Email("madhavi@vlabs.ac.in"), role=role2)
+        user_3 = User(name=Name("Will Smith"),
+                      email=Email("smith@vlabs.ac.in"), role=role2)
+
+        user_1.save()
+        user_2.save()
+        user_3.save()
+
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
+                                   created_by=user_1)
+
+        nodal_centre1.save()
+
+        nodal_centre2 = NodalCentre(name="HCU", location="Lingampalli", \
+                                    created_by=user_2)
+        nodal_centre2.save()
+        
+        nodal_centres_list = NodalCentre.get_all()
+
+        self.assertEqual("IIIT-Hyd", nodal_centres_list[0].name)
+        self.assertEqual("HCU", nodal_centres_list[1].name)
+
+        self.assertEqual("Gachibowli", nodal_centres_list[0].location)
+        self.assertEqual("Lingampalli", nodal_centres_list[1].location)
+
+#+END_SRC
+***** getNodalCentre: Id --> NodalCentre
+#+BEGIN_SRC python :tangle src/db.py :eval no 
+    @staticmethod
+    def get_by_id(id):
+        return NodalCentre.query.get(id)
+
+#+END_SRC
+***** Test getNodalCentre: Id --> NodalCentre
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no 
+    def test_get_nodal_centre_by_id(self):
+        print "test_get_nodal_centre_by_id"
+        role1 = Role(name=Name("OC"))
+        role1.save()
+
+        role2 = Role(name=Name("NC"))
+        role2.save()
+
+        user_1 = User(name=Name("Ambika"),
+                      email=Email("ambika@vlabs.ac.in"), role=role1)
+        user_2 = User(name=Name("Madhavi"),
+                      email=Email("madhavi@vlabs.ac.in"), role=role2)
+        user_3 = User(name=Name("Will Smith"),
+                      email=Email("smith@vlabs.ac.in"), role=role2)
+
+        user_1.save()
+        user_2.save()
+        user_3.save()
+
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
+                                   created_by=user_1)
+
+        nodal_centre1.save()
+
+        nodal_centre2 = NodalCentre(name="HCU", location="Lingampalli", \
+                                    created_by=user_2)               
+        nodal_centre2.save()
+        
+        self.assertEqual(nodal_centre1.get_by_id(1).name, "IIIT-Hyd")
+        self.assertEqual(nodal_centre2.get_by_id(2).name, "HCU")
+#+END_SRC
+***** getCreatedBy: NodalCentre --> User
+#+BEGIN_SRC python :tangle src/db.py :eval no 
+    def get_created_by(self):
+        return self.created_by
+
+#+END_SRC
+
+***** Test getCreatedBy: NodalCentre --> User
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_nodal_centre_created_by(self):
+        print "test_get_nc_created_by"
+        role1 = Role(name=Name("OC"))
+        role1.save()
+
+        role2 = Role(name=Name("NC"))
+        role2.save()
+
+        user_1 = User(name=Name("Ambika"),
+                      email=Email("ambika@vlabs.ac.in"), role=role1)
+        user_2 = User(name=Name("Madhavi"),
+                      email=Email("madhavi@vlabs.ac.in"), role=role2)
+        user_3 = User(name=Name("Will Smith"),
+                      email=Email("smith@vlabs.ac.in"), role=role2)
+
+        user_1.save()
+        user_2.save()
+        user_3.save()
+
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
+                                   created_by=user_1)
+
+        nodal_centre1.save()
+
+        nodal_centre2 = NodalCentre(name="HCU", location="Lingampalli", \
+                                    created_by=user_2)               
+        nodal_centre2.save()
+
+        centre_created_by = nodal_centre1.get_created_by()
+        self.assertEqual(centre_created_by.name, "Ambika")
+
+#+END_SRC
+
+***** getName: NodalCentre --> Name
+#+BEGIN_SRC python :tangle src/db.py :eval no 
+    def get_name(self):
+        return self.name
+#+END_SRC
+
+***** Test getName: NodalCentre --> Name 
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no 
+    def test_get_nodal_centre_name(self):
+        print "test_get_nodal_centre_name"
+        role1 = Role(name=Name("OC"))
+        role1.save()
+
+        role2 = Role(name=Name("NC"))
+        role2.save()
+
+        user_1 = User(name=Name("Ambika"),
+                      email=Email("ambika@vlabs.ac.in"), role=role1)
+        user_2 = User(name=Name("Madhavi"),
+                      email=Email("madhavi@vlabs.ac.in"), role=role2)
+        user_3 = User(name=Name("Will Smith"),
+                      email=Email("smith@vlabs.ac.in"), role=role2)
+
+        user_1.save()
+        user_2.save()
+        user_3.save()
+
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
+                                   created_by=user_1)
+
+        nodal_centre1.save()
+
+        nodal_centre2 = NodalCentre(name="HCU", location="Lingampalli", \
+                                    created_by=user_2)               
+        nodal_centre2.save()
+
+        centre_name = nodal_centre1.get_name()
+        self.assertEqual(centre_name, "IIIT-Hyd")
+#+END_SRC
+
+***** getLocation: NodalCentre --> Location
+#+BEGIN_SRC python :tangle src/db.py :eval no 
+    def get_location(self):
+        return self.location
+#+END_SRC
+      
+***** Test getLocation: NodalCentre --> Location
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no 
+    def test_get_nodal_centre_location(self):
+        print "test_get_nodal_centre_location"
+        role1 = Role(name=Name("OC"))
+        role1.save()
+
+        role2 = Role(name=Name("NC"))
+        role2.save()
+
+        user_1 = User(name=Name("Ambika"),
+                      email=Email("ambika@vlabs.ac.in"), role=role1)
+        user_2 = User(name=Name("Madhavi"),
+                      email=Email("madhavi@vlabs.ac.in"), role=role2)
+        user_3 = User(name=Name("Will Smith"),
+                      email=Email("smith@vlabs.ac.in"), role=role2)
+
+        user_1.save()
+        user_2.save()
+        user_3.save()
+
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
+                                   created_by=user_1)
+
+        nodal_centre1.save()
+
+        nodal_centre2 = NodalCentre(name="HCU", location="Lingampalli", \
+                                    created_by=user_2)               
+        nodal_centre2.save()
+
+        centre_location = nodal_centre1.get_location()
+        self.assertEqual(centre_location, "Gachibowli")
+#+END_SRC
+
+***** setCreatedBy: NodalCentre, User --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(created_by=User)
+    def set_created_by(self, created_by):
+        self.created_by = created_by
+
+#+END_SRC
+
+***** Test setCreatedBy: NodalCentre, User --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no 
+    def test_set_nodalcentre_created_by(self):
+        print "test_set_nodalcentre_created_by"
+        role1 = Role(name=Name("OC"))
+        role1.save()
+
+        role2 = Role(name=Name("NC"))
+        role2.save()
+
+        user_1 = User(name=Name("Ambika"),
+                      email=Email("ambika@vlabs.ac.in"), role=role1)
+        user_2 = User(name=Name("Madhavi"),
+                      email=Email("madhavi@vlabs.ac.in"), role=role2)
+        user_3 = User(name=Name("Will Smith"),
+                      email=Email("smith@vlabs.ac.in"), role=role2)
+
+        user_1.save()
+        user_2.save()
+        user_3.save()
+
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
+                                   created_by=user_1)
+
+        nodal_centre1.save()
+
+        nodal_centre2 = NodalCentre(name="HCU", location="Lingampalli", \
+                                    created_by=user_2)               
+        nodal_centre2.save()
+
+        nodal_centre1.set_created_by(user_2)
+        nodal_centre1.save()
+
+        centre = NodalCentre.get_by_id(1)
+        self.assertEqual(centre.created_by, user_2)
+#+END_SRC
+
+***** setName: NodalCentre, Name --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no 
+    @typecheck(name=str)
+    def set_name(self, name):
+        self.name = name
+#+END_SRC
+      
+***** Test setName: NodalCentre, Name --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no 
+    def test_set_nodal_centre_name(self):
+        print "test_set_nodal_centre_name"
+        role1 = Role(name=Name("OC"))
+        role1.save()
+
+        role2 = Role(name=Name("NC"))
+        role2.save()
+
+        user_1 = User(name=Name("Ambika"),
+                      email=Email("ambika@vlabs.ac.in"), role=role1)
+        user_2 = User(name=Name("Madhavi"),
+                      email=Email("madhavi@vlabs.ac.in"), role=role2)
+        user_3 = User(name=Name("Will Smith"),
+                      email=Email("smith@vlabs.ac.in"), role=role2)
+
+        user_1.save()
+        user_2.save()
+        user_3.save()
+
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
+                                   created_by=user_1)
+
+        nodal_centre1.save()
+
+        nodal_centre2 = NodalCentre(name="HCU", location="Lingampalli", \
+                                    created_by=user_2)               
+        nodal_centre2.save()
+
+        nodal_centre2.set_name("IIIT-Hyd")
+        nodal_centre2.save()
+        centre = NodalCentre.get_by_id(2)
+        self.assertEqual("IIIT-Hyd", centre.name)
+#+END_SRC
+
+***** setLocation: NodalCentre, Location --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no 
+    @typecheck(location=str)
+    def set_location(self, location):
+        self.location = location
+#+END_SRC
+
+***** Test setLocation: NodalCentre, Location --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_set_nodal_centre_location(self):
+        print "test_set_nodal_centre_location"
+        role1 = Role(name=Name("OC"))
+        role1.save()
+
+        role2 = Role(name=Name("NC"))
+        role2.save()
+
+        user_1 = User(name=Name("Ambika"),
+                      email=Email("ambika@vlabs.ac.in"), role=role1)
+        user_2 = User(name=Name("Madhavi"),
+                      email=Email("madhavi@vlabs.ac.in"), role=role2)
+        user_3 = User(name=Name("Will Smith"),
+                      email=Email("smith@vlabs.ac.in"), role=role2)
+
+        user_1.save()
+        user_2.save()
+        user_3.save()
+
+        nodal_centre1 = NodalCentre(name="HCU", location="Lingampalli", \
+                                    created_by=user_2)               
+        nodal_centre1.save()
+
+        nodal_centre1.set_location("Hyderabad")
+        nodal_centre1.save()
+        centre = NodalCentre.get_by_id(1)
+        self.assertEqual("Hyderabad", centre.location)
+#+END_SRC
+
+***** to_client
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def to_client(self):
+        return {
+            'id': self.id,
+            'created_by': self.created_by.to_client(),
+            'name': self.name,
+            'location': self.location
+        }
+#+END_SRC
+      
+***** Test Nodal Centre to_client
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no 
+    def test_nodal_centre_to_client(self):
+        print "test_nodal_centre_to_client"
+        role1 = Role(name=Name("OC"))
+        role1.save()
+
+        role2 = Role(name=Name("NC"))
+        role2.save()
+
+        user_1 = User(name=Name("Ambika"),
+                      email=Email("ambika@vlabs.ac.in"), role=role1)
+        user_2 = User(name=Name("Madhavi"),
+                      email=Email("madhavi@vlabs.ac.in"), role=role2)
+        user_3 = User(name=Name("Will Smith"),
+                      email=Email("smith@vlabs.ac.in"), role=role2)
+
+        user_1.save()
+        user_2.save()
+        user_3.save()
+
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
+                                   created_by=user_1)
+
+        nodal_centre1.save()
+
+        nodal_centre2 = NodalCentre(name="HCU", location="Lingampalli", \
+                                    created_by=user_2)               
+        nodal_centre2.save()
+
+        saved_centre = NodalCentre.get_by_id(1)
+        saved_centre_dict = saved_centre.to_client()
+        self.assertEqual("IIIT-Hyd", saved_centre_dict['name'])
+        self.assertEqual("Gachibowli", saved_centre_dict['location'])
+
+#+END_SRC
+
 *** Nodal Coordinator Details
 **** Immutable data
      + Id
@@ -2267,9 +2767,11 @@ class NodalCoordinatorDetail(Entity):
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     created_by_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    nodal_centre_id = db.Column(db.Integer, db.ForeignKey('nodal_centres.id'))
 
     user = relationship('User', foreign_keys=[user_id])
     created_by = relationship('User', foreign_keys=[created_by_id])
+    nodal_centre = relationship('NodalCentre', foreign_keys=[nodal_centre_id])
 
  #+END_SRC
 
@@ -2277,6 +2779,7 @@ class NodalCoordinatorDetail(Entity):
 #+BEGIN_EXAMPLE
     nodal_coordinator_detail = NodalCoordinatorDetail(user=<instance of class User>,
                                                       created_by=<instance of class User>,                  
+                                                      nodal_centre=<instance of class NodalCentre>,
                                                       target_workshops=int,  
                                                       target_participants=int
                                                       [,target_experiments=int]
@@ -2297,6 +2800,10 @@ class NodalCoordinatorDetail(Entity):
             raise AttributeRequired("mandatory attribute `created_by` is missing")
         self.set_created_by(kwargs['created_by'])
 
+        if 'nodal_centre' not in kwargs:
+            raise AttributeRequired("mandatory attribute `nodal_centre` is missing")
+        self.set_nodal_centre(kwargs['nodal_centre'])
+
         if 'target_workshops' not in kwargs:
             raise AttributeRequired("mandatory attribute `target_workshops` is missing")
         self.set_target_workshops(kwargs['target_workshops'])
@@ -2310,19 +2817,23 @@ class NodalCoordinatorDetail(Entity):
 
         
     def __str__(self):
-        return "last_updated = %s, user = %s, created_by = %s, target_workshops = %s, \
-        target_participants = %s, target_experiments = %s" % \
-            (self.last_updated, self.user, self.created_by,\
-             self.target_workshops, self.target_participants,\
-             self.target_experiments)
+        return "last_updated = %s, user = %s, created_by = %s,\
+        nodal_centre = %s, target_workshops = %s,  target_participants = %s,\
+        target_experiments = %s" %  (self.last_updated, self.user,
+                                     self.created_by, self.nodal_centre,
+                                     self.target_workshops,
+                                     self.target_participants,
+                                     self.target_experiments)
 
 
     def __repr__(self):
-        return "last_updated = %s, user = %s, created_by = %s, target_workshops = %s, \
-        target_participants = %s, target_experiments = %s" % \
-            (self.last_updated, self.user, self.created_by,\
-             self.target_workshops, self.target_participants,\
-             self.target_experiments)
+        return "last_updated = %s, user = %s, created_by = %s,\
+        nodal_centre = %s, target_workshops = %s,  target_participants = %s,\
+        target_experiments = %s" %  (self.last_updated, self.user,
+                                     self.created_by, self.nodal_centre,
+                                     self.target_workshops,
+                                     self.target_participants,
+                                     self.target_experiments)
 
 
 #+END_SRC
@@ -2365,13 +2876,25 @@ class TestNodalCoordinatorDetail(TestCase):
         user_2.save()
         user_3.save()
 
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
+                                   created_by=user_1)
+
+        nodal_centre1.save()
+
+        nodal_centre2 = NodalCentre(name="NIT", location="Warangal",\
+                                   created_by=user_2)
+
+        nodal_centre2.save()
+
         nc_details1 = NodalCoordinatorDetail(user=user_2, target_workshops=100,
                                              created_by=user_1,
+                                             nodal_centre=nodal_centre1,
                                              target_participants=1000)
         nc_details1.save()
 
         nc_details2 = NodalCoordinatorDetail(user=user_3, target_workshops=200,
                                              created_by=user_1,
+                                             nodal_centre=nodal_centre1,
                                              target_participants=2000)
         nc_details2.save()
 
@@ -2379,10 +2902,12 @@ class TestNodalCoordinatorDetail(TestCase):
         self.assertEqual("madhavi@vlabs.ac.in", nc_details1.user.email)
         self.assertEqual("Madhavi", nc_details1.user.name)
         self.assertEqual("Ambika", nc_details1.created_by.name)
+        self.assertEqual("IIIT-Hyd", nc_details1.nodal_centre.name)
 
         self.assertEqual("smith@vlabs.ac.in", nc_details2.user.email)
         self.assertEqual("Will Smith", nc_details2.user.name)
         self.assertEqual("Ambika", nc_details2.created_by.name)
+        self.assertEqual("IIIT-Hyd", nc_details2.nodal_centre.name)
 
         
         self.assertEqual(100, nc_details1.target_workshops)
@@ -2396,6 +2921,8 @@ class TestNodalCoordinatorDetail(TestCase):
         # wrong type should raise TypeError
         self.assertRaises(TypeError, NodalCoordinatorDetail,
                           ,**{'user': User,
+                             'created_by': User,
+                             'nodal_centre': NodalCentre,
                              'target_workshops': '123',
                              'target_participants': 123
                          })
@@ -2425,20 +2952,31 @@ class TestNodalCoordinatorDetail(TestCase):
                      role=Role(name=Name("NC")))
         user2.save()
 
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
+                                   created_by=user1)
+
+        nodal_centre1.save()
+
+        nodal_centre2 = NodalCentre(name="NIT", location="Warangal",\
+                                   created_by=user2)
+
+        nodal_centre2.save()
+
         nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
                                              created_by=user1,
+                                             nodal_centre=nodal_centre1,
                                              target_participants=1000)
         nc_details1.save()
 
         nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
                                              created_by=user1,
+                                             nodal_centre=nodal_centre2,
                                              target_participants=2000)
         nc_details2.save()
 
         r = self.client.get('/nodal_coordinator_details')
         result = json.loads(r.data)
-        print "Result, NC Deatils = "
-        print result
+
         self.assertEquals(len(result), 2)
 #+END_SRC
 ***** getNodalCoordinatorDetail: Id --> NodalCoordinatorDetail
@@ -2464,13 +3002,25 @@ class TestNodalCoordinatorDetail(TestCase):
                      role=Role(name=Name("NC")))
         user2.save()
 
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
+                                   created_by=user1)
+
+        nodal_centre1.save()
+
+        nodal_centre2 = NodalCentre(name="NIT", location="Warangal",\
+                                   created_by=user2)
+
+        nodal_centre2.save()
+
         nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
                                              created_by=user1,
+                                             nodal_centre=nodal_centre1,
                                              target_participants=1000)
         nc_details1.save()
 
         nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
                                              created_by=user1,
+                                             nodal_centre=nodal_centre2,
                                              target_participants=2000)
         nc_details2.save()
 
@@ -2500,13 +3050,25 @@ class TestNodalCoordinatorDetail(TestCase):
                      role=Role(name=Name("NC")))
         user2.save()
 
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
+                                   created_by=user1)
+
+        nodal_centre1.save()
+
+        nodal_centre2 = NodalCentre(name="NIT", location="Warangal",\
+                                   created_by=user2)
+
+        nodal_centre2.save()
+
         nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
                                              created_by=user1,
+                                             nodal_centre=nodal_centre1,
                                              target_participants=1000)
         nc_details1.save()
 
         nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
                                              created_by=user1,
+                                             nodal_centre=nodal_centre2,
                                              target_participants=2000)
         nc_details2.save()
        
@@ -2539,18 +3101,83 @@ class TestNodalCoordinatorDetail(TestCase):
                      role=Role(name=Name("NC")))
         user2.save()
 
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
+                                   created_by=user1)
+
+        nodal_centre1.save()
+
+        nodal_centre2 = NodalCentre(name="NIT", location="Warangal",\
+                                   created_by=user2)
+
+        nodal_centre2.save()
+
+
         nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
                                              created_by=user1,
+                                             nodal_centre=nodal_centre1,
                                              target_participants=1000)
         nc_details1.save()
 
         nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
                                              created_by=user1,
+                                             nodal_centre=nodal_centre2,
                                              target_participants=2000)
         nc_details2.save()
        
         nc_created_by = nc_details1.get_created_by()
         self.assertEqual(nc_created_by.name, "Joe Smith")
+
+
+#+END_SRC
+
+***** getNodalCentre: NodalCoordinatorDetail --> NodalCentre
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_nodal_centre(self):
+        return self.nodal_centre
+
+#+END_SRC
+
+***** Test getNodalCentre: NodalCoordinatorDetail --> NodalCentre
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_nc_nodal_centre(self):
+        print "test_get_nc_nodal_centre"
+        role = Role(name=Name("OC"))
+        role.save()
+        user1 = User(name=Name("Joe Smith"),
+                     email=Email("joe@smith.com"),
+                     role=role)
+        user1.save()
+
+        user2 = User(name=Name("Will Smith"),
+                     email=Email("will@smith.com"),
+                     role=Role(name=Name("NC")))
+        user2.save()
+
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
+                                   created_by=user1)
+
+        nodal_centre1.save()
+
+        nodal_centre2 = NodalCentre(name="NIT", location="Warangal",\
+                                   created_by=user2)
+
+        nodal_centre2.save()
+
+
+        nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
+                                             created_by=user1,
+                                             nodal_centre=nodal_centre1,
+                                             target_participants=1000)
+        nc_details1.save()
+
+        nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
+                                             created_by=user1,
+                                             nodal_centre=nodal_centre2,
+                                             target_participants=2000)
+        nc_details2.save()
+       
+        nc_created_by = nc_details1.get_nodal_centre()
+        self.assertEqual(nc_created_by.name, "IIIT-Hyd")
 
 
 #+END_SRC
@@ -2577,13 +3204,25 @@ class TestNodalCoordinatorDetail(TestCase):
                      role=Role(name=Name("NC")))
         user2.save()
 
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
+                                   created_by=user1)
+
+        nodal_centre1.save()
+
+        nodal_centre2 = NodalCentre(name="NIT", location="Warangal",\
+                                   created_by=user2)
+
+        nodal_centre2.save()
+
         nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
                                              created_by=user1,
+                                             nodal_centre=nodal_centre1,
                                              target_participants=1000)
         nc_details1.save()
 
         nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
                                              created_by=user1,
+                                             nodal_centre=nodal_centre2,
                                              target_participants=2000)
         nc_details2.save()
 
@@ -2628,14 +3267,27 @@ class TestNodalCoordinatorDetail(TestCase):
                      role=Role(name=Name("NC")))
         user2.save()
 
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
+                                   created_by=user1)
+
+        nodal_centre1.save()
+
+        nodal_centre2 = NodalCentre(name="NIT", location="Warangal",\
+                                   created_by=user2)
+
+        nodal_centre2.save()
+
+
         nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
                                              created_by=user1,
+                                             nodal_centre=nodal_centre1,
                                              last_updated="Mon Nov 23 2015",
                                              target_participants=1000)
         nc_details1.save()
 
         nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
                                              created_by=user1,
+                                             nodal_centre=nodal_centre2,
                                              last_updated="Tue Nov 24 2015",
                                              target_participants=2000)
         nc_details2.save()
@@ -2668,19 +3320,32 @@ class TestNodalCoordinatorDetail(TestCase):
                      role=Role(name=Name("NC")))
         user2.save()
 
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
+                                   created_by=user1)
+
+        nodal_centre1.save()
+
+        nodal_centre2 = NodalCentre(name="NIT", location="Warangal",\
+                                   created_by=user2)
+
+        nodal_centre2.save()
+
         nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
                                              created_by=user1,
+                                             nodal_centre=nodal_centre1,
                                              last_updated="Mon Nov 23 2015",
                                              target_participants=1000)
         nc_details1.save()
 
         nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
                                              created_by=user1,
+                                             nodal_centre=nodal_centre2,
                                              last_updated="Tue Nov 24 2015",
                                              target_participants=2000)
         nc_details2.save()
 
         self.assertEqual(nc_details1.get_target_workshops(), 100)
+        self.assertEqual(nc_details2.get_target_workshops(), 200)
 #+END_SRC
 
 ***** getTargetParticipants: NodalCoordinatorDetail --> TargetParticipants
@@ -2705,19 +3370,33 @@ class TestNodalCoordinatorDetail(TestCase):
                      role=Role(name=Name("NC")))
         user2.save()
 
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
+                                   created_by=user1)
+
+        nodal_centre1.save()
+
+        nodal_centre2 = NodalCentre(name="NIT", location="Warangal",\
+                                   created_by=user2)
+
+        nodal_centre2.save()
+
+
         nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
                                              created_by=user1,
+                                             nodal_centre=nodal_centre1,
                                              last_updated="Mon Nov 23 2015",
                                              target_participants=1000)
         nc_details1.save()
 
         nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
                                              created_by=user1,
+                                             nodal_centre=nodal_centre2,
                                              last_updated="Tue Nov 24 2015",
                                              target_participants=2000)
         nc_details2.save()
 
         self.assertEqual(nc_details1.get_target_participants(), 1000)
+        self.assertEqual(nc_details2.get_target_participants(), 2000)
 #+END_SRC
 
 ***** getTargetExperiments: NodalCoordinatorDetail --> TargetExperiments
@@ -2742,8 +3421,19 @@ class TestNodalCoordinatorDetail(TestCase):
                      role=Role(name=Name("NC")))
         user2.save()
 
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
+                                   created_by=user1)
+
+        nodal_centre1.save()
+
+        nodal_centre2 = NodalCentre(name="NIT", location="Warangal",\
+                                   created_by=user2)
+
+        nodal_centre2.save()
+
         nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
                                              created_by=user1,
+                                             nodal_centre=nodal_centre1,
                                              last_updated="Mon Nov 23 2015",
                                              target_experiments=800,
                                              target_participants=1000)
@@ -2751,12 +3441,14 @@ class TestNodalCoordinatorDetail(TestCase):
 
         nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
                                              created_by=user1,
+                                             nodal_centre=nodal_centre2,
                                              last_updated="Tue Nov 24 2015",
-                                             target_experiments=800,
+                                             target_experiments=1600,
                                              target_participants=2000)
         nc_details2.save()
 
         self.assertEqual(nc_details1.get_target_experiments(), 800)
+        self.assertEqual(nc_details2.get_target_experiments(), 1600)
 #+END_SRC
 
 ***** setLastUpdated: NodalCoordinatorDetail, String --> Void
@@ -2781,8 +3473,19 @@ class TestNodalCoordinatorDetail(TestCase):
                      role=Role(name=Name("NC")))
         user2.save()
 
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
+                                   created_by=user1)
+
+        nodal_centre1.save()
+
+        nodal_centre2 = NodalCentre(name="NIT", location="Warangal",\
+                                   created_by=user2)
+
+        nodal_centre2.save()
+
         nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
                                              created_by=user1,
+                                             nodal_centre=nodal_centre1,
                                              last_updated="Mon Nov 23 2015",
                                              target_experiments=800,
                                              target_participants=1000)
@@ -2790,6 +3493,7 @@ class TestNodalCoordinatorDetail(TestCase):
 
         nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
                                              created_by=user1,
+                                             nodal_centre=nodal_centre2,
                                              last_updated="Tue Nov 24 2015",
                                              target_experiments=800,
                                              target_participants=2000)
@@ -2798,6 +3502,10 @@ class TestNodalCoordinatorDetail(TestCase):
         nc_details1.set_last_updated("Tue Nov 24 2015")
         nc_details1.save()
         self.assertEqual("Tue Nov 24 2015", nc_details1.last_updated)
+
+        nc_details2.set_last_updated("Wed Nov 25 2015")
+        nc_details2.save()
+        self.assertEqual("Wed Nov 25 2015", nc_details2.last_updated)        
 #+END_SRC
 
 ***** setUser: NodalCoordinatorDetail, User --> Void
@@ -2824,15 +3532,27 @@ class TestNodalCoordinatorDetail(TestCase):
                      role=Role(name=Name("NC")))
         user2.save()
 
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
+                                   created_by=user1)
+
+        nodal_centre1.save()
+
+        nodal_centre2 = NodalCentre(name="NIT", location="Warangal",\
+                                   created_by=user2)
+
+        nodal_centre2.save()
+
         nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
                                              created_by=user1,
+                                             nodal_centre=nodal_centre1,
                                              last_updated="Mon Nov 23 2015",
                                              target_experiments=800,
                                              target_participants=1000)
         nc_details1.save()
 
-        nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
+        nc_details2 = NodalCoordinatorDetail(user=user1, target_workshops=200,
                                              created_by=user1,
+                                             nodal_centre=nodal_centre2,
                                              last_updated="Tue Nov 24 2015",
                                              target_experiments=800,
                                              target_participants=2000)
@@ -2842,6 +3562,12 @@ class TestNodalCoordinatorDetail(TestCase):
         nc_details1.save()
         nc_details = NodalCoordinatorDetail.get_by_id(1)
         self.assertEqual(nc_details.user, user1)
+
+        nc_details2.set_user(user2)
+        nc_details2.save()
+        nc_details = NodalCoordinatorDetail.get_by_id(2)
+        self.assertEqual(nc_details.user, user2)
+        
 #+END_SRC
 
 ***** setCreatedBy: NodalCoordinatorDetail, User --> Void
@@ -2868,15 +3594,27 @@ class TestNodalCoordinatorDetail(TestCase):
                      role=Role(name=Name("NC")))
         user2.save()
 
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
+                                   created_by=user1)
+
+        nodal_centre1.save()
+
+        nodal_centre2 = NodalCentre(name="NIT", location="Warangal",\
+                                   created_by=user2)
+
+        nodal_centre2.save()
+
         nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
                                              created_by=user1,
+                                             nodal_centre=nodal_centre1,
                                              last_updated="Mon Nov 23 2015",
                                              target_experiments=800,
                                              target_participants=1000)
         nc_details1.save()
 
         nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
-                                             created_by=user1,
+                                             created_by=user2,
+                                             nodal_centre=nodal_centre2,
                                              last_updated="Tue Nov 24 2015",
                                              target_experiments=800,
                                              target_participants=2000)
@@ -2887,6 +3625,73 @@ class TestNodalCoordinatorDetail(TestCase):
         nc_details1.save()
         nc_details = NodalCoordinatorDetail.get_by_id(1)
         self.assertEqual(nc_details.created_by, user2)
+
+        nc_details2.set_created_by(user1)
+        nc_details2.save()
+        nc_details = NodalCoordinatorDetail.get_by_id(2)
+        self.assertEqual(nc_details.created_by, user1)        
+#+END_SRC
+
+***** setNodalCentre: NodalCoordinatorDetail, NodalCentre --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(nodal_centre=NodalCentre)
+    def set_nodal_centre(self, nodal_centre):
+        self.nodal_centre = nodal_centre
+
+#+END_SRC
+
+***** Test setNodalCentre: NodalCoordinatorDetail, NodalCentre --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_set_nc_nodal_centre(self):
+        print "test_set_nc_nodal_centre"
+        role = Role(name=Name("OC"))
+        role.save()
+        user1 = User(name=Name("Joe Smith"),
+                     email=Email("joe@smith.com"),
+                     role=role)
+        user1.save()
+
+        user2 = User(name=Name("Will Smith"),
+                     email=Email("will@smith.com"),
+                     role=Role(name=Name("NC")))
+        user2.save()
+
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
+                                   created_by=user1)
+
+        nodal_centre1.save()
+
+        nodal_centre2 = NodalCentre(name="NIT", location="Warangal",\
+                                   created_by=user2)
+
+        nodal_centre2.save()
+
+        nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
+                                             created_by=user1,
+                                             nodal_centre=nodal_centre1,
+                                             last_updated="Mon Nov 23 2015",
+                                             target_experiments=800,
+                                             target_participants=1000)
+        nc_details1.save()
+
+        nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
+                                             created_by=user2,
+                                             nodal_centre=nodal_centre2,
+                                             last_updated="Tue Nov 24 2015",
+                                             target_experiments=800,
+                                             target_participants=2000)
+        nc_details2.save()
+
+
+        nc_details1.set_nodal_centre(nodal_centre2)
+        nc_details1.save()
+        nc_details = NodalCoordinatorDetail.get_by_id(1)
+        self.assertEqual(nc_details.nodal_centre, nodal_centre2)
+
+        nc_details2.set_nodal_centre(nodal_centre1)
+        nc_details2.save()
+        nc_details = NodalCoordinatorDetail.get_by_id(2)
+        self.assertEqual(nc_details.nodal_centre, nodal_centre1)        
 #+END_SRC
 
 ***** setTargetWorkshops: NodalCoordinatorDetail, Int --> Void
@@ -2911,8 +3716,19 @@ class TestNodalCoordinatorDetail(TestCase):
                      role=Role(name=Name("NC")))
         user2.save()
 
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
+                                   created_by=user1)
+
+        nodal_centre1.save()
+
+        nodal_centre2 = NodalCentre(name="NIT", location="Warangal",\
+                                   created_by=user2)
+
+        nodal_centre2.save()
+
         nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
                                              created_by=user1,
+                                             nodal_centre=nodal_centre1,
                                              last_updated="Mon Nov 23 2015",
                                              target_experiments=800,
                                              target_participants=1000)
@@ -2920,6 +3736,7 @@ class TestNodalCoordinatorDetail(TestCase):
 
         nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
                                              created_by=user1,
+                                             nodal_centre=nodal_centre2,
                                              last_updated="Tue Nov 24 2015",
                                              target_experiments=800,
                                              target_participants=2000)
@@ -2952,8 +3769,19 @@ class TestNodalCoordinatorDetail(TestCase):
                      role=Role(name=Name("NC")))
         user2.save()
 
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
+                                   created_by=user1)
+
+        nodal_centre1.save()
+
+        nodal_centre2 = NodalCentre(name="NIT", location="Warangal",\
+                                   created_by=user2)
+
+        nodal_centre2.save()
+
         nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
                                              created_by=user1,
+                                             nodal_centre=nodal_centre1,
                                              last_updated="Mon Nov 23 2015",
                                              target_experiments=800,
                                              target_participants=1000)
@@ -2961,6 +3789,7 @@ class TestNodalCoordinatorDetail(TestCase):
 
         nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
                                              created_by=user1,
+                                             nodal_centre=nodal_centre2,
                                              last_updated="Tue Nov 24 2015",
                                              target_experiments=800,
                                              target_participants=2000)
@@ -2969,6 +3798,10 @@ class TestNodalCoordinatorDetail(TestCase):
         nc_details1.set_target_participants(800)
         nc_details1.save()
         self.assertEqual(800, nc_details1.target_participants)
+
+        nc_details2.set_target_participants(1600)
+        nc_details2.save()
+        self.assertEqual(1600, nc_details2.target_participants)
 #+END_SRC
 
 ***** setTargetExperiments: NodalCoordinatorDetail, Int --> Void
@@ -2993,8 +3826,19 @@ class TestNodalCoordinatorDetail(TestCase):
                      role=Role(name=Name("NC")))
         user2.save()
 
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
+                                   created_by=user1)
+
+        nodal_centre1.save()
+
+        nodal_centre2 = NodalCentre(name="NIT", location="Warangal",\
+                                   created_by=user2)
+
+        nodal_centre2.save()
+
         nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
                                              created_by=user1,
+                                             nodal_centre=nodal_centre1,
                                              last_updated="Mon Nov 23 2015",
                                              target_experiments=800,
                                              target_participants=1000)
@@ -3002,8 +3846,9 @@ class TestNodalCoordinatorDetail(TestCase):
 
         nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
                                              created_by=user1,
+                                             nodal_centre=nodal_centre2,
                                              last_updated="Tue Nov 24 2015",
-                                             target_experiments=800,
+                                             target_experiments=600,
                                              target_participants=2000)
         nc_details2.save()
 
@@ -3011,6 +3856,10 @@ class TestNodalCoordinatorDetail(TestCase):
         nc_details1.set_target_experiments(1800)
         nc_details1.save()
         self.assertEqual(1800, nc_details1.target_experiments)
+
+        nc_details2.set_target_experiments(1600)
+        nc_details2.save()
+        self.assertEqual(1600, nc_details2.target_experiments)        
 #+END_SRC
 
 ***** to_client
@@ -3020,6 +3869,7 @@ class TestNodalCoordinatorDetail(TestCase):
             'id': self.id,
             'user': self.user.to_client(),
             'created_by': self.created_by.to_client(),
+            'nodal_centre': self.nodal_centre.to_client(),         
             'last_updated': self.last_updated,
             'created': self.created.isoformat(),
             'target_workshops': self.target_workshops,
@@ -3044,8 +3894,19 @@ class TestNodalCoordinatorDetail(TestCase):
                      role=Role(name=Name("NC")))
         user2.save()
 
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
+                                   created_by=user1)
+
+        nodal_centre1.save()
+
+        nodal_centre2 = NodalCentre(name="NIT", location="Warangal",\
+                                   created_by=user2)
+
+        nodal_centre2.save()
+
         nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
                                              created_by=user1,
+                                             nodal_centre=nodal_centre1,
                                              last_updated="Mon Nov 23 2015",
                                              target_experiments=800,
                                              target_participants=1000)
@@ -3053,6 +3914,7 @@ class TestNodalCoordinatorDetail(TestCase):
 
         nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
                                              created_by=user1,
+                                             nodal_centre=nodal_centre2,
                                              last_updated="Tue Nov 24 2015",
                                              target_experiments=800,
                                              target_participants=2000)
@@ -3065,741 +3927,7 @@ class TestNodalCoordinatorDetail(TestCase):
 
 #+END_SRC
 
-*** Nodal Centres
-**** Immutable data
-     + Id
-
-**** Mutable data
-     + Name
-     + Location
-     + NodalCoordinatorDetail --> Id
-     + User --> Id
-
-**** Definition
-#+BEGIN_SRC python :tangle src/db.py :eval no
-class NodalCentre(Entity):
-
-    __tablename__ = 'nodal_centres'
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(128), nullable=False)
-    location = db.Column(db.String(128))
-    coordinators_id = db.Column(db.Integer, db.ForeignKey('nodal_coordinator_details.id'))
-    created_by_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-
-    coordinators = relationship('NodalCoordinatorDetail', foreign_keys=[coordinators_id]) 
-    created_by = relationship('User', foreign_keys=[created_by_id])
-
- #+END_SRC
-
-**** Constructor
-#+BEGIN_EXAMPLE
-    nodal_centre = NodalCentre(name=str,
-                               location=str,                  
-                               created_by=<instance of class User>,
-                               coordinators=<instance of class NodalCoordinatorDetail>)
-                                            
-#+END_EXAMPLE
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def __init__(self, **kwargs):
-        if 'name' not in kwargs:
-            raise AttributeRequired("mandatory attribute `name` is missing")
-        self.set_name(kwargs['name'])
-
-        if 'location' not in kwargs:
-            raise AttributeRequired("mandatory attribute `location` is missing")
-        self.set_location(kwargs['location'])
-
-        if 'created_by' not in kwargs:
-            raise AttributeRequired("mandatory attribute `created_by` is missing")
-        self.set_created_by(kwargs['created_by'])
-
-        if 'coordinators' in kwargs:
-            self.set_coordinators(kwargs['coordinators'])
-        
-        
-    def __str__(self):
-        return "Name = %s, location = %s, created_by = %s, coordinators = %s" % \
-            (self.name, self.location, self.created_by, self.coordinators)
-
-    def __repr__(self):
-        return "Name = %s, location = %s, created_by = %s, coordinators = %s" % \
-            (self.name, self.location, self.created_by, self.coordinators)
-
-#+END_SRC
-
-**** Tests for Nodal Centre Constructor
-#+BEGIN_SRC python :tangle tests/test_db.py :eval no
-class TestNodalCentre(TestCase):
-    TESTING = True
-
-    def create_app(self):
-        app = create_app(config)
-        return app
-
-    def setUp(self):
-        db.create_all()
-
-    def tearDown(self):
-        db.session.remove()
-        db.drop_all()
-        
-#+END_SRC
-#+BEGIN_SRC python :tangle tests/test_db.py :eval no
-    def test_nodal_centre_constructor(self):
-        print "test_nodal_centre_constructor"
-        role1 = Role(name=Name("OC"))
-        role1.save()
-
-        role2 = Role(name=Name("NC"))
-        role2.save()
-
-        user_1 = User(name=Name("Ambika"),
-                      email=Email("ambika@vlabs.ac.in"), role=role1)
-        user_2 = User(name=Name("Madhavi"),
-                      email=Email("madhavi@vlabs.ac.in"), role=role2)
-        user_3 = User(name=Name("Will Smith"),
-                      email=Email("smith@vlabs.ac.in"), role=role2)
-
-        user_1.save()
-        user_2.save()
-        user_3.save()
-
-        nc_details1 = NodalCoordinatorDetail(user=user_2, target_workshops=100,
-                                             created_by=user_1,
-                                             target_participants=1000)
-        nc_details1.save()
-
-        nc_details2 = NodalCoordinatorDetail(user=user_3, target_workshops=200,
-                                             created_by=user_1,
-                                             target_participants=2000)
-        nc_details2.save()
-
-
-        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
-                                   created_by=user_1, coordinators=nc_details1)
-
-        nodal_centre1.save()
-
-        self.assertEqual(user_1.name, nodal_centre1.created_by.name)
-        self.assertEqual("IIIT-Hyd", nodal_centre1.name)
-        self.assertEqual("Gachibowli", nodal_centre1.location)                        
-    
-        # Calling the nodal_centre constructor without any arguments should raise
-        # AttributeRequired exception
-        self.assertRaises(AttributeRequired, NodalCentre)
-
-        # Calling the nodal_centre constructor with necessary arguments but with
-        # wrong type should raise TypeError
-        self.assertRaises(TypeError, NodalCentre,
-                          ,**{'name': "IIIT-Hyd",
-                              'location': 123,
-                              'created_by': user_1,
-                              'coordinators': nc_details1
-                         })
-
-#+END_SRC
-
-**** Functions that operate on the Nodal Centre domain
-***** getAll: Nil --> set[NodalCentre]
-#+BEGIN_SRC python :tangle src/db.py :eval no 
-    @staticmethod
-    def get_all():
-        return NodalCentre.query.all()
-
-#+END_SRC
-***** Test getAll: Nil --> set[NodalCentre]
-#+BEGIN_SRC python :tangle tests/test_db.py :eval no
-    def test_nodal_centres_get_all(self):
-        print "test_nodal_centres_get_all"
-        role1 = Role(name=Name("OC"))
-        role1.save()
-
-        role2 = Role(name=Name("NC"))
-        role2.save()
-
-        user_1 = User(name=Name("Ambika"),
-                      email=Email("ambika@vlabs.ac.in"), role=role1)
-        user_2 = User(name=Name("Madhavi"),
-                      email=Email("madhavi@vlabs.ac.in"), role=role2)
-        user_3 = User(name=Name("Will Smith"),
-                      email=Email("smith@vlabs.ac.in"), role=role2)
-
-        user_1.save()
-        user_2.save()
-        user_3.save()
-
-        nc_details1 = NodalCoordinatorDetail(user=user_2, target_workshops=100,
-                                             created_by=user_1,
-                                             target_participants=1000)
-        nc_details1.save()
-
-        nc_details2 = NodalCoordinatorDetail(user=user_3, target_workshops=200,
-                                             created_by=user_1,
-                                             target_participants=2000)
-        nc_details2.save()
-
-
-        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
-                                   created_by=user_1, coordinators=nc_details1)
-
-        nodal_centre1.save()
-
-
-        nodal_centre2 = NodalCentre(name="HCU", location="Lingampalli", \
-                                    created_by=user_2, coordinators=nc_details2)               
-        nodal_centre2.save()
-        
-        nodal_centres_list = NodalCentre.get_all()
-
-
-        self.assertEqual("IIIT-Hyd", nodal_centres_list[0].name)
-        self.assertEqual("HCU", nodal_centres_list[1].name)
-
-        self.assertEqual("Gachibowli", nodal_centres_list[0].location)
-        self.assertEqual("Lingampalli", nodal_centres_list[1].location)
-
-#+END_SRC
-***** getNodalCentre: Id --> NodalCentre
-#+BEGIN_SRC python :tangle src/db.py :eval no 
-    @staticmethod
-    def get_by_id(id):
-        return NodalCentre.query.get(id)
-
-#+END_SRC
-***** Test getNodalCentre: Id --> NodalCentre
-#+BEGIN_SRC python :tangle tests/test_db.py :eval no 
-    def test_get_nodal_centre_by_id(self):
-        print "test_get_nodal_centre_by_id"
-        role1 = Role(name=Name("OC"))
-        role1.save()
-
-        role2 = Role(name=Name("NC"))
-        role2.save()
-
-        user_1 = User(name=Name("Ambika"),
-                      email=Email("ambika@vlabs.ac.in"), role=role1)
-        user_2 = User(name=Name("Madhavi"),
-                      email=Email("madhavi@vlabs.ac.in"), role=role2)
-        user_3 = User(name=Name("Will Smith"),
-                      email=Email("smith@vlabs.ac.in"), role=role2)
-
-        user_1.save()
-        user_2.save()
-        user_3.save()
-
-        nc_details1 = NodalCoordinatorDetail(user=user_2, target_workshops=100,
-                                             created_by=user_1,
-                                             target_participants=1000)
-        nc_details1.save()
-
-        nc_details2 = NodalCoordinatorDetail(user=user_3, target_workshops=200,
-                                             created_by=user_1,
-                                             target_participants=2000)
-        nc_details2.save()
-
-        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
-                                   created_by=user_1, coordinators=nc_details1)
-
-        nodal_centre1.save()
-
-
-        nodal_centre2 = NodalCentre(name="HCU", location="Lingampalli", \
-                                    created_by=user_2, coordinators=nc_details2)               
-        nodal_centre2.save()
-        
-        self.assertEqual(nodal_centre1.get_by_id(1).name, "IIIT-Hyd")
-        self.assertEqual(nodal_centre2.get_by_id(2).name, "HCU")
-#+END_SRC
-***** getCreatedBy: NodalCentre --> User
-#+BEGIN_SRC python :tangle src/db.py :eval no 
-    def get_created_by(self):
-        return self.created_by
-
-#+END_SRC
-
-***** Test getCreatedBy: NodalCentre --> User
-#+BEGIN_SRC python :tangle tests/test_db.py :eval no
-    def test_get_nodal_centre_created_by(self):
-        print "test_get_nc_created_by"
-        role1 = Role(name=Name("OC"))
-        role1.save()
-
-        role2 = Role(name=Name("NC"))
-        role2.save()
-
-        user_1 = User(name=Name("Ambika"),
-                      email=Email("ambika@vlabs.ac.in"), role=role1)
-        user_2 = User(name=Name("Madhavi"),
-                      email=Email("madhavi@vlabs.ac.in"), role=role2)
-        user_3 = User(name=Name("Will Smith"),
-                      email=Email("smith@vlabs.ac.in"), role=role2)
-
-        user_1.save()
-        user_2.save()
-        user_3.save()
-
-        nc_details1 = NodalCoordinatorDetail(user=user_2, target_workshops=100,
-                                             created_by=user_1,
-                                             target_participants=1000)
-        nc_details1.save()
-
-        nc_details2 = NodalCoordinatorDetail(user=user_3, target_workshops=200,
-                                             created_by=user_1,
-                                             target_participants=2000)
-        nc_details2.save()
-
-        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
-                                   created_by=user_1, coordinators=nc_details1)
-
-        nodal_centre1.save()
-
-
-        nodal_centre2 = NodalCentre(name="HCU", location="Lingampalli", \
-                                    created_by=user_2, coordinators=nc_details2)               
-        nodal_centre2.save()
-
-        centre_created_by = nodal_centre1.get_created_by()
-        self.assertEqual(centre_created_by.name, "Ambika")
-
-#+END_SRC
-
-***** getName: NodalCentre --> Name
-#+BEGIN_SRC python :tangle src/db.py :eval no 
-    def get_name(self):
-        return self.name
-#+END_SRC
-
-***** Test getName: NodalCentre --> Name 
-#+BEGIN_SRC python :tangle tests/test_db.py :eval no 
-    def test_get_nodal_centre_name(self):
-        print "test_get_nodal_centre_name"
-        role1 = Role(name=Name("OC"))
-        role1.save()
-
-        role2 = Role(name=Name("NC"))
-        role2.save()
-
-        user_1 = User(name=Name("Ambika"),
-                      email=Email("ambika@vlabs.ac.in"), role=role1)
-        user_2 = User(name=Name("Madhavi"),
-                      email=Email("madhavi@vlabs.ac.in"), role=role2)
-        user_3 = User(name=Name("Will Smith"),
-                      email=Email("smith@vlabs.ac.in"), role=role2)
-
-        user_1.save()
-        user_2.save()
-        user_3.save()
-
-        nc_details1 = NodalCoordinatorDetail(user=user_2, target_workshops=100,
-                                             created_by=user_1,
-                                             target_participants=1000)
-        nc_details1.save()
-
-        nc_details2 = NodalCoordinatorDetail(user=user_3, target_workshops=200,
-                                             created_by=user_1,
-                                             target_participants=2000)
-        nc_details2.save()
-
-        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
-                                   created_by=user_1, coordinators=nc_details1)
-
-        nodal_centre1.save()
-
-
-        nodal_centre2 = NodalCentre(name="HCU", location="Lingampalli", \
-                                    created_by=user_2, coordinators=nc_details2)               
-        nodal_centre2.save()
-
-        centre_name = nodal_centre1.get_name()
-        self.assertEqual(centre_name, "IIIT-Hyd")
-#+END_SRC
-
-***** getLocation: NodalCentre --> Location
-#+BEGIN_SRC python :tangle src/db.py :eval no 
-    def get_location(self):
-        return self.location
-#+END_SRC
-      
-***** Test getLocation: NodalCentre --> Location
-#+BEGIN_SRC python :tangle tests/test_db.py :eval no 
-    def test_get_nodal_centre_location(self):
-        print "test_get_nodal_centre_location"
-        role1 = Role(name=Name("OC"))
-        role1.save()
-
-        role2 = Role(name=Name("NC"))
-        role2.save()
-
-        user_1 = User(name=Name("Ambika"),
-                      email=Email("ambika@vlabs.ac.in"), role=role1)
-        user_2 = User(name=Name("Madhavi"),
-                      email=Email("madhavi@vlabs.ac.in"), role=role2)
-        user_3 = User(name=Name("Will Smith"),
-                      email=Email("smith@vlabs.ac.in"), role=role2)
-
-        user_1.save()
-        user_2.save()
-        user_3.save()
-
-        nc_details1 = NodalCoordinatorDetail(user=user_2, target_workshops=100,
-                                             created_by=user_1,
-                                             target_participants=1000)
-        nc_details1.save()
-
-        nc_details2 = NodalCoordinatorDetail(user=user_3, target_workshops=200,
-                                             created_by=user_1,
-                                             target_participants=2000)
-        nc_details2.save()
-
-        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
-                                   created_by=user_1, coordinators=nc_details1)
-
-        nodal_centre1.save()
-
-
-        nodal_centre2 = NodalCentre(name="HCU", location="Lingampalli", \
-                                    created_by=user_2, coordinators=nc_details2)               
-        nodal_centre2.save()
-
-        centre_location = nodal_centre1.get_location()
-        self.assertEqual(centre_location, "Gachibowli")
-#+END_SRC
-
-***** getCoordinators: NodalCentre --> NodalCoordinatorDetails
-#+BEGIN_SRC python :tangle src/db.py :eval no 
-    def get_coordinators(self):
-        return self.coordinators
-
-#+END_SRC
-
-***** Test getCoordinators: NodalCentre --> NodalCoordinatorDetails
-#+BEGIN_SRC python :tangle tests/test_db.py :eval no 
-    def test_get_nodal_centre_coordinators(self):
-        print "test_get_nodal_centre_coordinators"
-        role1 = Role(name=Name("OC"))
-        role1.save()
-
-        role2 = Role(name=Name("NC"))
-        role2.save()
-
-        user_1 = User(name=Name("Ambika"),
-                      email=Email("ambika@vlabs.ac.in"), role=role1)
-        user_2 = User(name=Name("Madhavi"),
-                      email=Email("madhavi@vlabs.ac.in"), role=role2)
-        user_3 = User(name=Name("Will Smith"),
-                      email=Email("smith@vlabs.ac.in"), role=role2)
-
-        user_1.save()
-        user_2.save()
-        user_3.save()
-
-        nc_details1 = NodalCoordinatorDetail(user=user_2, target_workshops=100,
-                                             created_by=user_1,
-                                             target_participants=1000)
-        nc_details1.save()
-
-        nc_details2 = NodalCoordinatorDetail(user=user_3, target_workshops=200,
-                                             created_by=user_1,
-                                             target_participants=2000)
-        nc_details2.save()
-
-        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
-                                   created_by=user_1, coordinators=nc_details1)
-
-        nodal_centre1.save()
-
-
-        nodal_centre2 = NodalCentre(name="HCU", location="Lingampalli", \
-                                    created_by=user_2, coordinators=nc_details2)               
-        nodal_centre2.save()
-
-
-        centre_coordinators = nodal_centre1.get_coordinators()
-        self.assertEqual(centre_coordinators, nc_details1)
-
-#+END_SRC
-
-***** setCreatedBy: NodalCentre, User --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(created_by=User)
-    def set_created_by(self, created_by):
-        self.created_by = created_by
-
-#+END_SRC
-
-***** Test setCreatedBy: NodalCentre, User --> Void
-#+BEGIN_SRC python :tangle tests/test_db.py :eval no 
-    def test_set_nodalcentre_created_by(self):
-        print "test_set_nodalcentre_created_by"
-        role1 = Role(name=Name("OC"))
-        role1.save()
-
-        role2 = Role(name=Name("NC"))
-        role2.save()
-
-        user_1 = User(name=Name("Ambika"),
-                      email=Email("ambika@vlabs.ac.in"), role=role1)
-        user_2 = User(name=Name("Madhavi"),
-                      email=Email("madhavi@vlabs.ac.in"), role=role2)
-        user_3 = User(name=Name("Will Smith"),
-                      email=Email("smith@vlabs.ac.in"), role=role2)
-
-        user_1.save()
-        user_2.save()
-        user_3.save()
-
-        nc_details1 = NodalCoordinatorDetail(user=user_2, target_workshops=100,
-                                             created_by=user_1,
-                                             target_participants=1000)
-        nc_details1.save()
-
-        nc_details2 = NodalCoordinatorDetail(user=user_3, target_workshops=200,
-                                             created_by=user_1,
-                                             target_participants=2000)
-        nc_details2.save()
-
-        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
-                                   created_by=user_1, coordinators=nc_details1)
-
-        nodal_centre1.save()
-
-
-        nodal_centre2 = NodalCentre(name="HCU", location="Lingampalli", \
-                                    created_by=user_2, coordinators=nc_details2)               
-        nodal_centre2.save()
-
-        nodal_centre1.set_created_by(user_2)
-        nodal_centre1.save()
-
-        centre = NodalCentre.get_by_id(1)
-        self.assertEqual(centre.created_by, user_2)
-#+END_SRC
-
-***** setName: NodalCentre, Name --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no 
-    @typecheck(name=str)
-    def set_name(self, name):
-        self.name = name
-#+END_SRC
-      
-***** Test setName: NodalCentre, Name --> Void
-#+BEGIN_SRC python :tangle tests/test_db.py :eval no 
-    def test_set_nodal_centre_name(self):
-        print "test_set_nodal_centre_name"
-        role1 = Role(name=Name("OC"))
-        role1.save()
-
-        role2 = Role(name=Name("NC"))
-        role2.save()
-
-        user_1 = User(name=Name("Ambika"),
-                      email=Email("ambika@vlabs.ac.in"), role=role1)
-        user_2 = User(name=Name("Madhavi"),
-                      email=Email("madhavi@vlabs.ac.in"), role=role2)
-        user_3 = User(name=Name("Will Smith"),
-                      email=Email("smith@vlabs.ac.in"), role=role2)
-
-        user_1.save()
-        user_2.save()
-        user_3.save()
-
-        nc_details1 = NodalCoordinatorDetail(user=user_2, target_workshops=100,
-                                             created_by=user_1,
-                                             target_participants=1000)
-        nc_details1.save()
-
-        nc_details2 = NodalCoordinatorDetail(user=user_3, target_workshops=200,
-                                             created_by=user_1,
-                                             target_participants=2000)
-        nc_details2.save()
-
-        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
-                                   created_by=user_1, coordinators=nc_details1)
-
-        nodal_centre1.save()
-
-
-        nodal_centre2 = NodalCentre(name="HCU", location="Lingampalli", \
-                                    created_by=user_2, coordinators=nc_details2)               
-        nodal_centre2.save()
-
-        nodal_centre2.set_name("IIIT-Hyd")
-        nodal_centre2.save()
-        centre = NodalCentre.get_by_id(2)
-        self.assertEqual("IIIT-Hyd", centre.name)
-#+END_SRC
-
-***** setLocation: NodalCentre, Location --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no 
-    @typecheck(location=str)
-    def set_location(self, location):
-        self.location = location
-#+END_SRC
-
-***** Test setLocation: NodalCentre, Location --> Void
-#+BEGIN_SRC python :tangle tests/test_db.py :eval no
-    def test_set_nodal_centre_location(self):
-        print "test_set_nodal_centre_location"
-        role1 = Role(name=Name("OC"))
-        role1.save()
-
-        role2 = Role(name=Name("NC"))
-        role2.save()
-
-        user_1 = User(name=Name("Ambika"),
-                      email=Email("ambika@vlabs.ac.in"), role=role1)
-        user_2 = User(name=Name("Madhavi"),
-                      email=Email("madhavi@vlabs.ac.in"), role=role2)
-        user_3 = User(name=Name("Will Smith"),
-                      email=Email("smith@vlabs.ac.in"), role=role2)
-
-        user_1.save()
-        user_2.save()
-        user_3.save()
-
-        nc_details1 = NodalCoordinatorDetail(user=user_2, target_workshops=100,
-                                             created_by=user_1,
-                                             target_participants=1000)
-        nc_details1.save()
-
-        nc_details2 = NodalCoordinatorDetail(user=user_3, target_workshops=200,
-                                             created_by=user_1,
-                                             target_participants=2000)
-        nc_details2.save()
-
-        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
-                                   created_by=user_1, coordinators=nc_details1)
-
-        nodal_centre1.save()
-
-
-        nodal_centre2 = NodalCentre(name="HCU", location="Lingampalli", \
-                                    created_by=user_2, coordinators=nc_details2)               
-        nodal_centre2.save()
-
-        nodal_centre1.set_location("Hyderabad")
-        nodal_centre1.save()
-        centre = NodalCentre.get_by_id(1)
-        self.assertEqual("Hyderabad", centre.location)
-#+END_SRC
-
-***** setCoordinators: NodalCentre, NodalCoordinatorDetail --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(coordinators=NodalCoordinatorDetail)
-    def set_coordinators(self, coordinators):
-        self.coordinators = coordinators
-
-#+END_SRC
-
-***** Test setCoordinators: NodalCentre, NodalCoordinatorDetail --> Void
-#+BEGIN_SRC python :tangle tests/test_db.py :eval no 
-    def test_set_nodal_centre_coordinators(self):
-        print "test_set_nodal_centre_coordinators"
-        role1 = Role(name=Name("OC"))
-        role1.save()
-
-        role2 = Role(name=Name("NC"))
-        role2.save()
-
-        user_1 = User(name=Name("Ambika"),
-                      email=Email("ambika@vlabs.ac.in"), role=role1)
-        user_2 = User(name=Name("Madhavi"),
-                      email=Email("madhavi@vlabs.ac.in"), role=role2)
-        user_3 = User(name=Name("Will Smith"),
-                      email=Email("smith@vlabs.ac.in"), role=role2)
-
-        user_1.save()
-        user_2.save()
-        user_3.save()
-
-        nc_details1 = NodalCoordinatorDetail(user=user_2, target_workshops=100,
-                                             created_by=user_1,
-                                             target_participants=1000)
-        nc_details1.save()
-
-        nc_details2 = NodalCoordinatorDetail(user=user_3, target_workshops=200,
-                                             created_by=user_1,
-                                             target_participants=2000)
-        nc_details2.save()
-
-        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
-                                   created_by=user_1, coordinators=nc_details1)
-
-        nodal_centre1.save()
-
-
-        nodal_centre2 = NodalCentre(name="HCU", location="Lingampalli", \
-                                    created_by=user_2, coordinators=nc_details2)               
-        nodal_centre2.save()
-
-        nodal_centre1.set_coordinators(nc_details2)
-        nodal_centre1.save()
-        centre = NodalCentre.get_by_id(1)
-        self.assertEqual(centre.coordinators, nc_details2)
-#+END_SRC
-
-***** to_client
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def to_client(self):
-        return {
-            'id': self.id,
-            'created_by': self.created_by.to_client(),
-            'coordinators': self.coordinators.to_client(),
-            'name': self.name,
-            'location': self.location
-        }
-#+END_SRC
-      
-***** Test Nodal Centre to_client
-#+BEGIN_SRC python :tangle tests/test_db.py :eval no 
-    def test_nodal_centre_to_client(self):
-        print "test_nodal_centre_to_client"
-        role1 = Role(name=Name("OC"))
-        role1.save()
-
-        role2 = Role(name=Name("NC"))
-        role2.save()
-
-        user_1 = User(name=Name("Ambika"),
-                      email=Email("ambika@vlabs.ac.in"), role=role1)
-        user_2 = User(name=Name("Madhavi"),
-                      email=Email("madhavi@vlabs.ac.in"), role=role2)
-        user_3 = User(name=Name("Will Smith"),
-                      email=Email("smith@vlabs.ac.in"), role=role2)
-
-        user_1.save()
-        user_2.save()
-        user_3.save()
-
-        nc_details1 = NodalCoordinatorDetail(user=user_2, target_workshops=100,
-                                             created_by=user_1,
-                                             target_participants=1000)
-        nc_details1.save()
-
-        nc_details2 = NodalCoordinatorDetail(user=user_3, target_workshops=200,
-                                             created_by=user_1,
-                                             target_participants=2000)
-        nc_details2.save()
-
-        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
-                                   created_by=user_1, coordinators=nc_details1)
-
-        nodal_centre1.save()
-
-
-        nodal_centre2 = NodalCentre(name="HCU", location="Lingampalli", \
-                                    created_by=user_2, coordinators=nc_details2)               
-        nodal_centre2.save()
-
-        saved_centre = NodalCentre.get_by_id(1)
-        saved_centre_dict = saved_centre.to_client()
-        self.assertEqual("IIIT-Hyd", saved_centre_dict['name'])
-        self.assertEqual("Gachibowli", saved_centre_dict['location'])
-
-#+END_SRC
-
-*** College Reports
+*** Workshop Reports
 **** Immutable data
      + Id
   
@@ -3808,45 +3936,50 @@ class TestNodalCentre(TestCase):
      + Workshop Id
 
 **** Definition
-#+BEGIN_SRC 
-class CollegeReport(Entity):
+#+BEGIN_SRC python :tangle src/db.py :eval no
+class WorkshopReport(Entity):
 
-    __tablename__ = 'college_reports'
+    __tablename__ = 'workshop_reports'
 
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128))
     path = db.Column(db.String(128))
     workshop_id = db.Column(db.Integer, db.ForeignKey('workshops.id'))
-    
+
 #+END_SRC
 
 **** Constructor
 #+BEGIN_EXAMPLE 
-    college_report = CollegeReport(path=str,  workshop=<instance of class Workshop>)
+    workshop_report = WorkshopReport(name=str, path=str,  workshop=<instance of class Workshop>)
                                             
 #+END_EXAMPLE
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no 
     def __init__(self, **kwargs):
 
         if 'workshop' not in kwargs:
             raise AttributeRequired("mandatory attribute `workshop` is missing")
-        self.set_user(kwargs['workshop'])
+        self.set_workshop(kwargs['workshop'])
         
         if 'path' in kwargs:
             self.set_path(kwargs['path'])
 
+        if 'name' not in kwargs:
+            raise AttributeRequired("mandatory attribute `name` is missing")
+        self.set_name(kwargs['name'])
+
     def __str__(self):
-        return "workshop = %s, path = %s" % \
-            (self.workshop.name, self.path)
+        return "workshop = %s, name = %s, path = %s" % \
+            (self.workshop, self.name, self.path)
 
     def __repr__(self):
-        return "workshop = %s, path = %s" % \
-            (self.workshop.name, self.path)
+        return "workshop = %s, name=%s, path = %s" % \
+            (self.workshop, self.name, self.path)
 
 #+END_SRC
 
-**** Tests for College Report Constructor
-#+BEGIN_SRC 
-class TestCollegeReport(TestCase):
+**** Tests for Workshop Report Constructor
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no 
+class TestWorkshopReport(TestCase):
     TESTING = True
 
     def create_app(self):
@@ -3861,53 +3994,55 @@ class TestCollegeReport(TestCase):
         db.drop_all()
         
 #+END_SRC
-#+BEGIN_SRC 
-    def test_college_report_constructor(self):
-        print "test_college_report_constructor"
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_workshop_report_constructor(self):
+        print "test_workshop_report_constructor"
 
-        name = Name("Admin")
-        role = Role(name=name)
+        role = Role(name=Name("Admin"))
         role.save()
-         
-        user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
+    
+        user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"),
+                    role = role)
         user.save()
 
         workshop = Workshop(name="Coordinators Training", location="IIIT-Hyd",
-                            user=user, participating_institutes="HCU,\
-                            IIIT-Hyd", no_of_participants_expected=100,
+                            user=user, participating_institutes="HCU, IIIT-Hyd",
+                            no_of_participants_expected=100,
                             no_of_sessions=3, labs_planned=4,
-                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
-                            GMT-0500 (EST)")
-        workshop.save()
-            
-        college_report = CollegeReport(workshop=workshop)
-        college_report.save()
-         
-        # Calling the college_report constructor without any arguments should
-        # raise AttributeRequired exception
-        self.assertRaises(AttributeRequired, CollegeReport)
+                            status="Upcoming",
+                            date="Mon Nov 23 2015 06:18:26 GMT-0500 (EST)")
 
-        # Calling the college_report constructor with necessary arguments
+        workshop.save()
+        
+        workshop_report = WorkshopReport(name="College Report", workshop=workshop)
+        workshop_report.save()
+        
+        # Calling the workshop_report constructor without any arguments should
+        # raise AttributeRequired exception
+        self.assertRaises(AttributeRequired, WorkshopReport)
+
+        # Calling the workshop_report constructor with necessary arguments
         # (workshop,path) but with wrong type should raise TypeError
-        self.assertRaises(TypeError, CollegeReport,
-                          ,**{'path': 12
+        self.assertRaises(TypeError, WorkshopReport,
+                          ,**{'path': 12,
+                              'name':"College Report",
                              'workshop': workshop
                             })
 
 #+END_SRC
-**** Functions that operate on the College Report domain
-***** getAll: Nil --> set[CollegeReport]
-#+BEGIN_SRC 
+**** Functions that operate on the Workshop Report domain
+***** getAll: Nil --> set[WorkshopReport]
+#+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_all():
-        return CollegeReport.query.all()
+        return WorkshopReport.query.all()
 
 #+END_SRC
 
-***** Test getAll: Nil --> set[CollegeReport]
-#+BEGIN_SRC 
-    def test_college_reports_get_all(self):
-        print "test_college_reports_get_all"
+***** Test getAll: Nil --> set[WorkshopReport]
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_workshop_reports_get_all(self):
+        print "test_workshop_reports_get_all"
 
         name = Name("Admin")
         role = Role(name=name)
@@ -3924,23 +4059,35 @@ class TestCollegeReport(TestCase):
                             GMT-0500 (EST)")
         workshop.save()
         
-        doc = CollegeReport(path="/static/uploads/college-reports/file.pdf" workshop=workshop)
-        doc.save()
+        workshop_report1 = WorkshopReport(name="College Report", path="/static/uploads/college-reports/file.pdf",
+                             workshop=workshop)
+        workshop_report1.save()
 
-        self.assertEqual("/static/uploads/college-reports/file.pdf", doc.path)
+        workshop_report2 = WorkshopReport(name="Workshop Photos", path="/static/uploads/college-reports/photos.png",
+                             workshop=workshop)
+        workshop_report2.save()
+
+        workshop_report_list = WorkshopReport.get_all()
+        
+        self.assertEqual("College Report", workshop_report_list[0].name)
+        self.assertEqual("Workshop Photos", workshop_report_list[1].name)
+
+        self.assertEqual("/static/uploads/college-reports/file.pdf", workshop_report_list[0].path)
+        self.assertEqual("/static/uploads/college-reports/photos.png", workshop_report_list[1].path)
+
 #+END_SRC
 
-***** getCollegeReport: Id --> CollegeReport
-#+BEGIN_SRC 
+***** getWorkshopReport: Id --> WorkshopReport
+#+BEGIN_SRC python :tangle src/db.py :eval no 
     @staticmethod
     def get_by_id(id):
-        return CollegeReport.query.get(id)
+        return WorkshopReport.query.get(id)
 
 #+END_SRC
 
-***** Test getCollegeReport: Id --> CollegeReport
-#+BEGIN_SRC 
-    def test_get_college_report_by_id(self):
+***** Test getWorkshopReport: Id --> WorkshopReport
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no 
+    def test_get_workshop_report_by_id(self):
         print "test_get_document_by_id"
 
         name = Name("Admin")
@@ -3958,23 +4105,24 @@ class TestCollegeReport(TestCase):
                             GMT-0500 (EST)")
         workshop.save()
         
-        college_report = CollegeReport(path="/static/uploads/college-reports/file.pdf" workshop=workshop)
-        college_report.save()
+        workshop_report = WorkshopReport(name="College Report", path="/static/uploads/college-reports/file.pdf", workshop=workshop)
+        workshop_report.save()
 
-        self.assertEqual(college_report.get_by_id(1).path, "/static/uploads/college-reports/file.pdf" )
+        self.assertEqual(workshop_report.get_by_id(1).path, "/static/uploads/college-reports/file.pdf" )
+        self.assertEqual(workshop_report.get_by_id(1).name, "College Report" )
 
 #+END_SRC
      
-***** getPath: CollegeReport --> String
-#+BEGIN_SRC 
+***** getPath: WorkshopReport --> String
+#+BEGIN_SRC python :tangle src/db.py :eval no
     def get_path(self):
         return self.path
 #+END_SRC
 
-***** Test getPath: CollegeReport --> String
-#+BEGIN_SRC 
-    def test_get_college_report_path(self):
-        print "test_get_college_report_path"
+***** Test getPath: WorkshopReport --> String
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_workshop_report_path(self):
+        print "test_get_workshop_report_path"
         name = Name("Admin")
 
         role = Role(name=name)
@@ -3991,47 +4139,84 @@ class TestCollegeReport(TestCase):
                             GMT-0500 (EST)")
         workshop.save()
 
-        college_report = CollegeReport(path="/static/uploads/college-reports/file.pdf" workshop=workshop)
-        college_report.save()
+        workshop_report = WorkshopReport(name="College Report", path="/static/uploads/college-reports/file.pdf", workshop=workshop)
+        workshop_report.save()
 
-        college_report_path = college_report.get_path()
-        self.assertEqual(college_report_path, "/static/uploads/college-reports/file.pdf")
+        workshop_report_path = workshop_report.get_path()
+        self.assertEqual(workshop_report_path, "/static/uploads/college-reports/file.pdf")
+
 #+END_SRC
      
-***** getWorkshop: CollegeReport --> Workshop
-#+BEGIN_SRC 
+***** getName: WorkshopReport --> String
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_name(self):
+        return self.name
+#+END_SRC
+
+***** Test getName: WorkshopReport --> String
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no 
+    def test_get_workshop_report_name(self):
+        print "test_get_workshop_report_name"
+        name = Name("Admin")
+
+        role = Role(name=name)
+        role.save()
+         
+        user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
+        user.save()
+
+        workshop = Workshop(name="Coordinators Training", location="IIIT-Hyd",
+                            user=user, participating_institutes="HCU,\
+                            IIIT-Hyd", no_of_participants_expected=100,
+                            no_of_sessions=3, labs_planned=4,
+                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            GMT-0500 (EST)")
+        workshop.save()
+
+        workshop_report = WorkshopReport(name="College Report", path="/static/uploads/college-reports/file.pdf", workshop=workshop)
+        workshop_report.save()
+
+        workshop_report_name = workshop_report.get_name()
+        self.assertEqual(workshop_report_name, "College Report")
+
+#+END_SRC
+     
+***** getWorkshop: WorkshopReport --> Workshop
+#+BEGIN_SRC python :tangle src/db.py :eval no 
     def get_workshop(self):
         return self.workshop
 #+END_SRC
-***** TestWorkshop: CollegeReport --> Workshop
-#+BEGIN_SRC 
-def test_get_workshop(self):
-        print "test_get_workshop"
+***** TestWorkshop: WorkshopReport --> Workshop
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no 
+    def test_get_workshop_report_workshop(self):
+        print "test_get_workshop_report_workshop"
         role = Role(name=Name("Admin"))
         user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
-        workshop_1 = Workshop(name="Coordinators Training",
+        workshop = Workshop(name="Coordinators Training",
                               location="IIIT-Hyd", user=user,
                               participating_institutes="HCU, IIIT-Hyd",
                               no_of_participants_expected=100,
                               no_of_sessions=3, labs_planned=4,
                               status="Upcoming", date="Mon Nov 23 2015 06:18:26\
                               GMT-0500 (EST)")
+        workshop_report = WorkshopReport(name="College Report", path="/static/uploads/college-reports/file.pdf", workshop=workshop)
+        workshop_report.save()
 
-        workshop = workshop_1.get_workshop()
+        workshop = workshop_report.get_workshop()
         self.assertEqual("Coordinators Training", workshop.name )
 
 #+END_SRC
-***** setPath: CollegeReport, String --> Void
-#+BEGIN_SRC 
+***** setPath: WorkshopReport, String --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no 
     @typecheck(path=str)
     def set_path(self, path):
         self.path = path
 #+END_SRC
 
-***** Test setPath: CollegeReport, String --> Void
-#+BEGIN_SRC 
-    def test_set_college_report_path(self):
-        print "test_set_college_report_path"
+***** Test setPath: WorkshopReport, String --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no 
+    def test_set_workshop_report_path(self):
+        print "test_set_workshop_report_path"
 
         name = Name("Admin")
         role = Role(name=name)
@@ -4048,72 +4233,109 @@ def test_get_workshop(self):
                             GMT-0500 (EST)")
         workshop.save()
         
-        college_report = CollegeReport(path="/static/uploads/college-reports/file.pdf" workshop=workshop)
-        college_report.save()
+        workshop_report = WorkshopReport(name="College Report", path="/static/uploads/college-reports/file.pdf", workshop=workshop)
+        workshop_report.save()
 
-        college_report.set_path("/static/uploads/college-reports/file.doc")
-        college_report.save()
+        workshop_report.set_path("/static/uploads/college-reports/file.doc")
+        workshop_report.save()
 
-        doc = college_report.get_by_id(1)
+        doc = workshop_report.get_by_id(1)
         self.assertEqual(doc.path, "/static/uploads/college-reports/file.doc")
 #+END_SRC
       
-***** setWorkshop: CollegeReport, Workshop --> Void
-#+BEGIN_SRC 
-    @typecheck(user=User)
+***** setName: WorkshopReport, String --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no 
+    @typecheck(name=str)
+    def set_name(self, name):
+        self.name = name
+#+END_SRC
+
+***** Test setName: WorkshopReport, String --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no 
+    def test_set_workshop_report_name(self):
+        print "test_set_workshop_report_name"
+
+        name = Name("Admin")
+        role = Role(name=name)
+        role.save()
+         
+        user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
+        user.save()
+
+        workshop = Workshop(name="Coordinators Training", location="IIIT-Hyd",
+                            user=user, participating_institutes="HCU,\
+                            IIIT-Hyd", no_of_participants_expected=100,
+                            no_of_sessions=3, labs_planned=4,
+                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            GMT-0500 (EST)")
+        workshop.save()
+        
+        workshop_report = WorkshopReport(name="College Report", path="/static/uploads/college-reports/file.pdf", workshop=workshop)
+        workshop_report.save()
+
+        workshop_report.set_name("Workshop Photos")
+        workshop_report.save()
+
+        doc = workshop_report.get_by_id(1)
+        self.assertEqual(doc.name, "Workshop Photos")
+#+END_SRC
+      
+***** setWorkshop: WorkshopReport, Workshop --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(workshop=Workshop)
     def set_workshop(self, workshop):
         self.workshop = workshop
 
 #+END_SRC
-***** Test setWorkshop: CollegeReport, Workshop --> Void
-#+BEGIN_SRC 
-    def test_set_workshop(self):
-        print "test_set_workshop"
+
+***** Test setWorkshop: WorkshopReport, Workshop --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_set_workshop_report_workshop(self):
+        print "test_set_workshop_report_workshop"
         role = Role(name=Name("Admin"))
 
         user1 = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
         user2 = User(name=Name("madhavi"), email=Email("madhavi@vlabs.ac.in"), role=role)
 
         workshop1 = Workshop(name="Training", location="IIIT-Hyd",
-                            user=user1, participating_institutes="HCU,\
-                            IIIT-Hyd", no_of_participants_expected=100,
+                            user=user1, participating_institutes="HCU, IIIT-Hyd",
+                            no_of_participants_expected=100,
                             no_of_sessions=3, labs_planned=4,
-                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
-                            GMT-0500 (EST)")
+                            status="Upcoming", date="Mon Nov 23 2015 06:18:26 GMT-0500 (EST)")
 
 
         workshop1.save()
 
         workshop2 = Workshop(name="Training", location="IIT-D",
-                            user=user, participating_institutes="HCU,\
-                            IIIT-Hyd", no_of_participants_expected=100,
+                            user=user2, participating_institutes="HCU, IIIT-Hyd", 
+                            no_of_participants_expected=100,
                             no_of_sessions=3, labs_planned=4,
-                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
-                            GMT-0500 (EST)")
+                            status="Upcoming", date="Mon Nov 23 2015 06:18:26 GMT-0500 (EST)")
         
         workshop2.save()
 
-        college_report = CollegeReport(path="/static/uploads/college-reports/file.pdf" workshop=workshop1)
-        college_report.save()
+        workshop_report = WorkshopReport(name= "College Report", path="/static/uploads/college-reports/file.pdf", workshop=workshop1)
+        workshop_report.save()
      
-        college_report.set_workshop(workshop2)
-        college_report.save()
-        self.assertEqual(college_report.workshop.location, "IIT-D")
+        workshop_report.set_workshop(workshop2)
+        workshop_report.save()
+        self.assertEqual(workshop_report.workshop.location, "IIT-D")
 #+END_SRC
 ***** to_client
-#+BEGIN_SRC 
+#+BEGIN_SRC python :tangle src/db.py :eval no 
     def to_client(self):
         return {
             'id': self.id,
+            'name': self.name,
             'path': self.path,
-            'wokshop': self.workshop.to_client()
+            'workshop': self.workshop.to_client()
         }
 #+END_SRC
       
-***** Test CollegeReport to_client
-#+BEGIN_SRC 
-    def test_college_report_to_client(self):
-        print "test_college_report_to_client"
+***** Test WorkshopReport to_client
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no 
+    def test_workshop_report_to_client(self):
+        print "test_workshop_report_to_client"
 
         name = Name("Admin")
         role = Role(name=name)
@@ -4130,12 +4352,13 @@ def test_get_workshop(self):
                             GMT-0500 (EST)")
         workshop.save()
 
-        college_report = CollegeReport(path="/static/uploads/college-reports/file.pdf" workshop=workshop)
-        college_report.save()
+        workshop_report = WorkshopReport(name="College Reports", path="/static/uploads/college-reports/file.pdf", workshop=workshop)
+        workshop_report.save()
 
-        doc = college_report.get_by_id(1)
+        doc = workshop_report.get_by_id(1)
         doc_dict = doc.to_client()
         self.assertEqual("/static/uploads/college-reports/file.pdf", doc_dict['path'])
+        self.assertEqual("College Reports", doc_dict['name'])
 
 #+END_SRC
 
@@ -4372,8 +4595,8 @@ WHITELIST_IPS = ["127.0.0.1"]
 #LOG_LEVEL = 'DEBUG'
 
 # destination for uploaded files
-# example value - '/home/vlead/Desktop/outreach-docs/'
-UPLOAD_DIR_PATH = 'static/uploads/'
+# example value - '/home/vlead/Desktop/outreach-portal/build/code/src/static/uploads/'
+UPLOAD_DIR_PATH = '/home/vlead/Desktop/outreach-portal/build/code/src/static/uploads/'
 
 # allowed file extensions that can be uploaded
 ALLOWED_FILE_EXTENSIONS = ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'csv']
@@ -4480,8 +4703,9 @@ application = create_app(config)
       'users': User,
       'reference_documents': ReferenceDocument,
       'workshop': Workshop,
+      'nodal_centre': NodalCentre,
       'nodal_coordinator_detail': NodalCoordinatorDetail,
-      'nodal_centre': NodalCentre
+      'workshop_reports':WorkshopReport
     }
 #+END_SRC
 
@@ -4616,8 +4840,12 @@ workshop = {'entity_class': Workshop,
                  'relationship': 'one'},
                 {'name': 'date',
                  'class': None,
-                 'relationship': 'one'}
+                 'relationship': 'one'},
+                {'name': 'workshop_reports',
+                 'class': WorkshopReport,
+                 'relationship': 'many'}
             ]}
+
 
 nodal_coordinator_detail = {'entity_class': NodalCoordinatorDetail,
                             'attributes': [
@@ -4669,18 +4897,18 @@ nodal_centre = {'entity_class': NodalCentre,
                      'relationship': 'one'}
             ]}
 
-#college_report = {'entity_class': CollegeReport,
-#                     'attributes': [
- #                        {'name': 'id',
-  #                        'class': None,
-   #                       'relationship': 'one'},
-    #                     {'name': 'path',
-     #                     'class': None,
-      #                    'relationship': 'one'},
-       #                  {'name': 'workshop',
-       #                   'class': Workshop,
-        #                  'relationship': 'one'}
-         #            ]}
+workshop_report = {'entity_class': WorkshopReport,
+                  'attributes': [
+                      {'name': 'id',
+                       'class': None,
+                       'relationship': 'one'},
+                      {'name': 'path',
+                       'class': None,
+                       'relationship': 'one'},
+                      {'name': 'workshop',
+                       'class': Workshop,
+                       'relationship': 'one'}
+                  ]}
 
 roles = role
 users = user
@@ -4688,7 +4916,7 @@ reference_documents = reference_document
 workshops = workshop
 nodal_coordinator_details = nodal_coordinator_detail
 nodal_centres = nodal_centre
-#college_reports = college_report
+workshop_reports = workshop_report
 
 entity_pairs = {
     'roles': role,
@@ -4696,8 +4924,8 @@ entity_pairs = {
     'reference_documents': reference_document,
     'workshops': workshop,
     'nodal_coordinator_details': nodal_coordinator_detail,
-    'nodal_centres': nodal_centre
-#    'college_reports': college_report
+    'nodal_centres': nodal_centre,
+    'workshop_reports': workshop_report
 }
                    
 #+END_SRC
@@ -4784,8 +5012,8 @@ def logout_handler():
     session.pop('role', None)
     return "Ok"
 
-@api.route('/upload_document/<id>', methods=['GET', 'POST'])
-def save_file(id):
+@api.route('/upload_reference_document/<id>', methods=['GET', 'POST'])
+def save_reference_documents(id):
     if request.method == 'GET':
         return '''
         <!doctype html>
@@ -4803,10 +5031,37 @@ def save_file(id):
             current_time = datetime.utcnow()
             dir_path = "%s" % (UPLOAD_DIR_PATH)
             file_path = "%s%s" % (dir_path, filename)
-            file.save(os.getcwd()+"/build/code/src/"+file_path)
+            file.save(file_path)
 
         path = {'path': file_path}
         url = APP_URL + "/reference_documents/"\
+              + id
+        response = requests.put(url, data=path)
+        return file_path
+
+@api.route('/upload_workshop_document/<id>', methods=['GET', 'POST'])
+def save_workshop_documents(id):
+    if request.method == 'GET':
+        return '''
+        <!doctype html>
+        <title>Upload new File</title>
+        <h1>Upload new File</h1>
+        <form action="" method=post enctype=multipart/form-data>
+        <p><input type=file name=file>
+        <input type=submit value=Upload>
+        </form>
+        '''
+    if request.method == 'POST':
+        file = request.files['file']
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            current_time = datetime.utcnow()
+            dir_path = "%s" % (UPLOAD_DIR_PATH)
+            file_path = "%s%s" % (dir_path, filename)
+            file.save(file_path)
+
+        path = {'path': file_path}
+        url = APP_URL + "/workshop_reports/"\
               + id
         response = requests.put(url, data=path)
         return file_path
@@ -4937,11 +5192,21 @@ entity_map_types = {
             'date': str
         }
     },
-    'nodal_coordinator_details': {
+   'nodal_centres': {
+        'entity': NodalCentre,
+        'types': {
+            'created_by': User,
+            'name': str,
+            'location': str
+        }
+    },
+ 
+   'nodal_coordinator_details': {
         'entity': NodalCoordinatorDetail,
         'types': {
             'user': User,
             'created_by': User,
+            'nodal_centre':NodalCentre,
             'last_updated': str,
             'created': datetime,
             'target_workshops': int,
@@ -4949,15 +5214,15 @@ entity_map_types = {
             'target_experiments': int
         }
     },
-    'nodal_centres': {
-        'entity': NodalCentre,
+     'workshop_reports': {
+        'entity': WorkshopReport,
         'types': {
-            'created_by': User,
-            'coordinators': NodalCoordinatorDetail,
-            'name': str,
-            'location': str
+            'name':str,
+            'path': str,
+            'workshop': Workshop
         }
     }
+
 }
 
 #+END_SRC
@@ -5649,6 +5914,156 @@ class TestWorkshop(TestCase):
 
 #+END_SRC
     
+*** Tests for Nodal Centre
+#+BEGIN_SRC python :tangle tests/test_api.py :eval no 
+class TestNodalCentre(TestCase):
+
+    TESTING = True
+
+    def create_app(self):
+        app = create_app(config)
+        return app
+
+    def setUp(self):
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+
+    def test_get_all_nodal_centres(self):
+        print "test_get_all_nodal_centres"
+        role = Role(name=Name("OC"))
+        role.save()
+        user1 = User(name=Name("Joe Smith"),
+                     email=Email("joe@smith.com"),
+                     role=role)
+        user1.save()
+
+        user2 = User(name=Name("Will Smith"),
+                     email=Email("will@smith.com"),
+                     role=Role(name=Name("NC")))
+        user2.save()
+
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli", \
+                                    created_by=user2)
+
+        nodal_centre1.save()   
+ 
+        nodal_centre2 = NodalCentre(name="HCU", location="Gachibowli", \
+                                    created_by=user2)               
+
+        nodal_centre2.save()
+
+        r = self.client.get('/nodal_centres')
+        result = json.loads(r.data)
+
+        self.assertEquals(len(result), 2)
+
+    def test_get_one_nodal_centre(self):
+        print "test_get_one_nodal_centre"
+
+        role = Role(name=Name("OC"))
+        role.save()
+        user1 = User(name=Name("Joe Smith"),
+                     email=Email("joe@smith.com"),
+                     role=role)
+        user1.save()
+
+        user2 = User(name=Name("Will Smith"),
+                     email=Email("will@smith.com"),
+                     role=Role(name=Name("NC")))
+        user2.save()
+
+
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli", \
+                                    created_by=user2)
+
+        nodal_centre1.save()   
+
+        r = self.client.get('/nodal_centres/1')
+        result = json.loads(r.data)
+
+        self.assertEqual(result['name'], "IIIT-Hyd")
+
+    def test_update_existing_nodal_centre(self):
+        print "test_update_existing_nodal_centre"
+
+        role = Role(name=Name("OC"))
+        role.save()
+        user1 = User(name=Name("Joe Smith"),
+                     email=Email("joe@smith.com"),
+                     role=role)
+        user1.save()
+
+        user2 = User(name=Name("Will Smith"),
+                     email=Email("will@smith.com"),
+                     role=Role(name=Name("NC")))
+        user2.save()
+
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli", \
+                                    created_by=user1)
+
+        nodal_centre1.save()   
+
+        r = self.client.put('/nodal_centres/1',
+                            data=json.dumps({'name': 'HCU'}))
+
+        result = json.loads(r.data)
+        self.assertEqual(result['name'], "HCU")
+
+    def test_create_new_nodal_centre(self):
+        print "test_create_new_nodal_centre"
+
+        role = Role(name=Name("OC"))
+        role.save()
+        user1 = User(name=Name("Joe Smith"),
+                     email=Email("joe@smith.com"),
+                     role=role)
+        user1.save()
+
+        user2 = User(name=Name("Will Smith"),
+                     email=Email("will@smith.com"),
+                     role=Role(name=Name("NC")))
+        user2.save()
+
+
+        r = self.client.post('/nodal_centres',
+                             data=json.dumps({ 'created_by': user1.to_client(),
+                                               'name': 'IIIT-Hyd',
+                                               'location': 'Gachibowli'
+                                           }))
+        result = json.loads(r.data)
+        self.assertEqual(result['name'], "IIIT-Hyd")
+
+    def test_delete_nodal_centre(self):
+        print "test_delete_nodal_centre"
+
+        role = Role(name=Name("OC"))
+        role.save()
+        user1 = User(name=Name("Joe Smith"),
+                     email=Email("joe@smith.com"),
+                     role=role)
+        user1.save()
+
+        user2 = User(name=Name("Will Smith"),
+                     email=Email("will@smith.com"),
+                     role=Role(name=Name("NC")))
+        user2.save()
+
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli", \
+                                    created_by=user1)
+
+        nodal_centre1.save()   
+
+        r1 = self.client.delete('/nodal_centres/1')
+
+        r2 = self.client.get('/nodal_centres')
+        result = json.loads(r2.data)
+        self.assertEqual(len(result), 0)
+
+#+END_SRC
+
 *** Tests for Nodal Coordinator Details
 #+BEGIN_SRC python :tangle tests/test_api.py :eval no
 class TestNodalCoordinatorDetail(TestCase):
@@ -5681,13 +6096,21 @@ class TestNodalCoordinatorDetail(TestCase):
                      role=Role(name=Name("NC")))
         user2.save()
 
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli", \
+                                    created_by=user1)
+        nodal_centre1.save()
+        nodal_centre2 = NodalCentre(name="NIT", location="Warangal", \
+                                    created_by=user2)
+        nodal_centre2.save()
         nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
                                              created_by=user1,
+                                             nodal_centre=nodal_centre1,
                                              target_participants=1000)
         nc_details1.save()
 
         nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
                                              created_by=user1,
+                                             nodal_centre=nodal_centre2,
                                              target_participants=2000)
         nc_details2.save()
 
@@ -5710,13 +6133,23 @@ class TestNodalCoordinatorDetail(TestCase):
                      role=Role(name=Name("NC")))
         user2.save()
 
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",
+                                    created_by=user1)
+        nodal_centre1.save()
+        nodal_centre2 = NodalCentre(name="NIT", location="Warangal", \
+                                    created_by=user2)
+
+        nodal_centre2.save()
+
         nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
                                              created_by=user1,
+                                             nodal_centre=nodal_centre1,
                                              target_participants=1000)
         nc_details1.save()
 
         nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
                                              created_by=user1,
+                                             nodal_centre=nodal_centre2,
                                              target_participants=2000)
         nc_details2.save()
 
@@ -5738,8 +6171,17 @@ class TestNodalCoordinatorDetail(TestCase):
                      role=Role(name=Name("NC")))
         user2.save()
 
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli", \
+                                    created_by=user1)
+
+        nodal_centre1.save()
+        nodal_centre2 = NodalCentre(name="NIT", location="Warangal", \
+                                    created_by=user2)
+
+        nodal_centre2.save()
         nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
                                              created_by=user1,
+                                             nodal_centre=nodal_centre1,
                                              target_participants=1000)
         nc_details1.save()
 
@@ -5765,13 +6207,17 @@ class TestNodalCoordinatorDetail(TestCase):
                      role=Role(name=Name("NC")))
         user2.save()
 
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli", \
+                                    created_by=user1)
 
+        nodal_centre1.save()
         r = self.client.post('/nodal_coordinator_details',
-                             data=json.dumps({ 'user': user2.to_client(),
-                                               'target_workshops':100,
-                                               'created_by':user1.to_client(),
-                                               'target_participants':1000
-                                           }))
+                             data=json.dumps({'user': user2.to_client(),
+                                              'target_workshops':100,
+                                              'created_by':user1.to_client(),
+                                              'nodal_centre':nodal_centre1.to_client(),
+                                              'target_participants':1000
+                                          }))
         result = json.loads(r.data)
         self.assertEqual(result['target_workshops'], 100)
 
@@ -5789,13 +6235,24 @@ class TestNodalCoordinatorDetail(TestCase):
                      role=role)
         user2.save()
 
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli", \
+                                    created_by=user1)
+
+        nodal_centre1.save()
+        nodal_centre2 = NodalCentre(name="NIT", location="Warangal", \
+                                    created_by=user2)
+
+        nodal_centre2.save()
+
         nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
                                              created_by=user1,
+                                             nodal_centre=nodal_centre1,
                                              target_participants=1000)
         nc_details1.save()
 
         nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
                                              created_by=user1,
+                                             nodal_centre=nodal_centre2,
                                              target_participants=2000)
         nc_details2.save()
 
@@ -5804,13 +6261,10 @@ class TestNodalCoordinatorDetail(TestCase):
         r = self.client.get('/nodal_coordinator_details')
         result = json.loads(r.data)
         self.assertEqual(len(result), 1)
-
-
 #+END_SRC
-
-*** Tests for Nodal Centre
+*** Tests for Workshop Report
 #+BEGIN_SRC python :tangle tests/test_api.py :eval no 
-class TestNodalCentre(TestCase):
+class TestWorkshopReport(TestCase):
 
     TESTING = True
 
@@ -5825,9 +6279,9 @@ class TestNodalCentre(TestCase):
         db.session.remove()
         db.drop_all()
 
-    def test_get_all_nodal_centres(self):
-        print "test_get_all_nodal_centres"
-        role = Role(name=Name("OC"))
+    def test_get_all_workshop_reports(self):
+        print "test_get_all_workshop_reports"
+        role = Role(name=Name("Admin"))
         role.save()
         user1 = User(name=Name("Joe Smith"),
                      email=Email("joe@smith.com"),
@@ -5836,38 +6290,76 @@ class TestNodalCentre(TestCase):
 
         user2 = User(name=Name("Will Smith"),
                      email=Email("will@smith.com"),
-                     role=Role(name=Name("NC")))
+                     role=role)
         user2.save()
+        workshop_1 = Workshop(name="Coordinators Training",
+                              location="IIIT-Hyd", user=user1,
+                              participating_institutes="HCU, IIIT-Hyd",
+                              no_of_participants_expected=100,
+                              no_of_sessions=3, labs_planned=4,
+                              status="Upcoming", date="Mon Nov 23 2015 06:18:26 GMT-0500 (EST)")
 
-        nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
-                                             created_by=user1,
-                                             target_participants=1000)
-        nc_details1.save()
+        workshop_1.save()
 
-        nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
-                                             created_by=user1,
-                                             target_participants=2000)
-        nc_details2.save()
+        workshop_2 = Workshop(name="HCU workshop", location="HCU",
+                              user=user2, participating_institutes="HCU, IIIT-Hyd",
+                              no_of_participants_expected=50,
+                              no_of_sessions=2, labs_planned=2,
+                              status="Upcoming", date="Mon Nov 23 2015 06:18:26 GMT-0500 (EST)")
+
+        workshop_2.save()
+
+        workshop_report1 = WorkshopReport(name="College Report",
+                                          path="/static/uploads/college-reports/file.pdf",
+                                          workshop=workshop_1)
+        workshop_report1.save()
+
+        workshop_report2 = WorkshopReport(name="College Report",
+                                          path="/static/uploads/college-reports/file.pdf",
+                                          workshop=workshop_2)
+        workshop_report2.save()
 
 
-        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli", \
-                                    created_by=user2, coordinators=nc_details1)
-
-        nodal_centre1.save()   
- 
-        nodal_centre2 = NodalCentre(name="HCU", location="Gachibowli", \
-                                    created_by=user2, coordinators=nc_details2)               
-
-        nodal_centre2.save()
-
-        r = self.client.get('/nodal_centres')
+        r = self.client.get('/workshop_reports')
         result = json.loads(r.data)
-
         self.assertEquals(len(result), 2)
 
-    def test_get_one_nodal_centre(self):
-        print "test_get_one_nodal_centre"
+    def test_get_one_workshop_report(self):
+        print "test_get_one_workshop_report"
+        role = Role(name=Name("OC"))
+        role.save()
+        user1 = User(name=Name("Joe Smith"),
+                     email=Email("joe@smith.com"),
+                     role=role)
+        user1.save()
+        user2 = User(name=Name("Will Smith"),
+                     email=Email("will@smith.com"),
+                     role=role)
+        user2.save()
 
+        workshop_1 = Workshop(name="Coordinators Training",
+                              location="IIIT-Hyd", user=user1,
+                              participating_institutes="HCU, IIIT-Hyd",
+                              no_of_participants_expected=100,
+                              no_of_sessions=3, labs_planned=4,
+                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              GMT-0500 (EST)")
+
+        workshop_1.save()
+
+        workshop_report1 = WorkshopReport(name="College Report",
+                                          path="/static/uploads/college-reports/file.pdf",
+                                          workshop=workshop_1)
+        workshop_report1.save()
+
+
+        r = self.client.get('/workshop_reports/1')
+        result = json.loads(r.data)
+        print result
+        self.assertEqual(result['name'], "College Report")
+
+    def test_update_existing_workshop_report(self):
+        print "test_update_existing_workshop_report"
         role = Role(name=Name("OC"))
         role.save()
         user1 = User(name=Name("Joe Smith"),
@@ -5875,108 +6367,58 @@ class TestNodalCentre(TestCase):
                      role=role)
         user1.save()
 
-        user2 = User(name=Name("Will Smith"),
-                     email=Email("will@smith.com"),
-                     role=Role(name=Name("NC")))
-        user2.save()
+        workshop_1 = Workshop(name="Coordinators Training",
+                              location="IIIT-Hyd", user=user1,
+                              participating_institutes="HCU, IIIT-Hyd",
+                              no_of_participants_expected=100,
+                              no_of_sessions=3, labs_planned=4,
+                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              GMT-0500 (EST)")
 
-        nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
-                                             created_by=user1,
-                                             target_participants=1000)
-        nc_details1.save()
+        workshop_1.save()
 
-        nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
-                                             created_by=user1,
-                                             target_participants=2000)
-        nc_details2.save()
+        workshop_report1 = WorkshopReport(name="College Report",
+                                          path="/static/uploads/college-reports/file.pdf",
+                                          workshop=workshop_1)
+        workshop_report1.save()
 
-        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli", \
-                                    created_by=user2, coordinators=nc_details1)
+        r = self.client.put('/workshop_reports/1',
+                            data=json.dumps({'name': 'Workshop Photos'}))
 
-        nodal_centre1.save()   
-
-        r = self.client.get('/nodal_centres/1')
         result = json.loads(r.data)
 
-        self.assertEqual(result['name'], "IIIT-Hyd")
+        self.assertEqual(result['name'], "Workshop Photos")
 
-    def test_update_existing_nodal_centre(self):
-        print "test_update_existing_nodal_centre"
-
+    def test_create_new_workshop_report(self):
+        print "test_create_new_workshop_report"
         role = Role(name=Name("OC"))
         role.save()
+
         user1 = User(name=Name("Joe Smith"),
                      email=Email("joe@smith.com"),
                      role=role)
         user1.save()
 
-        user2 = User(name=Name("Will Smith"),
-                     email=Email("will@smith.com"),
-                     role=Role(name=Name("NC")))
-        user2.save()
+        workshop_1 = Workshop(name="Coordinators Training",
+                              location="IIIT-Hyd", user=user1,
+                              participating_institutes="HCU, IIIT-Hyd",
+                              no_of_participants_expected=100,
+                              no_of_sessions=3, labs_planned=4,
+                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              GMT-0500 (EST)")
 
-        nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
-                                             created_by=user1,
-                                             target_participants=1000)
-        nc_details1.save()
-
-        nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
-                                             created_by=user1,
-                                             target_participants=2000)
-        nc_details2.save()
-
-
-        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli", \
-                                    created_by=user1, coordinators=nc_details1)
-
-        nodal_centre1.save()   
-
-        r = self.client.put('/nodal_centres/1',
-                            data=json.dumps({'name': 'HCU'}))
-
-        result = json.loads(r.data)
-        self.assertEqual(result['name'], "HCU")
-
-    def test_create_new_nodal_centre(self):
-        print "test_create_new_nodal_centre"
-
-        role = Role(name=Name("OC"))
-        role.save()
-        user1 = User(name=Name("Joe Smith"),
-                     email=Email("joe@smith.com"),
-                     role=role)
-        user1.save()
-
-        user2 = User(name=Name("Will Smith"),
-                     email=Email("will@smith.com"),
-                     role=Role(name=Name("NC")))
-        user2.save()
-
-        nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
-                                             created_by=user1,
-                                             target_participants=1000)
-        nc_details1.save()
-
-        nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
-                                             created_by=user1,
-                                             target_participants=2000)
-        nc_details2.save()
-
-
-
-
-        r = self.client.post('/nodal_centres',
-                             data=json.dumps({ 'created_by': user1.to_client(),
-                                               'coordinators': nc_details1.to_client(),
-                                               'name': 'IIIT-Hyd',
-                                               'location': 'Gachibowli'
+        workshop_1.save()
+        
+        r = self.client.post('/workshop_reports',
+                             data=json.dumps({ 'name' : 'College Report',
+                                               'path' : '/static/uploads/college-reports/file.pdf', 
+                                               'workshop': workshop_1.to_client()
                                            }))
         result = json.loads(r.data)
-        self.assertEqual(result['name'], "IIIT-Hyd")
+        self.assertEqual(result['name'], "College Report")
 
-    def test_delete_nodal_centre(self):
-        print "test_delete_nodal_centre"
-
+    def test_delete_workshop_report(self):
+        print "test_delete_workshop_report"
         role = Role(name=Name("OC"))
         role.save()
         user1 = User(name=Name("Joe Smith"),
@@ -5986,32 +6428,45 @@ class TestNodalCentre(TestCase):
 
         user2 = User(name=Name("Will Smith"),
                      email=Email("will@smith.com"),
-                     role=Role(name=Name("NC")))
+                     role=role)
         user2.save()
 
-        nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
-                                             created_by=user1,
-                                             target_participants=1000)
-        nc_details1.save()
+        workshop_1 = Workshop(name="Coordinators Training",
+                              location="IIIT-Hyd", user=user1,
+                              participating_institutes="HCU, IIIT-Hyd",
+                              no_of_participants_expected=100,
+                              no_of_sessions=3, labs_planned=4,
+                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              GMT-0500 (EST)")
 
-        nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
-                                             created_by=user1,
-                                             target_participants=2000)
-        nc_details2.save()
+        workshop_1.save()
 
+        workshop_2 = Workshop(name="HCU workshop", location="HCU",
+                              user=user2, participating_institutes="HCU,\
+                              IIIT-Hyd", no_of_participants_expected=50,
+                              no_of_sessions=2, labs_planned=2,
+                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              GMT-0500 (EST)")
 
-        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli", \
-                                    created_by=user1, coordinators=nc_details1)
+        workshop_2.save()
 
-        nodal_centre1.save()   
+        workshop_report1 = WorkshopReport(name="College Report",
+                                          path="/static/uploads/college-reports/file.pdf",
+                                          workshop=workshop_1)
+        workshop_report1.save()
 
-        r1 = self.client.delete('/nodal_centres/1')
-
-        r2 = self.client.get('/nodal_centres')
-        result = json.loads(r2.data)
-        self.assertEqual(len(result), 0)
+        workshop_report2 = WorkshopReport(name="Workshop Photos",
+                                          path="/static/uploads/workshop-photos/photo.png",
+                                          workshop=workshop_2)
+        workshop_report2.save()
+        
+        r = self.client.delete('/workshop_reports/1')
+        r = self.client.get('/workshop_reports')
+        result = json.loads(r.data)
+        self.assertEqual(len(result), 1)
 
 #+END_SRC
+    
 * Run the Test Cases
 ** Python DB Tests
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
