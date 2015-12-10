@@ -4598,6 +4598,8 @@ WHITELIST_IPS = ["127.0.0.1"]
 # example value - '/home/vlead/Desktop/outreach-portal/build/code/src/static/uploads/'
 UPLOAD_DIR_PATH = '/home/vlead/Desktop/outreach-portal/build/code/src/static/uploads/'
 
+DB_PATH = '/static/uploads/'
+
 # allowed file extensions that can be uploaded
 ALLOWED_FILE_EXTENSIONS = ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'csv']
 
@@ -5031,9 +5033,10 @@ def save_reference_documents(id):
             current_time = datetime.utcnow()
             dir_path = "%s" % (UPLOAD_DIR_PATH)
             file_path = "%s%s" % (dir_path, filename)
+            db_path = "%s%s" % (DB_PATH, filename)
             file.save(file_path)
 
-        path = {'path': file_path}
+        path = {'path': db_path}
         url = APP_URL + "/reference_documents/"\
               + id
         response = requests.put(url, data=path)
