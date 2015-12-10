@@ -473,7 +473,7 @@ angular.module('outreachApp.controllers',[])
         if(isvalid)
         {
             $http.post('/workshops',
-                       { "name" : $scope.name, "location" : $scope.location,  "user" : {"id" : 3 }, "participating_institutes" : $scope.insts,
+                       { "name" : $scope.name, "location" : $scope.location,  "user" : {"id" : $window.number }, "participating_institutes" : $scope.insts,
                          "no_of_participants_expected" : $scope.parti, "no_of_sessions" : Number($scope.sessions),  "labs_planned" : Number($scope.labs),
                          "status" : "Upcoming",  "date" : $scope.date }).
             success(function(data, status, headers, config)
