@@ -73,6 +73,9 @@ angular.module('outreachApp',['ngRoute','outreachApp.controllers']).config
          }).when('/editworkshop/:id', {
 	     templateUrl : '/static/partials/edit-workshop.html',
 	     controller  : 'editworkshop'
+	 }).when('/upload_reports/:id', {
+	     templateUrl : '/static/partials/upload-reports.html',
+	     controller  : 'uploadreports'
 	 });
      
      
