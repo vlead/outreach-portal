@@ -506,6 +506,56 @@ angular.module('outreachApp.controllers',[])
         }
     }
   
+}).controller("editworkshop", function($scope, $http, $routeParams, $route, $window) {
+  $http.get('/workshops/'+$routeParams.id).
+    success(function(data, status, headers, config) 
+    {
+        $scope.message= data;
+              
+    }).
+    error(function(data, status, headers, config)
+    {
+      console.log(data);
+      
+    });
+
+    $scope.submit = function(isvalid) 
+    {
+        if(isvalid)
+        {
+            $http.put('/workshops/'+$routeParams.id, { "name" : $scope.message.name, "location" : $scope.message.location,  "user" : {"id" : $window.number }, "participating_institutes" : $scope.message.participating_institutes,"no_of_participants_expected" : $scope.message.no_of_participants_expected, "no_of_sessions" : Number($scope.message.no_of_sessions),  "labs_planned" : Number($scope.message.labs_planned),
+                         "status" : "Upcoming",  "date" : $scope.message.date}).success(function(data, status, headers, config)
+                {
+                    $scope.status = "Success";
+                    window.location.href = "#/manage-workshops";
+                                      
+                }).
+                error(function(data, status, headers, config)
+                {
+                    if(status == 500)
+                    {
+                        
+                        $scope.status = "Duplicate Email";
+                    }
+                    else if(status == 400)
+                    {
+                        $scope.status = "Invalid username"
+                    }
+                    else
+                    {
+                        $scope.status = "Failed"
+                    }
+                    
+                });
+        }
+        else
+        {
+            $scope.status = "Not empty"
+        }
+        
+    }
+
+
 });
 
 

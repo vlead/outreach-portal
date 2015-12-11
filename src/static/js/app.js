@@ -70,7 +70,10 @@ angular.module('outreachApp',['ngRoute','outreachApp.controllers']).config
          .when('/manage-workshops/workshop-history',{
              templateUrl: '/static/partials/workshop-history.html',
              controller  : 'manage-workshops'
-         });
+         }).when('/editworkshop/:id', {
+	     templateUrl : '/static/partials/edit-workshop.html',
+	     controller  : 'editworkshop'
+	 });
      
      
      
