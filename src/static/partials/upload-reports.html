@@ -1,22 +1,111 @@
-<div class="col-md-4">
+<div>
+  <h1> Upload Photos </h1>
   <form method="post" id="upload-file" name="myForm" action="" style="margin-top:30px"  enctype="multipart/form-data">
-    <input class="form-control" type="text" name="name" id="name" ng-model="name" placeholder="Enter the type of the file" required/><br>
-    <span style="color:red" ng-show="myForm.name.$dirty && myForm.name.$invalid">
-      <span ng-show="myForm.name.$error.required">File name required</span>
-    </span>
-    <input type="file" name="file" id="file" ng-model="file" required multiple/><br>
-    <span style="color:red" ng-show="myForm.file.$dirty && myForm.file.$invalid">
-      <span ng-show="myForm.file.$error.required">Document is required</span>
-    </span>
-    <button type="button" id="upload-file-btn" class="btn btn-primary">Upload</button>
+    <input type="file" name="file" id="file" required multiple/><br>
+    <button type="button" id="upload-photo" class="btn btn-primary">Upload</button>
   </form>
   <br><br>
+   <h1> Upload Attendance Sheets </h1>
+  <form method="post" id="upload-file" name="myForm" action="" style="margin-top:30px"  enctype="multipart/form-data">
+    <input type="file" name="file" id="file" required multiple/><br>
+    <button type="button" id="upload-attendance" class="btn btn-primary">Upload</button>
+  </form>
+  <br><br>
+   <h1> Upload College Reports </h1>
+  <form method="post" id="upload-file" name="myForm" action="" style="margin-top:30px"  enctype="multipart/form-data">
+    <input type="file" name="file" id="file" required multiple/><br>
+    <button type="button" id="upload-reports" class="btn btn-primary">Upload</button>
+  </form>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
    <script>
    $(function() {
-   $('#upload-file-btn').click(function() {
+   $('#upload-photo').click(function() {
         var workshop_id = location.href.split("/").pop()
-        var name = $('#name').val();
+        var name = 'Photos';
+        console.log(number);
+        console.log(name);
+        data = {name: name, workshop: {id : workshop_id }};
+        fileups = document.getElementById('file');
+        for (var i = 0; i < fileups.files.length; i++){
+        var jqxhr = $.ajax({
+            url: '/workshop_reports',
+            type: 'POST',
+            global: false,
+            async:false,
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function (data){
+                return data ;
+            },
+        }).responseText;
+
+        var documentId = JSON.parse(jqxhr).id;
+        console.log(documentId);
+        var form_data = new FormData();
+       
+        form_data.append('file', fileups.files[i], fileups.files[i].name);
+        var url = '/upload_workshop_document/' + documentId ;
+   
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: form_data,
+            contentType: false,
+            cache: false,
+            processData: false,
+            async: false,
+            success: function(data) {
+                console.log('Success');
+            },
+       });
+     }
+     
+    });
+ $('#upload-attendance').click(function() {
+        var workshop_id = location.href.split("/").pop()
+        var name = 'Attendance Sheets';
+        console.log(number);
+        console.log(name);
+        data = {name: name, workshop: {id : workshop_id }};
+        fileups = document.getElementById('file');
+        for (var i = 0; i < fileups.files.length; i++){
+        var jqxhr = $.ajax({
+            url: '/workshop_reports',
+            type: 'POST',
+            global: false,
+            async:false,
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function (data){
+                return data ;
+            },
+        }).responseText;
+
+        var documentId = JSON.parse(jqxhr).id;
+        console.log(documentId);
+        var form_data = new FormData();
+       
+        form_data.append('file', fileups.files[i], fileups.files[i].name);
+        var url = '/upload_workshop_document/' + documentId ;
+   
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: form_data,
+            contentType: false,
+            cache: false,
+            processData: false,
+            async: false,
+            success: function(data) {
+                console.log('Success');
+            },
+       });
+     }
+     
+    });
+ $('#upload-reports').click(function() {
+        var workshop_id = location.href.split("/").pop()
+        var name = 'College Reports';
         console.log(number);
         console.log(name);
         data = {name: name, workshop: {id : workshop_id }};

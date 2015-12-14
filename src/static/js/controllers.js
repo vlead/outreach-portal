@@ -370,7 +370,10 @@ angular.module('outreachApp.controllers',[])
 	        {
                     
                     workshop_date = new Date(data[i].date);
-                    
+                    var workshop_id = data[i].id ;
+                    if ((today > workshop_date) & (data[i].status == "Upcoming")){
+                        $http.put('/workshops/'+workshop_id.toString(), {'status': 'Pending for approval'}).success(function(data, status){ console.log('Status success'); });
+                    }
                     if( (today <= workshop_date) ||(today.getDate() == workshop_date.getDate() & (today.getMonth() == workshop_date.getMonth()) 
                                                     & (today.getFullYear() == workshop_date.getFullYear())))
                     {
