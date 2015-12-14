@@ -41,10 +41,15 @@ Following is the list of current REST APIs provided by outreach portal:
 - /users/<int:id> [GET, PUT, DELETE]
 - /users/<int:id>?fields=field1,field2 [GET]
 - /users?query_param1=val1&query_param2=val2&..query_paramn=valn [GET]
-- /workshop_documents [GET, POST]
-- /workshop_documents/<int:id> [GET, PUT, DELETE]
-- /workshop_documents/<int:id>?fields=field1,field2 [GET]
-- /workshop_documents?query_param1=val1&query_param2=val2&..query_paramn=valn [GET]
+- /reference_documents [GET, POST]
+- /reference_documents/<int:id> [GET, PUT, DELETE]
+- /reference_documents/<int:id>?fields=field1,field2 [GET]
+- /reference_documents?query_param1=val1&query_param2=val2&..query_paramn=valn [GET]
+- /upload_document/<id> [POST]
+- /workshop_reports [GET, POST]
+- /workshop_reports/<int:id> [GET, PUT, DELETE]
+- /workshop_reports/<int:id>?fields=field1,field2 [GET]
+- /workshop_reports?query_param1=val1&query_param2=val2&..query_paramn=valn [GET]
 - /upload_document/<id> [POST]
 - /workshops [GET, POST]
 - /workshops/<int:id> [GET, PUT, DELETE]
@@ -367,7 +372,7 @@ Following is the list of current REST APIs provided by outreach portal:
 "2015-11-17T09:41:20", "email": "john@gmail.com", "role": {"id": 1, "name":
 "Admin"}, "id": 1}]
    #+END_SRC
-*** /workshop_documents
+*** /reference_documents
 - Parameters
 |--------+------------------------------------------------------------------------------------------------------------|
 | *Name* | *Description*                                                                                              |
@@ -383,7 +388,7 @@ Following is the list of current REST APIs provided by outreach portal:
 - *GET* 
  + Example Request
   #+BEGIN_SRC
-  /workshop_documents
+  /reference_documents
   #+END_SRC
 
  + Example Result
@@ -430,7 +435,7 @@ null, "created": "2015-11-23T06:02:24", "email": "john@gmail.com", "role":
 }
  #+END_SRC
    
-*** /workshop_documents/<int:id>
+*** /reference_documents/<int:id>
 - Parameters
 |--------+------------------------------------------------------------------------------------------------------------|
 | *Name* | *Description*                                                                                              |
@@ -447,7 +452,7 @@ null, "created": "2015-11-23T06:02:24", "email": "john@gmail.com", "role":
 - *GET* - 
  + Example Request
   #+BEGIN_EXAMPLE
-   /workshop_documents/10 
+   /reference_documents/10 
    #+END_EXAMPLE
 
  + Example Result
@@ -532,7 +537,7 @@ null, "created": "2015-11-23T06:02:24", "email": "john@gmail.com", "role":
 }
     #+END_SRC
 
-*** /workshop_documents/<int:id>?fields=field1,field2 
+*** /reference_documents/<int:id>?fields=field1,field2 
 
 - Parameters
 |--------+------------------------------------------------------------------------------------------------------------|
@@ -550,7 +555,7 @@ null, "created": "2015-11-23T06:02:24", "email": "john@gmail.com", "role":
 - *GET* -
  + Example Request
    #+BEGIN_SRC
-   /workshop_documents/10?fields=name,path
+   /reference_documents/10?fields=name,path
    #+END_SRC
  
  + Example Result
@@ -573,8 +578,7 @@ null, "created": "2015-11-23T06:02:24", "email": "john@gmail.com", "role":
 }
    #+END_SRC
 
-
-*** /workshop_documents?query_param1=val1&query_param2=val2&..query_paramn=valn
+*** /reference_documents?query_param1=val1&query_param2=val2&..query_paramn=valn
 - Parameters
 |--------+------------------------------------------------------------------------------------------------------------|
 | *Name* | *Description*                                                                                              |
@@ -591,7 +595,7 @@ null, "created": "2015-11-23T06:02:24", "email": "john@gmail.com", "role":
 - *GET* -
  + Example Request
    #+BEGIN_SRC
-   /workshop_documents?name=Feedback Form
+   /reference_documents?name=Feedback Form
    #+END_SRC
  
  + Example Result
@@ -605,12 +609,345 @@ null, "created": "2015-11-23T06:02:24", "email": "john@gmail.com", "role":
 "Admin"}, "id": 2}, "id": 10, "name": "Feedback Form"}]
    #+END_SRC
 
-*** /upload_document/<id>
+*** /upload_reference_document/<id>
 
 - *POST* -
  + Example Request
    #+BEGIN_SRC
-   /upload_document/10
+   /upload_reference_document/10
+   #+END_SRC
+ 
+ + Example Result
+   #+BEGIN_SRC
+   /home/vlead/Desktop/outreach-docs/attendance-sheet.doc  
+   #+END_SRC
+
+*** /workshop_reports
+- Parameters
+|---------------+------------------------------------------------------------------------------------------------------------|
+| *Name*        | *Description*                                                                                              |
+|---------------+------------------------------------------------------------------------------------------------------------|
+| *id*          | Indicates the unique id of the workshop_document. *Example Value:* 2                                       |
+|---------------+------------------------------------------------------------------------------------------------------------|
+| *name*        | Specifies the name of workshop_document. *Example Value:*  Attendance Sheet, Feedback Form, College Report |
+|---------------+------------------------------------------------------------------------------------------------------------|
+| *workshop_id* | Indicates the id of the workshop. *Example Value:* {"id" : 1 }                                             |
+|---------------+------------------------------------------------------------------------------------------------------------|
+| *path*        | Specifies the path of workshop_document. *Example Value:* /outreach-portal/workshop-docs/admin             |
+|---------------+------------------------------------------------------------------------------------------------------------|
+- *GET* 
+ + Example Request
+  #+BEGIN_SRC
+  /workshop_reports
+  #+END_SRC
+
+ + Example Result
+  #+BEGIN_SRC
+[{"path":
+"/home/vlead/Desktop/outreach-portal/build/code/src/static/uploads/madhavi.jpg",
+"workshop": {"status": "Upcoming", "not_approval_reason": null,
+"no_of_sessions": 3, "last_updated": null, "name": "Coordinators Training",
+"disciplines": null, "created": "2015-12-07T11:59:49", "duration_of_sessions":
+null, "cancellation_reason": null, "labs_planned": 4,
+"participating_institutes": "HCU, IIIT-Hyd", "other_details": null, "location":
+"IIIT-Hyd", "participants_attended": null, "date": "Mon Nov 23 2015 06:18:26
+GMT-0500 (EST)", "no_of_participants_expected": 100, "experiments_conducted":
+null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
+"2015-12-07T09:48:22", "email": "outreach-admin@vlabs.ac.in", "role": {"id": 1,
+"name": "admin"}, "id": 1}}, "id": 1, "name": "College Photos"}]
+  #+END_SRC
+
+- *POST* 
+ + Example Request
+  #+BEGIN_SRC
+ json =  {
+"name":"College Photos",
+"workshop":{"id":1} 
+}
+  #+END_SRC
+
+ + Example Result
+
+  #+BEGIN_SRC
+{
+  "id": 2,
+  "name": "College Photos",
+  "path": null,
+  "workshop": {
+    "cancellation_reason": null,
+    "created": "2015-12-07T11:59:49",
+    "date": "Mon Nov 23 2015 06:18:26 GMT-0500 (EST)",
+    "disciplines": null,
+    "duration_of_sessions": null,
+    "experiments_conducted": null,
+    "id": 1,
+    "labs_planned": 4,
+    "last_updated": null,
+    "location": "IIIT-Hyd",
+    "name": "Coordinators Training",
+    "no_of_participants_expected": 100,
+    "no_of_sessions": 3,
+    "not_approval_reason": null,
+    "other_details": null,
+    "participants_attended": null,
+    "participating_institutes": "HCU, IIIT-Hyd",
+    "status": "Upcoming",
+    "user": {
+      "created": "2015-12-07T09:48:22",
+      "email": "outreach-admin@vlabs.ac.in",
+      "id": 1,
+      "last_active": null,
+      "name": "admin",
+      "role": {
+        "id": 1,
+        "name": "admin"
+      }
+    }
+  }
+}
+ #+END_SRC
+   
+*** /workshop_reports/<int:id>
+- Parameters
+
+|---------------+------------------------------------------------------------------------------------------------------------|
+| *Name*        | *Description*                                                                                              |
+|---------------+------------------------------------------------------------------------------------------------------------|
+| *id*          | Indicates the unique id of the workshop_document. *Example Value:* 2                                       |
+|---------------+------------------------------------------------------------------------------------------------------------|
+| *name*        | Specifies the name of workshop_document. *Example Value:*  Attendance Sheet, Feedback Form, College Report |
+|---------------+------------------------------------------------------------------------------------------------------------|
+| *workshop_id* | Indicates the id of the workshop. *Example Value:* {"id" : 1 }                                             |
+|---------------+------------------------------------------------------------------------------------------------------------|
+| *path*        | Specifies the path of workshop_document. *Example Value:* /outreach-portal/workshop-docs/admin             |
+|---------------+------------------------------------------------------------------------------------------------------------|
+
+
+- *GET* - 
+ + Example Request
+  #+BEGIN_EXAMPLE
+   /workshop_reports/1 
+   #+END_EXAMPLE
+
+ + Example Result
+  #+BEGIN_SRC
+{
+  "id": 1,
+  "name": "College Photos",
+  "path": "/home/vlead/Desktop/outreach-portal/build/code/src/static/uploads/madhavi.jpg",
+  "workshop": {
+    "cancellation_reason": null,
+    "created": "2015-12-07T11:59:49",
+    "date": "Mon Nov 23 2015 06:18:26 GMT-0500 (EST)",
+    "disciplines": null,
+    "duration_of_sessions": null,
+    "experiments_conducted": null,
+    "id": 1,
+    "labs_planned": 4,
+    "last_updated": null,
+    "location": "IIIT-Hyd",
+    "name": "Coordinators Training",
+    "no_of_participants_expected": 100,
+    "no_of_sessions": 3,
+    "not_approval_reason": null,
+    "other_details": null,
+    "participants_attended": null,
+    "participating_institutes": "HCU, IIIT-Hyd",
+    "status": "Upcoming",
+    "user": {
+      "created": "2015-12-07T09:48:22",
+      "email": "outreach-admin@vlabs.ac.in",
+      "id": 1,
+      "last_active": null,
+      "name": "admin",
+      "role": {
+        "id": 1,
+        "name": "admin"
+      }
+    }
+  }
+}
+  #+END_SRC
+
+- *PUT*
+  This *PUT* is valid for fields =name= and =user=. For updating the path or the
+  file, see here. 
+ + Example Request
+   #+BEGIN_SRC
+    {"name":"Feedback Form"}
+   #+END_SRC
+
+ + Example Result
+   #+BEGIN_SRC
+{
+  "id": 10, 
+  "name": "Feedback Form", 
+  "path": null, 
+  "user": {
+    "created": "2015-11-23T06:02:24", 
+    "email": "john@gmail.com", 
+    "id": 1, 
+    "last_active": null, 
+    "name": "John", 
+    "role": {
+      "id": 1, 
+      "name": "Admin"
+    }
+  }
+}
+   #+END_SRC
+
++ Example Request
+   #+BEGIN_SRC
+    {"user": {"id" : 2} }
+   #+END_SRC
+
+ + Example Result
+   #+BEGIN_SRC
+{
+  "id": 10, 
+  "name": "Feedback Form", 
+  "path": null, 
+  "user": {
+    "created": "2015-11-23T06:06:25", 
+    "email": "jane@abc.com", 
+    "id": 2, 
+    "last_active": "Tue Nov 23 2015 07:18:26 GMT-0500 (EST)", 
+    "name": "Jane", 
+    "role": {
+      "id": 1, 
+      "name": "Admin"
+    }
+  }
+}
+   #+END_SRC
+
+- *DELETE*
+ + Example Result
+   #+BEGIN_SRC
+{
+  "id": "1", 
+  "status": "success"
+}
+    #+END_SRC
+
+*** /workshop_reports/<int:id>?fields=field1,field2 
+    
+- Parameters
+
+|---------------+------------------------------------------------------------------------------------------------------------|
+| *Name*        | *Description*                                                                                              |
+|---------------+------------------------------------------------------------------------------------------------------------|
+| *id*          | Indicates the unique id of the workshop_document. *Example Value:* 2                                       |
+|---------------+------------------------------------------------------------------------------------------------------------|
+| *name*        | Specifies the name of workshop_document. *Example Value:*  Attendance Sheet, Feedback Form, College Report |
+|---------------+------------------------------------------------------------------------------------------------------------|
+| *workshop_id* | Indicates the id of the workshop. *Example Value:* {"id" : 1 }                                             |
+|---------------+------------------------------------------------------------------------------------------------------------|
+| *path*        | Specifies the path of workshop_document. *Example Value:* /outreach-portal/workshop-docs/admin             |
+|---------------+------------------------------------------------------------------------------------------------------------|
+
+- *GET* -
+ + Example Request
+   #+BEGIN_SRC
+   /workshop_reports/1?fields=name,path
+   #+END_SRC
+ 
+ + Example Result
+   #+BEGIN_SRC
+
+{
+  "id": 1,
+  "name": "College Photos",
+  "path": "/home/vlead/Desktop/outreach-portal/build/code/src/static/uploads/madhavi.jpg",
+  "workshop": {
+    "cancellation_reason": null,
+    "created": "2015-12-07T11:59:49",
+    "date": "Mon Nov 23 2015 06:18:26 GMT-0500 (EST)",
+    "disciplines": null,
+    "duration_of_sessions": null,
+    "experiments_conducted": null,
+    "id": 1,
+    "labs_planned": 4,
+    "last_updated": null,
+    "location": "IIIT-Hyd",
+    "name": "Coordinators Training",
+    "no_of_participants_expected": 100,
+    "no_of_sessions": 3,
+    "not_approval_reason": null,
+    "other_details": null,
+    "participants_attended": null,
+    "participating_institutes": "HCU, IIIT-Hyd",
+    "status": "Upcoming",
+    "user": {
+      "created": "2015-12-07T09:48:22",
+      "email": "outreach-admin@vlabs.ac.in",
+      "id": 1,
+      "last_active": null,
+      "name": "admin",
+      "role": {
+        "id": 1,
+        "name": "admin"
+      }
+    }
+  }
+}
+   #+END_SRC
+
+*** /workshop_reports?query_param1=val1&query_param2=val2&..query_paramn=valn
+- Parameters
+
+|---------------+------------------------------------------------------------------------------------------------------------|
+| *Name*        | *Description*                                                                                              |
+|---------------+------------------------------------------------------------------------------------------------------------|
+| *id*          | Indicates the unique id of the workshop_document. *Example Value:* 2                                       |
+|---------------+------------------------------------------------------------------------------------------------------------|
+| *name*        | Specifies the name of workshop_document. *Example Value:*  Attendance Sheet, Feedback Form, College Report |
+|---------------+------------------------------------------------------------------------------------------------------------|
+| *workshop_id* | Indicates the id of the workshop. *Example Value:* {"id" : 1 }                                             |
+|---------------+------------------------------------------------------------------------------------------------------------|
+| *path*        | Specifies the path of workshop_document. *Example Value:* /outreach-portal/workshop-docs/admin             |
+|---------------+------------------------------------------------------------------------------------------------------------|
+
+
+- *GET* -
+ + Example Request
+   #+BEGIN_SRC
+   /workshop_reports?name=College Photos
+   #+END_SRC
+ 
+ + Example Result
+   #+BEGIN_SRC
+[{"path":
+"/home/vlead/Desktop/outreach-portal/build/code/src/static/uploads/madhavi.jpg",
+"workshop": {"status": "Upcoming", "not_approval_reason": null,
+"no_of_sessions": 3, "last_updated": null, "name": "Coordinators Training",
+"disciplines": null, "created": "2015-12-07T11:59:49", "duration_of_sessions":
+null, "cancellation_reason": null, "labs_planned": 4,
+"participating_institutes": "HCU, IIIT-Hyd", "other_details": null, "location":
+"IIIT-Hyd", "participants_attended": null, "date": "Mon Nov 23 2015 06:18:26
+GMT-0500 (EST)", "no_of_participants_expected": 100, "experiments_conducted":
+null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
+"2015-12-07T09:48:22", "email": "outreach-admin@vlabs.ac.in", "role": {"id": 1,
+"name": "admin"}, "id": 1}}, "id": 1, "name": "College Photos"}, {"path": null,
+"workshop": {"status": "Upcoming", "not_approval_reason": null,
+"no_of_sessions": 3, "last_updated": null, "name": "Coordinators Training",
+"disciplines": null, "created": "2015-12-07T11:59:49", "duration_of_sessions":
+null, "cancellation_reason": null, "labs_planned": 4,
+"participating_institutes": "HCU, IIIT-Hyd", "other_details": null, "location":
+"IIIT-Hyd", "participants_attended": null, "date": "Mon Nov 23 2015 06:18:26
+GMT-0500 (EST)", "no_of_participants_expected": 100, "experiments_conducted":
+null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
+"2015-12-07T09:48:22", "email": "outreach-admin@vlabs.ac.in", "role": {"id": 1,
+"name": "admin"}, "id": 1}}, "id": 2, "name": "College Photos"}]
+   #+END_SRC
+
+*** /upload_workshop_report/<id>
+
+- *POST* -
+ + Example Request
+   #+BEGIN_SRC
+   /upload_workshop_report/10
    #+END_SRC
  
  + Example Result
