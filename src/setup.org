@@ -53,9 +53,26 @@ def create_roles():
     user = User(name=Name("admin"), email=Email("outreach-admin@vlabs.ac.in"), role = role1)
     user.save()
 
+def create_status():
+    status1 = Status(name=Name("Upcoming"))
+    status1.save()
+
+    status2 = Status(name=Name("Pending for Approval"))
+    status2.save()
+
+    status3 = Status(name=Name("Approved"))
+    status3.save()
+
+    status4 = Status(name=Name("Rejected"))
+    status4.save()
+
+
 if __name__ == "__main__":
     db.create_all(app=create_app(config))
     create_roles()
+    create_status()
+
+
   #+END_SRC
 * Install all dependencies and setup the software
 Install all dependencies, including the OS related packages, Python packages,
