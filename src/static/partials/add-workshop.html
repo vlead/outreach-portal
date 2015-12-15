@@ -28,7 +28,7 @@
       </p>
 
       <p>Total Participants:<br>
-	<input type="number" name="parti" ng-model="parti" class="form-control"
+	<input type="number" name="parti" ng-model="parti"  min="0" class="form-control"
                placeholder="Participants " required/>
         <span class="error" ng-show="myForm.parti.$error.number">Not valid number!</span>
 	<span style="color:red" ng-show="myForm.parti.$dirty && myForm.parti.$invalid">
@@ -36,7 +36,7 @@
 	</span>
       </p>
       <p>Session:<br>
-	<input type="number" name="sessions" ng-model="sessions" class="form-control"  placeholder="Sessions" required>
+	<input type="number" name="sessions" ng-model="sessions"  min="0"  class="form-control"  placeholder="Sessions" required>
         <span class="error" ng-show="myForm.sessions.$error.number">Not valid number!</span>
 	<span style="color:red" ng-show="myForm.sessions.$dirty && myForm.session.$invalid">
 	  <span ng-show="myForm.sessions.$error.required">Sessions required.</span>
@@ -44,7 +44,7 @@
       </p>
 
       <p>Labs Planned:<br>
-	<input type="number" name="labs" ng-model="labs"  class="form-control" placeholder="Labs planned" required>
+	<input type="number" name="labs" ng-model="labs"  min="0"  class="form-control" placeholder="Labs planned" required>
         <span class="error" ng-show="myForm.labs.$error.number">Not valid number!</span>
         <span style="color:red" ng-show="myForm.labs.$dirty && myForm.labs.$invalid">
 	  <span ng-show="myForm.labs.$error.required">Lab names required.</span>
