@@ -26,29 +26,35 @@
       </p>
 
       <p>Total Participants:<br>
-	<input type="text" name="parti" ng-model="message.no_of_participants_expected"  class="form-control"
+	<input type="number" name="parti" ng-model="message.no_of_participants_expected"  class="form-control"
                placeholder="Participants " required>
+        <span class="error" ng-show="myForm.parti.$error.number">Not valid number!</span>`
 	<span style="color:red" ng-show="myForm.parti.$dirty && myForm.parti.$invalid">
 	  <span ng-show="myForm.parti.$error.required">Participants required.</span>
 	</span>
       </p>
       <p>Session:<br>
-	<input type="text" name="sessions" ng-model="message.no_of_sessions"  class="form-control"  placeholder="Sessions" required>
+	<input type="number" name="sessions" ng-model="message.no_of_sessions"
+               class="form-control"  placeholder="Sessions" required>
+        <span class="error" ng-show="myForm.sessions.$error.number">Not valid number!</span>
 	<span style="color:red" ng-show="myForm.sessions.$dirty && myForm.session.$invalid">
 	  <span ng-show="myForm.sessions.$error.required">Sessions required.</span>
 	</span>
       </p>
 
       <p>Labs Planned:<br>
-	<input type="text" name="labs" ng-model="message.labs_planned"  class="form-control"
+	<input type="number" name="labs" ng-model="message.labs_planned"  class="form-control"
                placeholder="Labs planned" required>
+        <span class="error" ng-show="myForm.labs.$error.number">Not valid number!</span>
 	<span style="color:red" ng-show="myForm.labs.$dirty && myForm.labs.$invalid">
 	  <span ng-show="myForm.labs.$error.required">Lab names required.</span>
 	</span>
       </p>
 
       <p>Date:<br>
-	<input type="text" name="date" ng-model="message.date"  class="form-control"  placeholder="YYYY-MM-DD" required>
+	<input type="text" name="date" ng-model="message.date" id="datepicker"
+               class="form-control"  placeholder="YYYY-MM-DD" required>
+        <span class="error" ng-show="myForm.date.$error.date">
 	<span style="color:red" ng-show="myForm.date.$dirty && myForm.date.$invalid">
 	  <span ng-show="myForm.date.$error.required">Username is required.</span>
 	</span>
@@ -69,3 +75,8 @@
   </div>
   <div class="col-md-4"></div>
 </div>
+<script>
+  $(function() {
+  $("#datepicker").datepicker({ minDate: 0, dateFormat: 'yy-mm-dd'});
+  });
+</script>

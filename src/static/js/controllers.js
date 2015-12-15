@@ -394,8 +394,8 @@ angular.module('outreachApp.controllers',[])
                 $scope.pending = pending;
                 $scope.ups = ups;
                 $scope.upcoming = upcoming;
-                $scope.experiments = experiments;
-                $scope.count = count;
+          //    $scope.experiments = experiments;
+          //    $scope.count = count;
                 
                 
     }).
