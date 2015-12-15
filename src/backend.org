@@ -37,7 +37,7 @@ import config
 print "test package"
 #+END_SRC
 
-*** Imports for Python API
+*** Imports for Python AP
 #+BEGIN_SRC python :tangle src/db.py :eval no
 # -*- coding: utf-8 -*-
 
@@ -1013,6 +1013,154 @@ class TestReferenceDocument(TestCase):
 
 #+END_SRC
 
+*** Status
+**** Immutable data
+     + Id
+
+**** Mutable data
+     + Status Name
+
+**** Definition
+#+BEGIN_SRC python :tangle src/db.py :eval no
+class Status(Entity):
+
+    __tablename__ = 'status'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128), nullable=False)
+
+    workshop = db.relationship('Workshop', backref='status')
+        
+#+END_SRC
+
+**** Constructor
+#+BEGIN_EXAMPLE
+    status = Status(name=<instance of class Name>)
+                    
+#+END_EXAMPLE
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def __init__(self, **kwargs):
+        if 'name' not in kwargs:
+            raise AttributeRequired("mandatory attribute `name` is missing")
+        self.set_name(kwargs['name'])
+
+#+END_SRC
+**** Tests for Status Constructor
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+class TestStatus(TestCase):
+    TESTING = True
+
+    def create_app(self):
+        app = create_app(config)
+        return app
+
+    def setUp(self):
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+        
+#+END_SRC
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_status_constructor(self):
+        print "test_status_constructor"
+        name = Name("Pending for Approval")
+        status = Status(name=name)
+        self.assertEqual(isinstance(status, Status), True)
+
+        # Calling the institute constructor without any arguments should
+        # raise AttributeRequired exception
+        self.assertRaises(AttributeRequired, Status)
+
+        # Calling the role constructor with necessary arguments
+        # (name) but with wrong type should raise TypeError
+        self.assertRaises(TypeError, Role,
+                          ,**{'name': "Pending for Approval"
+                            })
+
+#+END_SRC
+**** Functions that operate on the Role domain
+***** getStatus: Id --> Status
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @staticmethod
+    def get_by_id(id):
+        return Status.query.get(id)
+
+#+END_SRC
+***** Test getStatus: Id --> Status
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_status_by_id(self):
+        print "test_get_status_by_id"
+        status = Status(name=Name("Pending for Approval"))
+        status.save()
+        self.assertEqual(status.get_by_id(1).name, "Pending for Approval")
+
+#+END_SRC
+***** getAll: Nil --> set[Status]
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @staticmethod
+    def get_all():
+        return Status.query.all()
+#+END_SRC
+***** Test getAll: Nil --> set[Status]
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_status_get_all(self):
+        print "test_status_get_all"
+        status = Status(name=Name("Upcoming"))
+        status.save()
+        self.assertEqual("Upcoming", status.name)
+#+END_SRC
+***** getName: Status --> Name
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_name(self):
+        return self.name
+#+END_SRC
+***** Test getName: Status --> Name 
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_status_name(self):
+        print "test_get_Status_name"
+        status = Status(name=Name("Upcoming"))
+        status_name = status.get_name()
+        self.assertEqual(status_name, "Upcoming")
+#+END_SRC
+
+***** setName: Status, Name --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(name=Name)
+    def set_name(self, name):
+        self.name = name.value
+#+END_SRC
+***** Test setName: Status, Name --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_set_status_name(self):
+        print "test_set_status_name"
+        status = Status(name=Name("Pending for Approval"))
+        new_name = Name("Approved")
+        status.set_name(new_name)
+        self.assertEqual(status.name, "Approved")
+#+END_SRC
+
+***** to_client
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def to_client(self):
+        return {
+            'id': self.id,
+            'name': self.name
+        }
+
+#+END_SRC
+
+***** Test Status to_client
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_status_to_client(self):
+        print "test_status_to_client"
+        status = Status(name=Name("Rejected"))
+        status.save()
+        status = Status.get_by_id(1)
+        status_dict = status.to_client()
+        self.assertEqual("Rejected", status_dict['name'])
+#+END_SRC
 *** Workshop
 **** Immutable data
      + Id
@@ -1048,6 +1196,7 @@ class Workshop(Entity):
     location = db.Column(db.String(128))
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    status_id = db.Column(db.Integer, db.ForeignKey('status.id'))
 
     date = db.Column(db.String(128), nullable=False)
     created = db.Column(db.DateTime(), default=datetime.utcnow)
@@ -1061,7 +1210,6 @@ class Workshop(Entity):
     disciplines = db.Column(db.String(128))
     experiments_conducted = db.Column(db.Integer)
     other_details = db.Column(db.String(128))
-    status = db.Column(db.String(128))
     cancellation_reason = db.Column(db.String(128))
     not_approval_reason = db.Column(db.String(128))
 
@@ -1083,7 +1231,7 @@ class Workshop(Entity):
                       labs_planned=int
                       [,experiments_conducted=int]
                       [,other_details=str],
-                      status=str
+                      status=<instance of class Status>
                       [,cancellation_reason=str]
                       [,not_approval_reason=str]
                       [,last_updated=str])                                                                           
@@ -1212,15 +1360,18 @@ class TestWorkshop(TestCase):
                     role = role)
         user.save()
 
+        status = Status(name=Name("Upcoming"))
+        status.save()
+
         workshop = Workshop(name="Coordinators Training", location="IIIT-Hyd",
                             user=user, participating_institutes="HCU,\
                             IIIT-Hyd", no_of_participants_expected=100,
                             no_of_sessions=3, labs_planned=4,
-                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            status=status, date="Mon Nov 23 2015 06:18:26\
                             GMT-0500 (EST)")
 
         self.assertEqual("Coordinators Training", workshop.name)
-        self.assertEqual("Upcoming", workshop.status)
+        self.assertEqual(status, workshop.status)
         self.assertEqual(user, workshop.user)                        
     
         # Calling the workshop constructor without any arguments should
@@ -1237,7 +1388,7 @@ class TestWorkshop(TestCase):
                              'no_of_participants_expected': 100,
                              'no_of_sessions': "three",
                              'labs_planned': 4,
-                             'status': "Upcoming",
+                             'status': status,
                              'date': "Mon Nov 23 2015 06:18:26 GMT-0500 (EST)"
                          })
 
@@ -1258,12 +1409,15 @@ class TestWorkshop(TestCase):
         user = User(name=Name("Thirumal Ravula"),
                     email=Email("travula@gmail.com"), role=role)
         
+        status = Status(name=Name("Upcoming"))
+        status.save()        
+
         workshop_1 = Workshop(name="Coordinators Training",
                               location="IIIT-Hyd", user=user,
                               participating_institutes="HCU, IIIT-Hyd",
                               no_of_participants_expected=100,
                               no_of_sessions=3, labs_planned=4,
-                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              status=status, date="Mon Nov 23 2015 06:18:26\
                               GMT-0500 (EST)")
         
         workshop_1.save() 
@@ -1272,7 +1426,7 @@ class TestWorkshop(TestCase):
                               user=user, participating_institutes="HCU,\
                               IIIT-Hyd", no_of_participants_expected=50,
                               no_of_sessions=2, labs_planned=2,
-                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              status=status, date="Mon Nov 23 2015 06:18:26\
                               GMT-0500 (EST)")
 
         workshop_2.save()
@@ -1299,6 +1453,10 @@ class TestWorkshop(TestCase):
         print "test_get_workshop_by_id"
         role = Role(name=Name("Admin"))
         role.save()
+
+        status = Status(name=Name("Upcoming"))
+        status.save()        
+
         user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"),\
                     role=role)
         
@@ -1307,7 +1465,7 @@ class TestWorkshop(TestCase):
                               participating_institutes="HCU, IIIT-Hyd",
                               no_of_participants_expected=100,
                               no_of_sessions=3, labs_planned=4,
-                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              status=status, date="Mon Nov 23 2015 06:18:26\
                               GMT-0500 (EST)")
         
         self.assertEqual(workshop_1.get_by_id(1).name, "Coordinators Training")
@@ -1324,13 +1482,18 @@ class TestWorkshop(TestCase):
     def test_get_workshop_name(self):
         print "test_get_workshop_name"
         role = Role(name=Name("Admin"))
+
         user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+
+        status = Status(name=Name("Upcoming"))
+        status.save()        
+
         workshop_1 = Workshop(name="Coordinators Training",
                               location="IIIT-Hyd", user=user,
                               participating_institutes="HCU, IIIT-Hyd",
                               no_of_participants_expected=100,
                               no_of_sessions=3, labs_planned=4,
-                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              status=status, date="Mon Nov 23 2015 06:18:26\
                               GMT-0500 (EST)")
 
         workshop_name = workshop_1.get_name()
@@ -1348,13 +1511,18 @@ class TestWorkshop(TestCase):
     def test_get_workshop_location(self):
         print "test_get_workshop_location"
         role = Role(name=Name("Admin"))
+
         user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+ 
+        status = Status(name=Name("Upcoming"))
+        status.save()        
+
         workshop_1 = Workshop(name="Coordinators Training",
                               location="IIIT-Hyd", user=user,
                               participating_institutes="HCU, IIIT-Hyd",
                               no_of_participants_expected=100,
                               no_of_sessions=3, labs_planned=4,
-                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              status=status, date="Mon Nov 23 2015 06:18:26\
                               GMT-0500 (EST)")
 
 
@@ -1373,12 +1541,15 @@ class TestWorkshop(TestCase):
         print "test_get_workshop_date"
         role = Role(name=Name("Admin"))
         user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        status = Status(name=Name("Upcoming"))
+        status.save()        
+
         workshop_1 = Workshop(name="Coordinators Training",
                               location="IIIT-Hyd", user=user,
                               participating_institutes="HCU, IIIT-Hyd",
                               no_of_participants_expected=100,
                               no_of_sessions=3, labs_planned=4,
-                              status="Upcoming",
+                              status=status,
                               date="Mon Nov 23 2015 06:18:26 GMT-0500 (EST)")
 
 
@@ -1399,12 +1570,15 @@ class TestWorkshop(TestCase):
         print "test_get_workshop_user"
         role = Role(name=Name("Admin"))
         user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        status = Status(name=Name("Upcoming"))
+        status.save()        
+
         workshop_1 = Workshop(name="Coordinators Training",
                               location="IIIT-Hyd", user=user,
                               participating_institutes="HCU, IIIT-Hyd",
                               no_of_participants_expected=100,
                               no_of_sessions=3, labs_planned=4,
-                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              status=status, date="Mon Nov 23 2015 06:18:26\
                               GMT-0500 (EST)")
 
         workshop_user = workshop_1.get_user()
@@ -1423,11 +1597,14 @@ class TestWorkshop(TestCase):
         print "test_get_workshop_toc"
         role = Role(name=Name("Admin"))
         user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        status = Status(name=Name("Upcoming"))
+        status.save()        
+
         workshop = Workshop(name="Coordinators Training", location="IIIT-Hyd",
                             user=user, participating_institutes="HCU,\
                             IIIT-Hyd", no_of_participants_expected=100,
                             no_of_sessions=3, labs_planned=4,
-                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            status=status, date="Mon Nov 23 2015 06:18:26\
                             GMT-0500 (EST)")
         
         workshop.save()
@@ -1461,11 +1638,14 @@ class TestWorkshop(TestCase):
         print "test_get_workshop_last_upd"
         role = Role(name=Name("Admin"))
         user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        status = Status(name=Name("Upcoming"))
+        status.save()        
+
         workshop = Workshop(name="Coordinators Training", location="IIIT-Hyd",
                             user=user, participating_institutes="HCU,\
                             IIIT-Hyd", no_of_participants_expected=100,
                             no_of_sessions=3, labs_planned=4,
-                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            status=status, date="Mon Nov 23 2015 06:18:26\
                             GMT-0500 (EST)", last_updated="Tue Nov 24 2015")
 
         workshop.save()
@@ -1485,12 +1665,15 @@ class TestWorkshop(TestCase):
         print "test_get_workshop_participating_institutes"
         role = Role(name=Name("Admin"))
         user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        status = Status(name=Name("Upcoming"))
+        status.save()        
+
         workshop_1 = Workshop(name="Coordinators Training",
                               location="IIIT-Hyd", user=user,
                               participating_institutes="HCU, IIIT-Hyd",
                               no_of_participants_expected=100,
                               no_of_sessions=3, labs_planned=4,
-                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              status=status, date="Mon Nov 23 2015 06:18:26\
                               GMT-0500 (EST)")
 
 
@@ -1508,12 +1691,15 @@ class TestWorkshop(TestCase):
         print "test_get_workshop_participants_expected"
         role = Role(name=Name("Admin"))
         user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        status = Status(name=Name("Upcoming"))
+        status.save()        
+
         workshop_1 = Workshop(name="Coordinators Training",
                               location="IIIT-Hyd", user=user,
                               participating_institutes="HCU, IIIT-Hyd",
                               no_of_participants_expected=100,
                               no_of_sessions=3, labs_planned=4,
-                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              status=status, date="Mon Nov 23 2015 06:18:26\
                               GMT-0500 (EST)")
 
 
@@ -1531,12 +1717,15 @@ class TestWorkshop(TestCase):
         print "test_get_workshop_actual_participants_attended"
         role = Role(name=Name("Admin"))
         user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        status = Status(name=Name("Upcoming"))
+        status.save()        
+
         workshop_1 = Workshop(name="Coordinators Training",
                               location="IIIT-Hyd", user=user,
                               participating_institutes="HCU, IIIT-Hyd",
                               no_of_participants_expected=100,
                               no_of_sessions=3, labs_planned=4,
-                              status="Upcoming", participants_attended=120,
+                              status=status, participants_attended=120,
                               date="Mon Nov 23 2015 06:18:26 GMT-0500 (EST)")
 
 
@@ -1554,12 +1743,15 @@ class TestWorkshop(TestCase):
         print "test_get_workshop_other_details"
         role = Role(name=Name("Admin"))
         user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        status = Status(name=Name("Upcoming"))
+        status.save()        
+
         workshop_1 = Workshop(name="Coordinators Training",
                               location="IIIT-Hyd", user=user,
                               participating_institutes="HCU, IIIT-Hyd",
                               no_of_participants_expected=100,
                               no_of_sessions=3, labs_planned=4,
-                              status="Upcoming", other_details="Overwhelming response!",
+                              status=status, other_details="Overwhelming response!",
                               date="Mon Nov 23 2015 06:18:26 GMT-0500 (EST)")
 
 
@@ -1577,12 +1769,15 @@ class TestWorkshop(TestCase):
         print "test_get_workshop_no_of_expts_conducted"
         role = Role(name=Name("Admin"))
         user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        status = Status(name=Name("Upcoming"))
+        status.save()        
+
         workshop_1 = Workshop(name="Coordinators Training",
                               location="IIIT-Hyd", user=user,
                               participating_institutes="HCU, IIIT-Hyd",
                               no_of_participants_expected=100,
                               no_of_sessions=3, labs_planned=4,
-                              status="Upcoming", experiments_conducted=20,
+                              status=status, experiments_conducted=20,
                               date="Mon Nov 23 2015 06:18:26 GMT-0500 (EST)")
 
         
@@ -1600,12 +1795,15 @@ class TestWorkshop(TestCase):
         print "test_get_workshop_duration_of_sessions"
         role = Role(name=Name("Admin"))
         user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        status = Status(name=Name("Upcoming"))
+        status.save()        
+
         workshop_1 = Workshop(name="Coordinators Training",
                               location="IIIT-Hyd", user=user,
                               participating_institutes="HCU, IIIT-Hyd",
                               no_of_participants_expected=100,
                               no_of_sessions=3, labs_planned=4,
-                              status="Upcoming", duration_of_sessions=1,
+                              status=status, duration_of_sessions=1,
                               date="Mon Nov 23 2015 06:18:26 GMT-0500 (EST)")
 
 
@@ -1623,12 +1821,15 @@ class TestWorkshop(TestCase):
         print "test_get_workshop_disciplines"
         role = Role(name=Name("Admin"))
         user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        status = Status(name=Name("Upcoming"))
+        status.save()        
+
         workshop_1 = Workshop(name="Coordinators Training",
                               location="IIIT-Hyd", user=user,
                               participating_institutes="HCU, IIIT-Hyd",
                               no_of_participants_expected=100,
                               no_of_sessions=3, labs_planned=4,
-                              status="Upcoming", disciplines="Electronics & Communication",
+                              status=status, disciplines="Electronics & Communication",
                               date="Mon Nov 23 2015 06:18:26 GMT-0500 (EST)")
 
 
@@ -1646,12 +1847,15 @@ class TestWorkshop(TestCase):
         print "test_get_workshop_no_of_sessions"
         role = Role(name=Name("Admin"))
         user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        status = Status(name=Name("Upcoming"))
+        status.save()        
+
         workshop_1 = Workshop(name="Coordinators Training",
                               location="IIIT-Hyd", user=user,
                               participating_institutes="HCU, IIIT-Hyd",
                               no_of_participants_expected=100,
                               no_of_sessions=3, labs_planned=4,
-                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              status=status, date="Mon Nov 23 2015 06:18:26\
                               GMT-0500 (EST)")
         workshop_1.save()
       
@@ -1668,12 +1872,15 @@ class TestWorkshop(TestCase):
         print "test_get_workshop_planned_labs"
         role = Role(name=Name("Admin"))
         user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        status = Status(name=Name("Upcoming"))
+        status.save()        
+
         workshop_1 = Workshop(name="Coordinators Training",
                               location="IIIT-Hyd", user=user,
                               participating_institutes="HCU, IIIT-Hyd",
                               no_of_participants_expected=100,
                               no_of_sessions=3, labs_planned=4,
-                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              status=status, date="Mon Nov 23 2015 06:18:26\
                               GMT-0500 (EST)")
 
 
@@ -1691,17 +1898,20 @@ class TestWorkshop(TestCase):
         print "test_get_workshop_status"
         role = Role(name=Name("Admin"))
         user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        status = Status(name=Name("Upcoming"))
+        status.save()        
+
         workshop_1 = Workshop(name="Coordinators Training",
                               location="IIIT-Hyd", user=user,
                               participating_institutes="HCU, IIIT-Hyd",
                               no_of_participants_expected=100,
                               no_of_sessions=3, labs_planned=4,
-                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              status=status, date="Mon Nov 23 2015 06:18:26\
                               GMT-0500 (EST)")
 
 
         wkshp_status = workshop_1.get_status()
-        self.assertEqual(wkshp_status, "Upcoming")
+        self.assertEqual(wkshp_status.name, "Upcoming")
 #+END_SRC
 ***** getCancellationReason: Workshop --> Reason
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -1714,12 +1924,15 @@ class TestWorkshop(TestCase):
         print "test_get_workshop_cancellation_reason"
         role = Role(name=Name("Admin"))
         user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        status = Status(name=Name("Upcoming"))
+        status.save()        
+
         workshop_1 = Workshop(name="Coordinators Training",
                               location="IIIT-Hyd", user=user,
                               participating_institutes="HCU, IIIT-Hyd",
                               no_of_participants_expected=100,
                               no_of_sessions=3, labs_planned=4,
-                              status="Upcoming", cancellation_reason="Univ Exams",
+                              status=status, cancellation_reason="Univ Exams",
                               date="Mon Nov 23 2015 06:18:26 GMT-0500 (EST)")
 
 
@@ -1737,12 +1950,15 @@ class TestWorkshop(TestCase):
         print "test_get_workshop_not_approval_reason"
         role = Role(name=Name("Admin"))
         user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        status = Status(name=Name("Upcoming"))
+        status.save()        
+
         workshop_1 = Workshop(name="Coordinators Training",
                               location="IIIT-Hyd", user=user,
                               participating_institutes="HCU, IIIT-Hyd",
                               no_of_participants_expected=100,
                               no_of_sessions=3, labs_planned=4,
-                              status="Upcoming", not_approval_reason="College Report not uploaded",
+                              status=status, not_approval_reason="College Report not uploaded",
                               date="Mon Nov 23 2015 06:18:26 GMT-0500 (EST)")
 
 
@@ -1763,11 +1979,14 @@ class TestWorkshop(TestCase):
         print "test_set_workshop_name"
         role = Role(name=Name("Admin"))
         user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)     
+        status = Status(name=Name("Upcoming"))
+        status.save()        
+
         workshop = Workshop(name="Training", location="IIIT-Hyd",
                             user=user, participating_institutes="HCU,\
                             IIIT-Hyd", no_of_participants_expected=100,
                             no_of_sessions=3, labs_planned=4,
-                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            status=status, date="Mon Nov 23 2015 06:18:26\
                             GMT-0500 (EST)")
 
         workshop.save()
@@ -1790,11 +2009,14 @@ class TestWorkshop(TestCase):
         print "test_set_workshop_location"
         role = Role(name=Name("Admin"))
         user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)     
+        status = Status(name=Name("Upcoming"))
+        status.save()        
+
         workshop = Workshop(name="Training", location="IIIT-Hyd",
                             user=user, participating_institutes="HCU,\
                             IIIT-Hyd", no_of_participants_expected=100,
                             no_of_sessions=3, labs_planned=4,
-                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            status=status, date="Mon Nov 23 2015 06:18:26\
                             GMT-0500 (EST)")
         
         workshop.save()
@@ -1818,11 +2040,15 @@ class TestWorkshop(TestCase):
 
         user1 = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
         user2 = User(name=Name("madhavi"), email=Email("madhavi@vlabs.ac.in"), role=role)
+
+        status = Status(name=Name("Upcoming"))
+        status.save()        
+
         workshop = Workshop(name="Training", location="IIIT-Hyd",
                             user=user1, participating_institutes="HCU,\
                             IIIT-Hyd", no_of_participants_expected=100,
                             no_of_sessions=3, labs_planned=4,
-                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            status=status, date="Mon Nov 23 2015 06:18:26\
                             GMT-0500 (EST)")
 
 
@@ -1845,11 +2071,15 @@ class TestWorkshop(TestCase):
 
         user1 = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
         user2 = User(name=Name("madhavi"), email=Email("madhavi@vlabs.ac.in"), role=role)
+
+        status = Status(name=Name("Upcoming"))
+        status.save()        
+
         workshop = Workshop(name="Training", location="IIIT-Hyd",
                             user=user1, participating_institutes="HCU,\
                             IIIT-Hyd", no_of_participants_expected=100,
                             no_of_sessions=3, labs_planned=4,
-                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            status=status, date="Mon Nov 23 2015 06:18:26\
                             GMT-0500 (EST)")
 
 
@@ -1874,11 +2104,14 @@ class TestWorkshop(TestCase):
         print "test_set_participating_institutes"
         role = Role(name=Name("Admin"))
         user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)     
+        status = Status(name=Name("Upcoming"))
+        status.save()        
+
         workshop = Workshop(name="Training", location="IIIT-Hyd",
                             user=user, participating_institutes="HCU,\
                             IIIT-Hyd", no_of_participants_expected=100,
                             no_of_sessions=3, labs_planned=4,
-                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            status=status, date="Mon Nov 23 2015 06:18:26\
                             GMT-0500 (EST)")
         
         workshop.save()
@@ -1899,11 +2132,14 @@ class TestWorkshop(TestCase):
         print "test_set_no_of_participants_expected"
         role = Role(name=Name("Admin"))
         user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)     
+        status = Status(name=Name("Upcoming"))
+        status.save()        
+
         workshop = Workshop(name="Training", location="IIIT-Hyd",
                             user=user, participating_institutes="HCU,\
                             IIIT-Hyd", no_of_participants_expected=100,
                             no_of_sessions=3, labs_planned=4,
-                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            status=status, date="Mon Nov 23 2015 06:18:26\
                             GMT-0500 (EST)")
         
         workshop.save()
@@ -1924,11 +2160,14 @@ class TestWorkshop(TestCase):
         print "test_set_participants_attended"
         role = Role(name=Name("Admin"))
         user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)     
+        status = Status(name=Name("Upcoming"))
+        status.save()        
+
         workshop = Workshop(name="Training", location="IIIT-Hyd",
                             user=user, participating_institutes="HCU,\
                             IIIT-Hyd", no_of_participants_expected=100,
                             no_of_sessions=3, labs_planned=4,
-                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            status=status, date="Mon Nov 23 2015 06:18:26\
                             GMT-0500 (EST)")
         
         workshop.save()
@@ -1949,11 +2188,14 @@ class TestWorkshop(TestCase):
         print "test_set_no_of_sessions"
         role = Role(name=Name("Admin"))
         user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)     
+        status = Status(name=Name("Upcoming"))
+        status.save()        
+
         workshop = Workshop(name="Training", location="IIIT-Hyd",
                             user=user, participating_institutes="HCU,\
                             IIIT-Hyd", no_of_participants_expected=100,
                             no_of_sessions=3, labs_planned=4,
-                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            status=status, date="Mon Nov 23 2015 06:18:26\
                             GMT-0500 (EST)")
         
         workshop.save()
@@ -1974,11 +2216,14 @@ class TestWorkshop(TestCase):
         print "test_set_duration_of_sessions"
         role = Role(name=Name("Admin"))
         user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)     
+        status = Status(name=Name("Upcoming"))
+        status.save()        
+
         workshop = Workshop(name="Training", location="IIIT-Hyd",
                             user=user, participating_institutes="HCU,\
                             IIIT-Hyd", no_of_participants_expected=100,
                             no_of_sessions=3, labs_planned=4,
-                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            status=status, date="Mon Nov 23 2015 06:18:26\
                             GMT-0500 (EST)")
         
         workshop.save()
@@ -2000,11 +2245,14 @@ class TestWorkshop(TestCase):
         print "test_set_disciplines"
         role = Role(name=Name("Admin"))
         user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)     
+        status = Status(name=Name("Upcoming"))
+        status.save()        
+
         workshop = Workshop(name="Training", location="IIIT-Hyd",
                             user=user, participating_institutes="HCU,\
                             IIIT-Hyd", no_of_participants_expected=100,
                             no_of_sessions=3, labs_planned=4,
-                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            status=status, date="Mon Nov 23 2015 06:18:26\
                             GMT-0500 (EST)")
         
         workshop.save()
@@ -2026,11 +2274,14 @@ class TestWorkshop(TestCase):
         print "test_set_last_updated"
         role = Role(name=Name("Admin"))
         user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)     
+        status = Status(name=Name("Upcoming"))
+        status.save()        
+
         workshop = Workshop(name="Training", location="IIIT-Hyd",
                             user=user, participating_institutes="HCU,\
                             IIIT-Hyd", no_of_participants_expected=100,
                             no_of_sessions=3, labs_planned=4,
-                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            status=status, date="Mon Nov 23 2015 06:18:26\
                             GMT-0500 (EST)")
         
         workshop.save()
@@ -2052,11 +2303,14 @@ class TestWorkshop(TestCase):
         print "test_set_planned_labs"
         role = Role(name=Name("Admin"))
         user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)     
+        status = Status(name=Name("Upcoming"))
+        status.save()        
+
         workshop = Workshop(name="Training", location="IIIT-Hyd",
                             user=user, participating_institutes="HCU,\
                             IIIT-Hyd", no_of_participants_expected=100,
                             no_of_sessions=3, labs_planned=4,
-                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            status=status, date="Mon Nov 23 2015 06:18:26\
                             GMT-0500 (EST)")
         
         workshop.save()
@@ -2077,11 +2331,14 @@ class TestWorkshop(TestCase):
         print "test_set_experiments_conducted"
         role = Role(name=Name("Admin"))
         user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)     
+        status = Status(name=Name("Upcoming"))
+        status.save()        
+
         workshop = Workshop(name="Training", location="IIIT-Hyd",
                             user=user, participating_institutes="HCU,\
                             IIIT-Hyd", no_of_participants_expected=100,
                             no_of_sessions=3, labs_planned=4,
-                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            status=status, date="Mon Nov 23 2015 06:18:26\
                             GMT-0500 (EST)")
         
         workshop.save()
@@ -2102,11 +2359,14 @@ class TestWorkshop(TestCase):
         print "test_set_other_details"
         role = Role(name=Name("Admin"))
         user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)     
+        status = Status(name=Name("Upcoming"))
+        status.save()        
+
         workshop = Workshop(name="Training", location="IIIT-Hyd",
                             user=user, participating_institutes="HCU,\
                             IIIT-Hyd", no_of_participants_expected=100,
                             no_of_sessions=3, labs_planned=4,
-                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            status=status, date="Mon Nov 23 2015 06:18:26\
                             GMT-0500 (EST)")
         
         workshop.save()
@@ -2115,30 +2375,39 @@ class TestWorkshop(TestCase):
         workshop = Workshop.get_by_id(1)
         self.assertEqual("Overwhelming Response!", workshop.other_details)
 #+END_SRC
-***** setStatus: Workshop, status --> Void
+***** setStatus: Workshop, Status --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(status=str)
+    @typecheck(status=Status)
     def set_status(self, status):
         self.status = status
 #+END_SRC
-***** Test setStatus: Workshop, status --> Void
+***** Test setStatus: Workshop, Status --> Void
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
-    def test_set_status(self):
-        print "test_set_status"
+    def test_set_workshop_status(self):
+        print "test_set_workshop_status"
         role = Role(name=Name("Admin"))
-        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)     
+
+        user1 = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        user2 = User(name=Name("madhavi"), email=Email("madhavi@vlabs.ac.in"), role=role)
+
+        status1 = Status(name=Name("Upcoming"))
+        status1.save()        
+
+        status2 = Status(name=Name("Pending for Approval"))
+        status2.save()        
+
         workshop = Workshop(name="Training", location="IIIT-Hyd",
-                            user=user, participating_institutes="HCU,\
+                            user=user1, participating_institutes="HCU,\
                             IIIT-Hyd", no_of_participants_expected=100,
                             no_of_sessions=3, labs_planned=4,
-                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            status=status1, date="Mon Nov 23 2015 06:18:26\
                             GMT-0500 (EST)")
-        
+
+
+        workshop.save()     
+        workshop.set_status(status2)
         workshop.save()
-        workshop.set_status("Completed")
-        workshop.save()
-        workshop = Workshop.get_by_id(1)
-        self.assertEqual("Completed", workshop.status)
+        self.assertEqual(workshop.status, status2)
 #+END_SRC
 ***** setCancellationReason: Workshop, Reason --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -2152,11 +2421,14 @@ class TestWorkshop(TestCase):
         print "test_set_cancellation_reason"
         role = Role(name=Name("Admin"))
         user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)     
+        status = Status(name=Name("Upcoming"))
+        status.save()        
+
         workshop = Workshop(name="Training", location="IIIT-Hyd",
                             user=user, participating_institutes="HCU,\
                             IIIT-Hyd", no_of_participants_expected=100,
                             no_of_sessions=3, labs_planned=4,
-                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            status=status, date="Mon Nov 23 2015 06:18:26\
                             GMT-0500 (EST)")
         
         workshop.save()
@@ -2177,11 +2449,14 @@ class TestWorkshop(TestCase):
         print "test_set_not_approval_reason"
         role = Role(name=Name("Admin"))
         user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)     
+        status = Status(name=Name("Upcoming"))
+        status.save()        
+
         workshop = Workshop(name="Training", location="IIIT-Hyd",
                             user=user, participating_institutes="HCU,\
                             IIIT-Hyd", no_of_participants_expected=100,
                             no_of_sessions=3, labs_planned=4,
-                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            status=status, date="Mon Nov 23 2015 06:18:26\
                             GMT-0500 (EST)")
         
         workshop.save()
@@ -2210,7 +2485,7 @@ class TestWorkshop(TestCase):
             'disciplines': self.disciplines,
             'experiments_conducted': self.experiments_conducted,
             'other_details': self.other_details,
-            'status': self.status,
+            'status': self.status.to_client(),
             'cancellation_reason': self.cancellation_reason,
             'not_approval_reason': self.not_approval_reason
         }
@@ -2223,12 +2498,14 @@ class TestWorkshop(TestCase):
         role = Role(name=Name("Admin"))
         user = User(name=Name("madhavi"), email=Email("madhavi@vlabs.ac.in"), role = role)
         user.save()
+        status = Status(name=Name("Upcoming"))
+        status.save()        
 
         workshop = Workshop(name="Training", location="IIIT-Hyd",
                             user=user, participating_institutes="HCU,\
                             IIIT-Hyd", no_of_participants_expected=100,
                             no_of_sessions=3, labs_planned=4,
-                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            status=status, date="Mon Nov 23 2015 06:18:26\
                             GMT-0500 (EST)")
 
         workshop.save()
@@ -4005,11 +4282,14 @@ class TestWorkshopReport(TestCase):
                     role = role)
         user.save()
 
+        status = Status(name=Name("Upcoming"))
+        status.save()
+           
         workshop = Workshop(name="Coordinators Training", location="IIIT-Hyd",
                             user=user, participating_institutes="HCU, IIIT-Hyd",
                             no_of_participants_expected=100,
                             no_of_sessions=3, labs_planned=4,
-                            status="Upcoming",
+                            status=status,
                             date="Mon Nov 23 2015 06:18:26 GMT-0500 (EST)")
 
         workshop.save()
@@ -4050,12 +4330,15 @@ class TestWorkshopReport(TestCase):
          
         user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
         user.save()
+
+        status = Status(name=Name("Upcoming"))
+        status.save()
            
         workshop = Workshop(name="Coordinators Training", location="IIIT-Hyd",
                             user=user, participating_institutes="HCU,\
                             IIIT-Hyd", no_of_participants_expected=100,
                             no_of_sessions=3, labs_planned=4,
-                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            status=status, date="Mon Nov 23 2015 06:18:26\
                             GMT-0500 (EST)")
         workshop.save()
         
@@ -4097,11 +4380,14 @@ class TestWorkshopReport(TestCase):
         user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
         user.save()
 
+        status = Status(name=Name("Upcoming"))
+        status.save()
+
         workshop = Workshop(name="Coordinators Training", location="IIIT-Hyd",
                             user=user, participating_institutes="HCU,\
                             IIIT-Hyd", no_of_participants_expected=100,
                             no_of_sessions=3, labs_planned=4,
-                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            status=status, date="Mon Nov 23 2015 06:18:26\
                             GMT-0500 (EST)")
         workshop.save()
         
@@ -4131,11 +4417,14 @@ class TestWorkshopReport(TestCase):
         user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
         user.save()
 
+        status = Status(name=Name("Upcoming"))
+        status.save()
+
         workshop = Workshop(name="Coordinators Training", location="IIIT-Hyd",
                             user=user, participating_institutes="HCU,\
                             IIIT-Hyd", no_of_participants_expected=100,
                             no_of_sessions=3, labs_planned=4,
-                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            status=status, date="Mon Nov 23 2015 06:18:26\
                             GMT-0500 (EST)")
         workshop.save()
 
@@ -4165,11 +4454,14 @@ class TestWorkshopReport(TestCase):
         user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
         user.save()
 
+        status = Status(name=Name("Upcoming"))
+        status.save()
+
         workshop = Workshop(name="Coordinators Training", location="IIIT-Hyd",
                             user=user, participating_institutes="HCU,\
                             IIIT-Hyd", no_of_participants_expected=100,
                             no_of_sessions=3, labs_planned=4,
-                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            status=status, date="Mon Nov 23 2015 06:18:26\
                             GMT-0500 (EST)")
         workshop.save()
 
@@ -4192,12 +4484,15 @@ class TestWorkshopReport(TestCase):
         print "test_get_workshop_report_workshop"
         role = Role(name=Name("Admin"))
         user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        status = Status(name=Name("Upcoming"))
+        status.save()
+
         workshop = Workshop(name="Coordinators Training",
                               location="IIIT-Hyd", user=user,
                               participating_institutes="HCU, IIIT-Hyd",
                               no_of_participants_expected=100,
                               no_of_sessions=3, labs_planned=4,
-                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              status=status, date="Mon Nov 23 2015 06:18:26\
                               GMT-0500 (EST)")
         workshop_report = WorkshopReport(name="College Report", path="/static/uploads/college-reports/file.pdf", workshop=workshop)
         workshop_report.save()
@@ -4225,11 +4520,14 @@ class TestWorkshopReport(TestCase):
         user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
         user.save()
 
+        status = Status(name=Name("Upcoming"))
+        status.save()
+
         workshop = Workshop(name="Coordinators Training", location="IIIT-Hyd",
                             user=user, participating_institutes="HCU,\
                             IIIT-Hyd", no_of_participants_expected=100,
                             no_of_sessions=3, labs_planned=4,
-                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            status=status, date="Mon Nov 23 2015 06:18:26\
                             GMT-0500 (EST)")
         workshop.save()
         
@@ -4262,11 +4560,14 @@ class TestWorkshopReport(TestCase):
         user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
         user.save()
 
+        status = Status(name=Name("Upcoming"))
+        status.save()
+
         workshop = Workshop(name="Coordinators Training", location="IIIT-Hyd",
                             user=user, participating_institutes="HCU,\
                             IIIT-Hyd", no_of_participants_expected=100,
                             no_of_sessions=3, labs_planned=4,
-                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            status=status, date="Mon Nov 23 2015 06:18:26\
                             GMT-0500 (EST)")
         workshop.save()
         
@@ -4297,11 +4598,14 @@ class TestWorkshopReport(TestCase):
         user1 = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
         user2 = User(name=Name("madhavi"), email=Email("madhavi@vlabs.ac.in"), role=role)
 
+        status = Status(name=Name("Upcoming"))
+        status.save()
+
         workshop1 = Workshop(name="Training", location="IIIT-Hyd",
                             user=user1, participating_institutes="HCU, IIIT-Hyd",
                             no_of_participants_expected=100,
                             no_of_sessions=3, labs_planned=4,
-                            status="Upcoming", date="Mon Nov 23 2015 06:18:26 GMT-0500 (EST)")
+                            status=status, date="Mon Nov 23 2015 06:18:26 GMT-0500 (EST)")
 
 
         workshop1.save()
@@ -4310,7 +4614,7 @@ class TestWorkshopReport(TestCase):
                             user=user2, participating_institutes="HCU, IIIT-Hyd", 
                             no_of_participants_expected=100,
                             no_of_sessions=3, labs_planned=4,
-                            status="Upcoming", date="Mon Nov 23 2015 06:18:26 GMT-0500 (EST)")
+                            status=status, date="Mon Nov 23 2015 06:18:26 GMT-0500 (EST)")
         
         workshop2.save()
 
@@ -4344,11 +4648,14 @@ class TestWorkshopReport(TestCase):
         user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
         user.save()
 
+        status = Status(name=Name("Upcoming"))
+        status.save()
+
         workshop = Workshop(name="Coordinators Training", location="IIIT-Hyd",
                             user=user, participating_institutes="HCU,\
                             IIIT-Hyd", no_of_participants_expected=100,
                             no_of_sessions=3, labs_planned=4,
-                            status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                            status=status, date="Mon Nov 23 2015 06:18:26\
                             GMT-0500 (EST)")
         workshop.save()
 
@@ -4704,6 +5011,7 @@ application = create_app(config)
       'roles': Role,
       'users': User,
       'reference_documents': ReferenceDocument,
+      'status': Status,
       'workshop': Workshop,
       'nodal_centre': NodalCentre,
       'nodal_coordinator_detail': NodalCoordinatorDetail,
@@ -4784,6 +5092,19 @@ reference_document = {'entity_class': ReferenceDocument,
                           'relationship': 'one'}
                      ]}
 
+status = {'entity_class': Status,
+        'attributes': [
+            {'name': 'id',
+             'class': None,
+             'relationship': 'one'},
+            {'name': 'name',
+             'class': None,
+             'relationship': 'one'},
+            {'name': 'workshops',
+             'class': Workshop,
+             'relationship': 'many'}
+            ]}
+
 workshop = {'entity_class': Workshop,
             'attributes': [
                 {'name': 'id',
@@ -4826,7 +5147,7 @@ workshop = {'entity_class': Workshop,
                  'class': None,
                  'relationship': 'one'},
                 {'name': 'status',
-                 'class': None,
+                 'class': Status,
                  'relationship': 'one'},
                 {'name': 'cancellation_reason',
                  'class': None,
@@ -4915,6 +5236,7 @@ workshop_report = {'entity_class': WorkshopReport,
 roles = role
 users = user
 reference_documents = reference_document
+status=status
 workshops = workshop
 nodal_coordinator_details = nodal_coordinator_detail
 nodal_centres = nodal_centre
@@ -4923,6 +5245,7 @@ workshop_reports = workshop_report
 entity_pairs = {
     'roles': role,
     'users': user,
+    'status':status,
     'reference_documents': reference_document,
     'workshops': workshop,
     'nodal_coordinator_details': nodal_coordinator_detail,
@@ -5172,6 +5495,12 @@ entity_map_types = {
             'user': User
         }
     },
+    'status': {
+        'entity': Status,
+        'types': {
+            'name': Name
+        }
+    },
     'workshops': {
         'entity': Workshop,
         'types': {
@@ -5187,7 +5516,6 @@ entity_map_types = {
             'labs_planned': int,
             'experiments_conducted': int,
             'other_details': str,
-            'status': str,
             'cancellation_reason': str,
             'not_approval_reason': str,
             'created': datetime,
@@ -5746,6 +6074,76 @@ class TestReferenceDocument(TestCase):
 
 #+END_SRC
  
+*** Tests for Status
+#+BEGIN_SRC python :tangle tests/test_api.py :eval no 
+class TestStatus(TestCase):
+
+    TESTING = True
+
+    def create_app(self):
+        app = create_app(config)
+        return app
+
+    def setUp(self):
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+
+    def test_get_all_status(self):
+        print "test_get_all_status"
+        status1 = Status(name=Name("Upcoming"))
+        status1.save()
+        status2 = Status(name=Name("Approved"))
+        status2.save()
+        r = self.client.get('/status')
+        result = json.loads(r.data)
+        self.assertEquals(len(result), 2)
+
+    def test_get_one_status(self):
+        print "test_get_one_status"
+        status1 = Status(name=Name("Approved"))
+        status1.save()
+        status2 = Status(name=Name("Rejected"))
+        status2.save()
+        r = self.client.get('/status/1')
+        result = json.loads(r.data)
+        self.assertEqual(result['name'], "Approved")
+
+    def test_update_existing_status(self):
+        print "test_update_existing_status"
+        status1 = Status(name=Name("Approved"))
+        status1.save()
+        status2 = Status(name=Name("Rejected"))
+        status2.save()
+        r = self.client.put('/status/1',
+                            data=json.dumps({'name': 'Rejected'}))
+        result = json.loads(r.data)
+        print "result"
+        print result
+        self.assertEqual(result['name'], "Rejected")
+
+    def test_create_new_status(self):
+        print "test_create_new_status"
+        r = self.client.post('/status',
+                             data=json.dumps({'name': 'Pending for Approval'}))
+        result = json.loads(r.data)
+        self.assertEqual(result['name'], "Pending for Approval")
+
+    def test_delete_status(self):
+        print "test_delete_status"
+        status1 = Status(name=Name("Upcoming"))
+        status1.save()
+        status2 = Status(name=Name("Approved"))
+        status2.save()
+        r = self.client.delete('/status/1')
+        r = self.client.get('/status')
+        result = json.loads(r.data)
+        self.assertEqual(len(result), 1)
+
+#+END_SRC
+    
 *** Tests for Workshop
 #+BEGIN_SRC python :tangle tests/test_api.py :eval no 
 class TestWorkshop(TestCase):
@@ -5776,12 +6174,16 @@ class TestWorkshop(TestCase):
                      email=Email("will@smith.com"),
                      role=role)
         user2.save()
+
+        status = Status(name=Name("Upcoming"))
+        status.save()
+
         workshop_1 = Workshop(name="Coordinators Training",
                               location="IIIT-Hyd", user=user1,
                               participating_institutes="HCU, IIIT-Hyd",
                               no_of_participants_expected=100,
                               no_of_sessions=3, labs_planned=4,
-                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              status=status, date="Mon Nov 23 2015 06:18:26\
                               GMT-0500 (EST)")
 
         workshop_1.save()
@@ -5790,7 +6192,7 @@ class TestWorkshop(TestCase):
                               user=user2, participating_institutes="HCU,\
                               IIIT-Hyd", no_of_participants_expected=50,
                               no_of_sessions=2, labs_planned=2,
-                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              status=status, date="Mon Nov 23 2015 06:18:26\
                               GMT-0500 (EST)")
 
         workshop_2.save()
@@ -5813,12 +6215,15 @@ class TestWorkshop(TestCase):
                      role=role)
         user2.save()
 
+        status = Status(name=Name("Upcoming"))
+        status.save()
+
         workshop_1 = Workshop(name="Coordinators Training",
                               location="IIIT-Hyd", user=user1,
                               participating_institutes="HCU, IIIT-Hyd",
                               no_of_participants_expected=100,
                               no_of_sessions=3, labs_planned=4,
-                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              status=status, date="Mon Nov 23 2015 06:18:26\
                               GMT-0500 (EST)")
 
         workshop_1.save()
@@ -5837,20 +6242,23 @@ class TestWorkshop(TestCase):
                      role=role)
         user1.save()
 
+        status = Status(name=Name("Upcoming"))
+        status.save()
+
         workshop_1 = Workshop(name="Coordinators Training",
                               location="IIIT-Hyd", user=user1,
                               participating_institutes="HCU, IIIT-Hyd",
                               no_of_participants_expected=100,
                               no_of_sessions=3, labs_planned=4,
-                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              status=status, date="Mon Nov 23 2015 06:18:26\
                               GMT-0500 (EST)")
 
         workshop_1.save()
 
         r = self.client.put('/workshops/1',
-                            data=json.dumps({'status': 'Completed'}))
+                            data=json.dumps({'location': 'HCU'}))
         result = json.loads(r.data)
-        self.assertEqual(result['status'], "Completed")
+        self.assertEqual(result['location'], "HCU")
 
     def test_create_new_workshop(self):
         print "test_create_new_workshop"
@@ -5862,20 +6270,23 @@ class TestWorkshop(TestCase):
                      role=role)
         user1.save()
 
+        status = Status(name=Name("Upcoming"))
+        status.save()
 
         r = self.client.post('/workshops',
-                             data=json.dumps({ 'name' : 'HCU workshop',
-                                               'location' : 'HCU', 
+                             data=json.dumps({'name': 'HCU workshop',
+                                              'location': 'HCU',
                                                'user': user1.to_client(),
                                                'participating_institutes' : 'HCU, IIIT-Hyd',
                                                'no_of_participants_expected' : 50,
                                                'no_of_sessions' : 2,
                                                'labs_planned' : 2,
-                                               'status' : 'Upcoming', 
+                                               'status': status.to_client(), 
                                                'date' : 'Mon Nov 23 2015 06:18:26 GMT-0500 (EST)'
-                                           }))
+                                          }))
         result = json.loads(r.data)
         self.assertEqual(result['name'], "HCU workshop")
+
 
     def test_delete_workshop(self):
         print "test_delete_workshop"
@@ -5891,12 +6302,15 @@ class TestWorkshop(TestCase):
                      role=role)
         user2.save()
 
+        status = Status(name=Name("Upcoming"))
+        status.save()
+
         workshop_1 = Workshop(name="Coordinators Training",
                               location="IIIT-Hyd", user=user1,
                               participating_institutes="HCU, IIIT-Hyd",
                               no_of_participants_expected=100,
                               no_of_sessions=3, labs_planned=4,
-                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              status=status, date="Mon Nov 23 2015 06:18:26\
                               GMT-0500 (EST)")
 
         workshop_1.save()
@@ -5905,7 +6319,7 @@ class TestWorkshop(TestCase):
                               user=user2, participating_institutes="HCU,\
                               IIIT-Hyd", no_of_participants_expected=50,
                               no_of_sessions=2, labs_planned=2,
-                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              status=status, date="Mon Nov 23 2015 06:18:26\
                               GMT-0500 (EST)")
 
         workshop_2.save()
@@ -6295,12 +6709,16 @@ class TestWorkshopReport(TestCase):
                      email=Email("will@smith.com"),
                      role=role)
         user2.save()
+
+        status = Status(name=Name("Upcoming"))
+        status.save()        
+
         workshop_1 = Workshop(name="Coordinators Training",
                               location="IIIT-Hyd", user=user1,
                               participating_institutes="HCU, IIIT-Hyd",
                               no_of_participants_expected=100,
                               no_of_sessions=3, labs_planned=4,
-                              status="Upcoming", date="Mon Nov 23 2015 06:18:26 GMT-0500 (EST)")
+                              status=status, date="Mon Nov 23 2015 06:18:26 GMT-0500 (EST)")
 
         workshop_1.save()
 
@@ -6308,7 +6726,7 @@ class TestWorkshopReport(TestCase):
                               user=user2, participating_institutes="HCU, IIIT-Hyd",
                               no_of_participants_expected=50,
                               no_of_sessions=2, labs_planned=2,
-                              status="Upcoming", date="Mon Nov 23 2015 06:18:26 GMT-0500 (EST)")
+                              status=status, date="Mon Nov 23 2015 06:18:26 GMT-0500 (EST)")
 
         workshop_2.save()
 
@@ -6340,12 +6758,15 @@ class TestWorkshopReport(TestCase):
                      role=role)
         user2.save()
 
+        status = Status(name=Name("Upcoming"))
+        status.save()        
+
         workshop_1 = Workshop(name="Coordinators Training",
                               location="IIIT-Hyd", user=user1,
                               participating_institutes="HCU, IIIT-Hyd",
                               no_of_participants_expected=100,
                               no_of_sessions=3, labs_planned=4,
-                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              status=status, date="Mon Nov 23 2015 06:18:26\
                               GMT-0500 (EST)")
 
         workshop_1.save()
@@ -6370,12 +6791,15 @@ class TestWorkshopReport(TestCase):
                      role=role)
         user1.save()
 
+        status = Status(name=Name("Upcoming"))
+        status.save()        
+
         workshop_1 = Workshop(name="Coordinators Training",
                               location="IIIT-Hyd", user=user1,
                               participating_institutes="HCU, IIIT-Hyd",
                               no_of_participants_expected=100,
                               no_of_sessions=3, labs_planned=4,
-                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              status=status, date="Mon Nov 23 2015 06:18:26\
                               GMT-0500 (EST)")
 
         workshop_1.save()
@@ -6402,12 +6826,15 @@ class TestWorkshopReport(TestCase):
                      role=role)
         user1.save()
 
+        status = Status(name=Name("Upcoming"))
+        status.save()        
+
         workshop_1 = Workshop(name="Coordinators Training",
                               location="IIIT-Hyd", user=user1,
                               participating_institutes="HCU, IIIT-Hyd",
                               no_of_participants_expected=100,
                               no_of_sessions=3, labs_planned=4,
-                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              status=status, date="Mon Nov 23 2015 06:18:26\
                               GMT-0500 (EST)")
 
         workshop_1.save()
@@ -6434,12 +6861,15 @@ class TestWorkshopReport(TestCase):
                      role=role)
         user2.save()
 
+        status = Status(name=Name("Upcoming"))
+        status.save()        
+
         workshop_1 = Workshop(name="Coordinators Training",
                               location="IIIT-Hyd", user=user1,
                               participating_institutes="HCU, IIIT-Hyd",
                               no_of_participants_expected=100,
                               no_of_sessions=3, labs_planned=4,
-                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              status=status, date="Mon Nov 23 2015 06:18:26\
                               GMT-0500 (EST)")
 
         workshop_1.save()
@@ -6448,7 +6878,7 @@ class TestWorkshopReport(TestCase):
                               user=user2, participating_institutes="HCU,\
                               IIIT-Hyd", no_of_participants_expected=50,
                               no_of_sessions=2, labs_planned=2,
-                              status="Upcoming", date="Mon Nov 23 2015 06:18:26\
+                              status=status, date="Mon Nov 23 2015 06:18:26\
                               GMT-0500 (EST)")
 
         workshop_2.save()
