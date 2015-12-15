@@ -5042,7 +5042,7 @@ def save_reference_documents(id):
         response = requests.put(url, data=path)
         return file_path
 
-@api.route('/upload_workshop_document/<id>', methods=['GET', 'POST'])
+@api.route('/upload_workshop_report/<id>', methods=['GET', 'POST'])
 def save_workshop_documents(id):
     if request.method == 'GET':
         return '''
