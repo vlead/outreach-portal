@@ -58,6 +58,11 @@ Following is the list of current REST APIs provided by outreach portal:
 - /nodal_coordinator_details/<int:id> [GET, PUT, DELETE]
 - /nodal_centres [GET, POST]
 - /nodal_centres/<int:id> [GET, PUT, DELETE]
+- /status [GET, POST]
+- /status/<int:id> [GET, PUT, DELETE]
+- /status/<int:id>?fields=field1,field2 [GET]
+- /status?query_param1=val1&query_param2=val2&..query_paramn=valn [GET]
+
 #+END_SRC
 
 *** /roles
@@ -1976,5 +1981,137 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
 "last_active": null, "created": "2015-12-07T09:48:22", "email":
 "outreach-admin@vlabs.ac.in", "role": {"id": 1, "name": "admin"}, "id": 1},
 "name": "HCU"}]
+   #+END_SRC
+
+*** /status
+- Parameters
+|--------+-----------------------------------------------------------|
+| *Name* | *Description*                                             |
+|--------+-----------------------------------------------------------|
+| *id*   | Indicates the unique id of the status. *Example Value:* 2 |
+|--------+-----------------------------------------------------------|
+| *name* | Specifies the name of status. *Example Value:*  Upcoming  |
+|--------+-----------------------------------------------------------|
+
+- *GET* 
+ + Example Request
+  #+BEGIN_SRC
+  /status
+  #+END_SRC
+
+ + Example Result
+  #+BEGIN_SRC
+[{"id": 1, "name": "Upcoming"}, {"id": 2, "name": "Pending for Approval"},
+ {"id": 3, "name": "Approved"}, {"id": 4, "name": "Rejected"}] 
+  #+END_SRC
+
+- *POST* 
+ + Example Request
+  #+BEGIN_SRC
+ json =  {
+    "name" : "Upcoming"
+}
+  #+END_SRC
+
+ + Example Result
+
+  #+BEGIN_SRC
+{
+  "id": 1, 
+  "name": "Upcoming"
+}
+ #+END_SRC
+
+*** /status/<int:id>
+- Parameters
+
+|--------+-----------------------------------------------------------|
+| *Name* | *Description*                                             |
+|--------+-----------------------------------------------------------|
+| *id*   | Indicates the unique id of the status. *Example Value:* 2 |
+|--------+-----------------------------------------------------------|
+| *name* | Specifies the name of status. *Example Value:*  Upcoming  |
+|--------+-----------------------------------------------------------|
+
+- *GET* - 
+ + Example Request
+  #+BEGIN_EXAMPLE
+   /status/1 
+   #+END_EXAMPLE
+
+ + Example Result
+  #+BEGIN_SRC
+ {
+  "id": 1, 
+  "name": "Upcoming"
+ }
+  #+END_SRC
+
+- *PUT*
+ + Example Request
+   #+BEGIN_SRC
+     name = {"name":"Pending for Approval"}
+   #+END_SRC
+
+ + Example Result
+   #+BEGIN_SRC
+ {
+  "id": 1, 
+  "name": "Pending for Approval"
+ }
+    #+END_SRC
+- *DELETE*
+ + Example Result
+   #+BEGIN_SRC
+{
+  "id": "4", 
+  "status": "success"
+}
+    #+END_SRC
+
+*** /status/<int:id>?fields=field1,field2 
+
+- Parameters
+|--------+-----------------------------------------------------------|
+| *Name* | *Description*                                             |
+|--------+-----------------------------------------------------------|
+| *id*   | Indicates the unique id of the status. *Example Value:* 2 |
+|--------+-----------------------------------------------------------|
+| *name* | Specifies the name of status. *Example Value:*  Upcoming  |
+|--------+-----------------------------------------------------------|
+
+- *GET* -
+ + Example Request
+   #+BEGIN_SRC
+   /status/1?fields=name,id
+   #+END_SRC
+ 
+ + Example Result
+   #+BEGIN_SRC
+{
+  "id": 1, 
+  "name": "Upcoming"
+}
+   #+END_SRC
+
+*** /status?query_param1=val1&query_param2=val2&..query_paramn=valn
+- Parameters
+|--------+-----------------------------------------------------------|
+| *Name* | *Description*                                             |
+|--------+-----------------------------------------------------------|
+| *id*   | Indicates the unique id of the status. *Example Value:* 2 |
+|--------+-----------------------------------------------------------|
+| *name* | Specifies the name of status. *Example Value:*  Upcoming  |
+|--------+-----------------------------------------------------------|
+
+- *GET* -
+ + Example Request
+   #+BEGIN_SRC
+   /status?name=Upcoming
+   #+END_SRC
+ 
+ + Example Result
+   #+BEGIN_SRC
+[{"id": 1, "name": "Upcoming"}]
    #+END_SRC
 
