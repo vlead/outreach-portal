@@ -2729,7 +2729,7 @@ class TestNodalCentre(TestCase):
 ***** Test getCreatedBy: NodalCentre --> User
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_get_nodal_centre_created_by(self):
-        print "test_get_nc_created_by"
+        print "test_get_nodal_centre_created_by"
         role1 = Role(name=Name("OC"))
         role1.save()
 
@@ -3042,7 +3042,7 @@ class NodalCoordinatorDetail(Entity):
     target_participants = db.Column(db.Integer)
     target_experiments = db.Column(db.Integer)
 
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), unique=True)
     created_by_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     nodal_centre_id = db.Column(db.Integer, db.ForeignKey('nodal_centres.id'))
 
@@ -3217,20 +3217,33 @@ class TestNodalCoordinatorDetail(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_get_all_nc_details(self):
         print "test_get_all_nc_details"
-        role = Role(name=Name("OC"))
-        role.save()
+        role1 = Role(name=Name("admin"))
+        role1.save()
+
+        role2 = Role(name=Name("OC"))
+        role2.save()
+
+        role3 = Role(name=Name("NC"))
+        role3.save()
+
         user1 = User(name=Name("Joe Smith"),
                      email=Email("joe@smith.com"),
-                     role=role)
+                     role=role1)
         user1.save()
 
         user2 = User(name=Name("Will Smith"),
                      email=Email("will@smith.com"),
-                     role=Role(name=Name("NC")))
+                     role=role2)
         user2.save()
 
+        user3 = User(name=Name("john Smith"),
+                     email=Email("john@smith.com"),
+                     role=role3)
+        user3.save()
+
+
         nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
-                                   created_by=user1)
+                                   created_by=user2)
 
         nodal_centre1.save()
 
@@ -3239,18 +3252,21 @@ class TestNodalCoordinatorDetail(TestCase):
 
         nodal_centre2.save()
 
-        nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
-                                             created_by=user1,
+        nc_details1 = NodalCoordinatorDetail(user=user3, target_workshops=100,
+                                             created_by=user2,
                                              nodal_centre=nodal_centre1,
+                                             last_updated="Mon Nov 23 2015",
+                                             target_experiments=800,
                                              target_participants=1000)
         nc_details1.save()
 
         nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
-                                             created_by=user1,
+                                             created_by=user2,
                                              nodal_centre=nodal_centre2,
+                                             last_updated="Tue Nov 24 2015",
+                                             target_experiments=800,
                                              target_participants=2000)
         nc_details2.save()
-
         r = self.client.get('/nodal_coordinator_details')
         result = json.loads(r.data)
 
@@ -3267,20 +3283,33 @@ class TestNodalCoordinatorDetail(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_get_nc_details_by_id(self):
         print "test_get_nc_details_by_id"
-        role = Role(name=Name("OC"))
-        role.save()
+        role1 = Role(name=Name("admin"))
+        role1.save()
+
+        role2 = Role(name=Name("OC"))
+        role2.save()
+
+        role3 = Role(name=Name("NC"))
+        role3.save()
+
         user1 = User(name=Name("Joe Smith"),
                      email=Email("joe@smith.com"),
-                     role=role)
+                     role=role1)
         user1.save()
 
         user2 = User(name=Name("Will Smith"),
                      email=Email("will@smith.com"),
-                     role=Role(name=Name("NC")))
+                     role=role2)
         user2.save()
 
+        user3 = User(name=Name("john Smith"),
+                     email=Email("john@smith.com"),
+                     role=role3)
+        user3.save()
+
+
         nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
-                                   created_by=user1)
+                                   created_by=user2)
 
         nodal_centre1.save()
 
@@ -3289,19 +3318,22 @@ class TestNodalCoordinatorDetail(TestCase):
 
         nodal_centre2.save()
 
-        nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
-                                             created_by=user1,
+        nc_details1 = NodalCoordinatorDetail(user=user3, target_workshops=100,
+                                             created_by=user2,
                                              nodal_centre=nodal_centre1,
+                                             last_updated="Mon Nov 23 2015",
+                                             target_experiments=800,
                                              target_participants=1000)
         nc_details1.save()
 
         nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
-                                             created_by=user1,
+                                             created_by=user2,
                                              nodal_centre=nodal_centre2,
+                                             last_updated="Tue Nov 24 2015",
+                                             target_experiments=800,
                                              target_participants=2000)
         nc_details2.save()
-
-        self.assertEqual(nc_details1.get_by_id(1).user.name, "Will Smith")
+        self.assertEqual(nc_details1.get_by_id(1).user.name, user3.name)
 #+END_SRC
 
 ***** getUser: NodalCoordinatorDetail --> User
@@ -3315,20 +3347,33 @@ class TestNodalCoordinatorDetail(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_get_nc_user(self):
         print "test_get_nc_user"
-        role = Role(name=Name("OC"))
-        role.save()
+        role1 = Role(name=Name("admin"))
+        role1.save()
+
+        role2 = Role(name=Name("OC"))
+        role2.save()
+
+        role3 = Role(name=Name("NC"))
+        role3.save()
+
         user1 = User(name=Name("Joe Smith"),
                      email=Email("joe@smith.com"),
-                     role=role)
+                     role=role1)
         user1.save()
 
         user2 = User(name=Name("Will Smith"),
                      email=Email("will@smith.com"),
-                     role=Role(name=Name("NC")))
+                     role=role2)
         user2.save()
 
+        user3 = User(name=Name("john Smith"),
+                     email=Email("john@smith.com"),
+                     role=role3)
+        user3.save()
+
+
         nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
-                                   created_by=user1)
+                                   created_by=user2)
 
         nodal_centre1.save()
 
@@ -3337,20 +3382,23 @@ class TestNodalCoordinatorDetail(TestCase):
 
         nodal_centre2.save()
 
-        nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
-                                             created_by=user1,
+        nc_details1 = NodalCoordinatorDetail(user=user3, target_workshops=100,
+                                             created_by=user2,
                                              nodal_centre=nodal_centre1,
+                                             last_updated="Mon Nov 23 2015",
+                                             target_experiments=800,
                                              target_participants=1000)
         nc_details1.save()
 
         nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
-                                             created_by=user1,
+                                             created_by=user2,
                                              nodal_centre=nodal_centre2,
+                                             last_updated="Tue Nov 24 2015",
+                                             target_experiments=800,
                                              target_participants=2000)
         nc_details2.save()
-       
         nc_user = nc_details1.get_user()
-        self.assertEqual(nc_user.name, "Will Smith")
+        self.assertEqual(nc_user.name, user3.name)
 
 
 #+END_SRC
@@ -3366,20 +3414,33 @@ class TestNodalCoordinatorDetail(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_get_nc_created_by(self):
         print "test_get_nc_created_by"
-        role = Role(name=Name("OC"))
-        role.save()
+        role1 = Role(name=Name("admin"))
+        role1.save()
+
+        role2 = Role(name=Name("OC"))
+        role2.save()
+
+        role3 = Role(name=Name("NC"))
+        role3.save()
+
         user1 = User(name=Name("Joe Smith"),
                      email=Email("joe@smith.com"),
-                     role=role)
+                     role=role1)
         user1.save()
 
         user2 = User(name=Name("Will Smith"),
                      email=Email("will@smith.com"),
-                     role=Role(name=Name("NC")))
+                     role=role2)
         user2.save()
 
+        user3 = User(name=Name("john Smith"),
+                     email=Email("john@smith.com"),
+                     role=role3)
+        user3.save()
+
+
         nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
-                                   created_by=user1)
+                                   created_by=user2)
 
         nodal_centre1.save()
 
@@ -3388,21 +3449,24 @@ class TestNodalCoordinatorDetail(TestCase):
 
         nodal_centre2.save()
 
-
-        nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
-                                             created_by=user1,
+        nc_details1 = NodalCoordinatorDetail(user=user3, target_workshops=100,
+                                             created_by=user2,
                                              nodal_centre=nodal_centre1,
+                                             last_updated="Mon Nov 23 2015",
+                                             target_experiments=800,
                                              target_participants=1000)
         nc_details1.save()
 
         nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
-                                             created_by=user1,
+                                             created_by=user2,
                                              nodal_centre=nodal_centre2,
+                                             last_updated="Tue Nov 24 2015",
+                                             target_experiments=800,
                                              target_participants=2000)
-        nc_details2.save()
        
+        nc_details2.save()
         nc_created_by = nc_details1.get_created_by()
-        self.assertEqual(nc_created_by.name, "Joe Smith")
+        self.assertEqual(nc_created_by.name, user2.name)
 
 
 #+END_SRC
@@ -3418,20 +3482,33 @@ class TestNodalCoordinatorDetail(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_get_nc_nodal_centre(self):
         print "test_get_nc_nodal_centre"
-        role = Role(name=Name("OC"))
-        role.save()
+        role1 = Role(name=Name("admin"))
+        role1.save()
+
+        role2 = Role(name=Name("OC"))
+        role2.save()
+
+        role3 = Role(name=Name("NC"))
+        role3.save()
+
         user1 = User(name=Name("Joe Smith"),
                      email=Email("joe@smith.com"),
-                     role=role)
+                     role=role1)
         user1.save()
 
         user2 = User(name=Name("Will Smith"),
                      email=Email("will@smith.com"),
-                     role=Role(name=Name("NC")))
+                     role=role2)
         user2.save()
 
+        user3 = User(name=Name("john Smith"),
+                     email=Email("john@smith.com"),
+                     role=role3)
+        user3.save()
+
+
         nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
-                                   created_by=user1)
+                                   created_by=user2)
 
         nodal_centre1.save()
 
@@ -3440,19 +3517,21 @@ class TestNodalCoordinatorDetail(TestCase):
 
         nodal_centre2.save()
 
-
-        nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
-                                             created_by=user1,
+        nc_details1 = NodalCoordinatorDetail(user=user3, target_workshops=100,
+                                             created_by=user2,
                                              nodal_centre=nodal_centre1,
+                                             last_updated="Mon Nov 23 2015",
+                                             target_experiments=800,
                                              target_participants=1000)
         nc_details1.save()
 
         nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
-                                             created_by=user1,
+                                             created_by=user2,
                                              nodal_centre=nodal_centre2,
+                                             last_updated="Tue Nov 24 2015",
+                                             target_experiments=800,
                                              target_participants=2000)
         nc_details2.save()
-       
         nc_created_by = nc_details1.get_nodal_centre()
         self.assertEqual(nc_created_by.name, "IIIT-Hyd")
 
@@ -3469,20 +3548,33 @@ class TestNodalCoordinatorDetail(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_get_nc_details_toc(self):
         print "test_get_nc_details_toc"
-        role = Role(name=Name("OC"))
-        role.save()
+        role1 = Role(name=Name("admin"))
+        role1.save()
+
+        role2 = Role(name=Name("OC"))
+        role2.save()
+
+        role3 = Role(name=Name("NC"))
+        role3.save()
+
         user1 = User(name=Name("Joe Smith"),
                      email=Email("joe@smith.com"),
-                     role=role)
+                     role=role1)
         user1.save()
 
         user2 = User(name=Name("Will Smith"),
                      email=Email("will@smith.com"),
-                     role=Role(name=Name("NC")))
+                     role=role2)
         user2.save()
 
+        user3 = User(name=Name("john Smith"),
+                     email=Email("john@smith.com"),
+                     role=role3)
+        user3.save()
+
+
         nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
-                                   created_by=user1)
+                                   created_by=user2)
 
         nodal_centre1.save()
 
@@ -3491,19 +3583,21 @@ class TestNodalCoordinatorDetail(TestCase):
 
         nodal_centre2.save()
 
-        nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
-                                             created_by=user1,
+        nc_details1 = NodalCoordinatorDetail(user=user3, target_workshops=100,
+                                             created_by=user2,
                                              nodal_centre=nodal_centre1,
+                                             last_updated="Mon Nov 23 2015",
+                                             target_experiments=800,
                                              target_participants=1000)
         nc_details1.save()
 
         nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
-                                             created_by=user1,
+                                             created_by=user2,
                                              nodal_centre=nodal_centre2,
+                                             last_updated="Tue Nov 24 2015",
+                                             target_experiments=800,
                                              target_participants=2000)
         nc_details2.save()
-
-
         time = datetime.utcnow()
         year = time.year
         month = time.month    
@@ -3532,20 +3626,33 @@ class TestNodalCoordinatorDetail(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_get_nc_last_updated(self):
         print "test_get_nc_last_updated"
-        role = Role(name=Name("OC"))
-        role.save()
+        role1 = Role(name=Name("admin"))
+        role1.save()
+
+        role2 = Role(name=Name("OC"))
+        role2.save()
+
+        role3 = Role(name=Name("NC"))
+        role3.save()
+
         user1 = User(name=Name("Joe Smith"),
                      email=Email("joe@smith.com"),
-                     role=role)
+                     role=role1)
         user1.save()
 
         user2 = User(name=Name("Will Smith"),
                      email=Email("will@smith.com"),
-                     role=Role(name=Name("NC")))
+                     role=role2)
         user2.save()
 
+        user3 = User(name=Name("john Smith"),
+                     email=Email("john@smith.com"),
+                     role=role3)
+        user3.save()
+
+
         nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
-                                   created_by=user1)
+                                   created_by=user2)
 
         nodal_centre1.save()
 
@@ -3554,23 +3661,21 @@ class TestNodalCoordinatorDetail(TestCase):
 
         nodal_centre2.save()
 
-
-        nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
-                                             created_by=user1,
+        nc_details1 = NodalCoordinatorDetail(user=user3, target_workshops=100,
+                                             created_by=user2,
                                              nodal_centre=nodal_centre1,
                                              last_updated="Mon Nov 23 2015",
+                                             target_experiments=800,
                                              target_participants=1000)
         nc_details1.save()
 
         nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
-                                             created_by=user1,
+                                             created_by=user2,
                                              nodal_centre=nodal_centre2,
                                              last_updated="Tue Nov 24 2015",
+                                             target_experiments=800,
                                              target_participants=2000)
         nc_details2.save()
-
-
-       
         nc_last_updated = nc_details1.get_last_updated()
         self.assertEqual(nc_last_updated, "Mon Nov 23 2015")
 #+END_SRC
@@ -3585,20 +3690,34 @@ class TestNodalCoordinatorDetail(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_get_nc_target_workshops(self):
         print "test_get_nc_target_workshops"
-        role = Role(name=Name("OC"))
-        role.save()
+
+        role1 = Role(name=Name("admin"))
+        role1.save()
+
+        role2 = Role(name=Name("OC"))
+        role2.save()
+
+        role3 = Role(name=Name("NC"))
+        role3.save()
+
         user1 = User(name=Name("Joe Smith"),
                      email=Email("joe@smith.com"),
-                     role=role)
+                     role=role1)
         user1.save()
 
         user2 = User(name=Name("Will Smith"),
                      email=Email("will@smith.com"),
-                     role=Role(name=Name("NC")))
+                     role=role2)
         user2.save()
 
+        user3 = User(name=Name("john Smith"),
+                     email=Email("john@smith.com"),
+                     role=role3)
+        user3.save()
+
+
         nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
-                                   created_by=user1)
+                                   created_by=user2)
 
         nodal_centre1.save()
 
@@ -3607,20 +3726,21 @@ class TestNodalCoordinatorDetail(TestCase):
 
         nodal_centre2.save()
 
-        nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
-                                             created_by=user1,
+        nc_details1 = NodalCoordinatorDetail(user=user3, target_workshops=100,
+                                             created_by=user2,
                                              nodal_centre=nodal_centre1,
                                              last_updated="Mon Nov 23 2015",
+                                             target_experiments=800,
                                              target_participants=1000)
         nc_details1.save()
 
         nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
-                                             created_by=user1,
+                                             created_by=user2,
                                              nodal_centre=nodal_centre2,
                                              last_updated="Tue Nov 24 2015",
+                                             target_experiments=800,
                                              target_participants=2000)
         nc_details2.save()
-
         self.assertEqual(nc_details1.get_target_workshops(), 100)
         self.assertEqual(nc_details2.get_target_workshops(), 200)
 #+END_SRC
@@ -3635,20 +3755,33 @@ class TestNodalCoordinatorDetail(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_get_nc_target_participants(self):
         print "test_get_nc_target_participants"
-        role = Role(name=Name("OC"))
-        role.save()
+        role1 = Role(name=Name("admin"))
+        role1.save()
+
+        role2 = Role(name=Name("OC"))
+        role2.save()
+
+        role3 = Role(name=Name("NC"))
+        role3.save()
+
         user1 = User(name=Name("Joe Smith"),
                      email=Email("joe@smith.com"),
-                     role=role)
+                     role=role1)
         user1.save()
 
         user2 = User(name=Name("Will Smith"),
                      email=Email("will@smith.com"),
-                     role=Role(name=Name("NC")))
+                     role=role2)
         user2.save()
 
+        user3 = User(name=Name("john Smith"),
+                     email=Email("john@smith.com"),
+                     role=role3)
+        user3.save()
+
+
         nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
-                                   created_by=user1)
+                                   created_by=user2)
 
         nodal_centre1.save()
 
@@ -3657,21 +3790,21 @@ class TestNodalCoordinatorDetail(TestCase):
 
         nodal_centre2.save()
 
-
-        nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
-                                             created_by=user1,
+        nc_details1 = NodalCoordinatorDetail(user=user3, target_workshops=100,
+                                             created_by=user2,
                                              nodal_centre=nodal_centre1,
                                              last_updated="Mon Nov 23 2015",
+                                             target_experiments=800,
                                              target_participants=1000)
         nc_details1.save()
 
         nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
-                                             created_by=user1,
+                                             created_by=user2,
                                              nodal_centre=nodal_centre2,
                                              last_updated="Tue Nov 24 2015",
+                                             target_experiments=800,
                                              target_participants=2000)
         nc_details2.save()
-
         self.assertEqual(nc_details1.get_target_participants(), 1000)
         self.assertEqual(nc_details2.get_target_participants(), 2000)
 #+END_SRC
@@ -3686,20 +3819,33 @@ class TestNodalCoordinatorDetail(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_get_nc_target_experiments(self):
         print "test_get_nc_target_experiments"
-        role = Role(name=Name("OC"))
-        role.save()
+        role1 = Role(name=Name("admin"))
+        role1.save()
+
+        role2 = Role(name=Name("OC"))
+        role2.save()
+
+        role3 = Role(name=Name("NC"))
+        role3.save()
+
         user1 = User(name=Name("Joe Smith"),
                      email=Email("joe@smith.com"),
-                     role=role)
+                     role=role1)
         user1.save()
 
         user2 = User(name=Name("Will Smith"),
                      email=Email("will@smith.com"),
-                     role=Role(name=Name("NC")))
+                     role=role2)
         user2.save()
 
+        user3 = User(name=Name("john Smith"),
+                     email=Email("john@smith.com"),
+                     role=role3)
+        user3.save()
+
+
         nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
-                                   created_by=user1)
+                                   created_by=user2)
 
         nodal_centre1.save()
 
@@ -3708,8 +3854,8 @@ class TestNodalCoordinatorDetail(TestCase):
 
         nodal_centre2.save()
 
-        nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
-                                             created_by=user1,
+        nc_details1 = NodalCoordinatorDetail(user=user3, target_workshops=100,
+                                             created_by=user2,
                                              nodal_centre=nodal_centre1,
                                              last_updated="Mon Nov 23 2015",
                                              target_experiments=800,
@@ -3717,13 +3863,12 @@ class TestNodalCoordinatorDetail(TestCase):
         nc_details1.save()
 
         nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
-                                             created_by=user1,
+                                             created_by=user2,
                                              nodal_centre=nodal_centre2,
                                              last_updated="Tue Nov 24 2015",
                                              target_experiments=1600,
                                              target_participants=2000)
         nc_details2.save()
-
         self.assertEqual(nc_details1.get_target_experiments(), 800)
         self.assertEqual(nc_details2.get_target_experiments(), 1600)
 #+END_SRC
@@ -3738,20 +3883,33 @@ class TestNodalCoordinatorDetail(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_set_nc_last_updated(self):
         print "test_set_nc_last_updated"
-        role = Role(name=Name("OC"))
-        role.save()
+        role1 = Role(name=Name("admin"))
+        role1.save()
+
+        role2 = Role(name=Name("OC"))
+        role2.save()
+
+        role3 = Role(name=Name("NC"))
+        role3.save()
+
         user1 = User(name=Name("Joe Smith"),
                      email=Email("joe@smith.com"),
-                     role=role)
+                     role=role1)
         user1.save()
 
         user2 = User(name=Name("Will Smith"),
                      email=Email("will@smith.com"),
-                     role=Role(name=Name("NC")))
+                     role=role2)
         user2.save()
 
+        user3 = User(name=Name("john Smith"),
+                     email=Email("john@smith.com"),
+                     role=role3)
+        user3.save()
+
+
         nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
-                                   created_by=user1)
+                                   created_by=user2)
 
         nodal_centre1.save()
 
@@ -3760,8 +3918,8 @@ class TestNodalCoordinatorDetail(TestCase):
 
         nodal_centre2.save()
 
-        nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
-                                             created_by=user1,
+        nc_details1 = NodalCoordinatorDetail(user=user3, target_workshops=100,
+                                             created_by=user2,
                                              nodal_centre=nodal_centre1,
                                              last_updated="Mon Nov 23 2015",
                                              target_experiments=800,
@@ -3769,13 +3927,13 @@ class TestNodalCoordinatorDetail(TestCase):
         nc_details1.save()
 
         nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
-                                             created_by=user1,
+                                             created_by=user2,
                                              nodal_centre=nodal_centre2,
                                              last_updated="Tue Nov 24 2015",
                                              target_experiments=800,
                                              target_participants=2000)
-        nc_details2.save()
 
+        nc_details2.save()
         nc_details1.set_last_updated("Tue Nov 24 2015")
         nc_details1.save()
         self.assertEqual("Tue Nov 24 2015", nc_details1.last_updated)
@@ -3797,20 +3955,33 @@ class TestNodalCoordinatorDetail(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_set_nc_user(self):
         print "test_set_nc_user"
-        role = Role(name=Name("OC"))
-        role.save()
+        role1 = Role(name=Name("admin"))
+        role1.save()
+
+        role2 = Role(name=Name("OC"))
+        role2.save()
+
+        role3 = Role(name=Name("NC"))
+        role3.save()
+
         user1 = User(name=Name("Joe Smith"),
                      email=Email("joe@smith.com"),
-                     role=role)
+                     role=role1)
         user1.save()
 
         user2 = User(name=Name("Will Smith"),
                      email=Email("will@smith.com"),
-                     role=Role(name=Name("NC")))
+                     role=role2)
         user2.save()
 
+        user3 = User(name=Name("john Smith"),
+                     email=Email("john@smith.com"),
+                     role=role3)
+        user3.save()
+
+
         nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
-                                   created_by=user1)
+                                   created_by=user2)
 
         nodal_centre1.save()
 
@@ -3819,16 +3990,16 @@ class TestNodalCoordinatorDetail(TestCase):
 
         nodal_centre2.save()
 
-        nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
-                                             created_by=user1,
+        nc_details1 = NodalCoordinatorDetail(user=user3, target_workshops=100,
+                                             created_by=user2,
                                              nodal_centre=nodal_centre1,
                                              last_updated="Mon Nov 23 2015",
                                              target_experiments=800,
                                              target_participants=1000)
         nc_details1.save()
 
-        nc_details2 = NodalCoordinatorDetail(user=user1, target_workshops=200,
-                                             created_by=user1,
+        nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
+                                             created_by=user2,
                                              nodal_centre=nodal_centre2,
                                              last_updated="Tue Nov 24 2015",
                                              target_experiments=800,
@@ -3859,20 +4030,33 @@ class TestNodalCoordinatorDetail(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_set_nc_created_by(self):
         print "test_set_nc_created_by"
-        role = Role(name=Name("OC"))
-        role.save()
+        role1 = Role(name=Name("admin"))
+        role1.save()
+
+        role2 = Role(name=Name("OC"))
+        role2.save()
+
+        role3 = Role(name=Name("NC"))
+        role3.save()
+
         user1 = User(name=Name("Joe Smith"),
                      email=Email("joe@smith.com"),
-                     role=role)
+                     role=role1)
         user1.save()
 
         user2 = User(name=Name("Will Smith"),
                      email=Email("will@smith.com"),
-                     role=Role(name=Name("NC")))
+                     role=role2)
         user2.save()
 
+        user3 = User(name=Name("john Smith"),
+                     email=Email("john@smith.com"),
+                     role=role3)
+        user3.save()
+
+
         nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
-                                   created_by=user1)
+                                   created_by=user2)
 
         nodal_centre1.save()
 
@@ -3881,8 +4065,8 @@ class TestNodalCoordinatorDetail(TestCase):
 
         nodal_centre2.save()
 
-        nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
-                                             created_by=user1,
+        nc_details1 = NodalCoordinatorDetail(user=user3, target_workshops=100,
+                                             created_by=user2,
                                              nodal_centre=nodal_centre1,
                                              last_updated="Mon Nov 23 2015",
                                              target_experiments=800,
@@ -3895,8 +4079,6 @@ class TestNodalCoordinatorDetail(TestCase):
                                              last_updated="Tue Nov 24 2015",
                                              target_experiments=800,
                                              target_participants=2000)
-        nc_details2.save()
-
 
         nc_details1.set_created_by(user2)
         nc_details1.save()
@@ -3921,20 +4103,33 @@ class TestNodalCoordinatorDetail(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_set_nc_nodal_centre(self):
         print "test_set_nc_nodal_centre"
-        role = Role(name=Name("OC"))
-        role.save()
+        role1 = Role(name=Name("admin"))
+        role1.save()
+
+        role2 = Role(name=Name("OC"))
+        role2.save()
+
+        role3 = Role(name=Name("NC"))
+        role3.save()
+
         user1 = User(name=Name("Joe Smith"),
                      email=Email("joe@smith.com"),
-                     role=role)
+                     role=role1)
         user1.save()
 
         user2 = User(name=Name("Will Smith"),
                      email=Email("will@smith.com"),
-                     role=Role(name=Name("NC")))
+                     role=role2)
         user2.save()
 
+        user3 = User(name=Name("john Smith"),
+                     email=Email("john@smith.com"),
+                     role=role3)
+        user3.save()
+
+
         nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
-                                   created_by=user1)
+                                   created_by=user2)
 
         nodal_centre1.save()
 
@@ -3943,8 +4138,8 @@ class TestNodalCoordinatorDetail(TestCase):
 
         nodal_centre2.save()
 
-        nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
-                                             created_by=user1,
+        nc_details1 = NodalCoordinatorDetail(user=user3, target_workshops=100,
+                                             created_by=user2,
                                              nodal_centre=nodal_centre1,
                                              last_updated="Mon Nov 23 2015",
                                              target_experiments=800,
@@ -3957,7 +4152,6 @@ class TestNodalCoordinatorDetail(TestCase):
                                              last_updated="Tue Nov 24 2015",
                                              target_experiments=800,
                                              target_participants=2000)
-        nc_details2.save()
 
 
         nc_details1.set_nodal_centre(nodal_centre2)
@@ -3981,20 +4175,34 @@ class TestNodalCoordinatorDetail(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_set_nc_target_workshops(self):
         print "test_set_nc_target_workshops"
-        role = Role(name=Name("OC"))
-        role.save()
+
+        role1 = Role(name=Name("admin"))
+        role1.save()
+
+        role2 = Role(name=Name("OC"))
+        role2.save()
+
+        role3 = Role(name=Name("NC"))
+        role3.save()
+
         user1 = User(name=Name("Joe Smith"),
                      email=Email("joe@smith.com"),
-                     role=role)
+                     role=role1)
         user1.save()
 
         user2 = User(name=Name("Will Smith"),
                      email=Email("will@smith.com"),
-                     role=Role(name=Name("NC")))
+                     role=role2)
         user2.save()
 
+        user3 = User(name=Name("john Smith"),
+                     email=Email("john@smith.com"),
+                     role=role3)
+        user3.save()
+
+
         nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
-                                   created_by=user1)
+                                   created_by=user2)
 
         nodal_centre1.save()
 
@@ -4003,8 +4211,8 @@ class TestNodalCoordinatorDetail(TestCase):
 
         nodal_centre2.save()
 
-        nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
-                                             created_by=user1,
+        nc_details1 = NodalCoordinatorDetail(user=user3, target_workshops=100,
+                                             created_by=user2,
                                              nodal_centre=nodal_centre1,
                                              last_updated="Mon Nov 23 2015",
                                              target_experiments=800,
@@ -4012,7 +4220,7 @@ class TestNodalCoordinatorDetail(TestCase):
         nc_details1.save()
 
         nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
-                                             created_by=user1,
+                                             created_by=user2,
                                              nodal_centre=nodal_centre2,
                                              last_updated="Tue Nov 24 2015",
                                              target_experiments=800,
@@ -4034,20 +4242,34 @@ class TestNodalCoordinatorDetail(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_set_nc_target_participants(self):
         print "test_set_nc_target_participants"
-        role = Role(name=Name("OC"))
-        role.save()
+
+        role1 = Role(name=Name("admin"))
+        role1.save()
+
+        role2 = Role(name=Name("OC"))
+        role2.save()
+
+        role3 = Role(name=Name("NC"))
+        role3.save()
+
         user1 = User(name=Name("Joe Smith"),
                      email=Email("joe@smith.com"),
-                     role=role)
+                     role=role1)
         user1.save()
 
         user2 = User(name=Name("Will Smith"),
                      email=Email("will@smith.com"),
-                     role=Role(name=Name("NC")))
+                     role=role2)
         user2.save()
 
+        user3 = User(name=Name("john Smith"),
+                     email=Email("john@smith.com"),
+                     role=role3)
+        user3.save()
+
+
         nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
-                                   created_by=user1)
+                                   created_by=user2)
 
         nodal_centre1.save()
 
@@ -4056,8 +4278,8 @@ class TestNodalCoordinatorDetail(TestCase):
 
         nodal_centre2.save()
 
-        nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
-                                             created_by=user1,
+        nc_details1 = NodalCoordinatorDetail(user=user3, target_workshops=100,
+                                             created_by=user2,
                                              nodal_centre=nodal_centre1,
                                              last_updated="Mon Nov 23 2015",
                                              target_experiments=800,
@@ -4065,7 +4287,7 @@ class TestNodalCoordinatorDetail(TestCase):
         nc_details1.save()
 
         nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
-                                             created_by=user1,
+                                             created_by=user2,
                                              nodal_centre=nodal_centre2,
                                              last_updated="Tue Nov 24 2015",
                                              target_experiments=800,
@@ -4091,20 +4313,34 @@ class TestNodalCoordinatorDetail(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_set_nc_target_experiments(self):
         print "test_set_nc_target_experiments"
-        role = Role(name=Name("OC"))
-        role.save()
+
+        role1 = Role(name=Name("admin"))
+        role1.save()
+
+        role2 = Role(name=Name("OC"))
+        role2.save()
+
+        role3 = Role(name=Name("NC"))
+        role3.save()
+
         user1 = User(name=Name("Joe Smith"),
                      email=Email("joe@smith.com"),
-                     role=role)
+                     role=role1)
         user1.save()
 
         user2 = User(name=Name("Will Smith"),
                      email=Email("will@smith.com"),
-                     role=Role(name=Name("NC")))
+                     role=role2)
         user2.save()
 
+        user3 = User(name=Name("john Smith"),
+                     email=Email("john@smith.com"),
+                     role=role3)
+        user3.save()
+
+
         nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
-                                   created_by=user1)
+                                   created_by=user2)
 
         nodal_centre1.save()
 
@@ -4113,8 +4349,8 @@ class TestNodalCoordinatorDetail(TestCase):
 
         nodal_centre2.save()
 
-        nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
-                                             created_by=user1,
+        nc_details1 = NodalCoordinatorDetail(user=user3, target_workshops=100,
+                                             created_by=user2,
                                              nodal_centre=nodal_centre1,
                                              last_updated="Mon Nov 23 2015",
                                              target_experiments=800,
@@ -4122,13 +4358,12 @@ class TestNodalCoordinatorDetail(TestCase):
         nc_details1.save()
 
         nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
-                                             created_by=user1,
+                                             created_by=user2,
                                              nodal_centre=nodal_centre2,
                                              last_updated="Tue Nov 24 2015",
-                                             target_experiments=600,
+                                             target_experiments=800,
                                              target_participants=2000)
         nc_details2.save()
-
 
         nc_details1.set_target_experiments(1800)
         nc_details1.save()
@@ -4159,20 +4394,33 @@ class TestNodalCoordinatorDetail(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_nc_details_to_client(self):
         print "test_nc_details_to_client"
-        role = Role(name=Name("OC"))
-        role.save()
+        role1 = Role(name=Name("admin"))
+        role1.save()
+
+        role2 = Role(name=Name("OC"))
+        role2.save()
+
+        role3 = Role(name=Name("NC"))
+        role3.save()
+
         user1 = User(name=Name("Joe Smith"),
                      email=Email("joe@smith.com"),
-                     role=role)
+                     role=role1)
         user1.save()
 
         user2 = User(name=Name("Will Smith"),
                      email=Email("will@smith.com"),
-                     role=Role(name=Name("NC")))
+                     role=role2)
         user2.save()
 
+        user3 = User(name=Name("john Smith"),
+                     email=Email("john@smith.com"),
+                     role=role3)
+        user3.save()
+
+
         nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
-                                   created_by=user1)
+                                   created_by=user2)
 
         nodal_centre1.save()
 
@@ -4181,8 +4429,8 @@ class TestNodalCoordinatorDetail(TestCase):
 
         nodal_centre2.save()
 
-        nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
-                                             created_by=user1,
+        nc_details1 = NodalCoordinatorDetail(user=user3, target_workshops=100,
+                                             created_by=user2,
                                              nodal_centre=nodal_centre1,
                                              last_updated="Mon Nov 23 2015",
                                              target_experiments=800,
@@ -4190,12 +4438,11 @@ class TestNodalCoordinatorDetail(TestCase):
         nc_details1.save()
 
         nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
-                                             created_by=user1,
+                                             created_by=user2,
                                              nodal_centre=nodal_centre2,
                                              last_updated="Tue Nov 24 2015",
                                              target_experiments=800,
                                              target_participants=2000)
-        nc_details2.save()
 
         saved_nc = NodalCoordinatorDetail.get_by_id(1)
         saved_nc_dict = saved_nc.to_client()
@@ -6500,33 +6747,54 @@ class TestNodalCoordinatorDetail(TestCase):
 
     def test_get_all_nc_details(self):
         print "test_get_all_nc_details"
-        role = Role(name=Name("OC"))
-        role.save()
+        role1 = Role(name=Name("admin"))
+        role1.save()
+
+        role2 = Role(name=Name("OC"))
+        role2.save()
+
+        role3 = Role(name=Name("NC"))
+        role3.save()
+
         user1 = User(name=Name("Joe Smith"),
                      email=Email("joe@smith.com"),
-                     role=role)
+                     role=role1)
         user1.save()
 
         user2 = User(name=Name("Will Smith"),
                      email=Email("will@smith.com"),
-                     role=Role(name=Name("NC")))
+                     role=role2)
         user2.save()
 
-        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli", \
-                                    created_by=user1)
+        user3 = User(name=Name("john Smith"),
+                     email=Email("john@smith.com"),
+                     role=role3)
+        user3.save()
+
+
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
+                                   created_by=user2)
+
         nodal_centre1.save()
-        nodal_centre2 = NodalCentre(name="NIT", location="Warangal", \
-                                    created_by=user2)
+
+        nodal_centre2 = NodalCentre(name="NIT", location="Warangal",\
+                                   created_by=user2)
+
         nodal_centre2.save()
-        nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
-                                             created_by=user1,
+
+        nc_details1 = NodalCoordinatorDetail(user=user3, target_workshops=100,
+                                             created_by=user2,
                                              nodal_centre=nodal_centre1,
+                                             last_updated="Mon Nov 23 2015",
+                                             target_experiments=800,
                                              target_participants=1000)
         nc_details1.save()
 
         nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
-                                             created_by=user1,
+                                             created_by=user2,
                                              nodal_centre=nodal_centre2,
+                                             last_updated="Tue Nov 24 2015",
+                                             target_experiments=800,
                                              target_participants=2000)
         nc_details2.save()
 
@@ -6537,35 +6805,54 @@ class TestNodalCoordinatorDetail(TestCase):
 
     def test_get_one_nc_detail(self):
         print "test_get_one_nc_detail"
-        role = Role(name=Name("OC"))
-        role.save()
+        role1 = Role(name=Name("admin"))
+        role1.save()
+
+        role2 = Role(name=Name("OC"))
+        role2.save()
+
+        role3 = Role(name=Name("NC"))
+        role3.save()
+
         user1 = User(name=Name("Joe Smith"),
                      email=Email("joe@smith.com"),
-                     role=role)
+                     role=role1)
         user1.save()
 
         user2 = User(name=Name("Will Smith"),
                      email=Email("will@smith.com"),
-                     role=Role(name=Name("NC")))
+                     role=role2)
         user2.save()
 
-        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",
-                                    created_by=user1)
+        user3 = User(name=Name("john Smith"),
+                     email=Email("john@smith.com"),
+                     role=role3)
+        user3.save()
+
+
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
+                                   created_by=user2)
+
         nodal_centre1.save()
-        nodal_centre2 = NodalCentre(name="NIT", location="Warangal", \
-                                    created_by=user2)
+
+        nodal_centre2 = NodalCentre(name="NIT", location="Warangal",\
+                                   created_by=user2)
 
         nodal_centre2.save()
 
-        nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
-                                             created_by=user1,
+        nc_details1 = NodalCoordinatorDetail(user=user3, target_workshops=100,
+                                             created_by=user2,
                                              nodal_centre=nodal_centre1,
+                                             last_updated="Mon Nov 23 2015",
+                                             target_experiments=800,
                                              target_participants=1000)
         nc_details1.save()
 
         nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
-                                             created_by=user1,
+                                             created_by=user2,
                                              nodal_centre=nodal_centre2,
+                                             last_updated="Tue Nov 24 2015",
+                                             target_experiments=800,
                                              target_participants=2000)
         nc_details2.save()
 
@@ -6575,32 +6862,56 @@ class TestNodalCoordinatorDetail(TestCase):
         self.assertEqual(result['target_workshops'], 100)
 
     def test_update_existing_nc_details(self):
-        role = Role(name=Name("OC"))
-        role.save()
+        role1 = Role(name=Name("admin"))
+        role1.save()
+
+        role2 = Role(name=Name("OC"))
+        role2.save()
+
+        role3 = Role(name=Name("NC"))
+        role3.save()
+
         user1 = User(name=Name("Joe Smith"),
                      email=Email("joe@smith.com"),
-                     role=role)
+                     role=role1)
         user1.save()
 
         user2 = User(name=Name("Will Smith"),
                      email=Email("will@smith.com"),
-                     role=Role(name=Name("NC")))
+                     role=role2)
         user2.save()
 
-        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli", \
-                                    created_by=user1)
+        user3 = User(name=Name("john Smith"),
+                     email=Email("john@smith.com"),
+                     role=role3)
+        user3.save()
+
+
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
+                                   created_by=user2)
 
         nodal_centre1.save()
-        nodal_centre2 = NodalCentre(name="NIT", location="Warangal", \
-                                    created_by=user2)
+
+        nodal_centre2 = NodalCentre(name="NIT", location="Warangal",\
+                                   created_by=user2)
 
         nodal_centre2.save()
-        nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
-                                             created_by=user1,
+
+        nc_details1 = NodalCoordinatorDetail(user=user3, target_workshops=100,
+                                             created_by=user2,
                                              nodal_centre=nodal_centre1,
+                                             last_updated="Mon Nov 23 2015",
+                                             target_experiments=800,
                                              target_participants=1000)
         nc_details1.save()
 
+        nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
+                                             created_by=user2,
+                                             nodal_centre=nodal_centre2,
+                                             last_updated="Tue Nov 24 2015",
+                                             target_experiments=800,
+                                             target_participants=2000)
+        nc_details2.save()
 
         r = self.client.put('/nodal_coordinator_details/1',
                             data=json.dumps({'target_workshops': 200}))
@@ -6639,39 +6950,56 @@ class TestNodalCoordinatorDetail(TestCase):
 
     def test_delete_nc_details(self):
         print "test_delete_nc_details"
-        role = Role(name=Name("OC"))
-        role.save()
+        role1 = Role(name=Name("admin"))
+        role1.save()
+
+        role2 = Role(name=Name("OC"))
+        role2.save()
+
+        role3 = Role(name=Name("NC"))
+        role3.save()
+
         user1 = User(name=Name("Joe Smith"),
                      email=Email("joe@smith.com"),
-                     role=role)
+                     role=role1)
         user1.save()
 
         user2 = User(name=Name("Will Smith"),
                      email=Email("will@smith.com"),
-                     role=role)
+                     role=role2)
         user2.save()
 
-        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli", \
-                                    created_by=user1)
+        user3 = User(name=Name("john Smith"),
+                     email=Email("john@smith.com"),
+                     role=role3)
+        user3.save()
+
+
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
+                                   created_by=user2)
 
         nodal_centre1.save()
-        nodal_centre2 = NodalCentre(name="NIT", location="Warangal", \
-                                    created_by=user2)
+
+        nodal_centre2 = NodalCentre(name="NIT", location="Warangal",\
+                                   created_by=user2)
 
         nodal_centre2.save()
 
-        nc_details1 = NodalCoordinatorDetail(user=user2, target_workshops=100,
-                                             created_by=user1,
+        nc_details1 = NodalCoordinatorDetail(user=user3, target_workshops=100,
+                                             created_by=user2,
                                              nodal_centre=nodal_centre1,
+                                             last_updated="Mon Nov 23 2015",
+                                             target_experiments=800,
                                              target_participants=1000)
         nc_details1.save()
 
         nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
-                                             created_by=user1,
+                                             created_by=user2,
                                              nodal_centre=nodal_centre2,
+                                             last_updated="Tue Nov 24 2015",
+                                             target_experiments=800,
                                              target_participants=2000)
         nc_details2.save()
-
 
         r = self.client.delete('/nodal_coordinator_details/1')
         r = self.client.get('/nodal_coordinator_details')
