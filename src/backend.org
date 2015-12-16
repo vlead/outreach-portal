@@ -5520,6 +5520,7 @@ entity_map_types = {
             'not_approval_reason': str,
             'created': datetime,
             'last_updated': str,
+            'status': Status,
             'date': str
         }
     },
@@ -6223,8 +6224,7 @@ class TestWorkshop(TestCase):
                               participating_institutes="HCU, IIIT-Hyd",
                               no_of_participants_expected=100,
                               no_of_sessions=3, labs_planned=4,
-                              status=status, date="Mon Nov 23 2015 06:18:26\
-                              GMT-0500 (EST)")
+                              status=status, date="Mon Nov 23 2015 06:18:26 GMT-0500 (EST)")
 
         workshop_1.save()
 
@@ -6276,14 +6276,13 @@ class TestWorkshop(TestCase):
         r = self.client.post('/workshops',
                              data=json.dumps({'name': 'HCU workshop',
                                               'location': 'HCU',
-                                               'user': user1.to_client(),
-                                               'participating_institutes' : 'HCU, IIIT-Hyd',
-                                               'no_of_participants_expected' : 50,
-                                               'no_of_sessions' : 2,
-                                               'labs_planned' : 2,
-                                               'status': status.to_client(), 
-                                               'date' : 'Mon Nov 23 2015 06:18:26 GMT-0500 (EST)'
-                                          }))
+                                              'user': user1.to_client(),
+                                              'participating_institutes' : 'HCU, IIIT-Hyd',
+                                              'no_of_participants_expected' : 50,
+                                              'no_of_sessions' : 2,
+                                              'labs_planned' : 2,
+                                              'status': status.to_client(),
+                                              'date' : 'Mon Nov 23 2015 06:18:26 GMT-0500 (EST)'}))
         result = json.loads(r.data)
         self.assertEqual(result['name'], "HCU workshop")
 
