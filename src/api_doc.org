@@ -17,7 +17,6 @@
 - To use the API layer, your application will make an HTTP request and parse the response. 
 - The response format is JSON.
 - Your methods will be the standard HTTP methods like GET, PUT and POST.
-
 - Appropriate *HTTP verbs* for each action are listed below:
 |--------+----------------------------------------------|
 | *Verb* | *Description*                                |
@@ -53,10 +52,17 @@ Following is the list of current REST APIs provided by outreach portal:
 - /upload_document/<id> [POST]
 - /workshops [GET, POST]
 - /workshops/<int:id> [GET, PUT, DELETE]
+- /workshops/<int:id>?fields=field1,field2 [GET]
+- /workshops?query_param1=val1&query_param2=val2&..query_paramn=valn [GET]
 - /nodal_coordinator_details [GET, POST]
 - /nodal_coordinator_details/<int:id> [GET, PUT, DELETE]
 - /nodal_centres [GET, POST]
 - /nodal_centres/<int:id> [GET, PUT, DELETE]
+- /status [GET, POST]
+- /status/<int:id> [GET, PUT, DELETE]
+- /status/<int:id>?fields=field1,field2 [GET]
+- /status?query_param1=val1&query_param2=val2&..query_paramn=valn [GET]
+
 #+END_SRC
 
 *** /roles
@@ -622,6 +628,566 @@ null, "created": "2015-11-23T06:02:24", "email": "john@gmail.com", "role":
    /home/vlead/Desktop/outreach-docs/attendance-sheet.doc  
    #+END_SRC
 
+*** /status
+- Parameters
+|--------+-----------------------------------------------------------|
+| *Name* | *Description*                                             |
+|--------+-----------------------------------------------------------|
+| *id*   | Indicates the unique id of the status. *Example Value:* 2 |
+|--------+-----------------------------------------------------------|
+| *name* | Specifies the name of status. *Example Value:*  Upcoming  |
+|--------+-----------------------------------------------------------|
+
+- *GET* 
+ + Example Request
+  #+BEGIN_SRC
+  /status
+  #+END_SRC
+
+ + Example Result
+  #+BEGIN_SRC
+[{"id": 1, "name": "Upcoming"}, {"id": 2, "name": "Pending for Approval"},
+ {"id": 3, "name": "Approved"}, {"id": 4, "name": "Rejected"}] 
+  #+END_SRC
+
+- *POST* 
+ + Example Request
+  #+BEGIN_SRC
+ json =  {
+    "name" : "Upcoming"
+}
+  #+END_SRC
+
+ + Example Result
+
+  #+BEGIN_SRC
+{
+  "id": 1, 
+  "name": "Upcoming"
+}
+ #+END_SRC
+
+*** /status/<int:id>
+- Parameters
+
+|--------+-----------------------------------------------------------|
+| *Name* | *Description*                                             |
+|--------+-----------------------------------------------------------|
+| *id*   | Indicates the unique id of the status. *Example Value:* 2 |
+|--------+-----------------------------------------------------------|
+| *name* | Specifies the name of status. *Example Value:*  Upcoming  |
+|--------+-----------------------------------------------------------|
+
+- *GET* - 
+ + Example Request
+  #+BEGIN_EXAMPLE
+   /status/1 
+   #+END_EXAMPLE
+
+ + Example Result
+  #+BEGIN_SRC
+ {
+  "id": 1, 
+  "name": "Upcoming"
+ }
+  #+END_SRC
+
+- *PUT*
+ + Example Request
+   #+BEGIN_SRC
+     name = {"name":"Pending for Approval"}
+   #+END_SRC
+
+ + Example Result
+   #+BEGIN_SRC
+ {
+  "id": 1, 
+  "name": "Pending for Approval"
+ }
+    #+END_SRC
+- *DELETE*
+ + Example Result
+   #+BEGIN_SRC
+{
+  "id": "4", 
+  "status": "success"
+}
+    #+END_SRC
+
+*** /status/<int:id>?fields=field1,field2 
+
+- Parameters
+|--------+-----------------------------------------------------------|
+| *Name* | *Description*                                             |
+|--------+-----------------------------------------------------------|
+| *id*   | Indicates the unique id of the status. *Example Value:* 2 |
+|--------+-----------------------------------------------------------|
+| *name* | Specifies the name of status. *Example Value:*  Upcoming  |
+|--------+-----------------------------------------------------------|
+
+- *GET* -
+ + Example Request
+   #+BEGIN_SRC
+   /status/1?fields=name,id
+   #+END_SRC
+ 
+ + Example Result
+   #+BEGIN_SRC
+{
+  "id": 1, 
+  "name": "Upcoming"
+}
+   #+END_SRC
+
+*** /status?query_param1=val1&query_param2=val2&..query_paramn=valn
+- Parameters
+|--------+-----------------------------------------------------------|
+| *Name* | *Description*                                             |
+|--------+-----------------------------------------------------------|
+| *id*   | Indicates the unique id of the status. *Example Value:* 2 |
+|--------+-----------------------------------------------------------|
+| *name* | Specifies the name of status. *Example Value:*  Upcoming  |
+|--------+-----------------------------------------------------------|
+
+- *GET* -
+ + Example Request
+   #+BEGIN_SRC
+   /status?name=Upcoming
+   #+END_SRC
+ 
+ + Example Result
+   #+BEGIN_SRC
+[{"id": 1, "name": "Upcoming"}]
+   #+END_SRC
+
+*** /workshops
+- Parameters
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *Name*                        | *Description*                                                                                               |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *id*                          | Indicates the unique id of the workshop. *Example Value:* 2                                                 |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *location*                    | Specifies the location where workshop is being held.                                                        |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *user*                        | Specifies the user who created this workshop entry in the portal. *Example Value:* {"id" : 1 }              |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *name*                        | Name of the workshop. *Example Value:* Coordinators Training.                                               |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *participating_institutes*    | All the institutes attending/participating in the workshop.                                                 |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *date*                        | Date of the workshop.                                                                                       |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *no_of_participants_expected* | No of participants expected to attend the workshop.                                                         |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *participants_attended*       | No of participants that actually attended the workshop.                                                     |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *no_of_sessions*              | No of sessions planned for the workshop.                                                                    |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *duration_of_sessions*        | Duration of each session.                                                                                   |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *discipline(s)*               | Disciplines from which the labs/experiments were taken for demo in the workshop.                            |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *labs_planned*                | Total no of labs planned for the demo in the workshop.                                                      |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *experiments_conducted*       | Total experiments that were actually performed in the workshop.                                             |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *other_details*               | Any other relevant details related to the workshop. *Example Value:* Overwhelming response.                 |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *status*                      | Status of the workshop. *Example Value:* {"id" : 1 }                                                        |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *created*                     | The date and time at which this workshop entry was created in the portal. This is an automatic              |
+|                               | generated value.                                                                                            |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *last_updated*                | When was any of the workshop fields last updated.                                                           |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *cancellation_reason*         | The reason because of which the workshop was cancelled. This field indicates that the *status* of           |
+|                               | the workshop is Cancelled.                                                                                  |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *not_approval_reason*         | The reason because of which an outreach-coordinator didn't approve the workshop or documents related to it. |
+|                               | *Example Value:* Attendance sheet not uploaded for this workshop.                                           |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+
+- *GET* 
+ + Example Request
+  #+BEGIN_SRC
+  /workshops
+  #+END_SRC
+
+ + Example Result
+  #+BEGIN_SRC
+[{"status": {"id": 1, "name": "Upcoming"}, "not_approval_reason": null,
+"no_of_sessions": 3, "last_updated": null, "name": "Coordinators Training",
+"disciplines": null, "created": "2015-12-16T05:19:21", "duration_of_sessions":
+null, "cancellation_reason": null, "labs_planned": 4,
+"participating_institutes": "HCU, IIIT-Hyd", "other_details": null, "location":
+"IIIT-Hyd", "participants_attended": null, "date": "Mon Nov 23 2015 06:18:26
+GMT-0500 (EST)", "no_of_participants_expected": 100, "experiments_conducted":
+null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
+"2015-12-15T12:04:54", "email": "outreach-admin@vlabs.ac.in", "role": {"id": 1,
+"name": "admin"}, "id": 1}}]
+  #+END_SRC
+
+- *POST* 
+ + Example Request
+  #+BEGIN_SRC
+ json =  {
+"name":"Coordinators Training",
+"location":"IIIT-Hyd", 
+"user":{"id":1},                              
+"participating_institutes":"HCU, IIIT-Hyd",
+"no_of_participants_expected":100,
+"no_of_sessions":3, 
+"labs_planned":4,
+"status":{"id":1}, 
+"date":"Mon Nov 23 2015 06:18:26 GMT-0500 (EST)"
+}
+  #+END_SRC
+
+ + Example Result
+
+  #+BEGIN_SRC
+{
+  "cancellation_reason": null,
+  "created": "2015-12-16T05:19:21",
+  "date": "Mon Nov 23 2015 06:18:26 GMT-0500 (EST)",
+  "disciplines": null,
+  "duration_of_sessions": null,
+  "experiments_conducted": null,
+  "id": 1,
+  "labs_planned": 4,
+  "last_updated": null,
+  "location": "IIIT-Hyd",
+  "name": "Coordinators Training",
+  "no_of_participants_expected": 100,
+  "no_of_sessions": 3,
+  "not_approval_reason": null,
+  "other_details": null,
+  "participants_attended": null,
+  "participating_institutes": "HCU, IIIT-Hyd",
+  "status": {
+    "id": 1,
+    "name": "Upcoming"
+  },
+  "user": {
+    "created": "2015-12-15T12:04:54",
+    "email": "outreach-admin@vlabs.ac.in",
+    "id": 1,
+    "last_active": null,
+    "name": "admin",
+    "role": {
+      "id": 1,
+      "name": "admin"
+    }
+  }
+}
+ #+END_SRC
+
+*** /workshops/<int:id>
+- Parameters
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *Name*                        | *Description*                                                                                               |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *id*                          | Indicates the unique id of the workshop. *Example Value:* 2                                                 |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *location*                    | Specifies the location where workshop is being held.                                                        |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *user*                        | Specifies the user who created this workshop entry in the portal. *Example Value:* {"id" : 1 }              |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *name*                        | Name of the workshop. *Example Value:* Coordinators Training.                                               |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *participating_institutes*    | All the institutes attending/participating in the workshop.                                                 |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *date*                        | Date of the workshop.                                                                                       |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *no_of_participants_expected* | No of participants expected to attend the workshop.                                                         |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *participants_attended*       | No of participants that actually attended the workshop.                                                     |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *no_of_sessions*              | No of sessions planned for the workshop.                                                                    |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *duration_of_sessions*        | Duration of each session.                                                                                   |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *discipline(s)*               | Disciplines from which the labs/experiments were taken for demo in the workshop.                            |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *labs_planned*                | Total no of labs planned for the demo in the workshop.                                                      |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *experiments_conducted*       | Total experiments that were actually performed in the workshop.                                             |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *other_details*               | Any other relevant details related to the workshop. *Example Value:* Overwhelming response.                 |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *status*                      | Status of the workshop. *Example Value:* {"id" : 1 }                                                        |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *created*                     | The date and time at which this workshop entry was created in the portal. This is an automatic              |
+|                               | generated value.                                                                                            |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *last_updated*                | When was any of the workshop fields last updated.                                                           |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *cancellation_reason*         | The reason because of which the workshop was cancelled. This field indicates that the *status* of           |
+|                               | the workshop is Cancelled.                                                                                  |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *not_approval_reason*         | The reason because of which an outreach-coordinator didn't approve the workshop or documents related to it. |
+|                               | *Example Value:* Attendance sheet not uploaded for this workshop.                                           |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+
+- *GET* - 
+ + Example Request
+  #+BEGIN_EXAMPLE
+   /workshops/1 
+   #+END_EXAMPLE
+
+ + Example Result
+  #+BEGIN_SRC
+{
+  "cancellation_reason": null,
+  "created": "2015-12-16T05:19:21",
+  "date": "Mon Nov 23 2015 06:18:26 GMT-0500 (EST)",
+  "disciplines": null,
+  "duration_of_sessions": null,
+  "experiments_conducted": null,
+  "id": 1,
+  "labs_planned": 4,
+  "last_updated": null,
+  "location": "IIIT-Hyd",
+  "name": "Coordinators Training",
+  "no_of_participants_expected": 100,
+  "no_of_sessions": 3,
+  "not_approval_reason": null,
+  "other_details": null,
+  "participants_attended": null,
+  "participating_institutes": "HCU, IIIT-Hyd",
+  "status": {
+    "id": 1,
+    "name": "Upcoming"
+  },
+  "user": {
+    "created": "2015-12-15T12:04:54",
+    "email": "outreach-admin@vlabs.ac.in",
+    "id": 1,
+    "last_active": null,
+    "name": "admin",
+    "role": {
+      "id": 1,
+      "name": "admin"
+    }
+  }
+}
+  #+END_SRC
+
+- *PUT*
+ + Example Request
+   #+BEGIN_SRC
+ {
+  "labs_planned" : 10 
+ }
+   #+END_SRC
+
+ + Example Result
+   #+BEGIN_SRC
+{
+  "cancellation_reason": null,
+  "created": "2015-12-16T05:19:21",
+  "date": "Mon Nov 23 2015 06:18:26 GMT-0500 (EST)",
+  "disciplines": null,
+  "duration_of_sessions": null,
+  "experiments_conducted": null,
+  "id": 1,
+  "labs_planned": 10,
+  "last_updated": null,
+  "location": "IIIT-Hyd",
+  "name": "Coordinators Training",
+  "no_of_participants_expected": 100,
+  "no_of_sessions": 3,
+  "not_approval_reason": null,
+  "other_details": null,
+  "participants_attended": null,
+  "participating_institutes": "HCU, IIIT-Hyd",
+  "status": {
+    "id": 1,
+    "name": "Upcoming"
+  },
+  "user": {
+    "created": "2015-12-15T12:04:54",
+    "email": "outreach-admin@vlabs.ac.in",
+    "id": 1,
+    "last_active": null,
+    "name": "admin",
+    "role": {
+      "id": 1,
+      "name": "admin"
+    }
+  }
+}
+    #+END_SRC
+- *DELETE*
+ + Example Result
+   #+BEGIN_SRC
+{
+  "id": "1", 
+  "status": "success"
+}
+    #+END_SRC
+
+*** /workshops/<int:id>?fields=field1,field2 
+    
+- Parameters
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *Name*                        | *Description*                                                                                               |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *id*                          | Indicates the unique id of the workshop. *Example Value:* 2                                                 |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *location*                    | Specifies the location where workshop is being held.                                                        |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *user*                        | Specifies the user who created this workshop entry in the portal. *Example Value:* {"id" : 1 }              |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *name*                        | Name of the workshop. *Example Value:* Coordinators Training.                                               |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *participating_institutes*    | All the institutes attending/participating in the workshop.                                                 |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *date*                        | Date of the workshop.                                                                                       |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *no_of_participants_expected* | No of participants expected to attend the workshop.                                                         |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *participants_attended*       | No of participants that actually attended the workshop.                                                     |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *no_of_sessions*              | No of sessions planned for the workshop.                                                                    |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *duration_of_sessions*        | Duration of each session.                                                                                   |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *discipline(s)*               | Disciplines from which the labs/experiments were taken for demo in the workshop.                            |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *labs_planned*                | Total no of labs planned for the demo in the workshop.                                                      |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *experiments_conducted*       | Total experiments that were actually performed in the workshop.                                             |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *other_details*               | Any other relevant details related to the workshop. *Example Value:* Overwhelming response.                 |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *status*                      | Status of the workshop. *Example Value:* {"id" : 1 }                                                        |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *created*                     | The date and time at which this workshop entry was created in the portal. This is an automatic              |
+|                               | generated value.                                                                                            |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *last_updated*                | When was any of the workshop fields last updated.                                                           |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *cancellation_reason*         | The reason because of which the workshop was cancelled. This field indicates that the *status* of           |
+|                               | the workshop is Cancelled.                                                                                  |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *not_approval_reason*         | The reason because of which an outreach-coordinator didn't approve the workshop or documents related to it. |
+|                               | *Example Value:* Attendance sheet not uploaded for this workshop.                                           |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+
+
+- *GET* -
+ + Example Request
+   #+BEGIN_SRC
+   /workshops/1?fields=status,labs_planned
+   #+END_SRC
+ 
+ + Example Result
+   #+BEGIN_SRC
+{
+  "cancellation_reason": null,
+  "created": "2015-12-16T05:19:21",
+  "date": "Mon Nov 23 2015 06:18:26 GMT-0500 (EST)",
+  "disciplines": null,
+  "duration_of_sessions": null,
+  "experiments_conducted": null,
+  "id": 1,
+  "labs_planned": 10,
+  "last_updated": null,
+  "location": "IIIT-Hyd",
+  "name": "Coordinators Training",
+  "no_of_participants_expected": 100,
+  "no_of_sessions": 3,
+  "not_approval_reason": null,
+  "other_details": null,
+  "participants_attended": null,
+  "participating_institutes": "HCU, IIIT-Hyd",
+  "status": {
+    "id": 1,
+    "name": "Upcoming"
+  },
+  "user": {
+    "created": "2015-12-15T12:04:54",
+    "email": "outreach-admin@vlabs.ac.in",
+    "id": 1,
+    "last_active": null,
+    "name": "admin",
+    "role": {
+      "id": 1,
+      "name": "admin"
+    }
+  }
+}
+   #+END_SRC
+
+*** /workshops?query_param1=val1&query_param2=val2&..query_paramn=valn
+- Parameters
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *Name*                        | *Description*                                                                                               |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *id*                          | Indicates the unique id of the workshop. *Example Value:* 2                                                 |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *location*                    | Specifies the location where workshop is being held.                                                        |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *user*                        | Specifies the user who created this workshop entry in the portal. *Example Value:* {"id" : 1 }              |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *name*                        | Name of the workshop. *Example Value:* Coordinators Training.                                               |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *participating_institutes*    | All the institutes attending/participating in the workshop.                                                 |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *date*                        | Date of the workshop.                                                                                       |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *no_of_participants_expected* | No of participants expected to attend the workshop.                                                         |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *participants_attended*       | No of participants that actually attended the workshop.                                                     |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *no_of_sessions*              | No of sessions planned for the workshop.                                                                    |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *duration_of_sessions*        | Duration of each session.                                                                                   |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *discipline(s)*               | Disciplines from which the labs/experiments were taken for demo in the workshop.                            |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *labs_planned*                | Total no of labs planned for the demo in the workshop.                                                      |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *experiments_conducted*       | Total experiments that were actually performed in the workshop.                                             |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *other_details*               | Any other relevant details related to the workshop. *Example Value:* Overwhelming response.                 |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *status*                      | Status of the workshop. *Example Value:* {"id" : 1 }                                                        |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *created*                     | The date and time at which this workshop entry was created in the portal. This is an automatic              |
+|                               | generated value.                                                                                            |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *last_updated*                | When was any of the workshop fields last updated.                                                           |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *cancellation_reason*         | The reason because of which the workshop was cancelled. This field indicates that the *status* of           |
+|                               | the workshop is Cancelled.                                                                                  |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+| *not_approval_reason*         | The reason because of which an outreach-coordinator didn't approve the workshop or documents related to it. |
+|                               | *Example Value:* Attendance sheet not uploaded for this workshop.                                           |
+|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+
+
+- *GET* -
+ + Example Request
+   #+BEGIN_SRC
+   /workshops?name=Coordinators Training
+   #+END_SRC
+ 
+ + Example Result
+   #+BEGIN_SRC
+[{"status": {"id": 1, "name": "Upcoming"}, "not_approval_reason": null,
+"no_of_sessions": 3, "last_updated": null, "name": "Coordinators Training",
+"disciplines": null, "created": "2015-12-16T05:19:21", "duration_of_sessions":
+null, "cancellation_reason": null, "labs_planned": 10,
+"participating_institutes": "HCU, IIIT-Hyd", "other_details": null, "location":
+"IIIT-Hyd", "participants_attended": null, "date": "Mon Nov 23 2015 06:18:26
+GMT-0500 (EST)", "no_of_participants_expected": 100, "experiments_conducted":
+null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
+"2015-12-15T12:04:54", "email": "outreach-admin@vlabs.ac.in", "role": {"id": 1,
+"name": "admin"}, "id": 1}}]
+   #+END_SRC
+
 *** /workshop_reports
 - Parameters
 |---------------+------------------------------------------------------------------------------------------------------------|
@@ -643,18 +1209,26 @@ null, "created": "2015-11-23T06:02:24", "email": "john@gmail.com", "role":
 
  + Example Result
   #+BEGIN_SRC
-[{"path":
-"/home/vlead/Desktop/outreach-portal/build/code/src/static/uploads/madhavi.jpg",
-"workshop": {"status": "Upcoming", "not_approval_reason": null,
-"no_of_sessions": 3, "last_updated": null, "name": "Coordinators Training",
-"disciplines": null, "created": "2015-12-07T11:59:49", "duration_of_sessions":
-null, "cancellation_reason": null, "labs_planned": 4,
+[{"path": null, "workshop": {"status": {"id": 1, "name": "Upcoming"},
+"not_approval_reason": null, "no_of_sessions": 3, "last_updated": null, "name":
+"Coordinators Training", "disciplines": null, "created": "2015-12-16T05:19:21",
+"duration_of_sessions": null, "cancellation_reason": null, "labs_planned": 10,
 "participating_institutes": "HCU, IIIT-Hyd", "other_details": null, "location":
 "IIIT-Hyd", "participants_attended": null, "date": "Mon Nov 23 2015 06:18:26
 GMT-0500 (EST)", "no_of_participants_expected": 100, "experiments_conducted":
 null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
-"2015-12-07T09:48:22", "email": "outreach-admin@vlabs.ac.in", "role": {"id": 1,
-"name": "admin"}, "id": 1}}, "id": 1, "name": "College Photos"}]
+"2015-12-15T12:04:54", "email": "outreach-admin@vlabs.ac.in", "role": {"id": 1,
+"name": "admin"}, "id": 1}}, "id": 1, "name": "College Photos"}, {"path": null,
+"workshop": {"status": {"id": 1, "name": "Upcoming"}, "not_approval_reason":
+null, "no_of_sessions": 3, "last_updated": null, "name": "Coordinators
+Training", "disciplines": null, "created": "2015-12-16T05:19:21",
+"duration_of_sessions": null, "cancellation_reason": null, "labs_planned": 10,
+"participating_institutes": "HCU, IIIT-Hyd", "other_details": null, "location":
+"IIIT-Hyd", "participants_attended": null, "date": "Mon Nov 23 2015 06:18:26
+GMT-0500 (EST)", "no_of_participants_expected": 100, "experiments_conducted":
+null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
+"2015-12-15T12:04:54", "email": "outreach-admin@vlabs.ac.in", "role": {"id": 1,
+"name": "admin"}, "id": 1}}, "id": 2, "name": "Feedback Form "}]
   #+END_SRC
 
 - *POST* 
@@ -670,18 +1244,18 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
 
   #+BEGIN_SRC
 {
-  "id": 2,
+  "id": 1,
   "name": "College Photos",
   "path": null,
   "workshop": {
     "cancellation_reason": null,
-    "created": "2015-12-07T11:59:49",
+    "created": "2015-12-16T05:19:21",
     "date": "Mon Nov 23 2015 06:18:26 GMT-0500 (EST)",
     "disciplines": null,
     "duration_of_sessions": null,
     "experiments_conducted": null,
     "id": 1,
-    "labs_planned": 4,
+    "labs_planned": 10,
     "last_updated": null,
     "location": "IIIT-Hyd",
     "name": "Coordinators Training",
@@ -691,9 +1265,12 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
     "other_details": null,
     "participants_attended": null,
     "participating_institutes": "HCU, IIIT-Hyd",
-    "status": "Upcoming",
+    "status": {
+      "id": 1,
+      "name": "Upcoming"
+    },
     "user": {
-      "created": "2015-12-07T09:48:22",
+      "created": "2015-12-15T12:04:54",
       "email": "outreach-admin@vlabs.ac.in",
       "id": 1,
       "last_active": null,
@@ -734,16 +1311,16 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
 {
   "id": 1,
   "name": "College Photos",
-  "path": "/home/vlead/Desktop/outreach-portal/build/code/src/static/uploads/madhavi.jpg",
+  "path": null,
   "workshop": {
     "cancellation_reason": null,
-    "created": "2015-12-07T11:59:49",
+    "created": "2015-12-16T05:19:21",
     "date": "Mon Nov 23 2015 06:18:26 GMT-0500 (EST)",
     "disciplines": null,
     "duration_of_sessions": null,
     "experiments_conducted": null,
     "id": 1,
-    "labs_planned": 4,
+    "labs_planned": 10,
     "last_updated": null,
     "location": "IIIT-Hyd",
     "name": "Coordinators Training",
@@ -753,9 +1330,12 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
     "other_details": null,
     "participants_attended": null,
     "participating_institutes": "HCU, IIIT-Hyd",
-    "status": "Upcoming",
+    "status": {
+      "id": 1,
+      "name": "Upcoming"
+    },
     "user": {
-      "created": "2015-12-07T09:48:22",
+      "created": "2015-12-15T12:04:54",
       "email": "outreach-admin@vlabs.ac.in",
       "id": 1,
       "last_active": null,
@@ -780,47 +1360,46 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
  + Example Result
    #+BEGIN_SRC
 {
-  "id": 10, 
-  "name": "Feedback Form", 
-  "path": null, 
-  "user": {
-    "created": "2015-11-23T06:02:24", 
-    "email": "john@gmail.com", 
-    "id": 1, 
-    "last_active": null, 
-    "name": "John", 
-    "role": {
-      "id": 1, 
-      "name": "Admin"
+  "id": 1,
+  "name": "Feedback Form",
+  "path": null,
+  "workshop": {
+    "cancellation_reason": null,
+    "created": "2015-12-16T05:19:21",
+    "date": "Mon Nov 23 2015 06:18:26 GMT-0500 (EST)",
+    "disciplines": null,
+    "duration_of_sessions": null,
+    "experiments_conducted": null,
+    "id": 1,
+    "labs_planned": 10,
+    "last_updated": null,
+    "location": "IIIT-Hyd",
+    "name": "Coordinators Training",
+    "no_of_participants_expected": 100,
+    "no_of_sessions": 3,
+    "not_approval_reason": null,
+    "other_details": null,
+    "participants_attended": null,
+    "participating_institutes": "HCU, IIIT-Hyd",
+    "status": {
+      "id": 1,
+      "name": "Upcoming"
+    },
+    "user": {
+      "created": "2015-12-15T12:04:54",
+      "email": "outreach-admin@vlabs.ac.in",
+      "id": 1,
+      "last_active": null,
+      "name": "admin",
+      "role": {
+        "id": 1,
+        "name": "admin"
+      }
     }
   }
 }
    #+END_SRC
 
-+ Example Request
-   #+BEGIN_SRC
-    {"user": {"id" : 2} }
-   #+END_SRC
-
- + Example Result
-   #+BEGIN_SRC
-{
-  "id": 10, 
-  "name": "Feedback Form", 
-  "path": null, 
-  "user": {
-    "created": "2015-11-23T06:06:25", 
-    "email": "jane@abc.com", 
-    "id": 2, 
-    "last_active": "Tue Nov 23 2015 07:18:26 GMT-0500 (EST)", 
-    "name": "Jane", 
-    "role": {
-      "id": 1, 
-      "name": "Admin"
-    }
-  }
-}
-   #+END_SRC
 
 - *DELETE*
  + Example Result
@@ -855,20 +1434,19 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
  
  + Example Result
    #+BEGIN_SRC
-
 {
   "id": 1,
-  "name": "College Photos",
-  "path": "/home/vlead/Desktop/outreach-portal/build/code/src/static/uploads/madhavi.jpg",
+  "name": "Feedback Form",
+  "path": null,
   "workshop": {
     "cancellation_reason": null,
-    "created": "2015-12-07T11:59:49",
+    "created": "2015-12-16T05:19:21",
     "date": "Mon Nov 23 2015 06:18:26 GMT-0500 (EST)",
     "disciplines": null,
     "duration_of_sessions": null,
     "experiments_conducted": null,
     "id": 1,
-    "labs_planned": 4,
+    "labs_planned": 10,
     "last_updated": null,
     "location": "IIIT-Hyd",
     "name": "Coordinators Training",
@@ -878,9 +1456,12 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
     "other_details": null,
     "participants_attended": null,
     "participating_institutes": "HCU, IIIT-Hyd",
-    "status": "Upcoming",
+    "status": {
+      "id": 1,
+      "name": "Upcoming"
+    },
     "user": {
-      "created": "2015-12-07T09:48:22",
+      "created": "2015-12-15T12:04:54",
       "email": "outreach-admin@vlabs.ac.in",
       "id": 1,
       "last_active": null,
@@ -918,28 +1499,16 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
  
  + Example Result
    #+BEGIN_SRC
-[{"path":
-"/home/vlead/Desktop/outreach-portal/build/code/src/static/uploads/madhavi.jpg",
-"workshop": {"status": "Upcoming", "not_approval_reason": null,
-"no_of_sessions": 3, "last_updated": null, "name": "Coordinators Training",
-"disciplines": null, "created": "2015-12-07T11:59:49", "duration_of_sessions":
-null, "cancellation_reason": null, "labs_planned": 4,
+[{"path": null, "workshop": {"status": {"id": 1, "name": "Upcoming"},
+"not_approval_reason": null, "no_of_sessions": 3, "last_updated": null, "name":
+"Coordinators Training", "disciplines": null, "created": "2015-12-16T05:19:21",
+"duration_of_sessions": null, "cancellation_reason": null, "labs_planned": 10,
 "participating_institutes": "HCU, IIIT-Hyd", "other_details": null, "location":
 "IIIT-Hyd", "participants_attended": null, "date": "Mon Nov 23 2015 06:18:26
 GMT-0500 (EST)", "no_of_participants_expected": 100, "experiments_conducted":
 null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
-"2015-12-07T09:48:22", "email": "outreach-admin@vlabs.ac.in", "role": {"id": 1,
-"name": "admin"}, "id": 1}}, "id": 1, "name": "College Photos"}, {"path": null,
-"workshop": {"status": "Upcoming", "not_approval_reason": null,
-"no_of_sessions": 3, "last_updated": null, "name": "Coordinators Training",
-"disciplines": null, "created": "2015-12-07T11:59:49", "duration_of_sessions":
-null, "cancellation_reason": null, "labs_planned": 4,
-"participating_institutes": "HCU, IIIT-Hyd", "other_details": null, "location":
-"IIIT-Hyd", "participants_attended": null, "date": "Mon Nov 23 2015 06:18:26
-GMT-0500 (EST)", "no_of_participants_expected": 100, "experiments_conducted":
-null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
-"2015-12-07T09:48:22", "email": "outreach-admin@vlabs.ac.in", "role": {"id": 1,
-"name": "admin"}, "id": 1}}, "id": 2, "name": "College Photos"}]
+"2015-12-15T12:04:54", "email": "outreach-admin@vlabs.ac.in", "role": {"id": 1,
+"name": "admin"}, "id": 1}}, "id": 1, "name": "College Photos"}]
    #+END_SRC
 
 *** /upload_workshop_report/<id>
@@ -954,107 +1523,46 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
    #+BEGIN_SRC
    /home/vlead/Desktop/outreach-docs/feedback-form.pdf  
    #+END_SRC
-*** /workshops
+*** /nodal_centres
 - Parameters
-|-------------------------------+-------------------------------------------------------------------------------------------------------------|
-| *Name*                        | *Description*                                                                                               |
-|-------------------------------+-------------------------------------------------------------------------------------------------------------|
-| *id*                          | Indicates the unique id of the workshop. *Example Value:* 2                                                 |
-|-------------------------------+-------------------------------------------------------------------------------------------------------------|
-| *location*                    | Specifies the location where workshop is being held.                                                        |
-|-------------------------------+-------------------------------------------------------------------------------------------------------------|
-| *user*                        | Specifies the user who created this workshop entry in the portal. *Example Value:* {"id" : 1 }              |
-|-------------------------------+-------------------------------------------------------------------------------------------------------------|
-| *name*                        | Name of the workshop. *Example Value:* Coordinators Training.                                               |
-|-------------------------------+-------------------------------------------------------------------------------------------------------------|
-| *participating_institutes*    | All the institutes attending/participating in the workshop.                                                 |
-|-------------------------------+-------------------------------------------------------------------------------------------------------------|
-| *date*                        | Date of the workshop.                                                                                       |
-|-------------------------------+-------------------------------------------------------------------------------------------------------------|
-| *no_of_participants_expected* | No of participants expected to attend the workshop.                                                         |
-|-------------------------------+-------------------------------------------------------------------------------------------------------------|
-| *participants_attended*       | No of participants that actually attended the workshop.                                                     |
-|-------------------------------+-------------------------------------------------------------------------------------------------------------|
-| *no_of_sessions*              | No of sessions planned for the workshop.                                                                    |
-|-------------------------------+-------------------------------------------------------------------------------------------------------------|
-| *duration_of_sessions*        | Duration of each session.                                                                                   |
-|-------------------------------+-------------------------------------------------------------------------------------------------------------|
-| *discipline(s)*               | Disciplines from which the labs/experiments were taken for demo in the workshop.                            |
-|-------------------------------+-------------------------------------------------------------------------------------------------------------|
-| *labs_planned*                | Total no of labs planned for the demo in the workshop.                                                      |
-|-------------------------------+-------------------------------------------------------------------------------------------------------------|
-| *experiments_conducted*       | Total experiments that were actually performed in the workshop.                                             |
-|-------------------------------+-------------------------------------------------------------------------------------------------------------|
-| *other_details*               | Any other relevant details related to the workshop. *Example Value:* Overwhelming response.                 |
-|-------------------------------+-------------------------------------------------------------------------------------------------------------|
-| *status*                      | Status of the workshop. *Example Value:* Upcoming, Cancelled, Completed.                                    |
-|-------------------------------+-------------------------------------------------------------------------------------------------------------|
-| *created*                     | The date and time at which this workshop entry was created in the portal. This is an automatic              |
-|                               | generated value.                                                                                            |
-|-------------------------------+-------------------------------------------------------------------------------------------------------------|
-| *last_updated*                | When was any of the workshop fields last updated.                                                           |
-|-------------------------------+-------------------------------------------------------------------------------------------------------------|
-| *cancellation_reason*         | The reason because of which the workshop was cancelled. This field indicates that the *status* of           |
-|                               | the workshop is Cancelled.                                                                                  |
-|-------------------------------+-------------------------------------------------------------------------------------------------------------|
-| *not_approval_reason*         | The reason because of which an outreach-coordinator didn't approve the workshop or documents related to it. |
-|                               | *Example Value:* Attendance sheet not uploaded for this workshop.                                           |
-|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+|----------------+-------------------------------------------------------------|
+| *Name*         | *Description*                                               |
+|----------------+-------------------------------------------------------------|
+| *id*           | Indicates the unique id of the workshop. *Example Value:* 2 |
+|----------------+-------------------------------------------------------------|
+| *name*         | Name of the nodal centre.                                   |
+|----------------+-------------------------------------------------------------|
+| *location*     | Location of the nodal centre.                               |
+|----------------+-------------------------------------------------------------|
+| *created_by*   | The user who added this nodal centre in the portal.         |
+|----------------+-------------------------------------------------------------|
+| *coordinators* | Nodal Coordinators associated with this nodal centre.       |
+|----------------+-------------------------------------------------------------|
 
 - *GET* 
  + Example Request
   #+BEGIN_SRC
-  /workshops
+  /nodal_centres
   #+END_SRC
 
  + Example Result
   #+BEGIN_SRC
-{
-  "cancellation_reason": null, 
-  "created": "2015-12-02T09:44:03", 
-  "date": "Mon Nov 23 2015 06:18:26 GMT-0500 (EST)", 
-  "disciplines": null, 
-  "duration_of_sessions": null, 
-  "experiments_conducted": null, 
-  "id": 1, 
-  "labs_planned": 4, 
-  "last_updated": null, 
-  "location": "IIIT-Hyd", 
-  "name": "Coordinators Training", 
-  "no_of_participants_expected": 100, 
-  "no_of_sessions": 3, 
-  "not_approval_reason": null, 
-  "other_details": null, 
-  "participants_attended": null, 
-  "participating_institutes": "HCU, IIIT-Hyd", 
-  "status": "Upcoming", 
-  "user": {
-    "created": "2015-12-02T09:40:28", 
-    "email": "john@abc.com", 
-    "id": 1, 
-    "last_active": null, 
-    "name": "John Doe", 
-    "role": {
-      "id": 1, 
-      "name": "Admin"
-    }
-  }
-}
+[{"location": "Nampally", "id": 1, "created_by": {"name": "admin",
+"last_active": null, "created": "2015-12-07T09:48:22", "email":
+"outreach-admin@vlabs.ac.in", "role": {"id": 1, "name": "admin"}, "id": 1},
+"name": "HCU"}, {"location": "Gachibowli", "id": 2, "created_by": {"name":
+"admin", "last_active": null, "created": "2015-12-07T09:48:22", "email":
+"outreach-admin@vlabs.ac.in", "role": {"id": 1, "name": "admin"}, "id": 1},
+"name": "IIIT-H"}]
   #+END_SRC
 
 - *POST* 
  + Example Request
   #+BEGIN_SRC
  json =  {
- "name" : "Coordinators Training",
- "location" : "IIIT-Hyd", 
- "user" : {"id" : 1 },
- "participating_institutes" : "HCU, IIIT-Hyd",
- "no_of_participants_expected" : 100,
- "no_of_sessions" : 3, 
- "labs_planned" : 4,
- "status" : "Upcoming", 
- "date" : "Mon Nov 23 2015 06:18:26 GMT-0500 (EST)"
+"name":"IIIT-H",
+"location":"Gachibowli",
+"created_by":{"id":1}
 }
   #+END_SRC
 
@@ -1062,166 +1570,88 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
 
   #+BEGIN_SRC
 {
-  "cancellation_reason": null, 
-  "created": "2015-12-02T09:44:03", 
-  "date": "Mon Nov 23 2015 06:18:26 GMT-0500 (EST)", 
-  "disciplines": null, 
-  "duration_of_sessions": null, 
-  "experiments_conducted": null, 
-  "id": 1, 
-  "labs_planned": 4, 
-  "last_updated": null, 
-  "location": "IIIT-Hyd", 
-  "name": "Coordinators Training", 
-  "no_of_participants_expected": 100, 
-  "no_of_sessions": 3, 
-  "not_approval_reason": null, 
-  "other_details": null, 
-  "participants_attended": null, 
-  "participating_institutes": "HCU, IIIT-Hyd", 
-  "status": "Upcoming", 
-  "user": {
-    "created": "2015-12-02T09:40:28", 
-    "email": "john@abc.com", 
-    "id": 1, 
-    "last_active": null, 
-    "name": "John Doe", 
+  "created_by": {
+    "created": "2015-12-07T09:48:22",
+    "email": "outreach-admin@vlabs.ac.in",
+    "id": 1,
+    "last_active": null,
+    "name": "admin",
     "role": {
-      "id": 1, 
-      "name": "Admin"
+      "id": 1,
+      "name": "admin"
     }
-  }
+  },
+  "id": 3,
+  "location": "Gachibowli",
+  "name": "IIIT-H"
 }
  #+END_SRC
 
-*** /workshops/<int:id>
+*** /nodal_centres/<int:id>
 - Parameters
-|-------------------------------+-------------------------------------------------------------------------------------------------------------|
-| *Name*                        | *Description*                                                                                               |
-|-------------------------------+-------------------------------------------------------------------------------------------------------------|
-| *id*                          | Indicates the unique id of the workshop. *Example Value:* 2                                                 |
-|-------------------------------+-------------------------------------------------------------------------------------------------------------|
-| *location*                    | Specifies the location where workshop is being held.                                                        |
-|-------------------------------+-------------------------------------------------------------------------------------------------------------|
-| *user*                        | Specifies the user who created this workshop entry in the portal. *Example Value:* {"id" : 1 }              |
-|-------------------------------+-------------------------------------------------------------------------------------------------------------|
-| *name*                        | Name of the workshop. *Example Value:* Coordinators Training.                                               |
-|-------------------------------+-------------------------------------------------------------------------------------------------------------|
-| *participating_institutes*    | All the institutes attending/participating in the workshop.                                                 |
-|-------------------------------+-------------------------------------------------------------------------------------------------------------|
-| *date*                        | Date of the workshop.                                                                                       |
-|-------------------------------+-------------------------------------------------------------------------------------------------------------|
-| *no_of_participants_expected* | No of participants expected to attend the workshop.                                                         |
-|-------------------------------+-------------------------------------------------------------------------------------------------------------|
-| *participants_attended*       | No of participants that actually attended the workshop.                                                     |
-|-------------------------------+-------------------------------------------------------------------------------------------------------------|
-| *no_of_sessions*              | No of sessions planned for the workshop.                                                                    |
-|-------------------------------+-------------------------------------------------------------------------------------------------------------|
-| *duration_of_sessions*        | Duration of each session.                                                                                   |
-|-------------------------------+-------------------------------------------------------------------------------------------------------------|
-| *discipline(s)*               | Disciplines from which the labs/experiments were taken for demo in the workshop.                            |
-|-------------------------------+-------------------------------------------------------------------------------------------------------------|
-| *labs_planned*                | Total no of labs planned for the demo in the workshop.                                                      |
-|-------------------------------+-------------------------------------------------------------------------------------------------------------|
-| *experiments_conducted*       | Total experiments that were actually performed in the workshop.                                             |
-|-------------------------------+-------------------------------------------------------------------------------------------------------------|
-| *other_details*               | Any other relevant details related to the workshop. *Example Value:* Overwhelming response.                 |
-|-------------------------------+-------------------------------------------------------------------------------------------------------------|
-| *status*                      | Status of the workshop. *Example Value:* Upcoming, Cancelled, Completed.                                    |
-|-------------------------------+-------------------------------------------------------------------------------------------------------------|
-| *created*                     | The date and time at which this workshop entry was created in the portal. This is an automatic              |
-|                               | generated value.                                                                                            |
-|-------------------------------+-------------------------------------------------------------------------------------------------------------|
-| *last_updated*                | When was any of the workshop fields last updated.                                                           |
-|-------------------------------+-------------------------------------------------------------------------------------------------------------|
-| *cancellation_reason*         | The reason because of which the workshop was cancelled. This field indicates that the *status* of           |
-|                               | the workshop is Cancelled.                                                                                  |
-|-------------------------------+-------------------------------------------------------------------------------------------------------------|
-| *not_approval_reason*         | The reason because of which an outreach-coordinator didn't approve the workshop or documents related to it. |
-|                               | *Example Value:* Attendance sheet not uploaded for this workshop.                                           |
-|-------------------------------+-------------------------------------------------------------------------------------------------------------|
+|----------------+-------------------------------------------------------------|
+| *Name*         | *Description*                                               |
+|----------------+-------------------------------------------------------------|
+| *id*           | Indicates the unique id of the workshop. *Example Value:* 2 |
+|----------------+-------------------------------------------------------------|
+| *name*         | Name of the nodal centre.                                   |
+|----------------+-------------------------------------------------------------|
+| *location*     | Location of the nodal centre.                               |
+|----------------+-------------------------------------------------------------|
+| *created_by*   | The user who added this nodal centre in the portal.         |
+|----------------+-------------------------------------------------------------|
+| *coordinators* | Nodal Coordinators associated with this nodal centre.       |
+|----------------+-------------------------------------------------------------|
 
 - *GET* - 
  + Example Request
   #+BEGIN_EXAMPLE
-   /workshops/1 
+   /nodal_centres/1 
    #+END_EXAMPLE
 
  + Example Result
   #+BEGIN_SRC
 {
-  "cancellation_reason": null, 
-  "created": "2015-12-02T09:44:03", 
-  "date": "Mon Nov 23 2015 06:18:26 GMT-0500 (EST)", 
-  "disciplines": null, 
-  "duration_of_sessions": null, 
-  "experiments_conducted": null, 
-  "id": 1, 
-  "labs_planned": 4, 
-  "last_updated": null, 
-  "location": "IIIT-Hyd", 
-  "name": "Coordinators Training", 
-  "no_of_participants_expected": 100, 
-  "no_of_sessions": 3, 
-  "not_approval_reason": null, 
-  "other_details": null, 
-  "participants_attended": null, 
-  "participating_institutes": "HCU, IIIT-Hyd", 
-  "status": "Upcoming", 
-  "user": {
-    "created": "2015-12-02T09:40:28", 
-    "email": "john@abc.com", 
-    "id": 1, 
-    "last_active": null, 
-    "name": "John Doe", 
+  "created_by": {
+    "created": "2015-12-07T09:48:22",
+    "email": "outreach-admin@vlabs.ac.in",
+    "id": 1,
+    "last_active": null,
+    "name": "admin",
     "role": {
-      "id": 1, 
-      "name": "Admin"
+      "id": 1,
+      "name": "admin"
     }
-  }
+  },
+  "id": 1,
+  "location": "Nampally",
+  "name": "HCU"
 }
   #+END_SRC
 
 - *PUT*
  + Example Request
    #+BEGIN_SRC
- {
-  "labs_planned" : 10 
- }
+{"location": "Nampally"}
    #+END_SRC
 
  + Example Result
    #+BEGIN_SRC
 {
-  "cancellation_reason": null, 
-  "created": "2015-12-02T09:44:03", 
-  "date": "Mon Nov 23 2015 06:18:26 GMT-0500 (EST)", 
-  "disciplines": null, 
-  "duration_of_sessions": null, 
-  "experiments_conducted": null, 
-  "id": 1, 
-  "labs_planned": 10, 
-  "last_updated": null, 
-  "location": "IIIT-Hyd", 
-  "name": "Coordinators Training", 
-  "no_of_participants_expected": 100, 
-  "no_of_sessions": 3, 
-  "not_approval_reason": null, 
-  "other_details": null, 
-  "participants_attended": null, 
-  "participating_institutes": "HCU, IIIT-Hyd", 
-  "status": "Upcoming", 
-  "user": {
-    "created": "2015-12-02T09:40:28", 
-    "email": "john@abc.com", 
-    "id": 1, 
-    "last_active": null, 
-    "name": "John Doe", 
+  "created_by": {
+    "created": "2015-12-07T09:48:22",
+    "email": "outreach-admin@vlabs.ac.in",
+    "id": 1,
+    "last_active": null,
+    "name": "admin",
     "role": {
-      "id": 1, 
-      "name": "Admin"
+      "id": 1,
+      "name": "admin"
     }
-  }
+  },
+  "id": 1,
+  "location": "Nampally",
+  "name": "HCU"
 }
     #+END_SRC
 - *DELETE*
@@ -1232,6 +1662,78 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
   "status": "success"
 }
     #+END_SRC
+*** /nodal_centres/<int:id>?fields=field1,field2 
+    
+- Parameters
+|----------------+-------------------------------------------------------------|
+| *Name*         | *Description*                                               |
+|----------------+-------------------------------------------------------------|
+| *id*           | Indicates the unique id of the workshop. *Example Value:* 2 |
+|----------------+-------------------------------------------------------------|
+| *name*         | Name of the nodal centre.                                   |
+|----------------+-------------------------------------------------------------|
+| *location*     | Location of the nodal centre.                               |
+|----------------+-------------------------------------------------------------|
+| *created_by*   | The user who added this nodal centre in the portal.         |
+|----------------+-------------------------------------------------------------|
+| *coordinators* | Nodal Coordinators associated with this nodal centre.       |
+|----------------+-------------------------------------------------------------|
+
+- *GET* -
+ + Example Request
+   #+BEGIN_SRC
+   /nodal_centres/1?fields=name,location
+   #+END_SRC
+ 
+ + Example Result
+   #+BEGIN_SRC
+{
+  "created_by": {
+    "created": "2015-12-07T09:48:22",
+    "email": "outreach-admin@vlabs.ac.in",
+    "id": 1,
+    "last_active": null,
+    "name": "admin",
+    "role": {
+      "id": 1,
+      "name": "admin"
+    }
+  },
+  "id": 1,
+  "location": "Nampally",
+  "name": "HCU"
+}
+   #+END_SRC
+
+*** /nodal_centres?query_param1=val1&query_param2=val2&..query_paramn=valn
+- Parameters
+|----------------+-------------------------------------------------------------|
+| *Name*         | *Description*                                               |
+|----------------+-------------------------------------------------------------|
+| *id*           | Indicates the unique id of the workshop. *Example Value:* 2 |
+|----------------+-------------------------------------------------------------|
+| *name*         | Name of the nodal centre.                                   |
+|----------------+-------------------------------------------------------------|
+| *location*     | Location of the nodal centre.                               |
+|----------------+-------------------------------------------------------------|
+| *created_by*   | The user who added this nodal centre in the portal.         |
+|----------------+-------------------------------------------------------------|
+| *coordinators* | Nodal Coordinators associated with this nodal centre.       |
+|----------------+-------------------------------------------------------------|
+
+- *GET* -
+ + Example Request
+   #+BEGIN_SRC
+   /nodal_centres?name=HCU
+   #+END_SRC
+ 
+ + Example Result
+   #+BEGIN_SRC
+[{"location": "Nampally", "id": 1, "created_by": {"name": "admin",
+"last_active": null, "created": "2015-12-07T09:48:22", "email":
+"outreach-admin@vlabs.ac.in", "role": {"id": 1, "name": "admin"}, "id": 1},
+"name": "HCU"}]
+   #+END_SRC
 
 *** /nodal_coordinator_details
 - Parameters
@@ -1264,50 +1766,76 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
 
  + Example Result
   #+BEGIN_SRC
-
+[{"last_updated": null, "user": {"name": "admin", "last_active": null,
+"created": "2015-12-07T09:48:22", "email": "outreach-admin@vlabs.ac.in",
+"role": {"id": 1, "name": "admin"}, "id": 1}, "created": "2015-12-07T09:57:42",
+"target_workshops": 200, "target_experiments": null, "nodal_centre":
+{"location": "Nampally", "id": 1, "created_by": {"name": "admin",
+"last_active": null, "created": "2015-12-07T09:48:22", "email":
+"outreach-admin@vlabs.ac.in", "role": {"id": 1, "name": "admin"}, "id": 1},
+"name": "HCU"}, "target_participants": 2000, "id": 1, "created_by": {"name":
+"admin", "last_active": null, "created": "2015-12-07T09:48:22", "email":
+"outreach-admin@vlabs.ac.in", "role": {"id": 1, "name": "admin"}, "id": 1}}]
   #+END_SRC
 
 - *POST* 
  + Example Request
   #+BEGIN_SRC
- json =  {
-  "created_by": { "id" : 1},
-  "user" : {"id" : 2 },
-  "target_workshops" : 100,
-  "target_participants" : 1000
- }
+ json = {
+"user":{"id":1}, 
+"target_workshops":200,
+"created_by":{"id":1},
+"nodal_centre":{"id":1},
+"target_participants":2000
+}
   #+END_SRC
 
  + Example Result
 
   #+BEGIN_SRC
 {
-  "created": "2015-12-02T09:52:46", 
+  "created": "2015-12-07T09:57:42",
   "created_by": {
-    "created": "2015-12-02T09:40:40", 
-    "email": "jane@abc.com", 
-    "id": 2, 
-    "last_active": null, 
-    "name": "Jane Doe", 
+    "created": "2015-12-07T09:48:22",
+    "email": "outreach-admin@vlabs.ac.in",
+    "id": 1,
+    "last_active": null,
+    "name": "admin",
     "role": {
-      "id": 2, 
-      "name": "OC"
+      "id": 1,
+      "name": "admin"
     }
-  }, 
-  "id": 1, 
-  "last_updated": null, 
-  "target_experiments": null, 
-  "target_participants": 1000, 
-  "target_workshops": 100, 
+  },
+  "id": 1,
+  "last_updated": null,
+  "nodal_centre": {
+    "created_by": {
+      "created": "2015-12-07T09:48:22",
+      "email": "outreach-admin@vlabs.ac.in",
+      "id": 1,
+      "last_active": null,
+      "name": "admin",
+      "role": {
+        "id": 1,
+        "name": "admin"
+      }
+    },
+    "id": 1,
+    "location": "Gachibowli",
+    "name": "HCU"
+  },
+  "target_experiments": null,
+  "target_participants": 2000,
+  "target_workshops": 200,
   "user": {
-    "created": "2015-12-02T09:40:40", 
-    "email": "john@abc.com", 
-    "id": 2, 
-    "last_active": null, 
-    "name": "John Doe", 
+    "created": "2015-12-07T09:48:22",
+    "email": "outreach-admin@vlabs.ac.in",
+    "id": 1,
+    "last_active": null,
+    "name": "admin",
     "role": {
-      "id": 2, 
-      "name": "OC"
+      "id": 1,
+      "name": "admin"
     }
   }
 }
@@ -1344,33 +1872,49 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
 
  + Example Result
   #+BEGIN_SRC
- {
-  "created": "2015-12-02T09:52:46", 
+{
+  "created": "2015-12-07T09:57:42",
   "created_by": {
-    "created": "2015-12-02T09:40:40", 
-    "email": "jane@abc.com", 
-    "id": 2, 
-    "last_active": null, 
-    "name": "Jane Doe", 
+    "created": "2015-12-07T09:48:22",
+    "email": "outreach-admin@vlabs.ac.in",
+    "id": 1,
+    "last_active": null,
+    "name": "admin",
     "role": {
-      "id": 2, 
-      "name": "OC"
+      "id": 1,
+      "name": "admin"
     }
-  }, 
-  "id": 1, 
-  "last_updated": null, 
-  "target_experiments": null, 
-  "target_participants": 1000, 
-  "target_workshops": 100, 
+  },
+  "id": 1,
+  "last_updated": null,
+  "nodal_centre": {
+    "created_by": {
+      "created": "2015-12-07T09:48:22",
+      "email": "outreach-admin@vlabs.ac.in",
+      "id": 1,
+      "last_active": null,
+      "name": "admin",
+      "role": {
+        "id": 1,
+        "name": "admin"
+      }
+    },
+    "id": 1,
+    "location": "Nampally",
+    "name": "HCU"
+  },
+  "target_experiments": null,
+  "target_participants": 2000,
+  "target_workshops": 200,
   "user": {
-    "created": "2015-12-02T09:40:40", 
-    "email": "john@abc.com", 
-    "id": 2, 
-    "last_active": null, 
-    "name": "John Doe", 
+    "created": "2015-12-07T09:48:22",
+    "email": "outreach-admin@vlabs.ac.in",
+    "id": 1,
+    "last_active": null,
+    "name": "admin",
     "role": {
-      "id": 2, 
-      "name": "OC"
+      "id": 1,
+      "name": "admin"
     }
   }
 }
@@ -1387,128 +1931,182 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
  + Example Result
    #+BEGIN_SRC
 {
-  "created": "2015-12-02T09:52:46", 
+  "created": "2015-12-07T09:57:42",
   "created_by": {
-    "created": "2015-12-02T09:40:40", 
-    "email": "jane@abc.com", 
-    "id": 2, 
-    "last_active": null, 
-    "name": "Jane Doe", 
+    "created": "2015-12-07T09:48:22",
+    "email": "outreach-admin@vlabs.ac.in",
+    "id": 1,
+    "last_active": null,
+    "name": "admin",
     "role": {
-      "id": 2, 
-      "name": "OC"
+      "id": 1,
+      "name": "admin"
     }
-  }, 
-  "id": 1, 
-  "last_updated": null, 
-  "target_experiments": null, 
-  "target_participants": 500, 
-  "target_workshops": 100, 
+  },
+  "id": 1,
+  "last_updated": null,
+  "nodal_centre": {
+    "created_by": {
+      "created": "2015-12-07T09:48:22",
+      "email": "outreach-admin@vlabs.ac.in",
+      "id": 1,
+      "last_active": null,
+      "name": "admin",
+      "role": {
+        "id": 1,
+        "name": "admin"
+      }
+    },
+    "id": 1,
+    "location": "Nampally",
+    "name": "HCU"
+  },
+  "target_experiments": null,
+  "target_participants": 500,
+  "target_workshops": 200,
   "user": {
-    "created": "2015-12-02T09:40:40", 
-    "email": "john@abc.com", 
-    "id": 2, 
-    "last_active": null, 
-    "name": "John Doe", 
+    "created": "2015-12-07T09:48:22",
+    "email": "outreach-admin@vlabs.ac.in",
+    "id": 1,
+    "last_active": null,
+    "name": "admin",
     "role": {
-      "id": 2, 
-      "name": "OC"
+      "id": 1,
+      "name": "admin"
     }
   }
 }
     #+END_SRC
 - *DELETE*
  + Example Result
-   #+BEGIN_SRC
+  #+BEGIN_SRC
 {
   "id": "1", 
   "status": "success"
 }
     #+END_SRC
 
-*** /nodal_centres
+*** /nodal_coordinator_details/<int:id>?fields=field1,field2 
+    
 - Parameters
-|----------------+-------------------------------------------------------------|
-| *Name*         | *Description*                                               |
-|----------------+-------------------------------------------------------------|
-| *id*           | Indicates the unique id of the workshop. *Example Value:* 2 |
-|----------------+-------------------------------------------------------------|
-| *name*         | Name of the nodal centre.                                   |
-|----------------+-------------------------------------------------------------|
-| *location*     | Location of the nodal centre.                               |
-|----------------+-------------------------------------------------------------|
-| *created_by*   | The user who added this nodal centre in the portal.         |
-|----------------+-------------------------------------------------------------|
-| *coordinators* | Nodal Coordinators associated with this nodal centre.       |
-|----------------+-------------------------------------------------------------|
+|-----------------------+-------------------------------------------------------------------------------------------------|
+| *Name*                | *Description*                                                                                   |
+|-----------------------+-------------------------------------------------------------------------------------------------|
+| *id*                  | Indicates the unique id of the workshop. *Example Value:* 2                                     |
+|-----------------------+-------------------------------------------------------------------------------------------------|
+| *user*                | Indicates the user whose details are mentioned in this record. *Example Value:* {"id" : 2 }     |
+|-----------------------+-------------------------------------------------------------------------------------------------|
+| *created_by*          | Indicates the user who created this nodal coordinator entry. *Example Value:* {"id" : 1 }       |
+|-----------------------+-------------------------------------------------------------------------------------------------|
+| *created*             | The date and time at which these details were first created in the portal. This is an automatic |
+|                       | generated value.                                                                                |
+|-----------------------+-------------------------------------------------------------------------------------------------|
+| *last_updated*        | When was any of the fields last updated.                                                        |
+|-----------------------+-------------------------------------------------------------------------------------------------|
+| *target_workshops*    | No of workshops set as a target for the nodal coordinator.                                      |
+|-----------------------+-------------------------------------------------------------------------------------------------|
+| *target_participants* | No of participants set as a target for the nodal coordinator.                                   |
+|-----------------------+-------------------------------------------------------------------------------------------------|
+| *target_experiments*  | No of experiments set as a target for the nodal coordinator.                                    |
+|-----------------------+-------------------------------------------------------------------------------------------------|
 
-- *GET* 
- + Example Request
-  #+BEGIN_SRC
-  /nodal_centres
-  #+END_SRC
 
- + Example Result
-  #+BEGIN_SRC
-
-  #+END_SRC
-
-- *POST* 
- + Example Request
-  #+BEGIN_SRC
- json =  {
-
-}
-  #+END_SRC
-
- + Example Result
-
-  #+BEGIN_SRC
-
- #+END_SRC
-
-*** /nodal_centres/<int:id>
-- Parameters
-|----------------+-------------------------------------------------------------|
-| *Name*         | *Description*                                               |
-|----------------+-------------------------------------------------------------|
-| *id*           | Indicates the unique id of the workshop. *Example Value:* 2 |
-|----------------+-------------------------------------------------------------|
-| *name*         | Name of the nodal centre.                                   |
-|----------------+-------------------------------------------------------------|
-| *location*     | Location of the nodal centre.                               |
-|----------------+-------------------------------------------------------------|
-| *created_by*   | The user who added this nodal centre in the portal.         |
-|----------------+-------------------------------------------------------------|
-| *coordinators* | Nodal Coordinators associated with this nodal centre.       |
-|----------------+-------------------------------------------------------------|
-
-- *GET* - 
- + Example Request
-  #+BEGIN_EXAMPLE
-   /nodal_centres/1 
-   #+END_EXAMPLE
-
- + Example Result
-  #+BEGIN_SRC
-
-  #+END_SRC
-
-- *PUT*
+- *GET* -
  + Example Request
    #+BEGIN_SRC
-
+   nodal_coordinator_details/1?fields=target_workshops,target_experiments
+   #+END_SRC
+ 
+ + Example Result
+   #+BEGIN_SRC
+{
+  "created": "2015-12-07T09:57:42",
+  "created_by": {
+    "created": "2015-12-07T09:48:22",
+    "email": "outreach-admin@vlabs.ac.in",
+    "id": 1,
+    "last_active": null,
+    "name": "admin",
+    "role": {
+      "id": 1,
+      "name": "admin"
+    }
+  },
+  "id": 1,
+  "last_updated": null,
+  "nodal_centre": {
+    "created_by": {
+      "created": "2015-12-07T09:48:22",
+      "email": "outreach-admin@vlabs.ac.in",
+      "id": 1,
+      "last_active": null,
+      "name": "admin",
+      "role": {
+        "id": 1,
+        "name": "admin"
+      }
+    },
+    "id": 1,
+    "location": "Nampally",
+    "name": "HCU"
+  },
+  "target_experiments": null,
+  "target_participants": 500,
+  "target_workshops": 200,
+  "user": {
+    "created": "2015-12-07T09:48:22",
+    "email": "outreach-admin@vlabs.ac.in",
+    "id": 1,
+    "last_active": null,
+    "name": "admin",
+    "role": {
+      "id": 1,
+      "name": "admin"
+    }
+  }
+}
    #+END_SRC
 
- + Example Result
-   #+BEGIN_SRC
+*** /nodal_coordinator_details?query_param1=val1&query_param2=val2&..query_paramn=valn
+- Parameters
+|-----------------------+-------------------------------------------------------------------------------------------------|
+| *Name*                | *Description*                                                                                   |
+|-----------------------+-------------------------------------------------------------------------------------------------|
+| *id*                  | Indicates the unique id of the workshop. *Example Value:* 2                                     |
+|-----------------------+-------------------------------------------------------------------------------------------------|
+| *user*                | Indicates the user whose details are mentioned in this record. *Example Value:* {"id" : 2 }     |
+|-----------------------+-------------------------------------------------------------------------------------------------|
+| *created_by*          | Indicates the user who created this nodal coordinator entry. *Example Value:* {"id" : 1 }       |
+|-----------------------+-------------------------------------------------------------------------------------------------|
+| *created*             | The date and time at which these details were first created in the portal. This is an automatic |
+|                       | generated value.                                                                                |
+|-----------------------+-------------------------------------------------------------------------------------------------|
+| *last_updated*        | When was any of the fields last updated.                                                        |
+|-----------------------+-------------------------------------------------------------------------------------------------|
+| *target_workshops*    | No of workshops set as a target for the nodal coordinator.                                      |
+|-----------------------+-------------------------------------------------------------------------------------------------|
+| *target_participants* | No of participants set as a target for the nodal coordinator.                                   |
+|-----------------------+-------------------------------------------------------------------------------------------------|
+| *target_experiments*  | No of experiments set as a target for the nodal coordinator.                                    |
+|-----------------------+-------------------------------------------------------------------------------------------------|
 
-    #+END_SRC
-- *DELETE*
+- *GET* -
+ + Example Request
+   #+BEGIN_SRC
+   /nodal_coordinator_details?user_id=1
+   #+END_SRC
+ 
  + Example Result
    #+BEGIN_SRC
-{
-  "id": "1", 
-  "status": "success"
-}
-    #+END_SRC
+[{"last_updated": null, "user": {"name": "admin", "last_active": null,
+"created": "2015-12-07T09:48:22", "email": "outreach-admin@vlabs.ac.in",
+"role": {"id": 1, "name": "admin"}, "id": 1}, "created": "2015-12-07T09:57:42",
+"target_workshops": 200, "target_experiments": null, "nodal_centre":
+{"location": "Nampally", "id": 1, "created_by": {"name": "admin",
+"last_active": null, "created": "2015-12-07T09:48:22", "email":
+"outreach-admin@vlabs.ac.in", "role": {"id": 1, "name": "admin"}, "id": 1},
+"name": "HCU"}, "target_participants": 500, "id": 1, "created_by": {"name":
+"admin", "last_active": null, "created": "2015-12-07T09:48:22", "email":
+"outreach-admin@vlabs.ac.in", "role": {"id": 1, "name": "admin"}, "id": 1}}]
+   #+END_SRC
+
