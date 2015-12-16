@@ -5596,21 +5596,27 @@ def save_reference_documents(id):
         <input type=submit value=Upload>
         </form>
         '''
-    if request.method == 'POST':
-        file = request.files['file']
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            current_time = datetime.utcnow()
-            dir_path = "%s" % (UPLOAD_DIR_PATH)
-            file_path = "%s%s" % (dir_path, filename)
-            db_path = "%s%s" % (DB_PATH, filename)
-            file.save(file_path)
 
-        path = {'path': db_path}
+    if request.method == 'POST':
         url = APP_URL + "/reference_documents/"\
               + id
-        response = requests.put(url, data=path)
-        return file_path
+        response = requests.get(url)
+
+        file = request.files['file']
+        if response.ok:
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                current_time = datetime.utcnow()
+                dir_path = "%s" % (UPLOAD_DIR_PATH)
+                file_path = "%s%s" % (dir_path, filename)
+                db_path = "%s%s" % (DB_PATH, filename)
+                file.save(file_path)
+
+            path = {'path': db_path}
+            response = requests.put(url, data=path)
+            return file_path
+        else:
+            return "No entry for ReferenceDocuments entity with given id"
 
 @api.route('/upload_workshop_report/<id>', methods=['GET', 'POST'])
 def save_workshop_documents(id):
@@ -5625,19 +5631,24 @@ def save_workshop_documents(id):
         </form>
         '''
     if request.method == 'POST':
-        file = request.files['file']
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            current_time = datetime.utcnow()
-            dir_path = "%s" % (UPLOAD_DIR_PATH)
-            file_path = "%s%s" % (dir_path, filename)
-            file.save(file_path)
-
-        path = {'path': file_path}
         url = APP_URL + "/workshop_reports/"\
               + id
-        response = requests.put(url, data=path)
-        return file_path
+        response = requests.get(url)
+        
+        file = request.files['file']
+        if response.ok:
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                current_time = datetime.utcnow()
+                dir_path = "%s" % (UPLOAD_DIR_PATH)
+                file_path = "%s%s" % (dir_path, filename)
+                file.save(file_path)
+
+            path = {'path': file_path}
+            response = requests.put(url, data=path)
+            return file_path
+        else:
+            return "No entry for 'WorkshopReports' entity with given id"
 
 def allowed_file(filename):
     return '.' in filename and \
