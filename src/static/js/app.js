@@ -96,6 +96,9 @@ angular.module('outreachApp',['ngRoute','outreachApp.controllers','autocomplete'
 	 }).when('/edit-centre/:id', {
 	     templateUrl : '/static/partials/edit-centre.html',
 	     controller  : 'edit-centre'
+	 }).when('/oc-manage-workshops', {
+	     templateUrl : '/static/partials/oc-manage-workshops.html',
+	     controller  : 'oc-manage-workshops'
 	 });
      
      

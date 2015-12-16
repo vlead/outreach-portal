@@ -482,7 +482,7 @@ angular.module('outreachApp.controllers',[])
             success(function(data, status, headers, config)
             {
                 $scope.status = "Success";
-                $location.path("/manage-workshops")
+                history.back();
 
                 
             }).
@@ -530,7 +530,7 @@ angular.module('outreachApp.controllers',[])
                          "status" : "Upcoming",  "date" : $scope.message.date}).success(function(data, status, headers, config)
                 {
                     $scope.status = "Success";
-                    window.location.href = "#/manage-workshops";
+                    history.back();
                                       
                 }).
                 error(function(data, status, headers, config)
@@ -840,6 +840,76 @@ angular.module('outreachApp.controllers',[])
     }
 
 
+}).controller("oc-manage-workshops", function($scope, $http, $routeParams, $route, $window) {
+   
+    $http.get('/workshops?user_id='+$window.number).
+    success(function(data, status, headers, config) 
+            {
+
+                today = new Date();
+                var upcoming = 0;
+                var ups = [];
+                var history = [];
+                var pending = [];
+	        for(i=0;i<data.length;i++)
+	        {
+                    
+                    workshop_date = new Date(data[i].date);
+                    var workshop_id = data[i].id ;
+                    if ((today > workshop_date) & (data[i].status == "Upcoming")){
+                        $http.put('/workshops/'+workshop_id.toString(), {'status': 'Pending for approval'}).success(function(data, status){ console.log('Status success'); });
+                    }
+                    if( (today <= workshop_date) ||(today.getDate() == workshop_date.getDate() & (today.getMonth() == workshop_date.getMonth()) 
+                                                    & (today.getFullYear() == workshop_date.getFullYear())))
+                    {
+                        ups.push(data[i]);
+		        upcoming = upcoming + 1;
+	            }
+	        
+                    else if(data[i].status == "Approved")
+                    {
+                        history.push(data[i]);
+                    }
+                    else if(data[i].status == "Pending for approval")
+                    {
+                        ups.push(data[i]);
+                        upcoming = upcoming + 1;
+                    }
+                }
+                $scope.history = history;
+                $scope.pending = pending;
+                $scope.ups = ups;
+                $scope.upcoming = upcoming;
+          //    $scope.experiments = experiments;
+          //    $scope.count = count;
+                
+                
+    }).
+    error(function(data, status, headers, config)
+    {
+      console.log(data);
+      
+    });
+    $scope.cancel = function(id)
+    {
+        if(confirm("Are you sure!") == true)
+        {
+            $http.delete('/workshops/'+id).
+                success(function(data, status, headers, config) 
+                        {
+                            $route.reload();
+                            
+                            
+                        }).
+                error(function(data, status, headers, config)
+                      {
+                          console.log(data);
+                          
+                      });
+            
+        }
+    }
+  
 });
 
 
