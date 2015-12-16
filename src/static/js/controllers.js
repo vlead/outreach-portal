@@ -637,35 +637,50 @@ angular.module('outreachApp.controllers',[])
 
 }).controller("manage-nc", function($scope, $http, $routeParams, $window, $route) {
     $http.get('/nodal_coordinator_details?created_by_id='+ $window.number).success(function(data, status, headers, config)
-    {
+                                                                                   {   
         var coordinators = [];                                                                             
         for( i=0;i<data.length;i++)
         {
+            //console.log(data[i].user.id);
+            var b = data[i].id;
             
-            $http.get('/users/'+ data[i].id).success(function(data, status, headers, config)
-                                            {  
+            $http.get('/users/'+ data[i].user.id).success(function(data, status, headers, config)
+                                                          {
+                                                              data.nc_details_id= b;
                                                 coordinators.push(data);
-                                                console.log(data);
+                                                console.log(coordinators);
                                                 
                                             }).error(function(data, status, headers, config)
                                                      {
-                                                         console.log(data);
+                                                        // console.log(data);
                                                          
                                                      });
         }
         $scope.coordinators=coordinators;
-        console.log(data);
+        
                
     }).error(function(data, status, headers, config)
     {
       console.log(data);
       
     });
-    $scope.del =  function(a)
+    $scope.del =  function(a, b)
     {
         if(confirm("Are you sure!") == true)
         {
-            $http.delete('/users/'+a).
+            $http.delete('/nodal_coordinator_details/'+a).
+                success(function(data, status, headers, config) 
+                        {
+                           $route.reload();
+                          // window.location.href = "#/manage-nc";
+                            
+                        }).
+                error(function(data, status, headers, config)
+                      {
+                          console.log(data);
+                      
+                      });
+            $http.delete('/users/'+b).
                 success(function(data, status, headers, config) 
                         {
                            $route.reload();
@@ -696,10 +711,10 @@ angular.module('outreachApp.controllers',[])
             
                  id = data.id;       
                             $scope.status = "Success";
-                            alert(id);
+                            
                   $http.post('/nodal_coordinator_details',
                        {"user": {"id": id}, "target_workshops":200,"target_experiments":400,"created_by":{"id": $window.number},
-                        "nodal_centre":{"id":12},"target_participants":2000} ).success(function(data, status, headers, config)
+                        "nodal_centre":{"id":1},"target_participants":2000} ).success(function(data, status, headers, config)
                             {
                                                                                                                                                                                                        window.location.href = "#/manage-nc";                                                                                                                                                                                   
                                                                                                                                                                                                                   }).error(function(data, status, headers, config)
