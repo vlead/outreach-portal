@@ -574,7 +574,281 @@ angular.module('outreachApp.controllers',[])
               $scope.movies = data;
         });
     }
+}).controller("oc-dashboard", function($scope, $http, $routeParams, $route, $window) {
+   // alert($window.number);
+    $http.get('/workshops?user_id='+$window.number).
+    success(function(data, status, headers, config) 
+            {
+                var count = 0;
+                var participants = 0;
+                var experiments = 0;
+                for(i=0;i<data.length;i++)
+                {
+                    count = count +1;
+                    participants = data[i].participants_attended + participants;
+                    experiments = data[i].experiments_conducted + experiments;
+                    
+                    //    alert(typeof(data[i].participants_attended));
+                   
+                }
+                $scope.participants = participants;
+                $scope.experiments = experiments;
+                $scope.count = count;
+                
+                
+    }).
+    error(function(data, status, headers, config)
+    {
+      console.log(data);
+      
+    });
+    $http.get('/nodal_coordinator_details?user_id='+$window.number).
+    success(function(data, status, headers, config) 
+            {
+
+                var target_workshops = 0;
+                var target_experiments = 0;
+                var target_participants = 0;
+                
+                for(i=0;i<data.length;i++)
+                {
+
+                    target_workshops = data[i].target_workshops + target_workshops;
+                    target_experiments = data[i].target_experiments + target_experiments;
+                    target_participants = data[i].target_participants + target_participants;
+                    
+                   
+                }
+                $scope.target_workshops = target_workshops;
+                $scope.target_experiments = target_experiments;
+                $scope.target_participants = target_participants;
+                
+                
+                
+                
+    }).
+    error(function(data, status, headers, config)
+    {
+      console.log(data);
+      
+    });
+    
+    
+
+}).controller("manage-nc", function($scope, $http, $routeParams, $window) {
+    $http.get('/users/3').success(function(data, status, headers, config)
+    {
+        $scope.message= data;
+        
+      
+    }).error(function(data, status, headers, config)
+    {
+      console.log(data);
+      
+    });
+    $scope.del =  function(a)
+    {
+        if(confirm("Are you sure!") == true)
+        {
+            $http.delete('/users/'+a).
+                success(function(data, status, headers, config) 
+                        {
+                            
+                           window.location.href = "#/managenc";
+                            
+                        }).
+                error(function(data, status, headers, config)
+                      {
+                          console.log(data);
+                      
+                      });
+            
+        }
+        else
+            return;
+         
+    }
+    
+}).controller("add-nc", function($scope, $http, $routeParams, $window, $route) {
+    $scope.id = 0;
+    $scope.submit = function(isvalid)
+    {
+        if(isvalid)
+        {
+            $http.post('/users',{'name' : $scope.name,'email' : $scope.email,'role' : { 'id' : 3 } } ).
+                success(function(data, status, headers, config)
+                        {
+            
+                 id = data.id;       
+                            $scope.status = "Success";
+                            alert(id);
+                  $http.post('/nodal_coordinator_details',
+                       {"user": {"id": id}, "target_workshops":200,"target_experiments":400,"created_by":{"id": $window.number},
+                        "nodal_centre":{"id":12},"target_participants":2000} ).success(function(data, status, headers, config)
+                            {
+                                                                                                                                                                                                       window.location.href = "#/manage-nc";                                                                                                                                                                                   
+                                                                                                                                                                                                                  }).error(function(data, status, headers, config)
+                                                                                                                                                                                                                  {
+                                                                                                                                                                                                                  });  
+                //window.location.href = "#/manage-nc";
+                //$scope.message= $routeParams.id;
+                
+            }).
+            error(function(data, status, headers, config)
+            {
+                if(status == 500)
+                {
+                    $scope.status = "Duplicate Entry";
+                }
+                else if(status == 400)
+                {
+                    $scope.status = "Invalid username"
+                }
+                else
+                {
+                    $scope.status = "Failed"
+                }
+            });
+            //alert(id);
+            
+        }
+        else
+        {
+            $scope.status = "Fill Details"
+        }
+    }
+    
+}).controller("manage-centres", function($scope, $http, $routeParams, $window, $route) {
+    $http.get('/nodal_centres').success(function(data, status, headers, config)
+    {
+        $scope.centres= data;
+        
+      
+    }).error(function(data, status, headers, config)
+    {
+      console.log(data);
+      
+    });
+    $scope.del =  function(a)
+    {
+        if(confirm("Are you sure!") == true)
+        {
+            $http.delete('/nodal_centres/'+a).
+                success(function(data, status, headers, config) 
+                        {
+                            $route.reload();
+                           
+                            
+                        }).
+                error(function(data, status, headers, config)
+                      {
+                          console.log(data);
+                      
+                      });
+            
+        }
+        else
+            return;
+         
+    }
+    
+}).controller("add-centre", function($scope, $http, $routeParams, $window) {
+
+    $scope.submit = function(isvalid)
+    {
+        if(isvalid)
+        {
+            
+            $http.post('/nodal_centres',{'name' : $scope.name,'location' : $scope.centre,'created_by' : { 'id' : $window.number } } ).
+                success(function(data, status, headers, config)
+            {
+                $scope.status = "Success";
+                window.location.href = "#/manage-centres";
+                //$scope.message= $routeParams.id;
+                
+            }).
+            error(function(data, status, headers, config)
+            {
+                if(status == 500)
+                {
+                    $scope.status = "Duplicate Entry";
+                }
+                else if(status == 400)
+                {
+                    $scope.status = "Invalid username"
+                }
+                else
+                {
+                    $scope.status = "Failed"
+                }
+            });
+  
+        }
+        else
+        {
+            $scope.status = "Fill Details"
+        }
+    }
+}).controller("edit-centre", function($scope, $http, $routeParams, $route, $window) {
+  $http.get('/nodal_centres/'+$routeParams.id).
+    success(function(data, status, headers, config) 
+    {
+        $scope.centres= data;
+              
+    }).
+    error(function(data, status, headers, config)
+    {
+      console.log(data);
+      
+    });
+
+    $scope.submit = function(isvalid) 
+    {
+        
+        if(isvalid)
+        {
+            
+            $http.put('/nodal_centres/'+$routeParams.id, { "name" : $scope.centres.name, "location" : $scope.centres.location,'created_by' : { 'id' : $window.number } }).success(function(data, status, headers, config)
+                {
+                    $scope.status = "Success";
+                    window.location.href = "#/manage-centres";
+                                      
+                }).
+                error(function(data, status, headers, config)
+                {
+                    if(status == 500)
+                    {
+                        
+                        $scope.status = "Duplicate Email";
+                    }
+                    else if(status == 400)
+                    {
+                        $scope.status = "Invalid username"
+                    }
+                    else
+                    {
+                        $scope.status = "Failed"
+                    }
+                    
+                });
+        }
+        else
+        {
+            $scope.status = "Not empty"
+        }
+        
+    }
+
+
 });
+
+
+
+
+
+
+
+
 
 
 

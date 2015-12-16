@@ -76,7 +76,28 @@ angular.module('outreachApp',['ngRoute','outreachApp.controllers','autocomplete'
 	 }).when('/upload_reports/:id', {
 	     templateUrl : '/static/partials/upload-reports.html',
 	     controller  : 'uploadreports'
+	 }).when('/oc-dashboard', {
+	     templateUrl : '/static/partials/nc-dashboard.html',
+	     controller  : 'oc-dashboard'
+	 }).when('/manage-nc', {
+	     templateUrl : '/static/partials/manage-nc.html',
+	     controller  : 'manage-nc'
+	 }).when('/add-nc', {
+	     templateUrl : '/static/partials/add-nc.html',
+	     controller  : 'add-nc'
+	 })
+         .when('/manage-centres', {
+	     templateUrl : '/static/partials/manage-centres.html',
+	     controller  : 'manage-centres'
+	 })
+         .when('/add-centre', {
+	     templateUrl : '/static/partials/add-centre.html',
+	     controller  : 'add-centre'
+	 }).when('/edit-centre/:id', {
+	     templateUrl : '/static/partials/edit-centre.html',
+	     controller  : 'edit-centre'
 	 });
+     
      
      
      
