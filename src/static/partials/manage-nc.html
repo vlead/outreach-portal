@@ -11,21 +11,23 @@
     <table class="table table-hover">
       <thead>
 	<tr>
+          <th>ID</th>
 	  <th>Name</th>
-	  <th>Email</th>
-	  <th>Last Active</th>
+	  <th>Email</th>	  
 	  <th>Created On</th>
+          <th>Last Active</th>
           <th>Manage</th>
 	</tr>
       </thead>
       <tbody>
-	<tr ng-repeat="oc in message">
-          <td>{{ oc.name }}</td>
-          <td>{{ oc.email }}</td>
-          <td>{{ oc.last_active }}</td>
-          <td>{{ oc.created }}</td>
+	<tr ng-repeat="coordinator in coordinators">
+          <td>{{ coordinator.id }}</td>
+          <td>{{ coordinator.name }}</td>
+          <td>{{ coordinator.email }}</td>
+          <td>{{ coordinator.created }}</td>
+          <td>{{ coordinator.last_active }}</td>
           <td><a href="#/editoc/{{oc.id}}" class="btn btn-primary">Edit</a></td>
-          <td><a class="btn btn-danger" href="#/deloc/{{oc.id}}">Delete</a></td>
+          <td><a class="btn btn-danger" ng-click="del(coordinator.id)">Delete</a></td>
 	</tr>
       </tbody>
     </table>

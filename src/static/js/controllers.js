@@ -6,27 +6,27 @@ angular.module('outreachApp.controllers',[])
     [
         {
             city : 'Gnanadeep college,kamareddy',
-	    date: '2/12/2015',
+	    date: '2/12/2016',
 	    coordinator: 'A',
             
         },
         {
             city : 'New Delhi',
-	    date: '13/11/2015',
+	    date: '13/11/2016',
 	    coordinator: 'A2',
             
             
         },
         {
             city : 'Mumbai',
-	    date: '4/12/2015',
+	    date: '4/12/2016',
 	    coordinator: 'A1',
             
             
         },
         {
             city : 'kolkata',
-	    date: '5/12/2015',
+	    date: '5/12/2016',
 	    coordinator: 'B',
             
             
@@ -635,12 +635,27 @@ angular.module('outreachApp.controllers',[])
     
     
 
-}).controller("manage-nc", function($scope, $http, $routeParams, $window) {
-    $http.get('/users/3').success(function(data, status, headers, config)
+}).controller("manage-nc", function($scope, $http, $routeParams, $window, $route) {
+    $http.get('/nodal_coordinator_details?created_by_id='+ $window.number).success(function(data, status, headers, config)
     {
-        $scope.message= data;
-        
-      
+        var coordinators = [];                                                                             
+        for( i=0;i<data.length;i++)
+        {
+            
+            $http.get('/users/'+ data[i].id).success(function(data, status, headers, config)
+                                            {  
+                                                coordinators.push(data);
+                                                console.log(data);
+                                                
+                                            }).error(function(data, status, headers, config)
+                                                     {
+                                                         console.log(data);
+                                                         
+                                                     });
+        }
+        $scope.coordinators=coordinators;
+        console.log(data);
+               
     }).error(function(data, status, headers, config)
     {
       console.log(data);
@@ -653,8 +668,8 @@ angular.module('outreachApp.controllers',[])
             $http.delete('/users/'+a).
                 success(function(data, status, headers, config) 
                         {
-                            
-                           window.location.href = "#/managenc";
+                           $route.reload();
+                          // window.location.href = "#/manage-nc";
                             
                         }).
                 error(function(data, status, headers, config)
