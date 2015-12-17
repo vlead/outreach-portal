@@ -1737,26 +1737,28 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
 
 *** /nodal_coordinator_details
 - Parameters
-|-----------------------+-------------------------------------------------------------------------------------------------|
-| *Name*                | *Description*                                                                                   |
-|-----------------------+-------------------------------------------------------------------------------------------------|
-| *id*                  | Indicates the unique id of the workshop. *Example Value:* 2                                     |
-|-----------------------+-------------------------------------------------------------------------------------------------|
-| *user*                | Indicates the user whose details are mentioned in this record. *Example Value:* {"id" : 2 }     |
-|-----------------------+-------------------------------------------------------------------------------------------------|
-| *created_by*          | Indicates the user who created this nodal coordinator entry. *Example Value:* {"id" : 1 }       |
-|-----------------------+-------------------------------------------------------------------------------------------------|
-| *created*             | The date and time at which these details were first created in the portal. This is an automatic |
-|                       | generated value.                                                                                |
-|-----------------------+-------------------------------------------------------------------------------------------------|
-| *last_updated*        | When was any of the fields last updated.                                                        |
-|-----------------------+-------------------------------------------------------------------------------------------------|
-| *target_workshops*    | No of workshops set as a target for the nodal coordinator.                                      |
-|-----------------------+-------------------------------------------------------------------------------------------------|
-| *target_participants* | No of participants set as a target for the nodal coordinator.                                   |
-|-----------------------+-------------------------------------------------------------------------------------------------|
-| *target_experiments*  | No of experiments set as a target for the nodal coordinator.                                    |
-|-----------------------+-------------------------------------------------------------------------------------------------|
+|-----------------------+---------------------------------------------------------------------------------------------------------|
+| *Name*                | *Description*                                                                                           |
+|-----------------------+---------------------------------------------------------------------------------------------------------|
+| *id*                  | Indicates the unique id of the workshop. *Example Value:* 2                                             |
+|-----------------------+---------------------------------------------------------------------------------------------------------|
+| *user*                | Indicates the user whose details are mentioned in this record. *Example Value:* {"id" : 2 }             |
+|-----------------------+---------------------------------------------------------------------------------------------------------|
+| *created_by*          | Indicates the user who created this nodal coordinator entry. *Example Value:* {"id" : 1 }               |
+|-----------------------+---------------------------------------------------------------------------------------------------------|
+| *nodal_centre*        | Indicates the  nodal centre and its details are mentioned in this record.  *Example Value:* {"id" : 1 } |
+|-----------------------+---------------------------------------------------------------------------------------------------------|
+| *created*             | The date and time at which these details were first created in the portal. This is an automatic         |
+|                       | generated value.                                                                                        |
+|-----------------------+---------------------------------------------------------------------------------------------------------|
+| *last_updated*        | When was any of the fields last updated.                                                                |
+|-----------------------+---------------------------------------------------------------------------------------------------------|
+| *target_workshops*    | No of workshops set as a target for the nodal coordinator.                                              |
+|-----------------------+---------------------------------------------------------------------------------------------------------|
+| *target_participants* | No of participants set as a target for the nodal coordinator.                                           |
+|-----------------------+---------------------------------------------------------------------------------------------------------|
+| *target_experiments*  | No of experiments set as a target for the nodal coordinator.                                            |
+|-----------------------+---------------------------------------------------------------------------------------------------------|
 
 - *GET* 
  + Example Request
@@ -1843,26 +1845,28 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
 
 *** /nodal_coordinator_details/<int:id>
 - Parameters
-|-----------------------+-------------------------------------------------------------------------------------------------|
-| *Name*                | *Description*                                                                                   |
-|-----------------------+-------------------------------------------------------------------------------------------------|
-| *id*                  | Indicates the unique id of the workshop. *Example Value:* 2                                     |
-|-----------------------+-------------------------------------------------------------------------------------------------|
-| *user*                | Indicates the user whose details are mentioned in this record. *Example Value:* {"id" : 2 }     |
-|-----------------------+-------------------------------------------------------------------------------------------------|
-| *created_by*          | Indicates the user who created this nodal coordinator entry. *Example Value:* {"id" : 1 }       |
-|-----------------------+-------------------------------------------------------------------------------------------------|
-| *created*             | The date and time at which these details were first created in the portal. This is an automatic |
-|                       | generated value.                                                                                |
-|-----------------------+-------------------------------------------------------------------------------------------------|
-| *last_updated*        | When was any of the fields last updated.                                                        |
-|-----------------------+-------------------------------------------------------------------------------------------------|
-| *target_workshops*    | No of workshops set as a target for the nodal coordinator.                                      |
-|-----------------------+-------------------------------------------------------------------------------------------------|
-| *target_participants* | No of participants set as a target for the nodal coordinator.                                   |
-|-----------------------+-------------------------------------------------------------------------------------------------|
-| *target_experiments*  | No of experiments set as a target for the nodal coordinator.                                    |
-|-----------------------+-------------------------------------------------------------------------------------------------|
+|-----------------------+---------------------------------------------------------------------------------------------------------|
+| *Name*                | *Description*                                                                                           |
+|-----------------------+---------------------------------------------------------------------------------------------------------|
+| *id*                  | Indicates the unique id of the workshop. *Example Value:* 2                                             |
+|-----------------------+---------------------------------------------------------------------------------------------------------|
+| *user*                | Indicates the user whose details are mentioned in this record. *Example Value:* {"id" : 2 }             |
+|-----------------------+---------------------------------------------------------------------------------------------------------|
+| *created_by*          | Indicates the user who created this nodal coordinator entry. *Example Value:* {"id" : 1 }               |
+|-----------------------+---------------------------------------------------------------------------------------------------------|
+| *nodal_centre*        | Indicates the  nodal centre and its details are mentioned in this record.  *Example Value:* {"id" : 1 } |
+|-----------------------+---------------------------------------------------------------------------------------------------------|
+| *created*             | The date and time at which these details were first created in the portal. This is an automatic         |
+|                       | generated value.                                                                                        |
+|-----------------------+---------------------------------------------------------------------------------------------------------|
+| *last_updated*        | When was any of the fields last updated.                                                                |
+|-----------------------+---------------------------------------------------------------------------------------------------------|
+| *target_workshops*    | No of workshops set as a target for the nodal coordinator.                                              |
+|-----------------------+---------------------------------------------------------------------------------------------------------|
+| *target_participants* | No of participants set as a target for the nodal coordinator.                                           |
+|-----------------------+---------------------------------------------------------------------------------------------------------|
+| *target_experiments*  | No of experiments set as a target for the nodal coordinator.                                            |
+|-----------------------+---------------------------------------------------------------------------------------------------------|
 
 - *GET* - 
  + Example Request
@@ -1989,26 +1993,28 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
 *** /nodal_coordinator_details/<int:id>?fields=field1,field2 
     
 - Parameters
-|-----------------------+-------------------------------------------------------------------------------------------------|
-| *Name*                | *Description*                                                                                   |
-|-----------------------+-------------------------------------------------------------------------------------------------|
-| *id*                  | Indicates the unique id of the workshop. *Example Value:* 2                                     |
-|-----------------------+-------------------------------------------------------------------------------------------------|
-| *user*                | Indicates the user whose details are mentioned in this record. *Example Value:* {"id" : 2 }     |
-|-----------------------+-------------------------------------------------------------------------------------------------|
-| *created_by*          | Indicates the user who created this nodal coordinator entry. *Example Value:* {"id" : 1 }       |
-|-----------------------+-------------------------------------------------------------------------------------------------|
-| *created*             | The date and time at which these details were first created in the portal. This is an automatic |
-|                       | generated value.                                                                                |
-|-----------------------+-------------------------------------------------------------------------------------------------|
-| *last_updated*        | When was any of the fields last updated.                                                        |
-|-----------------------+-------------------------------------------------------------------------------------------------|
-| *target_workshops*    | No of workshops set as a target for the nodal coordinator.                                      |
-|-----------------------+-------------------------------------------------------------------------------------------------|
-| *target_participants* | No of participants set as a target for the nodal coordinator.                                   |
-|-----------------------+-------------------------------------------------------------------------------------------------|
-| *target_experiments*  | No of experiments set as a target for the nodal coordinator.                                    |
-|-----------------------+-------------------------------------------------------------------------------------------------|
+|-----------------------+---------------------------------------------------------------------------------------------------------|
+| *Name*                | *Description*                                                                                           |
+|-----------------------+---------------------------------------------------------------------------------------------------------|
+| *id*                  | Indicates the unique id of the workshop. *Example Value:* 2                                             |
+|-----------------------+---------------------------------------------------------------------------------------------------------|
+| *user*                | Indicates the user whose details are mentioned in this record. *Example Value:* {"id" : 2 }             |
+|-----------------------+---------------------------------------------------------------------------------------------------------|
+| *created_by*          | Indicates the user who created this nodal coordinator entry. *Example Value:* {"id" : 1 }               |
+|-----------------------+---------------------------------------------------------------------------------------------------------|
+| *nodal_centre*        | Indicates the  nodal centre and its details are mentioned in this record.  *Example Value:* {"id" : 1 } |
+|-----------------------+---------------------------------------------------------------------------------------------------------|
+| *created*             | The date and time at which these details were first created in the portal. This is an automatic         |
+|                       | generated value.                                                                                        |
+|-----------------------+---------------------------------------------------------------------------------------------------------|
+| *last_updated*        | When was any of the fields last updated.                                                                |
+|-----------------------+---------------------------------------------------------------------------------------------------------|
+| *target_workshops*    | No of workshops set as a target for the nodal coordinator.                                              |
+|-----------------------+---------------------------------------------------------------------------------------------------------|
+| *target_participants* | No of participants set as a target for the nodal coordinator.                                           |
+|-----------------------+---------------------------------------------------------------------------------------------------------|
+| *target_experiments*  | No of experiments set as a target for the nodal coordinator.                                            |
+|-----------------------+---------------------------------------------------------------------------------------------------------|
 
 
 - *GET* -
@@ -2069,26 +2075,28 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
 
 *** /nodal_coordinator_details?query_param1=val1&query_param2=val2&..query_paramn=valn
 - Parameters
-|-----------------------+-------------------------------------------------------------------------------------------------|
-| *Name*                | *Description*                                                                                   |
-|-----------------------+-------------------------------------------------------------------------------------------------|
-| *id*                  | Indicates the unique id of the workshop. *Example Value:* 2                                     |
-|-----------------------+-------------------------------------------------------------------------------------------------|
-| *user*                | Indicates the user whose details are mentioned in this record. *Example Value:* {"id" : 2 }     |
-|-----------------------+-------------------------------------------------------------------------------------------------|
-| *created_by*          | Indicates the user who created this nodal coordinator entry. *Example Value:* {"id" : 1 }       |
-|-----------------------+-------------------------------------------------------------------------------------------------|
-| *created*             | The date and time at which these details were first created in the portal. This is an automatic |
-|                       | generated value.                                                                                |
-|-----------------------+-------------------------------------------------------------------------------------------------|
-| *last_updated*        | When was any of the fields last updated.                                                        |
-|-----------------------+-------------------------------------------------------------------------------------------------|
-| *target_workshops*    | No of workshops set as a target for the nodal coordinator.                                      |
-|-----------------------+-------------------------------------------------------------------------------------------------|
-| *target_participants* | No of participants set as a target for the nodal coordinator.                                   |
-|-----------------------+-------------------------------------------------------------------------------------------------|
-| *target_experiments*  | No of experiments set as a target for the nodal coordinator.                                    |
-|-----------------------+-------------------------------------------------------------------------------------------------|
+|-----------------------+---------------------------------------------------------------------------------------------------------|
+| *Name*                | *Description*                                                                                           |
+|-----------------------+---------------------------------------------------------------------------------------------------------|
+| *id*                  | Indicates the unique id of the workshop. *Example Value:* 2                                             |
+|-----------------------+---------------------------------------------------------------------------------------------------------|
+| *user*                | Indicates the user whose details are mentioned in this record. *Example Value:* {"id" : 2 }             |
+|-----------------------+---------------------------------------------------------------------------------------------------------|
+| *created_by*          | Indicates the user who created this nodal coordinator entry. *Example Value:* {"id" : 1 }               |
+|-----------------------+---------------------------------------------------------------------------------------------------------|
+| *nodal_centre*        | Indicates the  nodal centre and its details are mentioned in this record.  *Example Value:* {"id" : 1 } |
+|-----------------------+---------------------------------------------------------------------------------------------------------|
+| *created*             | The date and time at which these details were first created in the portal. This is an automatic         |
+|                       | generated value.                                                                                        |
+|-----------------------+---------------------------------------------------------------------------------------------------------|
+| *last_updated*        | When was any of the fields last updated.                                                                |
+|-----------------------+---------------------------------------------------------------------------------------------------------|
+| *target_workshops*    | No of workshops set as a target for the nodal coordinator.                                              |
+|-----------------------+---------------------------------------------------------------------------------------------------------|
+| *target_participants* | No of participants set as a target for the nodal coordinator.                                           |
+|-----------------------+---------------------------------------------------------------------------------------------------------|
+| *target_experiments*  | No of experiments set as a target for the nodal coordinator.                                            |
+|-----------------------+---------------------------------------------------------------------------------------------------------|
 
 - *GET* -
  + Example Request
