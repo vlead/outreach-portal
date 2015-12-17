@@ -699,6 +699,11 @@ angular.module('outreachApp.controllers',[])
     }
     
 }).controller("add-nc", function($scope, $http, $routeParams, $window, $route) {
+    $http.get("/nodal_centres?created_by_id="+$window.number).success(function(data, status, headers, config){
+        $scope.ncentres = data;
+    }).error(function(data,status,headers,config){
+        console.log("Failed")
+    });
     $scope.id = 0;
     $scope.submit = function(isvalid)
     {
