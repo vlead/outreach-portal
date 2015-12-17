@@ -240,7 +240,7 @@ angular.module('outreachApp.controllers',[])
     }
 }).controller("doclist", function($scope, $http, $routeParams, $route) {
     
-    $http.get('/reference_documents').
+    $http.get('/reference_documents?user_id=1').
     success(function(data, status, headers, config) 
     {
         $scope.documents= data;
@@ -944,6 +944,50 @@ angular.module('outreachApp.controllers',[])
         }
     }
   
+}).controller("oc-doclist", function($scope, $http, $routeParams, $route, $window) {
+    
+    $http.get('/reference_documents?user_id=' + $window.number).
+    success(function(data, status, headers, config) 
+    {
+        $scope.documents= data;
+              
+    }).
+    error(function(data, status, headers, config)
+    {
+      console.log(data);
+      
+    });
+    $http.get('/reference_documents?user_id=1').
+        success(function(data, status, headers, config) 
+                {
+                    $scope.admindocs = data;
+                    
+                }).
+        error(function(data, status, headers, config)
+              {
+                  console.log(data);
+                  
+              });
+    $scope.deldoc =  function(id)
+    {
+        $http.delete('/reference_documents/'+id).
+            success(function(data, status, headers, config) 
+                    {
+                        $scope.status= "Deleted";
+                        $route.reload();
+              
+                    }).
+            error(function(data, status, headers, config)
+                  {
+                      console.log(data);
+                      
+                  });
+        
+        
+        
+    }
+
+
 });
 
 

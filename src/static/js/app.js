@@ -99,7 +99,10 @@ angular.module('outreachApp',['ngRoute','outreachApp.controllers','autocomplete'
 	 }).when('/oc-manage-workshops', {
 	     templateUrl : '/static/partials/oc-manage-workshops.html',
 	     controller  : 'oc-manage-workshops'
-	 });
+	 }).when('/ocdocuments', {
+	     templateUrl : '/static/partials/oc-docs.html',
+	     controller  : 'oc-doclist'
+	 };
      
      
      
