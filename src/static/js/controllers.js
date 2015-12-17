@@ -456,11 +456,11 @@ angular.module('outreachApp.controllers',[])
   
 }).controller("nodalcenters", function($scope, $http, $routeParams, $route, $window) {
    
-    $http.get('/nodal_centres').
+    $http.get('/nodal_coordinator_details?user_id='+$window.number).
     success(function(data, status, headers, config) 
             {
-
-                $scope.centers = data;
+                console.log(data[0]);
+                $scope.centers = data[0].nodal_centre;
                 
                 
     }).
@@ -717,8 +717,8 @@ angular.module('outreachApp.controllers',[])
                             $scope.status = "Success";
                             
                   $http.post('/nodal_coordinator_details',
-                       {"user": {"id": id}, "target_workshops":200,"target_experiments":400,"created_by":{"id": $window.number},
-                        "nodal_centre":{"id":1},"target_participants":2000} ).success(function(data, status, headers, config)
+                             {"user": {"id": id}, "target_workshops":Number($scope.workshops),"target_experiments":Number($scope.expts), "target_participants":Number($scope.parti),"created_by":{"id": $window.number},
+                        "nodal_centre":{"id":1}} ).success(function(data, status, headers, config)
                             {
                                                                                                                                                                                                        window.location.href = "#/manage-nc";                                                                                                                                                                                   
                                                                                                                                                                                                                   }).error(function(data, status, headers, config)
