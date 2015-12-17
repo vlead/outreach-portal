@@ -371,8 +371,8 @@ angular.module('outreachApp.controllers',[])
                     
                     workshop_date = new Date(data[i].date);
                     var workshop_id = data[i].id ;
-                    if ((today > workshop_date) & (data[i].status == "Upcoming")){
-                        $http.put('/workshops/'+workshop_id.toString(), {'status': 'Pending for approval'}).success(function(data, status){ console.log('Status success'); });
+                    if ((today > workshop_date) & (data[i].status.name == "Upcoming")){
+                        $http.put('/workshops/'+workshop_id.toString(), {'status': {'id': 2}}).success(function(data, status){ console.log('Status success'); });
                     }
                     if( (today <= workshop_date) ||(today.getDate() == workshop_date.getDate() & (today.getMonth() == workshop_date.getMonth()) 
                                                     & (today.getFullYear() == workshop_date.getFullYear())))
@@ -381,11 +381,11 @@ angular.module('outreachApp.controllers',[])
 		        upcoming = upcoming + 1;
 	            }
 	        
-                    else if(data[i].status == "Approved")
+                    else if(data[i].status.name == "Approved")
                     {
                         history.push(data[i]);
                     }
-                    else if(data[i].status == "Pending for approval")
+                    else if(data[i].status.name == "Pending for Approval")
                     {
                         pending.push(data[i]);
                     }
@@ -478,7 +478,7 @@ angular.module('outreachApp.controllers',[])
             $http.post('/workshops',
                        { "name" : $scope.name, "location" : $scope.location,  "user" : {"id" : $window.number }, "participating_institutes" : $scope.insts,
                          "no_of_participants_expected" : $scope.parti, "no_of_sessions" : Number($scope.sessions),  "labs_planned" : Number($scope.labs),
-                         "status" : "Upcoming",  "date" : $scope.date }).
+                         "status" : {"id": 1},  "date" : $scope.date }).
             success(function(data, status, headers, config)
             {
                 $scope.status = "Success";
@@ -526,8 +526,7 @@ angular.module('outreachApp.controllers',[])
     {
         if(isvalid)
         {
-            $http.put('/workshops/'+$routeParams.id, { "name" : $scope.message.name, "location" : $scope.message.location,  "user" : {"id" : $window.number }, "participating_institutes" : $scope.message.participating_institutes,"no_of_participants_expected" : $scope.message.no_of_participants_expected, "no_of_sessions" : Number($scope.message.no_of_sessions),  "labs_planned" : Number($scope.message.labs_planned),
-                         "status" : "Upcoming",  "date" : $scope.message.date}).success(function(data, status, headers, config)
+            $http.put('/workshops/'+$routeParams.id, { "name" : $scope.message.name, "location" : $scope.message.location,  "user" : {"id" : $window.number }, "participating_institutes" : $scope.message.participating_institutes,"no_of_participants_expected" : $scope.message.no_of_participants_expected, "no_of_sessions" : Number($scope.message.no_of_sessions),  "labs_planned" : Number($scope.message.labs_planned),"status" : {"id":1},  "date" : $scope.message.date}).success(function(data, status, headers, config)
                 {
                     $scope.status = "Success";
                     history.back();
@@ -886,8 +885,8 @@ angular.module('outreachApp.controllers',[])
                     
                     workshop_date = new Date(data[i].date);
                     var workshop_id = data[i].id ;
-                    if ((today > workshop_date) & (data[i].status == "Upcoming")){
-                        $http.put('/workshops/'+workshop_id.toString(), {'status': 'Pending for approval'}).success(function(data, status){ console.log('Status success'); });
+                    if ((today > workshop_date) & (data[i].status.name == "Upcoming")){
+                        $http.put('/workshops/'+workshop_id.toString(), {'status': {'id': 2}}).success(function(data, status){ console.log('Status success'); });
                     }
                     if( (today <= workshop_date) ||(today.getDate() == workshop_date.getDate() & (today.getMonth() == workshop_date.getMonth()) 
                                                     & (today.getFullYear() == workshop_date.getFullYear())))
@@ -896,11 +895,11 @@ angular.module('outreachApp.controllers',[])
 		        upcoming = upcoming + 1;
 	            }
 	        
-                    else if(data[i].status == "Approved")
+                    else if(data[i].status.name == "Approved")
                     {
                         history.push(data[i]);
                     }
-                    else if(data[i].status == "Pending for approval")
+                    else if(data[i].status.name == "Pending for Approval")
                     {
                         ups.push(data[i]);
                         upcoming = upcoming + 1;
