@@ -14,12 +14,8 @@
 	</span>
       </p>
       <p>Nodal Centre Name:<br>
-        <select class="form-control">
-          <option  ng-repeat="centre in ncentres" value="{{ centre.id }}">{{centre.name}}</option>
-        </select>
-	<span style="color:red" ng-show="myForm.centre.$dirty && myForm.centre.$invalid">
-	  <span ng-show="myForm.centre.$error.required">Username is required.</span>
-	</span>
+         <select class="form-control" ng-model="ncentre_id" ng-options="centre.name for centre in ncentres ">
+         </select>
       </p>
 
       <p>Email:<br>
