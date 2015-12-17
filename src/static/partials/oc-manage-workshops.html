@@ -28,10 +28,10 @@
           <td>{{ workshop.location }}</td>
           <td>{{ workshop.no_of_participants_expected }}</td>
           <td>{{ workshop.date }}</td>
-          <td>{{ workshop.status }}</td>
+          <td>{{ workshop.status.name }}</td>
           <td><button class="btn btn-primary" ng-click="cancel(workshop.id)">Cancel</button></td>
-          <td ng-if="workshop.status == 'Upcoming'"><a href="#/editworkshop/{{workshop.id}}" class="btn btn-primary">Edit</a></td>
-          <td ng-if="workshop.status == 'Pending for approval'"><a href="#/editworkshop/{{workshop.id}}" class="btn btn-primary">Upload Reports</a></td>
+          <td ng-if="workshop.status.name == 'Upcoming'"><a href="#/editworkshop/{{workshop.id}}" class="btn btn-primary">Edit</a></td>
+          <td ng-if="workshop.status.name == 'Pending for Approval'"><a href="#/editworkshop/{{workshop.id}}" class="btn btn-primary">Upload Reports</a></td>
         </tr>
       </tbody>
     </table>
