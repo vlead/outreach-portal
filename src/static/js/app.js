@@ -102,7 +102,7 @@ angular.module('outreachApp',['ngRoute','outreachApp.controllers','autocomplete'
 	 }).when('/ocdocuments', {
 	     templateUrl : '/static/partials/oc-docs.html',
 	     controller  : 'oc-doclist'
-	 };
+	 });
      
      
      
