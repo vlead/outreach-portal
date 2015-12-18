@@ -31,24 +31,27 @@
               </div> 
             </div>
           </div>
+          <h3>Upcoming Workshops</h3>
+          <table class="table table-hover">
+            <thead>
+	      <tr>
+	  <th>Date</th>
+	  <th>Location</th>
+          <th>Courses of workshops</th>
+          
 
-          <div class="section-two">
-            <div class="row">
-              <div class="title">Upcoming Workshops</div>
-            </div>
-	    
-            <div class="row workshop-row" ng-repeat="workshop in upcoming">
-              <div class="col-md-4 workshop-date">
-		{{ workshop.date }}
-              </div>
-              <div class="col-md-4 workshop-location">
-		{{ workshop.city }}
-              </div>
-              <div class="col-md-4 workshop-coordinator">
-		{{workshop.coordinator}}
-              </div>
-            </div>
-          </div>
+        </tr>
+      </thead>
+      <tbody>
+	<tr ng-repeat="workshop in upcoming">
+          <td>{{ workshop.date }}</td>
+          <td>{{ workshop.location }}</td>
+          <td>{{ workshop.disciplines }}</td>
+
+        </tr>
+      </tbody>
+    </table>
+          
         </div>
 
       </div>

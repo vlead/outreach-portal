@@ -1,63 +1,30 @@
 
 angular.module('outreachApp.controllers',[])
-.controller('mapCtrl', function ($scope)
+    .controller('mapCtrl', function ($scope, $http)
 {
-	var cities = 
-    [
+    var cities1 = [];
+    $http.get('/workshops').success(function(data, status, headers, config)
+    {
+        for(i=0;i<data.length;i++)
         {
-            city : 'Gnanadeep college,kamareddy',
-	    date: '2/12/2016',
-	    coordinator: 'A',
-            
-        },
-        {
-            city : 'New Delhi',
-	    date: '13/11/2016',
-	    coordinator: 'A2',
-            
-            
-        },
-        {
-            city : 'Mumbai',
-	    date: '4/12/2016',
-	    coordinator: 'A1',
-            
-            
-        },
-        {
-            city : 'kolkata',
-	    date: '5/12/2016',
-	    coordinator: 'B',
-            
-            
-        },
-        {
-            city : 'bihar',
-	    date: '29/08/2015',
-	    coordinator: 'C',
-            
-            
-        },
-	   {
-            city : 'kadapa',
-            date: '29/11/2015',
-	    coordinator: 'D',
-            
-        },
-        {
-            city: 'Rajahmundry',
-	    date: '29/11/2015',
-	    coordinator: 'E',
-            
+            cities1.push(data[i]);
         }
-    ];
-        
-	$scope.upcoming = [];
-	var geocoder = new google.maps.Geocoder();
-	var get_geocode = function (cities,count)
-        {
-	       $scope.upcoming.push({city: cities.city, date: cities.date, coordinator: cities.coordinator});
-	       geocoder.geocode({ "address": cities.city }, function(results, status) 
+        cities();
+        //console.log(test);
+      
+    }).error(function(data, status, headers, config)
+    {
+      console.log(data);
+      
+    });
+
+    $scope.upcoming = [];
+    var geocoder = new google.maps.Geocoder();
+    var get_geocode = function (cities,count)
+    {
+        console.log(cities.date);
+        $scope.upcoming.push(cities);
+	       geocoder.geocode({ "address": cities.location }, function(results, status) 
                     {
 				        if (status == google.maps.GeocoderStatus.OK && results.length > 0)
                         {
@@ -69,22 +36,33 @@ angular.module('outreachApp.controllers',[])
 			         }
                     );
 	    }
-	
-    today = new Date();
-    var count = 0;
-	for(i=0;i<cities.length;i++)
+
+    var cities = function()
+    {
+        //console.log(cities1);
+        today = new Date();
+        var count = 0;
+        //console.log(cities1[0].name+""+cities1[0].location);
+	for(i=0;i<cities1.length;i++)
 	{
-        date_array = cities[i].date.split("/");
-	    workshop_date = new Date(Number(date_array[2]), Number(date_array[1])-1, Number(date_array[0]));
+            
+            date_array = cities1[i].date.split("-");
+            //console.log(date_array);
+            workshop_date = new Date(Number(date_array[0]), Number(date_array[1])-1, Number(date_array[2]));
+            //workshop_date = new Date(2016,12,18);
+//            console.log(workshop_date);
 	    if((today <= workshop_date) || (today.getDate() == workshop_date.getDate() & (today.getMonth() == workshop_date.getMonth()) 
-            & (today.getFullYear() == workshop_date.getFullYear())))
-        {
-		      count ++;
-		      get_geocode(cities[i],count);
+                                            & (today.getFullYear() == workshop_date.getFullYear())))
+            {
+		count ++;
+                //console.log(cities1[i].date);
+		get_geocode(cities1[i],count);
 	    }
 	    
 	}
-	
+        
+    }
+   	
     var mapOptions = { zoom: 4, center: new google.maps.LatLng(20,80) }
 	$scope.map = new google.maps.Map(document.getElementById('map'), mapOptions);
     $scope.createMarker = function (lat,lng,cities,count)
@@ -99,6 +77,7 @@ angular.module('outreachApp.controllers',[])
                 title: cities.city
             });
     }  
+
 	
 }).controller("mainController", function($scope, $http, $routeParams) {
     $http.get('/users?role_id=2').success(function(data, status, headers, config)
