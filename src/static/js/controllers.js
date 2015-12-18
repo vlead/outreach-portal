@@ -1018,6 +1018,28 @@ angular.module('outreachApp.controllers',[])
     }
 
 
+}).controller("nc-workshops", function($scope, $http, $routeParams, $window, $route) {
+    var nc_workshops = []
+    $http.get('/nodal_coordinator_details?created_by_id='+ $window.number).success(function(data, status, headers, config){
+        for (i = 0 ; i < data.length; i++ ){
+            $http.get('/workshops?user_id='+data[i].user.id).success(function(data,status,headers,config){
+                for (i=0; i<data.length; i++){
+                    if (data[i].status.id == 2){
+                        nc_workshops.push(data[i]);
+                    }else{
+                        console.log(data[i].name);
+                    }
+                   
+                }
+            }).error(function(data,status,headers,config){
+                console.log("Failed");
+            });
+        }
+    }).error(function(data, status, headers, config){
+        console.log("Failed");
+    });
+    $scope.workshops = nc_workshops;
+    
 });
 
 
