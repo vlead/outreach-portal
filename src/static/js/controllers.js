@@ -256,6 +256,52 @@ angular.module('outreachApp.controllers',[])
 
 }).controller("dashboard", function($scope, $http, $routeParams, $route) {
     
+   $http.get('/users').
+    success(function(data, status, headers, config) 
+    {  
+        var occount = 0;
+        var nccount = 0;
+        for(i=0;i<data.length;i++)
+        {
+            if(data[i].role.id == 2)
+                occount=occount+1;
+            else if(data[i].role.id == 3)
+                nccount=nccount+1;
+        }
+        $scope.totaloc = occount ;
+        $scope.totalnc = nccount ;
+        console.log(oc-count);
+              
+    }).
+    error(function(data, status, headers, config)
+    {
+      console.log(data);
+      
+    });
+   $http.get('/workshops').
+    success(function(data, status, headers, config) 
+    {  
+        var count = 0;
+        var expts = 0;
+        for(i=0;i<data.length;i++)
+        {
+            if(data[i].status.name == "Approved")
+            {
+                count=count+1;
+                expts = expts + data[i].experiments_conducted;
+            }
+        }
+            $scope.totalworkshops = count ;
+            $scope.totalexpts = expts ;
+
+              
+    }).
+    error(function(data, status, headers, config)
+    {
+      console.log(data);
+      
+    });
+     
     
 
 }).controller("profile", function($scope, $http, $routeParams, $route) {
