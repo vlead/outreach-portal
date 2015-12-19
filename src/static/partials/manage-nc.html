@@ -26,7 +26,7 @@
           <td>{{ coordinator.email }}</td>
           <td>{{ coordinator.created }}</td>
           <td>{{ coordinator.last_active }}</td>
-          <td><a href="#/editoc/{{oc.id}}" class="btn btn-primary">Edit</a></td>
+          <td><a href="#/editnc/{{ coordinator.nc_user_id }}" class="btn btn-primary">Edit</a></td>
           <td><a class="btn btn-danger"
           ng-click="del(coordinator.nc_details_id, coordinator.id)">Delete</a></td>
 	</tr>

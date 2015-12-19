@@ -43,6 +43,10 @@ angular.module('outreachApp',['ngRoute','outreachApp.controllers','autocomplete'
 	     templateUrl : '/static/partials/nc-dashboard.html',
 	     controller  : 'nc-dashboard'
 	 })
+         .when('/editnc/:id', {
+	     templateUrl : '/static/partials/edit-nc.html',
+	     controller  : 'edit-nc'
+	 })
          .when('/manage-workshops', {
 	     templateUrl : '/static/partials/manage_workshops.html',
 	     controller  : 'manage-workshops'
@@ -77,7 +81,7 @@ angular.module('outreachApp',['ngRoute','outreachApp.controllers','autocomplete'
 	     templateUrl : '/static/partials/upload-reports.html',
 	     controller  : 'uploadreports'
 	 }).when('/oc-dashboard', {
-	     templateUrl : '/static/partials/nc-dashboard.html',
+	     templateUrl : '/static/partials/oc-dashboard.html',
 	     controller  : 'oc-dashboard'
 	 }).when('/manage-nc', {
 	     templateUrl : '/static/partials/manage-nc.html',

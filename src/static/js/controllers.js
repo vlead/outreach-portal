@@ -320,7 +320,8 @@ angular.module('outreachApp.controllers',[])
     
 
 }).controller("nc-dashboard", function($scope, $http, $routeParams, $route, $window) {
-   // alert($window.number);
+
+    $http.put('/users/'+$window.number, {'last_active': Date()}).success(function(data, status){ console.log('Status success'); });
     $http.get('/workshops?user_id='+$window.number).
     success(function(data, status, headers, config) 
             {
@@ -583,82 +584,57 @@ angular.module('outreachApp.controllers',[])
     }
 
 
-}).controller("autoCompl",function($scope, MovieRetriever){
-    $scope.movies = ["Lord of the Rings",
-                     "Drive",
-                     "Science of Sleep",
-                     "Back to the Future",
-                     "Oldboy"];
-
-    // gives another movie array on change
-    $scope.updateMovies = function(typed){
-        // MovieRetriever could be some service returning a promise
-        $scope.newmovies = MovieRetriever.getmovies(typed);
-        $scope.newmovies.then(function(data){
-              $scope.movies = data;
-        });
-    }
 }).controller("oc-dashboard", function($scope, $http, $routeParams, $route, $window) {
-   // alert($window.number);
-    $http.get('/workshops?user_id='+$window.number).
-    success(function(data, status, headers, config) 
-            {
-                var count = 0;
-                var participants = 0;
-                var experiments = 0;
-                for(i=0;i<data.length;i++)
-                {
-                    count = count +1;
-                    participants = data[i].participants_attended + participants;
-                    experiments = data[i].experiments_conducted + experiments;
-                    
-                    //    alert(typeof(data[i].participants_attended));
-                   
-                }
-                $scope.participants = participants;
-                $scope.experiments = experiments;
-                $scope.count = count;
-                
-                
-    }).
-    error(function(data, status, headers, config)
-    {
-      console.log(data);
-      
+    var workshop = 0;
+    var participants = 0;
+    var experiments = 0;
+    $http.put('/users/'+$window.number, {'last_active': Date()}).success(function(data, status){ console.log('Status success'); });
+    $http.get("/nodal_centres?created_by_id="+$window.number).success(function(data, status, headers, config){
+        $scope.ncentres = data.length;
+    }).error(function(data,status,headers,config){
+        console.log("Failed")
     });
-    $http.get('/nodal_coordinator_details?user_id='+$window.number).
-    success(function(data, status, headers, config) 
-            {
+    $http.get('/nodal_coordinator_details?created_by_id='+ $window.number).success(function(data, status, headers, config)
+                                                                                   {   
+                                                                                       var coordinators = [];
+                                                                                      
+        for( i=0;i<data.length;i++)
+        {
+                       
+            $http.get('/workshops?user_id='+ data[i].user.id).success(function(data, status, headers, config)
+                                                          {
+                                                              for(i=0;i<data.length;i++)
+                                                              {
+                                                                  if(data[i].status.name == "Approved")
+                                                                  {
+                                                                      workshop=workshop+1;
+                                                                      participants=participants+data[i].participants_attended;
+                                                                      experiments=experiments+data[i].experiments_conducted;
+                                                                      $scope.workshops=workshop;
+                                                                      $scope.participants=participants;
+                                                                      $scope.experiments=experiments;
+                                                                  }
+                                                              }
 
-                var target_workshops = 0;
-                var target_experiments = 0;
-                var target_participants = 0;
-                
-                for(i=0;i<data.length;i++)
-                {
+                                                             
+                                                             
+                                                
+                                            }).error(function(data, status, headers, config)
+                                                     {
+                                                        // console.log(data);
+                                                         
+                                                     });
+        }
+                                                                                       
 
-                    target_workshops = data[i].target_workshops + target_workshops;
-                    target_experiments = data[i].target_experiments + target_experiments;
-                    target_participants = data[i].target_participants + target_participants;
-                    
-                   
-                }
-                $scope.target_workshops = target_workshops;
-                $scope.target_experiments = target_experiments;
-                $scope.target_participants = target_participants;
-                
-                
-                
-                
-    }).
-    error(function(data, status, headers, config)
+
+               
+    }).error(function(data, status, headers, config)
     {
       console.log(data);
       
     });
     
-    
-
 }).controller("manage-nc", function($scope, $http, $routeParams, $window, $route) {
     $http.get('/nodal_coordinator_details?created_by_id='+ $window.number).success(function(data, status, headers, config)
                                                                                    {   
@@ -667,12 +643,13 @@ angular.module('outreachApp.controllers',[])
         {
             //console.log(data[i].user.id);
             var b = data[i].id;
-            
+          //  var nc_id=data[i].user.id;
             $http.get('/users/'+ data[i].user.id).success(function(data, status, headers, config)
                                                           {
                                                               data.nc_details_id= b;
+                                                              data.nc_user_id=data.id;
                                                 coordinators.push(data);
-                                                console.log(coordinators);
+                                                
                                                 
                                             }).error(function(data, status, headers, config)
                                                      {
@@ -721,6 +698,87 @@ angular.module('outreachApp.controllers',[])
         else
             return;
          
+    }
+    
+}).controller("edit-nc", function($scope, $http, $routeParams, $window, $route) {
+   
+    $http.get("/nodal_centres?created_by_id="+$window.number).success(function(data, status, headers, config){
+
+        $scope.ncentres = data;
+        $scope.ncentre_id = data[0];
+        
+    }).error(function(data,status,headers,config){
+        console.log("Failed")
+    });
+    $http.get("/users/"+$routeParams.id).success(function(data, status, headers, config){
+
+        $scope.user = data.name;
+        $scope.user_id = data.id;
+        $scope.email = data.email;
+       
+        
+    }).error(function(data,status,headers,config){
+        console.log("Failed")
+    });
+    $http.get("/nodal_coordinator_details?user_id="+$routeParams.id).success(function(data, status, headers, config){
+
+        $scope.workshops = data[0].target_workshops;
+        $scope.nc_id=data[0].id;
+        $scope.expts = data[0].target_experiments;
+        $scope.parti = data[0].target_participants;
+        console.log($scope.workshops);
+       
+        
+    }).error(function(data,status,headers,config){
+        console.log("Failed")
+    });
+    $scope.id = 0;
+    $scope.submit = function(user_id, nc_id)
+    {
+        
+        if(true)
+        {
+            $http.put('/users/'+user_id,{'name' : $scope.user,'email' : $scope.email} ).
+                success(function(data, status, headers, config)
+                        {
+            
+                            id = data.id;       
+                            $scope.status = "Success";
+                                      
+                  $http.put('/nodal_coordinator_details/'+nc_id,
+                             {"target_workshops":Number($scope.workshops),"target_experiments":Number($scope.expts), "target_participants":Number($scope.parti),"created_by":{"id": $window.number},
+                        "nodal_centre":{"id":$scope.ncentre_id.id}} ).success(function(data, status, headers, config)
+                            {
+                                                                                                                                                                                                       window.location.href = "#/manage-nc";                                                                                                                                                                                   
+                                                                                                                                                                                                                  }).error(function(data, status, headers, config)
+                                                                                                                                                                                                                  {
+                                                                                                                                                                                                                  });  
+                //window.location.href = "#/manage-nc";
+                //$scope.message= $routeParams.id;
+                
+            }).
+            error(function(data, status, headers, config)
+            {
+                if(status == 500)
+                {
+                    $scope.status = "Duplicate Entry";
+                }
+                else if(status == 400)
+                {
+                    $scope.status = "Invalid username"
+                }
+                else
+                {
+                    $scope.status = "Failed"
+                }
+            });
+            //alert(id);
+            
+        }
+        else
+        {
+            $scope.status = "Fill Details"
+        }
     }
     
 }).controller("add-nc", function($scope, $http, $routeParams, $window, $route) {
@@ -783,7 +841,7 @@ angular.module('outreachApp.controllers',[])
     }
     
 }).controller("manage-centres", function($scope, $http, $routeParams, $window, $route) {
-    $http.get('/nodal_centres').success(function(data, status, headers, config)
+    $http.get('/nodal_centres?created_by_id='+$window.number).success(function(data, status, headers, config)
     {
         $scope.centres= data;
         
