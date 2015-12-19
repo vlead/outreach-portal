@@ -6,18 +6,18 @@
       <div ng-app="outreachApp">
       <div class="analytics-band">
         <div class="container">
-          <div class="row">
+          <div class="row" ng-controller="dashboard">
             <div class="col-md-4 analytics workshops-run">
               WORKSHOPS RUN<br>
-              <span class="number">36</span>
+              <span class="number">{{ totalworkshops }}</span>
             </div>
             <div class="col-md-4 analytics labs-taken">
               LABS TAKEN<br>
-              <span class="number">72021</span>
+              <span class="number">{{ labs }}</span>
             </div>
             <div class="col-md-4 analytics nodal-centers">
               NODAL CENTERS<br>
-              <span class="number">34</span>
+              <span class="number">{{ ncentres }}</span>
             </div>
           </div>
         </div>

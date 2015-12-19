@@ -1,42 +1,44 @@
 
-angular.module('outreachApp.controllers',[])
-    .controller('mapCtrl', function ($scope, $http)
-{
-    var cities1 = [];
-    $http.get('/workshops').success(function(data, status, headers, config)
-    {
-        for(i=0;i<data.length;i++)
-        {
-            cities1.push(data[i]);
-        }
-        cities();
-        //console.log(test);
-      
-    }).error(function(data, status, headers, config)
-    {
-      console.log(data);
-      
-    });
-
-    $scope.upcoming = [];
-    var geocoder = new google.maps.Geocoder();
-    var get_geocode = function (cities,count)
-    {
-        console.log(cities.date);
-        $scope.upcoming.push(cities);
-	       geocoder.geocode({ "address": cities.location }, function(results, status) 
-                    {
-				        if (status == google.maps.GeocoderStatus.OK && results.length > 0)
-                        {
-				            var location = results[0].geometry.location,
-				            lat      = location.lat(),
-				            lng      = location.lng();
-				            $scope.createMarker(lat,lng,cities,count);
-        				}
-			         }
-                    );
-	    }
-
+angular.module('outreachApp.controllers',[]).
+    controller('mapCtrl', function ($scope, $http)
+               {
+                   var cities1 = [];
+                   $http.get('/workshops')
+                       .success(function(data, status, headers, config)
+                                {
+                                    for(i=0;i<data.length;i++)
+                                    {
+                                        cities1.push(data[i]);
+                                    }
+                                    cities();
+                                    //console.log(test);
+                                    
+                                })
+                       .error(function(data, status, headers, config)
+                              {
+                                  console.log(data);
+                                  
+                              });
+                   
+                   $scope.upcoming = [];
+                   var geocoder = new google.maps.Geocoder();
+                   var get_geocode = function (cities,count)
+                   {
+                       console.log(cities.date);
+                       $scope.upcoming.push(cities);
+	               geocoder.geocode({ "address": cities.location }, function(results, status) 
+                                        {
+				            if (status == google.maps.GeocoderStatus.OK && results.length > 0)
+                                            {
+				                var location = results[0].geometry.location,
+				                    lat      = location.lat(),
+				                    lng      = location.lng();
+				                $scope.createMarker(lat,lng,cities,count);
+        				    }
+			                }
+                                       );
+	           }
+                   
     var cities = function()
     {
         //console.log(cities1);
@@ -63,7 +65,7 @@ angular.module('outreachApp.controllers',[])
         
     }
    	
-    var mapOptions = { zoom: 4, center: new google.maps.LatLng(20,80) }
+    var mapOptions = { zoom: 4, center: new google.maps.LatLng(20,80) };
 	$scope.map = new google.maps.Map(document.getElementById('map'), mapOptions);
     $scope.createMarker = function (lat,lng,cities,count)
     {
@@ -74,12 +76,12 @@ angular.module('outreachApp.controllers',[])
                 draggable: true,
                 label : String(count),
                 position: new google.maps.LatLng(lat, lng),
-                title: cities.city
+                title: cities.location
             });
     }  
 
 	
-}).controller("mainController", function($scope, $http, $routeParams) {
+               }).controller("mainController", function($scope, $http, $routeParams,$route) {
     $http.get('/users?role_id=2').success(function(data, status, headers, config)
     {
         $scope.message= data;
@@ -97,13 +99,13 @@ angular.module('outreachApp.controllers',[])
             $http.delete('/users/'+a).
                 success(function(data, status, headers, config) 
                         {
-                            
-                           window.location.href = "#/manageoc";
+                            $route.reload();
                             
                         }).
                 error(function(data, status, headers, config)
-                      {
-                          console.log(data);
+                      {   
+                          if(status == 500)
+                              alert("You can't delete this user as other users are associated with this account");
                       
                       });
             
@@ -113,25 +115,6 @@ angular.module('outreachApp.controllers',[])
          
     }
     
-}).controller("deloc", function($scope, $http, $routeParams) {
-  
-        $http.delete('/users/'+$routeParams.id).
-            success(function(data, status, headers, config) 
-                    {
-                      
-                           window.location.href = "#/manageoc";
-                      
-                    }).
-            error(function(data, status, headers, config)
-                  {
-                      console.log(data);
-                      
-                  });
-
-        
-  
-
-
 }).controller("editoc", function($scope, $http, $routeParams) {
   $http.get('/users?id='+$routeParams.id).
     success(function(data, status, headers, config) 
@@ -255,7 +238,16 @@ angular.module('outreachApp.controllers',[])
     
 
 }).controller("dashboard", function($scope, $http, $routeParams, $route) {
-    
+
+    $http.get('/nodal_centres').
+        success(function(data, status, headers, config) 
+                {   $scope.ncentres = data.length   })
+        . error(function(data, status, headers, config)
+                {
+                    console.log(data);
+                    
+                });
+   
    $http.get('/users').
     success(function(data, status, headers, config) 
     {  
@@ -283,16 +275,21 @@ angular.module('outreachApp.controllers',[])
     {  
         var count = 0;
         var expts = 0;
+        var labs = 0;
+        
         for(i=0;i<data.length;i++)
         {
             if(data[i].status.name == "Approved")
             {
                 count=count+1;
                 expts = expts + data[i].experiments_conducted;
+                labs = labs + data[i].labs_planned;
             }
         }
-            $scope.totalworkshops = count ;
-            $scope.totalexpts = expts ;
+        $scope.totalworkshops = count ;
+        $scope.totalexpts = expts ;
+        $scope.labs = labs ;
+        
 
               
     }).
@@ -403,10 +400,15 @@ angular.module('outreachApp.controllers',[])
                     if( (today <= workshop_date) ||(today.getDate() == workshop_date.getDate() & (today.getMonth() == workshop_date.getMonth()) 
                                                     & (today.getFullYear() == workshop_date.getFullYear())))
                     {
-                        ups.push(data[i]);
-		        upcoming = upcoming + 1;
+                        if(data[i].cancellation_reason == null)
+                        {
+                            
+                            ups.push(data[i]);
+                            console.log(ups);
+		            upcoming = upcoming + 1;
+
+                        }
 	            }
-	        
                     else if(data[i].status.name == "Approved")
                     {
                         history.push(data[i]);
@@ -434,7 +436,9 @@ angular.module('outreachApp.controllers',[])
     {
         if(confirm("Are you sure!") == true)
         {
-            $http.delete('/workshops/'+id).
+            var reason = prompt("Please enter your reason");
+            
+            $http.put('/workshops/'+id, {"cancellation_reason" : reason }).
                 success(function(data, status, headers, config) 
                         {
                             $route.reload();
@@ -984,7 +988,9 @@ angular.module('outreachApp.controllers',[])
                     if( (today <= workshop_date) ||(today.getDate() == workshop_date.getDate() & (today.getMonth() == workshop_date.getMonth()) 
                                                     & (today.getFullYear() == workshop_date.getFullYear())))
                     {
+                        
                         ups.push(data[i]);
+                        
 		        upcoming = upcoming + 1;
 	            }
 	        
