@@ -17,7 +17,11 @@
           <td><a href="{{ doc.path }}" class="btn btn-primary" target="_blank" >Click here</a></td>
 	</tr>
       </tbody>
-    </table>
+    </table><br>
+    Reasons for disapproval (if any):<br><br>
+    <textarea rows="4" cols="50" ng-model="remarks">
+      
+    </textarea><br><br>
     <button ng-click="approve()" class="btn btn-primary">Approve</button>&emsp; <button ng-click="disapprove()" class="btn btn-primary">Disapprove</button>
   </div>
 </div>

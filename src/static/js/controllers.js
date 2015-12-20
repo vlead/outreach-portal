@@ -1088,7 +1088,7 @@ angular.module('outreachApp.controllers',[]).
         for (i = 0 ; i < data.length; i++ ){
             $http.get('/workshops?user_id='+data[i].user.id).success(function(data,status,headers,config){
                 for (i=0; i<data.length; i++){
-                    if (data[i].status.id == 2){
+                    if (data[i].status.id == 2 || data[i].status.id == 4){
                         nc_workshops.push(data[i]);
                     }else{
                         console.log(data[i].name);
@@ -1111,7 +1111,7 @@ angular.module('outreachApp.controllers',[]).
         });
     }
      $scope.disapprove = function(){
-        $http.put('/workshops/'+$routeParams.id, {'status': {'id': 4}}).success(function(data, status, headers, config){
+        $http.put('/workshops/'+$routeParams.id, {'not_approval_reason': $scope.remarks,'status': {'id': 4}}).success(function(data, status, headers, config){
             console.log("Status: Disapproved");
         });
     }
