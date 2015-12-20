@@ -1104,6 +1104,23 @@ angular.module('outreachApp.controllers',[]).
     });
     $scope.workshops = nc_workshops;
     
+}).controller("review-reports", function($scope, $http, $routeParams, $route, $window){
+    $scope.approve = function(){
+        $http.put('/workshops/'+$routeParams.id, {'status': {'id': 3}}).success(function(data, status, headers, config){
+            console.log("Status: Approved");
+        });
+    }
+     $scope.disapprove = function(){
+        $http.put('/workshops/'+$routeParams.id, {'status': {'id': 4}}).success(function(data, status, headers, config){
+            console.log("Status: Disapproved");
+        });
+    }
+    $http.get('/workshop_reports?workshop_id='+$routeParams.id).success(function(data,status,headers,config){
+        $scope.reports = data;
+    }).error(function(data, status, headers, config){
+        console.log("Failed");
+    });
+
 });
 
 

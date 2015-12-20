@@ -109,6 +109,9 @@ angular.module('outreachApp',['ngRoute','outreachApp.controllers','autocomplete'
 	 }).when('/oc-manage-workshops/nc-workshops', {
 	     templateUrl : '/static/partials/nc-workshops.html',
 	     controller  : 'nc-workshops'
+	 }).when('/review-reports/:id', {
+	     templateUrl : '/static/partials/review-reports.html',
+	     controller  : 'review-reports'
 	 });
      
      
