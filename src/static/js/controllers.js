@@ -1108,11 +1108,13 @@ angular.module('outreachApp.controllers',[]).
     $scope.approve = function(){
         $http.put('/workshops/'+$routeParams.id, {'status': {'id': 3}}).success(function(data, status, headers, config){
             console.log("Status: Approved");
+            history.back();
         });
     }
      $scope.disapprove = function(){
-        $http.put('/workshops/'+$routeParams.id, {'not_approval_reason': $scope.remarks,'status': {'id': 4}}).success(function(data, status, headers, config){
-            console.log("Status: Disapproved");
+         $http.put('/workshops/'+$routeParams.id, {'not_approval_reason': $scope.remarks,'status': {'id': 4}}).success(function(data, status, headers, config){
+             console.log("Status: Disapproved");
+             history.back();
         });
     }
     $http.get('/workshop_reports?workshop_id='+$routeParams.id).success(function(data,status,headers,config){
