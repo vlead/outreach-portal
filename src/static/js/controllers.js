@@ -1121,6 +1121,45 @@ angular.module('outreachApp.controllers',[]).
         console.log("Failed");
     });
 
+}).controller("oc-workshop-history", function($scope, $http, $routeParams, $window, $route) {
+    var workshops = [] ;
+    $http.get('/nodal_coordinator_details?created_by_id='+ $window.number).success(function(data, status, headers, config){
+        for (i = 0 ; i < data.length; i++ ){
+            $http.get('/workshops?user_id='+data[i].user.id).success(function(data,status,headers,config){
+                for (i=0; i<data.length; i++){
+                    if (data[i].status.id == 3){
+                        workshops.push(data[i]);
+                    }else{
+                        console.log(data[i].name);
+                    }
+                   
+                }
+            }).error(function(data,status,headers,config){
+                console.log("Failed");
+            });
+        }
+    }).error(function(data, status, headers, config){
+        console.log("Failed");
+    });
+     $http.get('/workshops?user_id='+$window.number). success(function(data, status, headers, config) {
+               
+	        for(i=0;i<data.length;i++){
+                    
+                    if(data[i].status.id == 3){
+                        workshops.push(data[i]);
+                    }else{
+                        console.log(data[i].name);
+                    }
+                    
+                    
+                }
+        
+    }).error(function(data, status, headers, config){
+        console.log(data);
+        
+    });
+    $scope.workshops = workshops;
+    
 });
 
 
