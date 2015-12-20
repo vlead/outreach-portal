@@ -413,7 +413,7 @@ angular.module('outreachApp.controllers',[]).
                     {
                         history.push(data[i]);
                     }
-                    else if(data[i].status.name == "Pending for Approval")
+                    else if(data[i].status.name == "Pending for Approval" || data[i].status.id == 4)
                     {
                         pending.push(data[i]);
                     }
