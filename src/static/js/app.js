@@ -80,6 +80,9 @@ angular.module('outreachApp',['ngRoute','outreachApp.controllers','autocomplete'
 	 }).when('/upload_reports/:id', {
 	     templateUrl : '/static/partials/upload-reports.html',
 	     controller  : 'uploadreports'
+	 }).when('/oc_upload_reports/:id', {
+	     templateUrl : '/static/partials/oc-upload-reports.html',
+	     controller  : 'uploadreports'
 	 }).when('/oc-dashboard', {
 	     templateUrl : '/static/partials/oc-dashboard.html',
 	     controller  : 'oc-dashboard'
@@ -117,14 +120,7 @@ angular.module('outreachApp',['ngRoute','outreachApp.controllers','autocomplete'
 	     controller  : 'oc-workshop-history'
 	 });
      
-     
-     
-     
-     
-	 
-	    
-		
-	}
+     	}
 );
 
 
