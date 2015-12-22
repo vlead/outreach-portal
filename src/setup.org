@@ -66,6 +66,12 @@ def create_status():
     status4 = Status(name=Name("Rejected"))
     status4.save()
 
+    status5 = Status(name=Name("Pending for Upload"))
+    status5.save()
+
+    status6 = Status(name=Name("Cancel"))
+    status6.save()
+
 
 if __name__ == "__main__":
     db.create_all(app=create_app(config))
