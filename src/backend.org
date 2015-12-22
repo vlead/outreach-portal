@@ -5692,9 +5692,10 @@ def save_workshop_documents(id):
                 current_time = datetime.utcnow()
                 dir_path = "%s" % (UPLOAD_DIR_PATH)
                 file_path = "%s%s" % (dir_path, filename)
+                db_path = "%s%s" % (DB_PATH, filename)
                 file.save(file_path)
 
-            path = {'path': file_path}
+            path = {'path': db_path}
             response = requests.put(url, data=path)
             return file_path
         else:
