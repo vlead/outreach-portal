@@ -375,7 +375,7 @@ class TestRole(TestCase):
      + Email
      + Role --> Id
      + Last Active
-  
+     + Intitue Name
 **** Definition
 #+BEGIN_SRC python :tangle src/db.py :eval no
 class User(Entity):
@@ -385,6 +385,7 @@ class User(Entity):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), nullable=False)
     email = db.Column(db.String(128), unique=True)
+    institute_name = db.Column(db.String(128))
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     reference_documents = db.relationship('ReferenceDocument', backref='user')
     created = db.Column(db.DateTime(), default=datetime.utcnow)
@@ -398,7 +399,8 @@ class User(Entity):
     User = User(name=<instance of class Name>,
                 email=<instance of class Email>,
                 role=<instance of class Role>
-                [,last_active=str])
+                [,last_active=str]
+                [,institute_name=str])
                                             
 #+END_EXAMPLE
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -417,15 +419,23 @@ class User(Entity):
 
         if 'last_active' in kwargs:
             self.set_last_active(kwargs['last_active'])
+
+        if 'institute_name' in kwargs:
+            self.set_institute_name(kwargs['institute_name'])
         
         
     def __str__(self):
-        return "Name = %s, e-mail id = %s, role = %s, last_active = %s" % \
-            (self.name, self.email, self.role.name, self.last_active)
+        return "Name = %s, e-mail id = %s,\
+        institute_name = %s, role=%s, last_active = %s"\
+        % (self.name, self.email, self.institute_name,\
+           self.role.name, self.last_active)
 
     def __repr__(self):
-        return "Name = %s, e-mail id = %s, role = %s, last_active = %s" % \
-            (self.name, self.email, self.role.name, self.last_active)
+        return "Name = %s, e-mail id = %s,\
+        institute_name = %s, role=%s, last_active = %s"\
+        % (self.name, self.email, self.institute_name,\
+           self.role.name, self.last_active)
+
 
 #+END_SRC
      
@@ -550,6 +560,24 @@ class TestUser(TestCase):
         self.assertEqual(user_email, "ambika@vlabs.ac.in")
 #+END_SRC
 
+***** getInstituteName: User --> String
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_institute_name(self):
+        return self.institute_name
+#+END_SRC
+      
+***** Test getInstitueName: User --> String
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_get_user_inst_name(self):
+        print "test_get_user_inst_name"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"),
+                    role=role,
+                    institute_name="IIIT-H")
+        user.save()
+        self.assertEqual(user.institute_name, "IIIT-H")
+#+END_SRC
+
 ***** getRole: User --> Role
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_role(self):
@@ -656,6 +684,24 @@ class TestUser(TestCase):
         self.assertEqual("madhavi@vlabs.ac.in", user.email)
 #+END_SRC
 
+***** setInstituteName: User, InstituteName --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def set_institute_name(self, institute_name):
+        self.institute_name = institute_name
+#+END_SRC
+
+***** Test setInstituteName: User, InstituteName --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_set_user_institute_name(self):
+        print "test_set_user_institute_name"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)     
+        user.save()
+        user.set_institute_name("IIIT-H")
+        user.save()
+        self.assertEqual("IIIT-H", user.institute_name)
+#+END_SRC
+
 ***** setLastActive: User, Time --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def set_last_active(self, last_active):
@@ -705,6 +751,7 @@ class TestUser(TestCase):
             'name': self.name,
             'role': self.role.to_client(),
             'last_active': self.last_active,
+            'institute_name': self.institute_name,
             'created': self.created.isoformat()
         }
 #+END_SRC
@@ -4466,7 +4513,7 @@ class WorkshopReport(Entity):
     __tablename__ = 'workshop_reports'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(128))
+    name = db.Column(db.String(128), nullable=False)
     path = db.Column(db.String(128))
     workshop_id = db.Column(db.Integer, db.ForeignKey('workshops.id'))
 
@@ -5303,6 +5350,9 @@ user = {'entity_class': User,
             {'name': 'last_active',
              'class': None,
              'relationship': 'one'},
+            {'name': 'institute_name',
+             'class': None,
+             'relationship': 'one'},
             {'name': 'role',
              'class': Role,
              'relationship': 'many'},
@@ -5740,6 +5790,7 @@ entity_map_types = {
         'types': {
             'name': Name,
             'email': Email,
+            'institute_name': str,
             'role': Role,
             'last_active': str,
             'created': datetime
@@ -5858,8 +5909,6 @@ def delete_record(entity, id):
     else:
         try:
             record.delete()
-            #db.session.delete(record)
-            #db.session.commit()
         except Exception, e:
             print e
             abort(500, str(e))
@@ -6700,7 +6749,6 @@ class TestNodalCentre(TestCase):
                      email=Email("will@smith.com"),
                      role=Role(name=Name("NC")))
         user2.save()
-
 
         r = self.client.post('/nodal_centres',
                              data=json.dumps({ 'created_by': user1.to_client(),
