@@ -1,9 +1,10 @@
 
 
 <div class="row">
-  <div class="col-md-10"><h2>Outreach Coordinator Details</h2></div>
+  <div class="col-md-10"><h2>Nodal Centres  Details</h2></div>
   <div class="col-md-2">
-     <a href="#/addoc" role="button" class="btn btn-success btn-large">ADD OC</a>
+     <a href="#/add-centre" role="button" class="btn btn-success btn-large">ADD
+     NODAL CENTRE</a>
   </div>
 </div>
 <div class="row">
@@ -12,20 +13,16 @@
       <thead>
 	<tr>
 	  <th>Name</th>
-	  <th>Email</th>
-	  <th>Last Active</th>
-	  <th>Created On</th>
-          <th>Manage</th>
+	  <th>Location</th>
+	  
 	</tr>
       </thead>
       <tbody>
-	<tr ng-repeat="oc in message">
-          <td>{{ oc.name }}</td>
-          <td>{{ oc.email }}</td>
-          <td>{{ oc.last_active }}</td>
-          <td>{{ oc.created }}</td>
-          <td><a href="#/editoc/{{oc.id}}" class="btn btn-primary">Edit</a></td>
-          <td><a class="btn btn-danger" ng-click="del(oc.id)">Delete</a></td>
+	<tr ng-repeat="centre in centres">
+          <td>{{ centre.name }}</td>
+          <td>{{ centre.location }}</td>
+          <td><a href="#/edit-centre/{{centre.id}}" class="btn btn-primary">Edit</a></td>
+          <td><a class="btn btn-danger" ng-click="del(centre.id)">Delete</a></td>
 	</tr>
       </tbody>
     </table>
