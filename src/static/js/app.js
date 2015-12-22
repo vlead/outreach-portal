@@ -80,6 +80,9 @@ angular.module('outreachApp',['ngRoute','outreachApp.controllers','autocomplete'
 	 }).when('/upload_reports/:id', {
 	     templateUrl : '/static/partials/upload-reports.html',
 	     controller  : 'uploadreports'
+	 }).when('/oc_upload_reports/:id', {
+	     templateUrl : '/static/partials/oc-upload-reports.html',
+	     controller  : 'uploadreports'
 	 }).when('/oc-dashboard', {
 	     templateUrl : '/static/partials/oc-dashboard.html',
 	     controller  : 'oc-dashboard'
@@ -106,16 +109,21 @@ angular.module('outreachApp',['ngRoute','outreachApp.controllers','autocomplete'
 	 }).when('/ocdocuments', {
 	     templateUrl : '/static/partials/oc-docs.html',
 	     controller  : 'oc-doclist'
+	 }).when('/oc-manage-workshops/nc-workshops', {
+	     templateUrl : '/static/partials/nc-workshops.html',
+	     controller  : 'nc-workshops'
+	 }).when('/review-reports/:id', {
+	     templateUrl : '/static/partials/review-reports.html',
+	     controller  : 'review-reports'
+	 }).when('/view-reports/:id', {
+	     templateUrl : '/static/partials/view-reports.html',
+	     controller  : 'review-reports'
+	 }).when('/oc-manage-workshops/oc-workshop-history', {
+	     templateUrl : '/static/partials/oc-workshop-history.html',
+	     controller  : 'oc-workshop-history'
 	 });
      
-     
-     
-     
-     
-	 
-	    
-		
-	}
+     	}
 );
 
 

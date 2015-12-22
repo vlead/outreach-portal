@@ -413,7 +413,7 @@ angular.module('outreachApp.controllers',[]).
                     {
                         history.push(data[i]);
                     }
-                    else if(data[i].status.name == "Pending for Approval")
+                    else if(data[i].status.name == "Pending for Approval" || data[i].status.id == 4)
                     {
                         pending.push(data[i]);
                     }
@@ -1082,6 +1082,86 @@ angular.module('outreachApp.controllers',[]).
     }
 
 
+}).controller("nc-workshops", function($scope, $http, $routeParams, $window, $route) {
+    var nc_workshops = []
+    $http.get('/nodal_coordinator_details?created_by_id='+ $window.number).success(function(data, status, headers, config){
+        for (i = 0 ; i < data.length; i++ ){
+            $http.get('/workshops?user_id='+data[i].user.id).success(function(data,status,headers,config){
+                for (i=0; i<data.length; i++){
+                    if (data[i].status.id == 2 || data[i].status.id == 4){
+                        nc_workshops.push(data[i]);
+                    }else{
+                        console.log(data[i].name);
+                    }
+                   
+                }
+            }).error(function(data,status,headers,config){
+                console.log("Failed");
+            });
+        }
+    }).error(function(data, status, headers, config){
+        console.log("Failed");
+    });
+    $scope.workshops = nc_workshops;
+    
+}).controller("review-reports", function($scope, $http, $routeParams, $route, $window){
+    $scope.approve = function(){
+        $http.put('/workshops/'+$routeParams.id, {'status': {'id': 3}}).success(function(data, status, headers, config){
+            console.log("Status: Approved");
+            history.back();
+        });
+    }
+     $scope.disapprove = function(){
+         $http.put('/workshops/'+$routeParams.id, {'not_approval_reason': $scope.remarks,'status': {'id': 4}}).success(function(data, status, headers, config){
+             console.log("Status: Disapproved");
+             history.back();
+        });
+    }
+    $http.get('/workshop_reports?workshop_id='+$routeParams.id).success(function(data,status,headers,config){
+        $scope.reports = data;
+    }).error(function(data, status, headers, config){
+        console.log("Failed");
+    });
+
+}).controller("oc-workshop-history", function($scope, $http, $routeParams, $window, $route) {
+    var workshops = [] ;
+    $http.get('/nodal_coordinator_details?created_by_id='+ $window.number).success(function(data, status, headers, config){
+        for (i = 0 ; i < data.length; i++ ){
+            $http.get('/workshops?user_id='+data[i].user.id).success(function(data,status,headers,config){
+                for (i=0; i<data.length; i++){
+                    if (data[i].status.id == 3){
+                        workshops.push(data[i]);
+                    }else{
+                        console.log(data[i].name);
+                    }
+                   
+                }
+            }).error(function(data,status,headers,config){
+                console.log("Failed");
+            });
+        }
+    }).error(function(data, status, headers, config){
+        console.log("Failed");
+    });
+     $http.get('/workshops?user_id='+$window.number). success(function(data, status, headers, config) {
+               
+	        for(i=0;i<data.length;i++){
+                    
+                    if(data[i].status.id == 3){
+                        workshops.push(data[i]);
+                    }else{
+                        console.log(data[i].name);
+                    }
+                    
+                    
+                }
+        
+    }).error(function(data, status, headers, config){
+        console.log(data);
+        
+    });
+    $scope.workshops = workshops;
+    
 });
 
 

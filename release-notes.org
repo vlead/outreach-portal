@@ -1,0 +1,21 @@
+#+Title: Release Notes Sample
+#+Author: VLEAD Outreach Team
+#+Email: engg@vlabs.ac.in
+#+DATE: [2015-12-22 Thurs]
+#+SETUPFILE: ./org-templates/level-0.org
+#+LANGUAGE: en
+#+OPTIONS: ^:nil
+
+* Commit id of the Source
+  Commit id : b4a7b15c05fdb17b72b42b079de4750a1cde984e
+
+* Version Number of the Lab
+  Version of the lab to be released : v2.0
+
+* New Features Added
+* Resolved Defects
+* Environment Settings 
+   - OS : Windows 7, Linux
+   - Browsers : Firefox, Chrome
+  
+  

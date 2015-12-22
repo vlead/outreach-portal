@@ -11,7 +11,7 @@
 	<tr>
 	  <th>Name</th>
 	  <th>Location</th>
-          <th>Participants</th>
+          <th>Reasons for rejection (If any)</th>
 	  <th>Date</th>
           <th>Status</th>
           <th>Action</th>
@@ -22,7 +22,7 @@
 	<tr ng-repeat="workshop in pending">
           <td>{{ workshop.name }}</td>
           <td>{{ workshop.location }}</td>
-          <td>{{ workshop.no_of_participants_expected }}</td>
+          <td>{{ workshop.not_approval_reason }}</td>
           <td>{{ workshop.date }}</td>
           <td>{{ workshop.status.name }}</td>
           <td><a class="btn btn-primary" href="#/upload_reports/{{workshop.id}}">Upload Reports</a></td>

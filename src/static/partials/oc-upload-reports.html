@@ -142,6 +142,19 @@
                 console.log('Success');
             },
        });
+       var workshop_url =  '/workshops/'+workshop_id;
+       $.ajax({
+            url: workshop_url,
+            type: 'PUT',
+            global: false,
+            async:false,
+            contentType: 'application/json',
+            data: JSON.stringify({status : { id : 3 }}),
+            success: function (data){
+                console.log("Status Approved") ;
+            },
+        });
+       
      }
       window.history.back();                                  
     });
