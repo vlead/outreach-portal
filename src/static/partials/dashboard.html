@@ -1,15 +1,16 @@
 <div class="row">
   <div class="col-md-4">
-    <div class="box">Workshops Run
+    <div class="box" onclick="location.href='#/workshop_list'">Workshops Run
        <br><br><br>
       {{ totalworkshops }}
-    </div>
-    <div class="box">O.C
+      </div>
+      
+    <div class="box" onclick="location.href='#/ocuser_list'">O.C
       <br><br><br>
       {{ totaloc }}
     </div>
   </div>
-  <div class="col-md-4">
+  <div class="col-md-4" onclick="location.href='#/ncuser_list'">
     <div class="box">N.C
        <br><br><br>
       {{ totalnc }}

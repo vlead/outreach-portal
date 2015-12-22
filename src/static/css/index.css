@@ -116,6 +116,7 @@ h1,h2,h3{
     padding: 20px 30px;
     color: #fff;
 }
+.box:hover {cursor: pointer;}
 
 .profile{
     background-color: #3799FA;

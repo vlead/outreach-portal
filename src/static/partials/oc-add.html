@@ -21,6 +21,9 @@
 	  <span ng-show="myForm.email.$error.email">Invalid email address.</span>
 	</span>
       </p>
+      <p>Institute Name <br>
+	<input type="text" name="inst_name" ng-model="inst_name"  class="form-control"  placeholder="IIIT-H">
+      </p>
 
       <p>
 	<input type="submit" value="submit" class="btn btn-primary"  ng-disabled="myForm.user.$dirty && myForm.user.$invalid ||

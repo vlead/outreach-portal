@@ -1,11 +1,23 @@
 
-angular.module('outreachApp',['ngRoute','outreachApp.controllers','autocomplete']).config
+var app = angular.module('outreachApp',['ngRoute','outreachApp.controllers','autocomplete']).config
 (function($routeProvider)
  {
      $routeProvider
 	 .when('/manageoc', {
 	     templateUrl : '/static/partials/home.html',
 	     controller  : 'mainController'
+	 })
+         .when('/workshop_list', {
+	     templateUrl : '/static/partials/workshop_list.html',
+	     controller  : 'dashboard'
+	 })
+         .when('/ncuser_list', {
+	     templateUrl : '/static/partials/ncuser_list.html',
+	     controller  : 'dashboard'
+	 })
+         .when('/ocuser_list', {
+	     templateUrl : '/static/partials/ocuser_list.html',
+	     controller  : 'dashboard'
 	 })
      
 	 .when('/deloc/:id', {
@@ -126,4 +138,20 @@ angular.module('outreachApp',['ngRoute','outreachApp.controllers','autocomplete'
      	}
 );
 
+app.factory('workshops', function($http){
+        return {
+            list: function(callback){
+                $http.get('/workshops').success(callback);
+                
+          }
+        };
+      });
 
+app.factory('users', function($http){
+        return {
+            list: function(callback){
+                $http.get('/users').success(callback);
+                
+          }
+        };
+      });

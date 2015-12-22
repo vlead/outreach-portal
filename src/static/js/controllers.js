@@ -132,7 +132,7 @@ angular.module('outreachApp.controllers',[]).
     {
         if($scope.message[0].name != "" & $scope.message[0].email != "")
         {
-            $http.put('/users/'+$routeParams.id, {'name' : $scope.message[0].name, 'email' : $scope.message[0].email}).success(function(data, status, headers, config)
+            $http.put('/users/'+$routeParams.id, {'name' : $scope.message[0].name, 'institute_name' : $scope.message[0].institute_name, 'email' : $scope.message[0].email}).success(function(data, status, headers, config)
                 {
                     $scope.status = "Success";
                     window.location.href = "#/manageoc";
@@ -170,7 +170,7 @@ angular.module('outreachApp.controllers',[]).
     {
         if(isvalid)
         {
-            $http.post('/users',{'name' : $scope.name,'email' : $scope.email,'role' : { 'id' : 2 } } ).
+            $http.post('/users',{'name' : $scope.name,'email' : $scope.email, 'institute_name' : $scope.inst_name, 'role' : { 'id' : 2 } } ).
             success(function(data, status, headers, config)
             {
                 $scope.status = "Success";
@@ -237,8 +237,54 @@ angular.module('outreachApp.controllers',[]).
     
     
 
-}).controller("dashboard", function($scope, $http, $routeParams, $route) {
+}).controller("dashboard", function($scope, workshops, users, $http, $routeParams, $route,$window) {
+    
+    workshops.list(function(workshops) {
+        var workshop_list = [];
+        var count=0;
+        for(workshop=0;workshop<workshops.length;workshop++)
+        {
+            
+            if(workshops[workshop].status.name == "Approved")
+            {
+                count=count+1;
+                workshops[workshop].sno=count;
+                workshop_list.push(workshops[workshop]);
+            }
+        }
+        $scope.workshops = workshop_list;
+        
 
+    });
+    users.list(function(users) {
+        var ncs_list = [];
+        var ocs_list = [];
+        var nc_count=0;
+        var oc_count=0;
+        for(user=0;user<users.length;user++)
+        {
+            
+            if(users[user].role.id == 2)
+            {
+                oc_count=oc_count+1;
+                users[user].sno=oc_count;
+                ocs_list.push(users[user]);
+            }
+            else if(users[user].role.id == 3)
+            {
+                nc_count=nc_count+1;
+                users[user].sno=nc_count;
+                ncs_list.push(users[user]);
+                
+            }
+        }
+        $scope.nc_users = ncs_list;
+        $scope.oc_users = ocs_list;
+        
+
+    });
+    
+//    $scope.count = 0;
     $http.get('/nodal_centres').
         success(function(data, status, headers, config) 
                 {   $scope.ncentres = data.length   })
@@ -270,6 +316,7 @@ angular.module('outreachApp.controllers',[]).
       console.log(data);
       
     });
+    
    $http.get('/workshops').
     success(function(data, status, headers, config) 
     {  
@@ -298,7 +345,7 @@ angular.module('outreachApp.controllers',[]).
       console.log(data);
       
     });
-     
+    
     
 
 }).controller("profile", function($scope, $http, $routeParams, $route) {
@@ -1162,7 +1209,12 @@ angular.module('outreachApp.controllers',[]).
     });
     $scope.workshops = workshops;
     
-});
+}).controller('test', function ($scope, workshops){
+        workshops.list(function(workshops) {
+            $scope.countries = workshops;
+            alert($scope.countries);
+        });
+      });
 
 
 
