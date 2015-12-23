@@ -237,8 +237,36 @@ angular.module('outreachApp.controllers',[]).
     
     
 
-}).controller("dashboard", function($scope, workshops, users, $http, $routeParams, $route,$window) {
-    
+}).controller("dashboard", function($scope, workshops, dataFactory, $http, $routeParams, $route,$window) {
+    dataFactory.fetch("/users?role_id=2").success(function(response){
+        $scope.totaloc = response.length;
+        $scope.oc_users = response;
+        
+    });
+    dataFactory.fetch("/nodal_centres").success(function(response){
+        $scope.ncentres = response.length;
+    });
+    dataFactory.fetch("/users?role_id=3").success(function(response){
+        $scope.totalnc = response.length;
+        $scope.nc_users = response;
+        
+    });
+    dataFactory.fetch("/workshops?status_id=2").success(function(workshops){
+        var count = 0;
+        var workshop_list = [];
+        var labs = 0;
+        for(workshop=0;workshop<workshops.length;workshop++)
+        {
+            workshop_list.push(workshops[workshop]);
+            count = count + workshops[workshop].experiments_conducted;
+            labs = labs + workshops[workshop].labs_planned;
+        }
+        $scope.totalworkshops = workshops.length;
+        $scope.totalexpts = count;
+        $scope.labs = labs;
+        $scope.workshops = workshop_list;
+    });
+    /*
     workshops.list(function(workshops) {
         var workshop_list = [];
         var count=0;
@@ -346,7 +374,7 @@ angular.module('outreachApp.controllers',[]).
       
     });
     
-    
+    */
 
 }).controller("profile", function($scope, $http, $routeParams, $route) {
     
@@ -1211,9 +1239,9 @@ angular.module('outreachApp.controllers',[]).
     
 }).controller('testCtrl',function($scope,dataFactory){
     
-    dataFactory.fetch().success(function(response){
-        $scope.hello = response[0];
-       
+    dataFactory.fetch("/users").success(function(response){
+        $scope.hello = response[1];
+        
     });
     var data={name : "sripathi"};
     dataFactory.fetchbyid(data).success(function(response){
@@ -1222,17 +1250,4 @@ angular.module('outreachApp.controllers',[]).
         });
     //$scope.hello = "dfd";
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
 
