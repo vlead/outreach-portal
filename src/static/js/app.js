@@ -5,19 +5,19 @@ var app = angular.module('outreachApp',['ngRoute','outreachApp.controllers','out
      $routeProvider
 	 .when('/manageoc', {
 	     templateUrl : '/static/partials/home.html',
-	     controller  : 'mainController'
+	     controller  : 'adminController'
 	 })
          .when('/workshop_list', {
 	     templateUrl : '/static/partials/workshop_list.html',
-	     controller  : 'dashboard'
+	     controller  : 'adminController'
 	 })
          .when('/ncuser_list', {
 	     templateUrl : '/static/partials/ncuser_list.html',
-	     controller  : 'dashboard'
+	     controller  : 'adminController'
 	 })
          .when('/ocuser_list', {
 	     templateUrl : '/static/partials/ocuser_list.html',
-	     controller  : 'dashboard'
+	     controller  : 'adminController'
 	 })
      
 	 .when('/deloc/:id', {
@@ -36,16 +36,16 @@ var app = angular.module('outreachApp',['ngRoute','outreachApp.controllers','out
      
          .when('/profile', {
 	     templateUrl : '/static/partials/profile.html',
-	     controller  : 'dashboard'
+	     controller  : 'adminController'
 	 })
      
 	 .when('/addoc', {
 	     templateUrl : '/static/partials/oc-add.html',
-	     controller  : 'addoc'
+	     controller  : 'adminController'
          })
 	 .when('/dashboard', {
 	     templateUrl : '/static/partials/dashboard.html',
-	     controller  : 'dashboard'
+	     controller  : 'adminController'
 	 })
          .when('/adddoc', {
 	     templateUrl : '/static/partials/doc-add.html',

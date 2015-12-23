@@ -79,41 +79,6 @@ angular.module('outreachApp.controllers',[]).
                 title: cities.location
             });
     }  
-
-	
-               }).controller("mainController", function($scope, $http, $routeParams,$route) {
-    $http.get('/users?role_id=2').success(function(data, status, headers, config)
-    {
-        $scope.message= data;
-        
-      
-    }).error(function(data, status, headers, config)
-    {
-      console.log(data);
-      
-    });
-    $scope.del =  function(a)
-    {
-        if(confirm("Are you sure!") == true)
-        {
-            $http.delete('/users/'+a).
-                success(function(data, status, headers, config) 
-                        {
-                            $route.reload();
-                            
-                        }).
-                error(function(data, status, headers, config)
-                      {   
-                          if(status == 500)
-                              alert("You can't delete this user as other users are associated with this account");
-                      
-                      });
-            
-        }
-        else
-            return;
-         
-    }
     
 }).controller("editoc", function($scope, $http, $routeParams) {
   $http.get('/users?id='+$routeParams.id).
@@ -163,43 +128,6 @@ angular.module('outreachApp.controllers',[]).
         
     }
 
-
-}).controller("addoc", function($scope, $http, $routeParams) {
-
-    $scope.submit = function(isvalid)
-    {
-        if(isvalid)
-        {
-            $http.post('/users',{'name' : $scope.name,'email' : $scope.email, 'institute_name' : $scope.inst_name, 'role' : { 'id' : 2 } } ).
-            success(function(data, status, headers, config)
-            {
-                $scope.status = "Success";
-                window.location.href = "#/manageoc";
-                //$scope.message= $routeParams.id;
-                
-            }).
-            error(function(data, status, headers, config)
-            {
-                if(status == 500)
-                {
-                    $scope.status = "Duplicate Entry";
-                }
-                else if(status == 400)
-                {
-                    $scope.status = "Invalid username"
-                }
-                else
-                {
-                    $scope.status = "Failed"
-                }
-            });
-  
-        }
-        else
-        {
-            $scope.status = "Fill Details"
-        }
-    }
 }).controller("doclist", function($scope, $http, $routeParams, $route) {
     
     $http.get('/reference_documents?user_id=1').
@@ -237,10 +165,55 @@ angular.module('outreachApp.controllers',[]).
     
     
 
-}).controller("dashboard", function($scope, workshops, dataFactory, $http, $routeParams, $route,$window) {
+}).controller("adminController", function($scope, workshops, dataFactory, $http, $routeParams, $route,$window) {
     dataFactory.fetch("/users/"+$window.number).success(function(response){
         $scope.user = response;
     });
+    $scope.add_oc = function(isvalid){    
+        if(isvalid){
+            data = {'name' : $scope.name,'email' : $scope.email, 'institute_name' : $scope.inst_name, 'role' : { 'id' : 2 } };
+            dataFactory.post("/users", data).success(function(response){
+                history.back();
+            }).error(function(data, status, headers, config){
+                if(status == 500){
+                    $scope.status = "Duplicate Entry";
+                }
+                else if(status == 400){
+                    $scope.status = "Invalid username"
+                }
+                else{
+                    $scope.status = "Failed"
+                }
+            });
+            
+        }
+        else{
+            $scope.status = "Fill Details"
+        }
+    }
+    $scope.delete_oc =  function(id)
+    {
+        if(confirm("Are you sure!") == true)
+        {
+            $http.delete('/users/'+id).
+                success(function(data, status, headers, config) 
+                        {
+                            $route.reload();
+                            
+                        }).
+                error(function(data, status, headers, config)
+                      {   
+                          if(status == 500)
+                              alert("You can't delete this user as other users are associated with this account");
+                      
+                      });
+            
+        }
+        else
+            return;
+         
+    }
+    
     dataFactory.fetch("/users?role_id=2").success(function(response){
         $scope.totaloc = response.length;
         $scope.oc_users = response;
