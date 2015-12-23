@@ -36,7 +36,7 @@ var app = angular.module('outreachApp',['ngRoute','outreachApp.controllers','out
      
          .when('/profile', {
 	     templateUrl : '/static/partials/profile.html',
-	     controller  : 'profile'
+	     controller  : 'dashboard'
 	 })
      
 	 .when('/addoc', {

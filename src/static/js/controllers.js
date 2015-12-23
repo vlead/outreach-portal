@@ -238,6 +238,9 @@ angular.module('outreachApp.controllers',[]).
     
 
 }).controller("dashboard", function($scope, workshops, dataFactory, $http, $routeParams, $route,$window) {
+    dataFactory.fetch("/users/"+$window.number).success(function(response){
+        $scope.user = response;
+    });
     dataFactory.fetch("/users?role_id=2").success(function(response){
         $scope.totaloc = response.length;
         $scope.oc_users = response;
@@ -266,131 +269,7 @@ angular.module('outreachApp.controllers',[]).
         $scope.labs = labs;
         $scope.workshops = workshop_list;
     });
-    /*
-    workshops.list(function(workshops) {
-        var workshop_list = [];
-        var count=0;
-        for(workshop=0;workshop<workshops.length;workshop++)
-        {
-            
-            if(workshops[workshop].status.name == "Approved")
-            {
-                count=count+1;
-                workshops[workshop].sno=count;
-                workshop_list.push(workshops[workshop]);
-            }
-        }
-        $scope.workshops = workshop_list;
-        
-
-    });
-    users.list(function(users) {
-        var ncs_list = [];
-        var ocs_list = [];
-        var nc_count=0;
-        var oc_count=0;
-        for(user=0;user<users.length;user++)
-        {
-            
-            if(users[user].role.id == 2)
-            {
-                oc_count=oc_count+1;
-                users[user].sno=oc_count;
-                ocs_list.push(users[user]);
-            }
-            else if(users[user].role.id == 3)
-            {
-                nc_count=nc_count+1;
-                users[user].sno=nc_count;
-                ncs_list.push(users[user]);
-                
-            }
-        }
-        $scope.nc_users = ncs_list;
-        $scope.oc_users = ocs_list;
-        
-
-    });
     
-//    $scope.count = 0;
-    $http.get('/nodal_centres').
-        success(function(data, status, headers, config) 
-                {   $scope.ncentres = data.length   })
-        . error(function(data, status, headers, config)
-                {
-                    console.log(data);
-                    
-                });
-   
-   $http.get('/users').
-    success(function(data, status, headers, config) 
-    {  
-        var occount = 0;
-        var nccount = 0;
-        for(i=0;i<data.length;i++)
-        {
-            if(data[i].role.id == 2)
-                occount=occount+1;
-            else if(data[i].role.id == 3)
-                nccount=nccount+1;
-        }
-        $scope.totaloc = occount ;
-        $scope.totalnc = nccount ;
-        console.log(oc-count);
-              
-    }).
-    error(function(data, status, headers, config)
-    {
-      console.log(data);
-      
-    });
-    
-   $http.get('/workshops').
-    success(function(data, status, headers, config) 
-    {  
-        var count = 0;
-        var expts = 0;
-        var labs = 0;
-        
-        for(i=0;i<data.length;i++)
-        {
-            if(data[i].status.name == "Approved")
-            {
-                count=count+1;
-                expts = expts + data[i].experiments_conducted;
-                labs = labs + data[i].labs_planned;
-            }
-        }
-        $scope.totalworkshops = count ;
-        $scope.totalexpts = expts ;
-        $scope.labs = labs ;
-        
-
-              
-    }).
-    error(function(data, status, headers, config)
-    {
-      console.log(data);
-      
-    });
-    
-    */
-
-}).controller("profile", function($scope, $http, $routeParams, $route) {
-    
-    $http.get('/users?role_id=1').
-    success(function(data, status, headers, config) 
-    {
-        $scope.users = data;
-              
-    }).
-    error(function(data, status, headers, config)
-    {
-      console.log(data);
-      
-    });
-    
-
 }).controller("nc-dashboard", function($scope, $http, $routeParams, $route, $window) {
 
     $http.put('/users/'+$window.number, {'last_active': Date()}).success(function(data, status){ console.log('Status success'); });
