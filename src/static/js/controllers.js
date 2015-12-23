@@ -1214,7 +1214,45 @@ angular.module('outreachApp.controllers',[]).
             $scope.countries = workshops;
             alert($scope.countries);
         });
-      });
+}).controller("uploadreports", function($scope, $http, $routeParams, $route, $window){
+    var photos = [];
+    var attendance = [];
+    var reports = [];
+    $http.get('/workshop_reports?workshop_id='+$routeParams.id).success(function(data,status,headers,config){
+        for(i=0;i<data.length;i++){
+            if (data[i].name == 'Photos'){
+                photos.push(data[i]);
+            }else if (data[i].name == 'Attendance'){
+                attendance.push(data[i]);
+            }else{
+                reports.push(data[i]);
+            }
+        }
+    }).error(function(data, status, headers, config){
+        console.log("Failed");
+    });
+    $scope.delreport =  function(id)
+    {
+        $http.delete('/workshop_reports/'+id).
+            success(function(data, status, headers, config) 
+                    {
+                        $scope.status= "Deleted";
+                        $route.reload();
+              
+                    }).
+            error(function(data, status, headers, config)
+                  {
+                      console.log(data);
+                      
+                  });
+        
+        
+        
+    }
+    $scope.photos = photos;
+    $scope.attendance = attendance;
+    $scope.reports = reports;
+});
 
 
 
