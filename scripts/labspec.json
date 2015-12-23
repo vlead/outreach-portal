@@ -96,9 +96,7 @@
         ],
         "build_steps": {
           "configure": [],
-          "pre_build": [
-            "bash ./install_emacs24.sh"
-          ],
+          "pre_build": [],
           "build": [
             "cd ../;make build"
           ],
