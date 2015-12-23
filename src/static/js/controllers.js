@@ -1209,13 +1209,19 @@ angular.module('outreachApp.controllers',[]).
     });
     $scope.workshops = workshops;
     
-}).controller('test', function ($scope, workshops){
-        workshops.list(function(workshops) {
-            $scope.countries = workshops;
-            alert($scope.countries);
+}).controller('testCtrl',function($scope,dataFactory){
+    
+    dataFactory.fetch().success(function(response){
+        $scope.hello = response[0];
+       
+    });
+    var data={name : "sripathi"};
+    dataFactory.fetchbyid(data).success(function(response){
+        $scope.helloo = response;
+       
         });
-      });
-
+    //$scope.hello = "dfd";
+});
 
 
 

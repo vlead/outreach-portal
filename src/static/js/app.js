@@ -1,5 +1,5 @@
 
-var app = angular.module('outreachApp',['ngRoute','outreachApp.controllers','autocomplete']).config
+var app = angular.module('outreachApp',['ngRoute','outreachApp.controllers','outreachApp.factories']).config
 (function($routeProvider)
  {
      $routeProvider
