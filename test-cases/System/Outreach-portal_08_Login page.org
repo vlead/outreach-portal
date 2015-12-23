@@ -1,0 +1,29 @@
+* Author: Nihanth
+* Date Created: 23 Dec 2015
+* Environment
+  - OS: Windows 7, Ubuntu-16.04,Centos-6
+  - Browsers: Firefox-42.0,Chrome-47.0,chromium-45.0
+  - Bandwidth : 100Mbps
+  - Hardware Configuration:8GBRAM , 
+  - Processor:i5,
+
+* Objective
+  - To be able to login the portal
+
+* Pre/Post conditions
+  - Refer to first test case [[https://github.com/Virtual-Labs/system/blob/master/test-cases/integration_test-cases/System/System_01_Usability.org][System_01_Usability.org]]
+
+* Post conditions
+  - Nil
+* Test Steps
+  1. Refer to the [[https://github.com/Virtual-Labs/system/blob/master/test-cases/integration_test-cases/System/Outreach-portal_06_Login page.org][Outreach-portal_06_Login page.org]]
+  2. Enter the invalid password in the password field
+  3. Hit enter or click signin button.
+
+* Expected result
+  1. Refer to the [[https://github.com/Virtual-Labs/system/blob/master/test-cases/integration_test-cases/System/Outreach-portal_06_Login page.org][Outreach-portal_06_Login page.org]]
+  2. An error message should be displayed on the screen as to enter the valid password
+
+* Review/comments
+
+
