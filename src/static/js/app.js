@@ -27,7 +27,7 @@ var app = angular.module('outreachApp',['ngRoute','outreachApp.controllers','out
      
 	 .when('/editoc/:id', {
 	     templateUrl : '/static/partials/oc-edit.html',
-	     controller  : 'editoc'
+	     controller  : 'adminController'
 	 })
          .when('/documents', {
 	     templateUrl : '/static/partials/doc-upload.html',

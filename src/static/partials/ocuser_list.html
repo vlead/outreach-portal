@@ -1,7 +1,10 @@
 
 
 <div class="row">
-  <div class="col-md-12"><h2>NC Details</h2></div>
+  <div class="col-md-10"><h2>Outreach Coordinators Details</h2></div>
+  <div class="col-md-2">
+    <a onclick="history.back();" role="button" class="btn btn-success btn-large">Back</a>
+  </div>
 </div>
 <div class="row">
   <div class="col-md-12">
@@ -18,7 +21,7 @@
       </thead>
       <tbody>
 	<tr ng-repeat="oc in oc_users">
-          <td>{{ oc.sno }}</td>
+          <td>{{ $index+1 }}</td>
           <td>{{ oc.name }}</td>
           <td>{{ oc.email }}</td>
           <td>{{ oc.institute_name }}</td>

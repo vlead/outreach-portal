@@ -10,6 +10,9 @@ service.factory('dataFactory', function($http){
     data.post = function(url, data){
         return $http.post(url, data);
     }
+    data.put = function(url, data){
+        return $http.put(url, data);
+    }
     
     
     return data;

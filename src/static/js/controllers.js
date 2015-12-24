@@ -169,6 +169,33 @@ angular.module('outreachApp.controllers',[]).
     dataFactory.fetch("/users/"+$window.number).success(function(response){
         $scope.user = response;
     });
+    dataFactory.fetch("/users/"+$routeParams.id).success(function(response){
+        $scope.oc_user = response;
+                
+    });
+    $scope.edit_oc = function(isvalid){
+        if(isvalid){
+            data = {'name' : $scope.oc_user.name,'email' : $scope.oc_user.email, 'institute_name' : $scope.oc_user.institute_name };
+            dataFactory.put("/users/"+$routeParams.id, data).success(function(response){
+                history.back();
+            }).error(function(data, status, headers, config){
+                if(status == 500){
+                    $scope.status = "Duplicate Entry";
+                }
+                else if(status == 400){
+                    $scope.status = "Invalid username"
+                }
+                else{
+                    $scope.status = "Failed"
+                }
+            });
+            
+        }
+        else{
+            $scope.status = "Fill Details"
+        }
+    }
+    
     $scope.add_oc = function(isvalid){    
         if(isvalid){
             data = {'name' : $scope.name,'email' : $scope.email, 'institute_name' : $scope.inst_name, 'role' : { 'id' : 2 } };
