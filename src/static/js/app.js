@@ -31,7 +31,7 @@ var app = angular.module('outreachApp',['ngRoute','outreachApp.controllers','out
 	 })
          .when('/documents', {
 	     templateUrl : '/static/partials/doc-upload.html',
-	     controller  : 'doclist'
+	     controller  : 'adminController'
 	 })
      
          .when('/profile', {
@@ -49,7 +49,7 @@ var app = angular.module('outreachApp',['ngRoute','outreachApp.controllers','out
 	 })
          .when('/adddoc', {
 	     templateUrl : '/static/partials/doc-add.html',
-	     controller  : 'adddoc'
+	     controller  : 'adminController'
 	 })
          .when('/nc-dashboard', {
 	     templateUrl : '/static/partials/nc-dashboard.html',

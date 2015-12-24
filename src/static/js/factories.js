@@ -13,6 +13,9 @@ service.factory('dataFactory', function($http){
     data.put = function(url, data){
         return $http.put(url, data);
     }
+    data.del = function(url){
+        return $http.delete(url);
+    }
     
     
     return data;
