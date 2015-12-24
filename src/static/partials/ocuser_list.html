@@ -1,23 +1,22 @@
 
 
 <div class="row">
-  <div class="col-md-10"><h2>Outreach Coordinator Details</h2></div>
+  <div class="col-md-10"><h2>Outreach Coordinators Details</h2></div>
   <div class="col-md-2">
-     <a href="#/addoc" role="button" class="btn btn-success btn-large">ADD OC</a>
+    <a onclick="history.back();" role="button" class="btn btn-success btn-large">Back</a>
   </div>
 </div>
 <div class="row">
   <div class="col-md-12">
-    <table class="table table-hover">
+    <div class="table-responsive">
+    <table class="table table-stripped">
       <thead>
 	<tr>
           <th>S.NO</th>
 	  <th>Name</th>
 	  <th>Email</th>
-          <th>Institute Name</th>
-	  <th>Last Active</th>
-	  <th>Created On</th>
-          <th>Manage</th>
+	  <th>Institute Name</th>
+
 	</tr>
       </thead>
       <tbody>
@@ -26,13 +25,11 @@
           <td>{{ oc.name }}</td>
           <td>{{ oc.email }}</td>
           <td>{{ oc.institute_name }}</td>
-          <td>{{ oc.last_active }}</td>
-          <td>{{ oc.created }}</td>
-          <td><a href="#/editoc/{{oc.id}}" class="btn btn-primary">Edit</a></td>
-          <td><a class="btn btn-danger" ng-click="delete_oc(oc.id)">Delete</a></td>
+
 	</tr>
       </tbody>
     </table>
+    </div>
   </div>
 </div>
 

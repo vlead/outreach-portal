@@ -1,32 +1,34 @@
 <div>
   <h1> Upload Photos </h1>
   <form method="post" id="upload-file" name="myForm" action="" style="margin-top:30px"  enctype="multipart/form-data">
-    <input type="file" name="file" id="file" required multiple/><br>
-    <button type="button" id="upload-photo" class="btn btn-primary">Upload</button>
-  </form>
+    <input type="file" name="file" id="photo-file" required multiple/><br>
+ 
+ 
   <br><br>
    <h1> Upload Attendance Sheets </h1>
-  <form method="post" id="upload-file" name="myForm" action="" style="margin-top:30px"  enctype="multipart/form-data">
-    <input type="file" name="file" id="file" required multiple/><br>
-    <button type="button" id="upload-attendance" class="btn btn-primary">Upload</button>
-  </form>
+ 
+    <input type="file" name="file" id="attendance-file" required multiple/><br>
+ 
+ 
   <br><br>
    <h1> Upload College Reports </h1>
-  <form method="post" id="upload-file" name="myForm" action="" style="margin-top:30px"  enctype="multipart/form-data">
-    <input type="file" name="file" id="file" required multiple/><br>
+ 
+    <input type="file" name="file" id="reports-file" required multiple/><br>
     <button type="button" id="upload-reports" class="btn btn-primary">Upload</button>
   </form>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
    <script>
    $(function() {
-   $('#upload-photo').click(function() {
+   $('#upload-reports').click(function() {
         var workshop_id = location.href.split("/").pop()
-        var name = 'Photos';
         console.log(number);
-        console.log(name);
-        data = {name: name, workshop: {id : workshop_id }};
-        fileups = document.getElementById('file');
-        for (var i = 0; i < fileups.files.length; i++){
+       
+        fileups = {'Photos':document.getElementById('photo-file'),
+                   'Attendance':document.getElementById('attendance-file'),
+                   'Reports': document.getElementById('reports-file')}
+        for (var key in fileups){
+        data = {name: key, workshop: {id : workshop_id }};
+        for (var i = 0; i < fileups[key].files.length; i++){
         var jqxhr = $.ajax({
             url: '/workshop_reports',
             type: 'POST',
@@ -43,7 +45,7 @@
         console.log(documentId);
         var form_data = new FormData();
        
-        form_data.append('file', fileups.files[i], fileups.files[i].name);
+        form_data.append('file', fileups[key].files[i], fileups[key].files[i].name);
         var url = '/upload_workshop_report/' + documentId ;
    
         $.ajax({
@@ -59,105 +61,20 @@
             },
        });
      }
-     
-    });
- $('#upload-attendance').click(function() {
-        var workshop_id = location.href.split("/").pop()
-        var name = 'Attendance Sheets';
-        console.log(number);
-        console.log(name);
-        data = {name: name, workshop: {id : workshop_id }};
-        fileups = document.getElementById('file');
-        for (var i = 0; i < fileups.files.length; i++){
-        var jqxhr = $.ajax({
-            url: '/workshop_reports',
-            type: 'POST',
-            global: false,
-            async:false,
-            contentType: 'application/json',
-            data: JSON.stringify(data),
-            success: function (data){
-                return data ;
-            },
-        }).responseText;
-
-        var documentId = JSON.parse(jqxhr).id;
-        console.log(documentId);
-        var form_data = new FormData();
-       
-        form_data.append('file', fileups.files[i], fileups.files[i].name);
-        var url = '/upload_workshop_report/' + documentId ;
-   
-        $.ajax({
-            type: 'POST',
-            url: url,
-            data: form_data,
-            contentType: false,
-            cache: false,
-            processData: false,
-            async: false,
-            success: function(data) {
-                console.log('Success');
-            },
-       });
-     }
-     
-    });
- $('#upload-reports').click(function() {
-        var workshop_id = location.href.split("/").pop()
-        var name = 'College Reports';
-        console.log(number);
-        console.log(name);
-        data = {name: name, workshop: {id : workshop_id }};
-        fileups = document.getElementById('file');
-        for (var i = 0; i < fileups.files.length; i++){
-        var jqxhr = $.ajax({
-            url: '/workshop_reports',
-            type: 'POST',
-            global: false,
-            async:false,
-            contentType: 'application/json',
-            data: JSON.stringify(data),
-            success: function (data){
-                return data ;
-            },
-        }).responseText;
-
-        var documentId = JSON.parse(jqxhr).id;
-        console.log(documentId);
-        var form_data = new FormData();
-       
-        form_data.append('file', fileups.files[i], fileups.files[i].name);
-        var url = '/upload_workshop_report/' + documentId ;
-   
-        $.ajax({
-            type: 'POST',
-            url: url,
-            data: form_data,
-            contentType: false,
-            cache: false,
-            processData: false,
-            async: false,
-            success: function(data) {
-                console.log('Success');
-            },
-       });
-       var workshop_url =  '/workshops/'+workshop_id;
-       $.ajax({
-            url: workshop_url,
-            type: 'PUT',
-            global: false,
-            async:false,
-            contentType: 'application/json',
-            data: JSON.stringify({status : { id : 3 }}),
-            success: function (data){
-                console.log("Status Approved") ;
-            },
-        });
-       
-     }
-      window.history.back();                                  
-    });
+    }
+    var url = '/workshops/'+workshop_id;                        
+    $.ajax({
+        url: url,
+        type: 'PUT',
+        async:false,
+        contentType: 'application/json',
+        data: JSON.stringify({status: {id: 3}}),
+        success: function (data){
+          console.log('Status: Approved');
+        }
+        });                    
+    window.history.back();                                  
+    });                        
 });
  </script>
 </div>
