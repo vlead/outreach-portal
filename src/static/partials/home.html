@@ -11,6 +11,7 @@
     <table class="table table-hover">
       <thead>
 	<tr>
+          <th>S.NO</th>
 	  <th>Name</th>
 	  <th>Email</th>
           <th>Institute Name</th>
@@ -20,14 +21,15 @@
 	</tr>
       </thead>
       <tbody>
-	<tr ng-repeat="oc in message">
+	<tr ng-repeat="oc in oc_users">
+          <td>{{ $index+1 }}</td>
           <td>{{ oc.name }}</td>
           <td>{{ oc.email }}</td>
           <td>{{ oc.institute_name }}</td>
           <td>{{ oc.last_active }}</td>
           <td>{{ oc.created }}</td>
           <td><a href="#/editoc/{{oc.id}}" class="btn btn-primary">Edit</a></td>
-          <td><a class="btn btn-danger" ng-click="del(oc.id)">Delete</a></td>
+          <td><a class="btn btn-danger" ng-click="delete_oc(oc.id)">Delete</a></td>
 	</tr>
       </tbody>
     </table>

@@ -39,23 +39,23 @@ angular.module('outreachApp.controllers',[]).
                                        );
 	           }
                    
-    var cities = function()
-    {
-        //console.log(cities1);
-        today = new Date();
-        var count = 0;
-        //console.log(cities1[0].name+""+cities1[0].location);
-	for(i=0;i<cities1.length;i++)
-	{
-            
-            date_array = cities1[i].date.split("-");
-            //console.log(date_array);
-            workshop_date = new Date(Number(date_array[0]), Number(date_array[1])-1, Number(date_array[2]));
-            //workshop_date = new Date(2016,12,18);
-//            console.log(workshop_date);
-	    if((today <= workshop_date) || (today.getDate() == workshop_date.getDate() & (today.getMonth() == workshop_date.getMonth()) 
-                                            & (today.getFullYear() == workshop_date.getFullYear())))
-            {
+                   var cities = function()
+                   {
+                       //console.log(cities1);
+                       today = new Date();
+                       var count = 0;
+                       //console.log(cities1[0].name+""+cities1[0].location);
+	               for(i=0;i<cities1.length;i++)
+	               {
+                           
+                           date_array = cities1[i].date.split("-");
+                           //console.log(date_array);
+                           workshop_date = new Date(Number(date_array[0]), Number(date_array[1])-1, Number(date_array[2]));
+                           //workshop_date = new Date(2016,12,18);
+                           //            console.log(workshop_date);
+	                   if((today <= workshop_date) || (today.getDate() == workshop_date.getDate() & (today.getMonth() == workshop_date.getMonth()) 
+                                                           & (today.getFullYear() == workshop_date.getFullYear())))
+                           {
 		count ++;
                 //console.log(cities1[i].date);
 		get_geocode(cities1[i],count);
@@ -80,289 +80,115 @@ angular.module('outreachApp.controllers',[]).
             });
     }  
 
-	
-               }).controller("mainController", function($scope, $http, $routeParams,$route) {
-    $http.get('/users?role_id=2').success(function(data, status, headers, config)
-    {
-        $scope.message= data;
-        
-      
-    }).error(function(data, status, headers, config)
-    {
-      console.log(data);
-      
+}).controller("adminController", function($scope, workshops, dataFactory, $http, $routeParams, $route,$window) {
+    dataFactory.fetch("/users/"+$window.number).success(function(response){
+        $scope.user = response;
     });
-    $scope.del =  function(a)
-    {
-        if(confirm("Are you sure!") == true)
-        {
-            $http.delete('/users/'+a).
-                success(function(data, status, headers, config) 
-                        {
-                            $route.reload();
-                            
-                        }).
-                error(function(data, status, headers, config)
-                      {   
-                          if(status == 500)
-                              alert("You can't delete this user as other users are associated with this account");
-                      
-                      });
-            
-        }
-        else
-            return;
-         
-    }
-    
-}).controller("editoc", function($scope, $http, $routeParams) {
-  $http.get('/users?id='+$routeParams.id).
-    success(function(data, status, headers, config) 
-    {
-        $scope.message= data;
-              
-    }).
-    error(function(data, status, headers, config)
-    {
-      console.log(data);
-      
-    });
-
-    $scope.submit = function () 
-    {
-        if($scope.message[0].name != "" & $scope.message[0].email != "")
-        {
-            $http.put('/users/'+$routeParams.id, {'name' : $scope.message[0].name, 'institute_name' : $scope.message[0].institute_name, 'email' : $scope.message[0].email}).success(function(data, status, headers, config)
-                {
-                    $scope.status = "Success";
-                    window.location.href = "#/manageoc";
-                                      
-                }).
-                error(function(data, status, headers, config)
-                {
-                    if(status == 500)
-                    {
-                        
-                        $scope.status = "Duplicate Email";
-                    }
-                    else if(status == 400)
-                    {
-                        $scope.status = "Invalid username"
-                    }
-                    else
-                    {
-                        $scope.status = "Failed"
-                    }
-                    
-                });
-        }
-        else
-        {
-            $scope.status = "Not empty"
-        }
-        
-    }
-
-
-}).controller("addoc", function($scope, $http, $routeParams) {
-
-    $scope.submit = function(isvalid)
-    {
-        if(isvalid)
-        {
-            $http.post('/users',{'name' : $scope.name,'email' : $scope.email, 'institute_name' : $scope.inst_name, 'role' : { 'id' : 2 } } ).
-            success(function(data, status, headers, config)
-            {
-                $scope.status = "Success";
-                window.location.href = "#/manageoc";
-                //$scope.message= $routeParams.id;
+    dataFactory.fetch("/users/"+$routeParams.id).success(function(response){
+        $scope.oc_user = response;
                 
-            }).
-            error(function(data, status, headers, config)
-            {
-                if(status == 500)
-                {
-                    $scope.status = "Duplicate Entry";
-                }
-                else if(status == 400)
-                {
-                    $scope.status = "Invalid username"
-                }
-                else
-                {
-                    $scope.status = "Failed"
-                }
-            });
-  
-        }
-        else
-        {
-            $scope.status = "Fill Details"
-        }
-    }
-}).controller("doclist", function($scope, $http, $routeParams, $route) {
-    
-    $http.get('/reference_documents?user_id=1').
-    success(function(data, status, headers, config) 
-    {
-        $scope.documents= data;
-              
-    }).
-    error(function(data, status, headers, config)
-    {
-      console.log(data);
-      
+    });
+    dataFactory.fetch("/reference_documents?user_id=1").success(function(response){
+        $scope.documents = response;
     });
     $scope.deldoc =  function(id)
     {
-        $http.delete('/reference_documents/'+id).
-            success(function(data, status, headers, config) 
-                    {
-                        $scope.status= "Deleted";
-                        $route.reload();
-              
-                    }).
-            error(function(data, status, headers, config)
-                  {
-                      console.log(data);
-                      
-                  });
-        
-        
-        
+        if(confirm("Are you sure!") == true){
+            dataFactory.del("/reference_documents/"+id).success(function(response){
+                $route.reload();
+            }).error(function(data, status){
+                
+            });
+    
+        }
     }
 
+    $scope.edit_oc = function(isvalid){
+        if(isvalid){
+            data = {'name' : $scope.oc_user.name,'email' : $scope.oc_user.email, 'institute_name' : $scope.oc_user.institute_name };
+            dataFactory.put("/users/"+$routeParams.id, data).success(function(response){
+                history.back();
+            }).error(function(data, status, headers, config){
+                if(status == 500){
+                    $scope.status = "Duplicate Entry";
+                }
+                else if(status == 400){
+                    $scope.status = "Invalid username"
+                }
+                else{
+                    $scope.status = "Failed"
+                }
+            });
+            
+        }
+        else{
+            $scope.status = "Fill Details"
+        }
+    }
+    
+    $scope.add_oc = function(isvalid){    
+        if(isvalid){
+            data = {'name' : $scope.name,'email' : $scope.email, 'institute_name' : $scope.inst_name, 'role' : { 'id' : 2 } };
+            dataFactory.post("/users", data).success(function(response){
+                history.back();
+            }).error(function(data, status, headers, config){
+                if(status == 500){
+                    $scope.status = "Duplicate Entry";
+                }
+                else if(status == 400){
+                    $scope.status = "Invalid username"
+                }
+                else{
+                    $scope.status = "Failed"
+                }
+            });
+            
+        }
+        else{
+            $scope.status = "Fill Details"
+        }
+    }
 
-}).controller("adddoc", function($scope, $http, $routeParams, $route) {
-    
-    
-
-}).controller("dashboard", function($scope, workshops, users, $http, $routeParams, $route,$window) {
-    
-    workshops.list(function(workshops) {
+    $scope.delete_oc =  function(id)
+    {
+        if(confirm("Are you sure!") == true){
+            dataFactory.del("/users/"+id).success(function(response){
+                $route.reload();
+            }).error(function(data, status){
+                alert("You can delete after deleting NC users under him");  
+            });
+        }
+                 
+    }
+    dataFactory.fetch("/users?role_id=2").success(function(response){
+        $scope.totaloc = response.length;
+        $scope.oc_users = response;
+        
+    });
+    dataFactory.fetch("/nodal_centres").success(function(response){
+        $scope.ncentres = response.length;
+    });
+    dataFactory.fetch("/users?role_id=3").success(function(response){
+        $scope.totalnc = response.length;
+        $scope.nc_users = response;
+        
+    });
+    dataFactory.fetch("/workshops?status_id=2").success(function(workshops){
+        var count = 0;
         var workshop_list = [];
-        var count=0;
+        var labs = 0;
         for(workshop=0;workshop<workshops.length;workshop++)
         {
-            
-            if(workshops[workshop].status.name == "Approved")
-            {
-                count=count+1;
-                workshops[workshop].sno=count;
-                workshop_list.push(workshops[workshop]);
-            }
+            workshop_list.push(workshops[workshop]);
+            count = count + workshops[workshop].experiments_conducted;
+            labs = labs + workshops[workshop].labs_planned;
         }
+        $scope.totalworkshops = workshops.length;
+        $scope.totalexpts = count;
+        $scope.labs = labs;
         $scope.workshops = workshop_list;
-        
-
-    });
-    users.list(function(users) {
-        var ncs_list = [];
-        var ocs_list = [];
-        var nc_count=0;
-        var oc_count=0;
-        for(user=0;user<users.length;user++)
-        {
-            
-            if(users[user].role.id == 2)
-            {
-                oc_count=oc_count+1;
-                users[user].sno=oc_count;
-                ocs_list.push(users[user]);
-            }
-            else if(users[user].role.id == 3)
-            {
-                nc_count=nc_count+1;
-                users[user].sno=nc_count;
-                ncs_list.push(users[user]);
-                
-            }
-        }
-        $scope.nc_users = ncs_list;
-        $scope.oc_users = ocs_list;
-        
-
     });
     
-//    $scope.count = 0;
-    $http.get('/nodal_centres').
-        success(function(data, status, headers, config) 
-                {   $scope.ncentres = data.length   })
-        . error(function(data, status, headers, config)
-                {
-                    console.log(data);
-                    
-                });
-   
-   $http.get('/users').
-    success(function(data, status, headers, config) 
-    {  
-        var occount = 0;
-        var nccount = 0;
-        for(i=0;i<data.length;i++)
-        {
-            if(data[i].role.id == 2)
-                occount=occount+1;
-            else if(data[i].role.id == 3)
-                nccount=nccount+1;
-        }
-        $scope.totaloc = occount ;
-        $scope.totalnc = nccount ;
-        console.log(oc-count);
-              
-    }).
-    error(function(data, status, headers, config)
-    {
-      console.log(data);
-      
-    });
-    
-   $http.get('/workshops').
-    success(function(data, status, headers, config) 
-    {  
-        var count = 0;
-        var expts = 0;
-        var labs = 0;
-        
-        for(i=0;i<data.length;i++)
-        {
-            if(data[i].status.name == "Approved")
-            {
-                count=count+1;
-                expts = expts + data[i].experiments_conducted;
-                labs = labs + data[i].labs_planned;
-            }
-        }
-        $scope.totalworkshops = count ;
-        $scope.totalexpts = expts ;
-        $scope.labs = labs ;
-        
-
-              
-    }).
-    error(function(data, status, headers, config)
-    {
-      console.log(data);
-      
-    });
-    
-    
-
-}).controller("profile", function($scope, $http, $routeParams, $route) {
-    
-    $http.get('/users?role_id=1').
-    success(function(data, status, headers, config) 
-    {
-        $scope.users = data;
-              
-    }).
-    error(function(data, status, headers, config)
-    {
-      console.log(data);
-      
-    });
-    
-
 }).controller("nc-dashboard", function($scope, $http, $routeParams, $route, $window) {
 
     $http.put('/users/'+$window.number, {'last_active': Date()}).success(function(data, status){ console.log('Status success'); });
@@ -1209,11 +1035,18 @@ angular.module('outreachApp.controllers',[]).
     });
     $scope.workshops = workshops;
     
-}).controller('test', function ($scope, workshops){
-        workshops.list(function(workshops) {
-            $scope.countries = workshops;
-            alert($scope.countries);
+}).controller('testCtrl',function($scope,dataFactory){
+    
+    dataFactory.fetch("/users").success(function(response){
+        $scope.hello = response[1];
+        
+    });
+    var data={name : "sripathi"};
+    dataFactory.fetchbyid(data).success(function(response){
+        $scope.helloo = response;
+       
         });
+
 }).controller("uploadreports", function($scope, $http, $routeParams, $route, $window){
     var photos = [];
     var attendance = [];
@@ -1253,18 +1086,3 @@ angular.module('outreachApp.controllers',[]).
     $scope.attendance = attendance;
     $scope.reports = reports;
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

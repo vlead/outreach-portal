@@ -6,7 +6,7 @@
   <div class="col-md-4">
     <h2>Add Outreach Coordinator</h2>
    <span class="error"> {{ status }}</span>
-    <form name="myForm" novalidate ng-submit="submit(myForm.$valid)">
+    <form name="myForm" novalidate ng-submit="add_oc(myForm.$valid)">
       <p>Name:<br>
 	<input type="text" name="user" ng-model="name"  class="form-control"  placeholder="User Name" required>
 	<span style="color:red" ng-show="myForm.user.$dirty && myForm.user.$invalid">

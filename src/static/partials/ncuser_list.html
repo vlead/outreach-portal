@@ -1,7 +1,10 @@
 
 
 <div class="row">
-  <div class="col-md-12"><h2>NC Details</h2></div>
+  <div class="col-md-10"><h2>Nodal Coordinators Details</h2></div>
+  <div class="col-md-2">
+    <a onclick="history.back();" role="button" class="btn btn-success btn-large">Back</a>
+  </div>
 </div>
 <div class="row">
   <div class="col-md-12">
@@ -18,7 +21,7 @@
       </thead>
       <tbody>
 	<tr ng-repeat="nc in nc_users">
-          <td>{{ nc.sno }}</td>
+          <td>{{ $index+1 }}</td>
           <td>{{ nc.name }}</td>
           <td>{{ nc.email }}</td>
           <td>{{ nc.institute_name }}</td>
