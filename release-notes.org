@@ -18,6 +18,7 @@
     format.
   - Scenario 38: Combined three buttons into single button and
     listed all files of each type under each heading.
+  - Scenario 7A & 23A Added to the existing scenario list
 * Environment Settings 
    - OS : Windows 7, Linux
    - Browsers : Firefox, Chrome
