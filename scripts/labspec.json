@@ -124,6 +124,7 @@
         },
         "installer": [
           "bash /var/www/setup.sh",
+          "python /var/www/setup.py install",
           "bash /var/www/configure.sh",
           "python /var/www/db_setup.py"
         ],
