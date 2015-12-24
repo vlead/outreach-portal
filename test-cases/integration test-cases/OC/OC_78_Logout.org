@@ -1,0 +1,28 @@
+* Author: Nihanth
+* Date Created: 22 Dec 2015
+* Environment
+  - OS: Windows 7, Ubuntu-16.04,Centos-6
+  - Browsers: Firefox-42.0,Chrome-47.0,chromium-45.0
+  - Bandwidth : 100Mbps
+  - Hardware Configuration:8GBRAM , 
+  - Processor:i5,
+
+* Objective
+  - To be able to log out to the portal page
+
+* Pre conditions
+  - Refer to first test case [[https://github.com/Virtual-Labs/Outreach Portal/blob/master/test-cases/integration_test-cases/OC/OC_01_Usability.org][OC_01_Usability.org]]
+
+* Post conditions
+  - Nil
+* Test Steps
+  1. Refer to the step id 77
+  2. Click on the browser back navigation button
+
+* Expected result
+  1. Refer to the step id 77
+  2. It should not redirect to the previous page and authentication should be required
+
+* Review/comments
+
+
