@@ -5151,7 +5151,9 @@ def create_app(config):
     # init sqlalchemy db instance
     db.init_app(app)
     db.app = app
-
+    os.environ["no_proxy"] = app.config['NO_PROXY']
+    os.environ["http_proxy"] = app.config['HTTP_PROXY']
+    os.environ["https_proxy"] = app.config['HTTPS_PROXY']
     # register blueprints
     app.register_blueprint(api)
     configure_logging(app)
@@ -5208,22 +5210,20 @@ def configure_logging(app):
     print "log file name = %s" % log_filename
     # Also error can be sent out via email. So we can also have a SMTPHandler?
     current_path = os.path.dirname(os.path.abspath(__file__))
-    print current_path
     log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                            '..',
                            app.config['LOG_FILE_DIRECTORY'])
-    print "log_dir = %s" % log_dir
     if not os.path.isdir(log_dir):
         os.mkdir(log_dir)
+        os.system("chmod -R 777 %s" % log_dir)
     log_file = "%s/%s" % (log_dir, app.config['LOG_FILE'])
-    print "log_file = %s" % log_file
+    os.system("chmod -R 777 %s" % log_file)
     max_size = 1024 * 1024 * 20  # Max Size for a log file: 20MB
     log_handler = logging.handlers.RotatingFileHandler(log_file,
                                                        maxBytes=max_size,
                                                        backupCount=10)
 
     log_level = app.config['LOG_LEVEL']
-    print "log_level = %s" % log_level
     log_handler.setLevel(log_level)
     log_handler.setFormatter(formatter)
 
@@ -5264,6 +5264,9 @@ LOG_FILE = 'outreach.log'
 
 # Log level for the application
 LOG_LEVEL = 'DEBUG'
+HTTP_PROXY = ""
+HTTPS_PROXY = ""
+NO_PROXY = ""
 
 # destination for uploaded files
 # example value - '/home/vlead/Desktop/outreach-portal/build/code/src/static/uploads/'
