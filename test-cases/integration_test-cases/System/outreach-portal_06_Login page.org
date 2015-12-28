@@ -11,7 +11,7 @@
   - To be able to login the portal
 
 * Pre/Post conditions
-  - Refer to first test case [[https://github.com/vlead/system/blob/master/test-cases/integration_test-cases/System/outreach-portal_01_Usability.org][outreach-portal_01_Usability.org]]
+  - Refer to first test case [[https://github.com/vlead/outreach-portal/blob/master/test-cases/integration_test-cases/System/outreach-portal_01_Usability.org][outreach-portal_01_Usability.org]]
 
 * Post conditions
   - Nil
