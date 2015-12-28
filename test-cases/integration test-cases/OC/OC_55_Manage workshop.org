@@ -16,11 +16,11 @@
 * Post conditions
   - Nil
 * Test Steps
-  1. Refer to the step id 54
+  1. Refer to the   [[https://github.com/Virtual-Labs/outreach-portal/blob/master/test-cases/integration_test-cases/OC/OC_54_Manage%20workshop.org][OC_54_Manage workshop.org]] 
   2. Click on the cancel button present in the confirmation pop-up box
 
 * Expected result
-  1. Refer to the step id 54
+  1. Refer to the   [[https://github.com/Virtual-Labs/outreach-portal/blob/master/test-cases/integration_test-cases/OC/OC_54_Manage%20workshop.org][OC_54_Manage workshop.org]] 
   2. The selected workshop should not get cancelled
 
 * Review/comments

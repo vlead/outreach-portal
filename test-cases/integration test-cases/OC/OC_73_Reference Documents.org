@@ -18,7 +18,7 @@
 * Test Steps
   1. Click on the Reference documents
   2. It should redirect to the Reference documents page
-
+     
 * Expected result
   1. Manage documents should be displayed on the screen
   2. Content should be present with no distortions and junk characters

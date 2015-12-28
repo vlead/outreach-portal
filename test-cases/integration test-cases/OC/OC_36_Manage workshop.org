@@ -16,12 +16,12 @@
 * Post conditions
   - Nil
 * Test Steps
-  1. Refer to the step id 35
+  1. Refer to the  [[https://github.com/Virtual-Labs/outreach-portal/blob/master/test-cases/integration_test-cases/OC/OC_35_Manage%20workshop.org][OC_35_Manage workshop.org]]
   2. Click on the upcoming events link present in the page
   3. It should redirect to the upcoming events page
 
 * Expected result
-  1. Refer to the step id 35
+  1. Refer to the  [[https://github.com/Virtual-Labs/outreach-portal/blob/master/test-cases/integration_test-cases/OC/OC_35_Manage%20workshop.org][OC_35_Manage workshop.org]] 
   2. upcoming workshops page should be displayed on the screen
   3. Content should be present with no distortions and junk characters
 

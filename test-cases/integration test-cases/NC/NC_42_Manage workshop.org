@@ -17,11 +17,11 @@
 * Post conditions
   - Nil
 * Test Steps
-  1. Refer to the step id 40
+  1. Refer to the  [[https://github.com/Virtual-Labs/outreach-portal/blob/master/test-cases/integration_test-cases/NC/NC_40_Manage%20workshop.org][NC_40_Manage workshop.org]] 
   2. Select either report or picture, and click on the cancel button
 
 * Expected result
-  1. Refer to the step id 40
+  1. Refer to the  [[https://github.com/Virtual-Labs/outreach-portal/blob/master/test-cases/integration_test-cases/NC/NC_40_Manage%20workshop.org][NC_40_Manage workshop.org]] 
   2. The selected file should not be reflected in the pending workshops page
 
 * Review/comments
