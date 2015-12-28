@@ -61,3 +61,10 @@ S.no		Test case link
 60. 	[[https://github.com/Virtual-Labs/outreach-portal/blob/master/test-cases/integration_test-cases/Admin/Admin_60_delete%20doc.org][Admin_60_delete doc.org]]
 61. 	[[https://github.com/Virtual-Labs/outreach-portal/blob/master/test-cases/integration_test-cases/Admin/Admin_61_Profile.org][Admin_61_Profile.org]]
 62. 	[[https://github.com/Virtual-Labs/outreach-portal/blob/master/test-cases/integration_test-cases/Admin/Admin_62_Logout.org][Admin_62_Logout.org]]
+63.    	[[https://github.com/Virtual-Labs/outreach-portal/blob/master/test-cases/integration_test-cases/Admin/Admin_63_Dashboard.org][Admin_63_Dashboard.org]]
+64.    	[[https://github.com/Virtual-Labs/outreach-portal/blob/master/test-cases/integration_test-cases/Admin/Admin_64_Dashboard.org][Admin_64_Dashboard.org]] 
+65.    	[[https://github.com/Virtual-Labs/outreach-portal/blob/master/test-cases/integration_test-cases/Admin/Admin_65_Dashboard.org][Admin_65_Dashboard.org]]
+66.    	[[https://github.com/Virtual-Labs/outreach-portal/blob/master/test-cases/integration_test-cases/Admin/Admin_66_Dashboard.org][Admin_66_Dashboard.org
+]]67.    	[[https://github.com/Virtual-Labs/outreach-portal/blob/master/test-cases/integration_test-cases/Admin/Admin_67_Dashboard.org][Admin_67_Dashboard.org]]
+68.    	[[https://github.com/Virtual-Labs/outreach-portal/blob/master/test-cases/integration_test-cases/Admin/Admin_68_Dashboard.org][Admin_68_Dashboard.org]]
+69.    	[[https://github.com/Virtual-Labs/outreach-portal/blob/master/test-cases/integration_test-cases/Admin/Admin_69_Dashboard.org][Admin_69_Dashboard.org]]
