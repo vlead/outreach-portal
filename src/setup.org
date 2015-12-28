@@ -80,6 +80,198 @@ if __name__ == "__main__":
 
 
   #+END_SRC
+* Program to migrate the data from old database to new database of outreach portal
+#+BEGIN_SRC python :tangle migrate_old_to_new_data.py :eval no
+#!/usr/bin/python
+import MySQLdb
+import sys
+from src.app import create_app
+from src.db import *
+import src.config as config
+
+def populate_va_user_details_data():
+    cursor1.execute("select * from va_user_details")
+    data = cursor1.fetchall()
+    va_user_details_data = {}
+    for row in data:
+        va_user_details_data['last_name'] = row[3]
+        print va_user_details_data
+
+def populate_va_users_data():
+    cursor1.execute("select * from va_users")
+    data = cursor1.fetchall()
+    va_users_data = {}
+    for row in data:
+        va_users_data['id'] = row[0]
+        va_users_data['name'] = row[1]
+        va_users_data['email'] = row[2]
+        va_users_data['user_type'] = row[5]
+        va_users_data['centre'] = row[6]
+        va_users_data['participants'] = row[10]
+        va_users_data['experiments'] = row[11]
+        va_users_data['created_on'] = row[14]
+        va_users_data['last_loggedin'] = row[15]
+        print va_users_data
+
+def populate_workshop_data():
+    cursor1.execute("select * from workshop")
+    data = cursor1.fetchall()
+
+    workshop_data = {}
+    for row in data:
+         workshop_data['uid'] = row[12]
+
+         print row[12]
+
+def populate_workshop_documents_data():
+    cursor1.execute("select * from workshop_documents")
+    data = cursor1.fetchall()
+
+    workshop_documents_data = {}
+    for row in data:
+        workshop_documents_data['document_name'] = row[1]
+        workshop_documents_data['document_path'] = row[2]
+        workshop_documents_data['created_on'] = row[3]
+
+        print workshop_documents_data
+
+def populate_workshop_metirial_documents_data():
+    # execute the SQL query using execute() method.
+    cursor1.execute("select * from workshop_metirial_documents")
+    # fetch all of the rows from the query
+    data = cursor1.fetchall()
+
+    workshop_metirial_documents_data = {}
+    for row in data:
+        workshop_metirial_documents_data['document_name'] = row[1]
+        workshop_metirial_documents_data['document_path'] = row[2]
+        workshop_metirial_documents_data['created_on'] = row[3]
+
+        print workshop_metirial_documents_data
+
+def populate_presentation_reporting_documents_data():
+    # execute the SQL query using execute() method.
+    cursor1.execute("select * from presentation_reporting_documents")
+    # fetch all of the rows from the query
+    data = cursor1.fetchall()
+
+    presentation_reporting_documents_data = {}
+    for row in data:
+        presentation_reporting_documents_data['document_name'] = row[1]
+        presentation_reporting_documents_data['document_path'] = row[2]
+        presentation_reporting_documents_data['created_on'] = row[3]
+
+        print presentation_reporting_documents_data
+
+def populate_nodalcoordinatortraining_data():
+    cursor1.execute("select * from nodalcoordinatortraining")
+    data = cursor1.fetchall()
+
+    nodalcoordinatortraining_data = {}
+    for row in data:
+        nodalcoordinatortraining_data['participants_attend'] = row[1]
+        nodalcoordinatortraining_data['experiments_conducted'] = row[2]
+        nodalcoordinatortraining_data['attendance_sheet'] = row[3]
+        nodalcoordinatortraining_data['training_photos'] = row[4]
+        nodalcoordinatortraining_data['outreach_id'] = row[7]
+        nodalcoordinatortraining_data['created_on'] = row[8]
+
+        print nodalcoordinatortraining_data
+
+def populate_workshop_report_data():
+    cursor1.execute("select * from workshop_report")
+    data = cursor1.fetchall()
+
+    workshop_report_data = {}
+    for row in data:
+        workshop_report_data['workshop_id'] = row[1]
+        workshop_report_data['uid'] = row[2]
+        workshop_report_data['participate_attend'] = row[3]
+        workshop_report_data['participate_experiment'] = row[4]
+        workshop_report_data['upload_attend_sheet'] = row[5]
+        workshop_report_data['college_report'] = row[6]
+        workshop_report_data['workshop_photos'] = row[7]
+        workshop_report_data['comments_positive'] = row[8]
+        workshop_report_data['comments_negative'] = row[9]
+        workshop_report_data['created_on'] = row[12]
+
+        print workshop_report_data
+
+def populate_users():
+    print "Populating users table.."
+    cursor1.execute("select * from va_users")
+    data = cursor1.fetchall()
+
+    for row in data:
+        name = Name(row[1].strip())
+        email = Email(row[2].strip())
+        if row[5] == 1:
+            role=Role.get_by_id(2)
+        elif row[5] == 2:
+            role=Role.get_by_id(3)
+        else:
+            role = None
+        new_user = User(name=name, email=email, role=role)
+       # print new_user.name, new_user.email
+        new_user.save()
+
+def populate_workshops():
+    print "Populating workshops table.."
+    cursor1.execute("select * from workshop")
+    data = cursor1.fetchall()
+
+    for row in data:
+        name = row[1].strip()
+        location = row[2].strip()
+        user = User.get_by_id(row[12])
+        participating_institutes = row[3].strip()
+        no_of_participants_expected = row[5]
+        no_of_sessions = row[6]
+        labs_planned = row[9]
+        status = Status.get_by_id(4)
+        date = row[4]
+
+        new_workshop = Workshop(name=name, location=location, user=user,
+                                participating_institutes=participating_institutes,
+                                no_of_participants_expected=no_of_participants_expected,
+                                no_of_sessions=no_of_sessions, labs_planned=labs_planned,
+                                status=status, date=date)
+        print new_workshop.name, new_workshop.location, new_workshop.user.name, new_workshop.participating_institutes,
+        print new_workshop.no_of_participants_expected, new_workshop.no_of_sessions,
+       # new_workshop.save()
+
+
+if __name__ == "__main__":
+    connection1 = MySQLdb.connect(host = "localhost", user = "root",
+                                  passwd = "root", db = "old_outreach")
+    cursor1 = connection1.cursor()
+
+    connection2 = MySQLdb.connect(host = "localhost", user = "root",
+                                  passwd = "root", db = "outreach")
+    cursor2 = connection2.cursor()
+
+#    populate_va_user_details_data()
+#    populate_va_users_data()
+#    populate_workshop_data()
+#    populate_workshop_metirial_documents_data()
+#    populate_workshop_report_data()
+#    populate_nodalcoordinatortraining_data()
+#    populate_presentation_reporting_documents_data()
+
+
+    db.create_all(app=create_app(config))
+#    populate_users()
+    populate_workshops()
+
+    cursor1.close()
+    connection1.close()
+
+    cursor2.close()
+    connection2.close()
+
+    sys.exit()
+#+END_SRC
+
 * Install all dependencies and setup the software
 Install all dependencies, including the OS related packages, Python packages,
 setup the database, configure the webserver, and finally deploy the
