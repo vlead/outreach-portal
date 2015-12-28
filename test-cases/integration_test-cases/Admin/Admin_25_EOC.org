@@ -11,16 +11,16 @@
   - To be able to edit the OC
 
 * Pre conditions
-  - Refer to first test case [[https://github.com/Virtual-Labs/Outreach Portal/blob/master/test-cases/integration_test-cases/Admin/Admin_01_Usability.org][Admin_01_Usability.org]]
+  - Refer to first test case [[https://github.com/vlead/Outreach Portal/blob/master/test-cases/integration_test-cases/Admin/Admin_01_Usability.org][Admin_01_Usability.org]]
 
 * Post conditions
   - Nil
 * Test Steps
-  1. Refer to [[https://github.com/Virtual-Labs/outreach-portal/blob/master/test-cases/integration_test-cases/Admin/Admin_24_EOC.org][Admin_24_EOC.org]] 
+  1. Refer to [[https://github.com/vlead/outreach-portal/blob/master/test-cases/integration_test-cases/Admin/Admin_24_EOC.org][Admin_24_EOC.org]] 
   2. Erase the name of the OC in the name field and click on save button
 
 * Expected result
-  1. Refer to [[https://github.com/Virtual-Labs/outreach-portal/blob/master/test-cases/integration_test-cases/Admin/Admin_24_EOC.org][Admin_24_EOC.org]] 
+  1. Refer to [[https://github.com/vlead/outreach-portal/blob/master/test-cases/integration_test-cases/Admin/Admin_24_EOC.org][Admin_24_EOC.org]] 
   2. An error message should be displayed on the screen as to enter the valid name in the name field and click on the save button
 
 * Review/comments

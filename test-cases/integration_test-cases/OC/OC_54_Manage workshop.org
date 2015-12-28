@@ -11,16 +11,16 @@
   - To be able to cancel the created workshops
 
 * Pre conditions
-  - Refer to first test case [[https://github.com/Virtual-Labs/Outreach Portal/blob/master/test-cases/integration_test-cases/OC/OC_01_Usability.org][OC_01_Usability.org]]
+  - Refer to first test case [[https://github.com/vlead/Outreach Portal/blob/master/test-cases/integration_test-cases/OC/OC_01_Usability.org][OC_01_Usability.org]]
 
 * Post conditions
   - Nil
 * Test Steps
-  1. Refer to the [[https://github.com/Virtual-Labs/outreach-portal/blob/master/test-cases/integration_test-cases/OC/OC_37_Manage%20workshop.org][OC_37_Manage workshop.org]]  
+  1. Refer to the [[https://github.com/vlead/outreach-portal/blob/master/test-cases/integration_test-cases/OC/OC_37_Manage%20workshop.org][OC_37_Manage workshop.org]]  
   2. Select the workshop and click on the cancel button present under the actions column in the page
 
 * Expected result
-  1. Refer to the  [[https://github.com/Virtual-Labs/outreach-portal/blob/master/test-cases/integration_test-cases/OC/OC_37_Manage%20workshop.org][OC_37_Manage workshop.org]]  
+  1. Refer to the  [[https://github.com/vlead/outreach-portal/blob/master/test-cases/integration_test-cases/OC/OC_37_Manage%20workshop.org][OC_37_Manage workshop.org]]  
   2. A confirmation pop-up box should be displayed on the screen with OK and Cancel buttons
 
 * Review/comments

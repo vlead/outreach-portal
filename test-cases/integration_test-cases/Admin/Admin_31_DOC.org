@@ -11,16 +11,16 @@
   - To be able to delete the OC
 
 * Pre conditions
-  - Refer to first test case [[https://github.com/Virtual-Labs/Outreach Portal/blob/master/test-cases/integration_test-cases/Admin/Admin_01_Usability.org][Admin_01_Usability.org]]
+  - Refer to first test case [[https://github.com/vlead/Outreach Portal/blob/master/test-cases/integration_test-cases/Admin/Admin_01_Usability.org][Admin_01_Usability.org]]
 
 * Post conditions
   - Nil
 * Test Steps
-  1. Refer to th [[https://github.com/Virtual-Labs/outreach-portal/blob/master/test-cases/integration_test-cases/Admin/Admin_14_View%20OC.org][Admin_14_View OC.org]]e 
+  1. Refer to th [[https://github.com/vlead/outreach-portal/blob/master/test-cases/integration_test-cases/Admin/Admin_14_View%20OC.org][Admin_14_View OC.org]]e 
   2. Select the OC and click on the corresponding delete button to that OC
 
 * Expected result
-  1. Refer to the  [[https://github.com/Virtual-Labs/outreach-portal/blob/master/test-cases/integration_test-cases/Admin/Admin_14_View%20OC.org][Admin_14_View OC.org]]
+  1. Refer to the  [[https://github.com/vlead/outreach-portal/blob/master/test-cases/integration_test-cases/Admin/Admin_14_View%20OC.org][Admin_14_View OC.org]]
   2. A confirmation pop-up box should be displayed on the screen with ok and cancel buttons
 
 * Review/comments

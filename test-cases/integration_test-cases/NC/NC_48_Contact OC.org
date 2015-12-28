@@ -6,7 +6,7 @@
   - To be able to view the contact details of OC'S
 
 * Pre conditions
-  - Refer to first test case [[https://github.com/Virtual-Labs/Outreach Portal/blob/master/test-cases/integration_test-cases/NC/NC_01_Feature.org][NC_01_Feature.org]]
+  - Refer to first test case [[https://github.com/vlead/Outreach Portal/blob/master/test-cases/integration_test-cases/NC/NC_01_Feature.org][NC_01_Feature.org]]
 
 * Post conditions
   - Nil

@@ -11,16 +11,16 @@
   - To be able to delete the OC
 
 * Pre conditions
-  - Refer to first test case [[https://github.com/Virtual-Labs/Outreach Portal/blob/master/test-cases/integration_test-cases/Admin/Admin_01_Usability.org][Admin_01_Usability.org]]
+  - Refer to first test case [[https://github.com/vlead/Outreach Portal/blob/master/test-cases/integration_test-cases/Admin/Admin_01_Usability.org][Admin_01_Usability.org]]
 
 * Post conditions
   - Nil
 * Test Steps
-  1. Refer to the [[https://github.com/Virtual-Labs/outreach-portal/blob/master/test-cases/integration_test-cases/Admin/Admin_31_DOC.org][Admin_31_DOC.org]] 
+  1. Refer to the [[https://github.com/vlead/outreach-portal/blob/master/test-cases/integration_test-cases/Admin/Admin_31_DOC.org][Admin_31_DOC.org]] 
   2. Click on the cancel button
 
 * Expected result
-  1. Refer to the [[https://github.com/Virtual-Labs/outreach-portal/blob/master/test-cases/integration_test-cases/Admin/Admin_31_DOC.org][Admin_31_DOC.org]] 
+  1. Refer to the [[https://github.com/vlead/outreach-portal/blob/master/test-cases/integration_test-cases/Admin/Admin_31_DOC.org][Admin_31_DOC.org]] 
   2. The corresponding OC should not get deleted
 
 * Review/comments

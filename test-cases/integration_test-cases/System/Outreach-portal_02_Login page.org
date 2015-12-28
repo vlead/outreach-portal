@@ -11,7 +11,7 @@
   - To be able to login the portal
 
 * Pre/Post conditions
-  - Refer to first test case [[https://github.com/Virtual-Labs/system/blob/master/test-cases/integration_test-cases/System/System_01_Usability.org][System_01_Usability.org]]
+  - Refer to first test case [[https://github.com/vlead/system/blob/master/test-cases/integration_test-cases/System/System_01_Usability.org][System_01_Usability.org]]
 
 * Post conditions
   - Nil

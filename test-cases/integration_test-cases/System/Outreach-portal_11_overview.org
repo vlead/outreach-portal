@@ -11,7 +11,7 @@
   - User should be able to have an overview about the outreach portal 
 
 * Pre conditions
-    - Refer to first test case [[https://github.com/Virtual-Labs/Outreach Portal/blob/master/test-cases/integration_test-cases/System/System_01_Usability.org][System_01_Usability.org]]
+    - Refer to first test case [[https://github.com/vlead/Outreach Portal/blob/master/test-cases/integration_test-cases/System/System_01_Usability.org][System_01_Usability.org]]
 
 * Post conditions
   - Nil
