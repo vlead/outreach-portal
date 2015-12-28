@@ -11,7 +11,7 @@
   - To be able to delete the created NC's
 
 * Pre conditions
-  - Refer to first test case [[https://github.com/vlead/Outreach Portal/blob/master/test-cases/integration_test-cases/OC/OC_01_Usability.org][OC_01_Usability.org]]
+  - Refer to first test case [[https://github.com/vlead/outreach-portal/blob/master/test-cases/integration_test-cases/OC/OC_01_Usability.org][OC_01_Usability.org]]
 
 * Post conditions
   - Nil

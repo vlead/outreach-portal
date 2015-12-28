@@ -11,7 +11,7 @@
   - To be able to view the list of workshops
 
 * Pre conditions
-  - Refer to first test case [[https://github.com/vlead/Outreach Portal/blob/master/test-cases/integration_test-cases/NC/NC_01_Feature.org][NC_01_Feature.org]]
+  - Refer to first test case [[https://github.com/vlead/outreach-portal/blob/master/test-cases/integration_test-cases/NC/NC_01_Feature.org][NC_01_Feature.org]]
 
 * Post conditions
   - Nil
