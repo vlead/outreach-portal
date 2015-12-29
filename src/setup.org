@@ -243,23 +243,24 @@ def populate_nodal_centres():
     data = cursor1.fetchall()
 
     for row in data:
-        if row[6]=="NULL":
-            name = None
-            location = None
-        elif row[6]==None:
+        name=''
+        location=''
+        if row[6]==None:
             pass
         else:
-            name = row[6].split(",")
-            print name[0].strip()
-            print
-            #location = row[6]
-
-
-       # user = User.get_by_id(row[0])
-
-       # new_centre = NodalCentre(name=name, location=location, created_by=user)
-        #print new_centre.name, new_centre.location, new_centre.created_by.name
-        #new_centre.save()
+            name_location = row[6].split(",")
+            if len(name_location)==1:
+                pass
+            else:
+                name=name_location[0].strip()
+                location=name_location[1].strip()
+                user = User.query.filter_by(name=row[1]).first()
+                if user==None:
+                    pass
+                else:
+                    new_centre = NodalCentre(name=name, location=location, created_by=user)
+                    print new_centre.name, new_centre.location, new_centre.created_by.name
+                    new_centre.save()
 
 if __name__ == "__main__":
     connection1 = MySQLdb.connect(host = "localhost", user = "root",
@@ -282,8 +283,7 @@ if __name__ == "__main__":
     db.create_all(app=create_app(config))
     populate_users()
     populate_workshops()
-
-#    populate_nodal_centres()
+    populate_nodal_centres()
 
     cursor1.close()
     connection1.close()
