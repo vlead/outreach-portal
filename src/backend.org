@@ -5913,10 +5913,13 @@ def delete_record(entity, id):
     else:
         try:
             if entity.__name__=="WorkshopReport" or entity.__name__=="ReferenceDocument":
-                dir_path=os.path.dirname(os.path.abspath(__file__))
-                file_loc=dir_path+record.path
-                os.remove(file_loc)
-                record.delete()
+                if record.path==None:
+                    record.delete()
+                else:
+                    dir_path=os.path.dirname(os.path.abspath(__file__))
+                    file_loc=dir_path+record.path
+                    os.remove(file_loc)
+                    record.delete()
             else:
                 record.delete()
         except Exception, e:
