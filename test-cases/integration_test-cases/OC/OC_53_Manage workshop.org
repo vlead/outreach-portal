@@ -24,7 +24,8 @@
 * Expected result
   1. Refer to the   [[https://github.com/vlead/outreach-portal/blob/master/test-cases/integration_test-cases/OC/OC_52_Manage%20workshop.org][OC_52_Manage workshop.org]]  
   2. It should redirect to the next page
-  3. The workshop details entered should be created
+  3. The workshop details entered should 
+     be created and an successfull message should be displayed on the screen
 
 * Review/comments
 
