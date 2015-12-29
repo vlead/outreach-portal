@@ -1,85 +1,35 @@
-
 angular.module('outreachApp.controllers',[]).
-    controller('mapCtrl', function ($scope, $http)
-               {
-                   var cities1 = [];
-                   $http.get('/workshops')
-                       .success(function(data, status, headers, config)
-                                {
-                                    for(i=0;i<data.length;i++)
-                                    {
-                                        cities1.push(data[i]);
-                                    }
-                                    cities();
-                                    //console.log(test);
-                                    
-                                })
-                       .error(function(data, status, headers, config)
-                              {
-                                  console.log(data);
-                                  
-                              });
-                   
-                   $scope.upcoming = [];
-                   var geocoder = new google.maps.Geocoder();
-                   var get_geocode = function (cities,count)
-                   {
-                       console.log(cities.date);
-                       $scope.upcoming.push(cities);
-	               geocoder.geocode({ "address": cities.location }, function(results, status) 
-                                        {
-				            if (status == google.maps.GeocoderStatus.OK && results.length > 0)
-                                            {
-				                var location = results[0].geometry.location,
-				                    lat      = location.lat(),
-				                    lng      = location.lng();
-				                $scope.createMarker(lat,lng,cities,count);
-        				    }
-			                }
-                                       );
-	           }
-                   
-                   var cities = function()
-                   {
-                       //console.log(cities1);
-                       today = new Date();
-                       var count = 0;
-                       //console.log(cities1[0].name+""+cities1[0].location);
-	               for(i=0;i<cities1.length;i++)
-	               {
-                           
-                           date_array = cities1[i].date.split("-");
-                           //console.log(date_array);
-                           workshop_date = new Date(Number(date_array[0]), Number(date_array[1])-1, Number(date_array[2]));
-                           //workshop_date = new Date(2016,12,18);
-                           //            console.log(workshop_date);
-	                   if((today <= workshop_date) || (today.getDate() == workshop_date.getDate() & (today.getMonth() == workshop_date.getMonth()) 
-                                                           & (today.getFullYear() == workshop_date.getFullYear())))
-                           {
-		count ++;
-                //console.log(cities1[i].date);
-		get_geocode(cities1[i],count);
-	    }
-	    
-	}
-        
-    }
-   	
-    var mapOptions = { zoom: 4, center: new google.maps.LatLng(20,80) };
+    controller('mapCtrl', function ($scope, $http, dataFactory){
+        dataFactory.fetch("/workshops?status_id=1").success(function(workshops){
+            $scope.workshops = workshops;
+            for(i=0;i<workshops.length;i++){
+	        get_geocode(workshops[i].location, (i+1));
+            }
+        });
+        var mapOptions = { zoom: 4, center: new google.maps.LatLng(20,80) };
 	$scope.map = new google.maps.Map(document.getElementById('map'), mapOptions);
-    $scope.createMarker = function (lat,lng,cities,count)
-    {
-	   var marker = new google.maps.Marker(
-            {
+        var geocoder = new google.maps.Geocoder();
+        var get_geocode = function (workshop_location, label){
+            geocoder.geocode(
+                { "address": workshop_location }, function(results, status) {
+                    if (status == google.maps.GeocoderStatus.OK && results.length > 0){
+		        var geo_code = results[0].geometry.location;
+                        $scope.createMarker(geo_code,workshop_location,label);
+        	    }
+	        }
+            );
+        }
+        $scope.createMarker = function (geo_code,workshop_location,label){
+            var marker = new google.maps.Marker({
                 map: $scope.map,
                 animation: google.maps.Animation.DROP,
                 draggable: true,
-                label : String(count),
-                position: new google.maps.LatLng(lat, lng),
-                title: cities.location
+                label : String(label),
+                position: new google.maps.LatLng(geo_code.lat(), geo_code.lng()),
+                title: workshop.location
             });
-    }  
-
+        }  
+        
 }).controller("adminController", function($scope, workshops, dataFactory, $http, $routeParams, $route,$window) {
     dataFactory.fetch("/users/"+$window.number).success(function(response){
         $scope.user = response;
@@ -311,7 +261,7 @@ angular.module('outreachApp.controllers',[]).
         {
             var reason = prompt("Please enter your reason");
             
-            $http.put('/workshops/'+id, {"cancellation_reason" : reason }).
+            $http.put('/workshops/'+id, {"cancellation_reason" : reason, "status" : {"id": 6} }).
                 success(function(data, status, headers, config) 
                         {
                             $route.reload();
