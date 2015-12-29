@@ -5151,9 +5151,6 @@ def create_app(config):
     # init sqlalchemy db instance
     db.init_app(app)
     db.app = app
-    os.environ["no_proxy"] = app.config['NO_PROXY']
-    os.environ["http_proxy"] = app.config['HTTP_PROXY']
-    os.environ["https_proxy"] = app.config['HTTPS_PROXY']
     # register blueprints
     app.register_blueprint(api)
     configure_logging(app)
@@ -5260,9 +5257,6 @@ LOG_FILE = 'outreach.log'
 
 # Log level for the application
 LOG_LEVEL = 'DEBUG'
-HTTP_PROXY = ""
-HTTPS_PROXY = ""
-NO_PROXY = ""
 
 # destination for uploaded files
 # example value - '/static/uploads/'
