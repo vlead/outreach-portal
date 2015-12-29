@@ -52,7 +52,7 @@
         var form_data = new FormData();
        
         form_data.append('file', fileups.files[i], fileups.files[i].name);
-        var url = '/upload_reference_document/' + documentId ;
+        var url = '/upload_reference_documents/' + documentId ;
    
         $.ajax({
             type: 'POST',
