@@ -5130,7 +5130,6 @@ def typecheck(**typemap):
 ** The web application
 #+BEGIN_SRC python :tangle src/app.py :eval no
 # -*- coding: utf-8 -*-
-
 import os
 
 from flask import Flask, jsonify, make_response
@@ -5200,17 +5199,12 @@ def configure_errorhandlers(app):
 
 
 def configure_logging(app):
-    log_level = None
-    log_filename = None
     import logging
     import logging.handlers
     formatter = logging.Formatter('%(asctime)s: %(levelname)s: %(filename)s:'
                                   ' %(funcName)s():%(lineno)d: %(message)s')
 
-    log_filename = app.config['LOG_FILE']
-    print "log file name = %s" % log_filename
     # Also error can be sent out via email. So we can also have a SMTPHandler?
-    current_path = os.path.dirname(os.path.abspath(__file__))
     log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                            '..',
                            app.config['LOG_FILE_DIRECTORY'])
@@ -5218,7 +5212,8 @@ def configure_logging(app):
         os.mkdir(log_dir)
         os.system("chmod -R 777 %s" % log_dir)
     log_file = "%s/%s" % (log_dir, app.config['LOG_FILE'])
-    os.system("chmod -R 777 %s" % log_file)
+    os.system("sudo touch %s" % log_file)
+    os.system("sudo chmod 777 %s" % log_file)
     max_size = 1024 * 1024 * 20  # Max Size for a log file: 20MB
     log_handler = logging.handlers.RotatingFileHandler(log_file,
                                                        maxBytes=max_size,
@@ -5234,7 +5229,7 @@ def configure_logging(app):
 if __name__ == "__main__":
     app = create_app(config)
     app.run(debug=True, host='0.0.0.0', threaded=True)
-
+    
 #+END_SRC
 
 ** Configuring the application
