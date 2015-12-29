@@ -82,6 +82,7 @@ if __name__ == "__main__":
   #+END_SRC
 * Program to migrate the data from old database to new database of outreach portal
 #+BEGIN_SRC python :tangle migrate_old_to_new_data.py :eval no
+
 #!/usr/bin/python
 import MySQLdb
 import sys
@@ -193,7 +194,10 @@ def populate_users():
     data = cursor1.fetchall()
 
     for row in data:
-        name = Name(row[1].strip())
+        if row[1]=="Prof. (Dr.) K. Kamal":
+            name = Name("Prof.Dr.K. Kamal")
+        else:
+            name = Name(row[1].strip())
         email = Email(row[2].strip())
         if row[5] == 1:
             role=Role.get_by_id(2)
@@ -216,13 +220,13 @@ def populate_workshops():
         user = User.get_by_id(row[12]+1)
         participating_institutes = row[3].strip()
         status = Status.get_by_id(4)
+        labs_planned = len(row[9].split(","))
 
         if row[4] == '' or row[5] == '' or row[6] == '' or row[9] == '':
             pass
         else:
             no_of_participants_expected = int(row[5])
             no_of_sessions = int(row[6])
-            labs_planned = int(row[9])
             date = str(row[4])
 
         new_workshop = Workshop(name=name, location=location, user=user,
@@ -233,19 +237,21 @@ def populate_workshops():
 
         new_workshop.save()
 
-#def populate_nodal_centres():
-#    print "Populating nodal centres table.."
-#    cursor1.execute("select * from va_users")
-#    data = cursor1.fetchall()
+def populate_nodal_centres():
+    print "Populating nodal centres table.."
+    cursor1.execute("select * from va_users")
+    data = cursor1.fetchall()
 
-#    for row in data:
-#        if row[6]=="NULL":
-#            name = None
-#            location = None
-#        elif row[6]!=None
-#            name = row[6].split(",")
-#            print name[0].strip()
-#            print name
+    for row in data:
+        if row[6]=="NULL":
+            name = None
+            location = None
+        elif row[6]==None:
+            pass
+        else:
+            name = row[6].split(",")
+            print name[0].strip()
+            print
             #location = row[6]
 
 
@@ -274,8 +280,8 @@ if __name__ == "__main__":
 
 
     db.create_all(app=create_app(config))
-#    populate_users()
-#    populate_workshops()
+    populate_users()
+    populate_workshops()
 
 #    populate_nodal_centres()
 
