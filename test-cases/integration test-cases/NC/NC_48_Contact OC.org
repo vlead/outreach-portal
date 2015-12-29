@@ -1,0 +1,23 @@
+* Author: 
+* Date Created: 22 Dec 2015
+* Environment
+
+* Objective
+  - To be able to view the contact details of OC'S
+
+* Pre conditions
+  - Refer to first test case [[https://github.com/Virtual-Labs/Outreach Portal/blob/master/test-cases/integration_test-cases/NC/NC_01_Feature.org][NC_01_Feature.org]]
+
+* Post conditions
+  - Nil
+* Test Steps
+  1. Click on the Contact OC link
+  2. It should redirect to the contacts page
+
+* Expected result
+  1. Contact page should be opened and all the contact details should be displayed on the screen
+  2. Content should be present without any distortions and junk characters
+
+* Review/comments
+
+

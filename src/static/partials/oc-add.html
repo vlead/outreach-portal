@@ -6,7 +6,7 @@
   <div class="col-md-4">
     <h2>Add Outreach Coordinator</h2>
    <span class="error"> {{ status }}</span>
-    <form name="myForm" novalidate ng-submit="submit(myForm.$valid)">
+    <form name="myForm" novalidate ng-submit="add_oc(myForm.$valid)">
       <p>Name:<br>
 	<input type="text" name="user" ng-model="name"  class="form-control"  placeholder="User Name" required>
 	<span style="color:red" ng-show="myForm.user.$dirty && myForm.user.$invalid">
@@ -20,6 +20,9 @@
 	  <span ng-show="myForm.email.$error.required">Email is required.</span>
 	  <span ng-show="myForm.email.$error.email">Invalid email address.</span>
 	</span>
+      </p>
+      <p>Institute Name <br>
+	<input type="text" name="inst_name" ng-model="inst_name"  class="form-control"  placeholder="IIIT-H">
       </p>
 
       <p>

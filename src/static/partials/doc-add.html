@@ -9,7 +9,17 @@
   </form>
   <br><br>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-   <script>
+  <script>
+    var validFile = function(fileList){
+       for (var i=0; i < fileList.files.length; i++ ){           
+           var re = /(\.jpg|\.jpeg|\.png|\.gif|\.pdf|\.txt|\.csv)$/i;
+           if(!re.exec(fileList.files[i].name)){
+             return false;
+           }
+           
+       }
+       return true;                  
+   }; 
    $(function() {
    $('#upload-file-btn').click(function() {
         var name = $('#name').val();
@@ -17,6 +27,10 @@
         console.log(name);
         if (name == ""){
             $('.error').html("Please enter the type of file!") ;
+        }else if (fileups.files.length == 0){
+            $('.error').html("Please select a file!<br>") ;
+        }else if (!validFile(fileups)){                 
+            $('.error').html("Allowed file formats are: <br> [txt, pdf, png, jpg, jpeg, gif, csv]<br>") ;
         }else{
         data = {name: name, user: {id : number}};
         fileups = document.getElementById('file');

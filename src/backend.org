@@ -106,6 +106,7 @@ class Entity(db.Model):
 import os
 import csv
 import requests
+import inspect
 from flask import session, render_template, Blueprint, request, jsonify, abort,\
     current_app, redirect, url_for
 from config import *
@@ -5269,10 +5270,8 @@ HTTPS_PROXY = ""
 NO_PROXY = ""
 
 # destination for uploaded files
-# example value - '/home/vlead/Desktop/outreach-portal/build/code/src/static/uploads/'
-UPLOAD_DIR_PATH = '/home/vlead/Desktop/outreach-portal/build/code/src/static/uploads/'
-
-DB_PATH = '/static/uploads/'
+# example value - '/static/uploads/'
+UPLOAD_DIR_PATH = '/static/uploads/'
 
 # allowed file extensions that can be uploaded
 ALLOWED_FILE_EXTENSIONS = ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'csv']
@@ -5709,7 +5708,7 @@ def logout_handler():
     session.pop('role', None)
     return "Ok"
 
-@api.route('/upload_reference_document/<id>', methods=['GET', 'POST'])
+@api.route('/upload_reference_documents/<id>', methods=['GET', 'POST'])
 def save_reference_documents(id):
     if request.method == 'GET':
         return '''
@@ -5731,19 +5730,21 @@ def save_reference_documents(id):
         if response.ok:
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
-                current_time = datetime.utcnow()
-                dir_path = "%s" % (UPLOAD_DIR_PATH)
+                outreach_directory_path = os.path.dirname(os.path.abspath(__file__))
+                dir_path = outreach_directory_path + UPLOAD_DIR_PATH
                 file_path = "%s%s" % (dir_path, filename)
-                db_path = "%s%s" % (DB_PATH, filename)
+                db_path = "%s%s" % (UPLOAD_DIR_PATH, filename)
                 file.save(file_path)
 
-            path = {'path': db_path}
-            response = requests.put(url, data=path)
-            return file_path
+                path = {'path': db_path}
+                response = requests.put(url, data=path)
+                return file_path
+            else:
+                return "file format is not in Allowed Extensions"
         else:
-            return "No entry for ReferenceDocuments entity with given id"
+            return "No entry for 'ReferenceDocuments' entity with given id"
 
-@api.route('/upload_workshop_report/<id>', methods=['GET', 'POST'])
+@api.route('/upload_workshop_reports/<id>', methods=['GET', 'POST'])
 def save_workshop_documents(id):
     if request.method == 'GET':
         return '''
@@ -5764,15 +5765,17 @@ def save_workshop_documents(id):
         if response.ok:
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
-                current_time = datetime.utcnow()
-                dir_path = "%s" % (UPLOAD_DIR_PATH)
+                outreach_directory_path = os.path.dirname(os.path.abspath(__file__))
+                dir_path = outreach_directory_path + UPLOAD_DIR_PATH
                 file_path = "%s%s" % (dir_path, filename)
-                db_path = "%s%s" % (DB_PATH, filename)
+                db_path = "%s%s" % (UPLOAD_DIR_PATH, filename)
                 file.save(file_path)
 
-            path = {'path': db_path}
-            response = requests.put(url, data=path)
-            return file_path
+                path = {'path': db_path}
+                response = requests.put(url, data=path)
+                return file_path
+            else:
+                return "file format is not in Allowed Extensions"
         else:
             return "No entry for 'WorkshopReports' entity with given id"
 
@@ -5984,7 +5987,13 @@ def delete_record(entity, id):
         abort(404, 'No %s with id %s' % (entity, id))
     else:
         try:
-            record.delete()
+            if entity.__name__=="WorkshopReport" or entity.__name__=="ReferenceDocument":
+                dir_path=os.path.dirname(os.path.abspath(__file__))
+                file_loc=dir_path+record.path
+                os.remove(file_loc)
+                record.delete()
+            else:
+                record.delete()
         except Exception, e:
             print e
             abort(500, str(e))
@@ -6191,7 +6200,7 @@ class TestRole(TestCase):
     TESTING = True
 
     def create_app(self):
-        app = create_app(config)
+        app = create_app(confg)
         return app
 
     def setUp(self):

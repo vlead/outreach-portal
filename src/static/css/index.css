@@ -107,14 +107,18 @@ h1,h2,h3{
 /* Sub-tabs in admin  */
 .box{
     background: #3799FA;
-    width: 250px;
-    border-radius: 10px;
-    height: 250px;
+    width: 150px;
+    border-radius: 5px;
+    height: 100px;
     font-size: 18px;
-    margin: 0 20px 30px 20px;
+    margin: 0 10px 10px 10px;
     text-align: center;
-    padding: 20px 30px;
+    padding: 10px 5px;
     color: #fff;
+}
+.box:hover {
+    cursor: pointer;
+    background: #028482;
 }
 
 .profile{
