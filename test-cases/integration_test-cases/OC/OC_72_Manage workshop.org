@@ -18,10 +18,12 @@
 * Test Steps
   1. Refer to the [[https://github.com/vlead/outreach-portal/blob/master/test-cases/integration_test-cases/OC/OC_36_Manage%20workshop.org][OC_36_Manage workshop.org]] 
   2. Click on the workshop history link
+  3. Select a particukar work shop and click on the corresponding 'click here' link
 
 * Expected result
   1. Refer to the  [[https://github.com/vlead/outreach-portal/blob/master/test-cases/integration_test-cases/OC/OC_36_Manage%20workshop.org][OC_36_Manage workshop.org]] 
   2. All the workshops details should be displayed on the screen
+  3. The selected workshop document should get downloaded
 
 * Review/comments
 
