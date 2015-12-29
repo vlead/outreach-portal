@@ -113,16 +113,6 @@ def populate_va_users_data():
         va_users_data['last_loggedin'] = row[15]
         print va_users_data
 
-def populate_workshop_data():
-    cursor1.execute("select * from workshop")
-    data = cursor1.fetchall()
-
-    workshop_data = {}
-    for row in data:
-         workshop_data['uid'] = row[12]
-
-         print row[12]
-
 def populate_workshop_documents_data():
     cursor1.execute("select * from workshop_documents")
     data = cursor1.fetchall()
@@ -223,23 +213,47 @@ def populate_workshops():
     for row in data:
         name = row[1].strip()
         location = row[2].strip()
-        user = User.get_by_id(row[12])
+        user = User.get_by_id(row[12]+1)
         participating_institutes = row[3].strip()
-        no_of_participants_expected = row[5]
-        no_of_sessions = row[6]
-        labs_planned = row[9]
         status = Status.get_by_id(4)
-        date = row[4]
+
+        if row[4] == '' or row[5] == '' or row[6] == '' or row[9] == '':
+            pass
+        else:
+            no_of_participants_expected = int(row[5])
+            no_of_sessions = int(row[6])
+            labs_planned = int(row[9])
+            date = str(row[4])
 
         new_workshop = Workshop(name=name, location=location, user=user,
                                 participating_institutes=participating_institutes,
                                 no_of_participants_expected=no_of_participants_expected,
                                 no_of_sessions=no_of_sessions, labs_planned=labs_planned,
                                 status=status, date=date)
-        print new_workshop.name, new_workshop.location, new_workshop.user.name, new_workshop.participating_institutes,
-        print new_workshop.no_of_participants_expected, new_workshop.no_of_sessions,
-       # new_workshop.save()
 
+        new_workshop.save()
+
+#def populate_nodal_centres():
+#    print "Populating nodal centres table.."
+#    cursor1.execute("select * from va_users")
+#    data = cursor1.fetchall()
+
+#    for row in data:
+#        if row[6]=="NULL":
+#            name = None
+#            location = None
+#        elif row[6]!=None
+#            name = row[6].split(",")
+#            print name[0].strip()
+#            print name
+            #location = row[6]
+
+
+       # user = User.get_by_id(row[0])
+
+       # new_centre = NodalCentre(name=name, location=location, created_by=user)
+        #print new_centre.name, new_centre.location, new_centre.created_by.name
+        #new_centre.save()
 
 if __name__ == "__main__":
     connection1 = MySQLdb.connect(host = "localhost", user = "root",
@@ -261,7 +275,9 @@ if __name__ == "__main__":
 
     db.create_all(app=create_app(config))
 #    populate_users()
-    populate_workshops()
+#    populate_workshops()
+
+#    populate_nodal_centres()
 
     cursor1.close()
     connection1.close()
