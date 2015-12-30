@@ -17,11 +17,10 @@
   - Nil
 * Test Steps
   1. Refer to the  [[https://github.com/vlead/outreach-portal/blob/master/test-cases/integration_test-cases/NC/NC_33_Manage%20workshop.org][NC_33_Manage workshop.org]]  
-  2. Modify the changes in the selected fields and click on ok button
-
+  2. Erase the data in any one of the fields(eg:sessions) and click on the submit button
 * Expected result
   1. Refer to the [[https://github.com/vlead/outreach-portal/blob/master/test-cases/integration_test-cases/NC/NC_33_Manage%20workshop.org][NC_33_Manage workshop.org]]   
-  2. The modified data should be saved and reflected in the upcoming events page
+  2. An error message should be displayed on the screen as to fill the data in all the required fields
 
 * Review/comments
 

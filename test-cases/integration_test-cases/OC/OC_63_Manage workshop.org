@@ -8,7 +8,7 @@
   - Processor:i5,
 
 * Objective
-  - To be able to approve/cancel the  reports created by NC to particular workshop
+  - To be able to edit the  workshops created by NC to particular workshop
 
 * Pre conditions
   - Refer to first test case [[https://github.com/vlead/outreach-portal/blob/master/test-cases/integration_test-cases/OC/OC_01_Usability.org][OC_01_Usability.org]]
@@ -19,6 +19,7 @@
   1. Refer to the [[https://github.com/vlead/outreach-portal/blob/master/test-cases/integration_test-cases/OC/OC_36_Manage%20workshop.org][OC_36_Manage workshop.org]] 
   2. Click on the NC workshops link present in the page
   3. It should redirect to the NC workshop page
+  4. Check if the redirected page has necessary fields or not
 
 * Expected result
   1. Refer to the  [[https://github.com/vlead/outreach-portal/blob/master/test-cases/integration_test-cases/OC/OC_36_Manage%20workshop.org][OC_36_Manage workshop.org ]]
