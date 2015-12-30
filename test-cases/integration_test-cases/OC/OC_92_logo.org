@@ -8,7 +8,7 @@
   - Processor:i5,
 
 * Objective
-  - To be able to click on the logo of the portal 
+  - To be able to click on the logo of the portal
 * Pre conditions
   - Refer to first test case [[https://github.com/vlead/outreach-portal/blob/master/test-cases/integration_test-cases/Admin/Admin_01_Usability.org][Admin_01_Usability.org]]
 
