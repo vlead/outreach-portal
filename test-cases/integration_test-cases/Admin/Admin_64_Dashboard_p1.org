@@ -27,7 +27,7 @@
   2. Content should be present with no distortions and junk characters
   3. Workshops page should be displayed on the screen
   4. Content should be present with no distortions and junk characters
-
+  5. Check if the redirected page has necessary fields or not
 
 * Review/comments
 
