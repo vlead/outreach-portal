@@ -22,7 +22,8 @@
    }; 
    $(function() {
    $('#upload-file-btn').click(function() {
-        var name = $('#name').val();
+        var fileups = document.getElementById('file');
+	var name = $('#name').val();
         console.log(number);
         console.log(name);
         if (name == ""){
@@ -33,7 +34,6 @@
             $('.error').html("Allowed file formats are: <br> [txt, pdf, png, jpg, jpeg, gif, csv]<br>") ;
         }else{
         data = {name: name, user: {id : number}};
-        fileups = document.getElementById('file');
         for (var i = 0; i < fileups.files.length; i++){
         var jqxhr = $.ajax({
             url: '/reference_documents',
@@ -52,7 +52,7 @@
         var form_data = new FormData();
        
         form_data.append('file', fileups.files[i], fileups.files[i].name);
-        var url = '/upload_reference_document/' + documentId ;
+        var url = '/upload_reference_documents/' + documentId ;
    
         $.ajax({
             type: 'POST',
