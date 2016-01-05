@@ -123,7 +123,7 @@ angular.module('outreachApp.controllers',[]).
         $scope.nc_users = response;
         
     });
-    dataFactory.fetch("/workshops?status_id=2").success(function(workshops){
+    dataFactory.fetch("/workshops?status_id=3").success(function(workshops){
         var count = 0;
         var workshop_list = [];
         var labs = 0;
@@ -329,12 +329,12 @@ angular.module('outreachApp.controllers',[]).
         if(isvalid)
         {
             $http.post('/workshops',
-                       { "name" : $scope.name, "location" : $scope.location,  "user" : {"id" : $window.number }, "participating_institutes" : $scope.insts,
+                       { "name" : $scope.name, "duration_of_sessions" : Number($scope.session), "location" : $scope.location,  "user" : {"id" : $window.number }, "participating_institutes" : $scope.insts,
                          "no_of_participants_expected" : $scope.parti, "no_of_sessions" : Number($scope.sessions),  "labs_planned" : Number($scope.labs),
                          "status" : {"id": 1},  "date" : $scope.date }).
             success(function(data, status, headers, config)
             {
-                $scope.status = "Success";
+                $scope.status = "Successfully created workshop";
                 history.back();
 
                 
@@ -532,7 +532,7 @@ angular.module('outreachApp.controllers',[]).
     $http.get("/nodal_centres?created_by_id="+$window.number).success(function(data, status, headers, config){
 
         $scope.ncentres = data;
-        $scope.ncentre_id = data[0];
+        $scope.ncentre_id = data[0];$scope.email = data.email;
         
     }).error(function(data,status,headers,config){
         console.log("Failed")
@@ -542,6 +542,7 @@ angular.module('outreachApp.controllers',[]).
         $scope.user = data.name;
         $scope.user_id = data.id;
         $scope.email = data.email;
+        $scope.inst_name = data.institute_name;
        
         
     }).error(function(data,status,headers,config){
@@ -624,7 +625,7 @@ angular.module('outreachApp.controllers',[]).
                
         if(isvalid)
         {
-            $http.post('/users',{'name' : $scope.name,'email' : $scope.email,'role' : { 'id' : 3 } } ).
+            $http.post('/users',{'name' : $scope.name,"institute_name" : $scope.inst_name, 'email' : $scope.email,'role' : { 'id' : 3 } } ).
                 success(function(data, status, headers, config)
                         {
             

@@ -25,6 +25,14 @@
 	  <span ng-show="myForm.email.$error.email">Invalid email address.</span>
 	</span>
       </p>
+      <p>Institute Name:<br>
+	<input type="text" name="inst_name" ng-model="inst_name"  class="form-control"  placeholder="Institute Name" required>
+	<span style="color:red" ng-show="myForm.inst_name.$dirty && myForm.inst_name.$invalid">
+	  <span ng-show="myForm.inst_name.$error.required">Institute name is required.</span>
+	</span>
+      </p>
+     
+      <!--
       <p>Phone No:<br>
 	<input type="number" name="phone"  ng-pattern="/^[(]{0,1}[0-9]{3}[)\.\-
                                                        ]{0,1}[0-9]{3}[\.\-
@@ -39,6 +47,7 @@
           <span ng-show="myForm.phone.$error.number">Phone number is required.</span>
 	</span>
       </p>
+      -->
       <p>Target Workshops<br>
 	<input type="number" name="workshops" min="0" ng-model="workshops"  class="form-control"
                placeholder="No of workshops" required>

@@ -9,6 +9,7 @@
      <a href="#/add-workshop" role="button" class="btn btn-success btn-large">ADD WORKSHOP</a>
   </div>
 </div>
+
 <div class="row">
   <div class="col-md-12">
     <table class="table table-hover">
@@ -19,7 +20,7 @@
           <th>Participants</th>
 	  <th>Date</th>
           <th>Status</th>
-          <th>Action</th>
+          <th>&emsp;&emsp;&emsp;Action</th>
 	</tr>
       </thead>
       <tbody>
@@ -29,8 +30,10 @@
           <td>{{ workshop.no_of_participants_expected }}</td>
           <td>{{ workshop.date }}</td>
           <td>{{ workshop.status.name }}</td>
-          <td><button class="btn btn-primary" ng-click="cancel(workshop.id)">Cancel</button></td>
-          <td><a href="#/editworkshop/{{workshop.id}}" class="btn btn-primary">Edit</a></td>
+          <td><button class="btn btn-primary"
+                      ng-click="cancel(workshop.id)">Cancel</button>
+            &emsp;&emsp;
+          <a href="#/editworkshop/{{workshop.id}}" class="btn btn-primary">Edit</a></td>
 	</tr>
       </tbody>
     </table>
