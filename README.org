@@ -1,0 +1,14 @@
+
+* Post Installation steps
+
+  1. Set http_proxy, https_proxy and no_proxy in /etc/profile .
+#+BEGIN_EXAMPLE
+export http_proxy="http://proxy.iiit.ac.in:8080"
+#+END_EXAMPLE
+  2. Set http_proxy, https_proxy and no_proxy in /etc/environment
+  2. Change the APP_URL in file /var/www/src/config.py appropriately.
+#+BEGIN_EXAMPLE
+# APP_URL
+APP_URL = "http://10.2.57.1"
+#+END_EXAMPLE
+
