@@ -5675,8 +5675,13 @@ def login():
         if resp.ok:
             verification_data = resp.json()
         if verification_data['status'] == 'okay':
-            backend_resp = requests.get(APP_URL + "/users?email="
-                                        +verification_data['email'])
+            url_for_getting_the_user = "%s/users?email=%s" % \
+                                       (APP_URL, verification_data['email'])
+            current_app.logger.debug("url_for_getting_the_user = %s" %
+                                     url_for_getting_the_user)
+            backend_resp = requests.get(url_for_getting_the_user)
+            current_app.logger.debug("backend response = %s" %
+                                     backend_resp.text)
             if (len(backend_resp.text.encode('ascii')) != 2):
                 session['email'] = verification_data['email']
                 role = backend_resp.json()[0]['role']['name'].encode('ascii')
@@ -5749,7 +5754,7 @@ def save_workshop_documents(id):
         url = APP_URL + "/workshop_reports/"\
               + id
         response = requests.get(url)
-        
+
         file = request.files['file']
         if response.ok:
             if file and allowed_file(file.filename):
