@@ -463,27 +463,22 @@ angular.module('outreachApp.controllers',[]).
     });
     
 }).controller("manage-nc", function($scope, $http, $routeParams, $window, $route) {
-    $http.get('/nodal_coordinator_details?created_by_id='+ $window.number).success(function(data, status, headers, config)
-                                                                                   {   
+    $http.get('/nodal_coordinator_details?created_by_id='+ $window.number).success(function(data, status, headers, config){
         var coordinators = [];                                                                             
-        for( i=0;i<data.length;i++)
-        {
-            //console.log(data[i].user.id);
+        for( i=0;i<data.length;i++){
             var b = data[i].id;
-          //  var nc_id=data[i].user.id;
-            $http.get('/users/'+ data[i].user.id).success(function(data, status, headers, config)
-                                                          {
-                                                              data.nc_details_id= b;
-                                                              data.nc_user_id=data.id;
-                                                coordinators.push(data);
-                                                
-                                                
-                                            }).error(function(data, status, headers, config)
-                                                     {
-                                                        // console.log(data);
-                                                         
-                                                     });
+            //var ncentre = data[i].nodal_centre;
+            //  var nc_id=data[i].user.id;
+            $http.get('/users/'+ data[i].user.id).success(function(data, status, headers, config){
+                data.nc_details_id= b;
+                data.nc_user_id=data.id;
+                coordinators.push(data);
+                
+            }).error(function(data, status, headers, config){
+                
+            });
         }
+        
         $scope.coordinators=coordinators;
         
                
@@ -692,6 +687,7 @@ angular.module('outreachApp.controllers',[]).
                         }).
                 error(function(data, status, headers, config)
                       {
+                          alert("Delete the nodal coordinator first which is associated with nodal center");
                           console.log(data);
                       
                       });
