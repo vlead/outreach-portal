@@ -379,7 +379,7 @@ angular.module('outreachApp.controllers',[]).
     {
         if(isvalid)
         {
-            $http.put('/workshops/'+$routeParams.id, { "name" : $scope.message.name, "location" : $scope.message.location,  "user" : {"id" : $window.number }, "participating_institutes" : $scope.message.participating_institutes,"no_of_participants_expected" : $scope.message.no_of_participants_expected, "no_of_sessions" : Number($scope.message.no_of_sessions),  "labs_planned" : Number($scope.message.labs_planned),"status" : {"id":1},  "date" : $scope.message.date}).success(function(data, status, headers, config)
+            $http.put('/workshops/'+$routeParams.id, { "name" : $scope.message.name, "location" : $scope.message.location,  "user" : {"id" : $window.number }, "participating_institutes" : $scope.message.participating_institutes,"no_of_participants_expected" : $scope.message.no_of_participants_expected, "no_of_sessions" : Number($scope.message.no_of_sessions),  "labs_planned" : Number($scope.message.labs_planned),"status" : {"id":1},  "date" : $scope.message.date, "experiments_conducted": $scope.message.experiments_conducted}).success(function(data, status, headers, config)
                 {
                     $scope.status = "Success";
                     history.back();
