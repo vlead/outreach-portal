@@ -6,23 +6,26 @@
    <span class="error"> {{ status }}</span>
     <form name="myForm" novalidate ng-submit="submit(myForm.$valid)">
       <p>Workshop Name:<br>
-	<input type="text" name="user" ng-model="message.name"  class="form-control"  placeholder="Workshop Name" required>
+	<input type="text" name="user" ng-model="message.name"  ng-pattern="/^[a-zA-Z\s]*$/"  class="form-control"  placeholder="Workshop Name" required>
 	<span style="color:red" ng-show="myForm.user.$dirty && myForm.user.$invalid">
 	  <span ng-show="myForm.user.$error.required">Workshop name is required.</span>
+	  <span ng-show="myForm.user.$error.pattern">Enter valid name</span>
 	</span>
       </p>
       <p>Location:<br>
-	<input type="text" name="location" ng-model="message.location"  class="form-control"  placeholder="Location" required>
+	<input type="text" name="location" ng-model="message.location" ng-pattern="/^[a-zA-Z\s,]*$/" class="form-control"  placeholder="Location" required>
 	<span style="color:red" ng-show="myForm.location.$dirty && myForm.location.$invalid">
 	  <span ng-show="myForm.location.$error.required">Location is required.</span>
+	  <span ng-show="myForm.location.$error.pattern">Enter valid location</span>
 	</span>
       </p>
       <p>Participating Institues:<br>
 	<input type="text" name="insts"
-               ng-model="message.participating_institutes" class="form-control"
+               ng-model="message.participating_institutes"  ng-pattern="/^[a-zA-Z\s,]*$/" class="form-control"
                placeholder="Institute names" required>
 	<span style="color:red" ng-show="myForm.insts.$dirty && myForm.insts.$invalid">
 	  <span ng-show="myForm.insts.$error.required">Institute names required.</span>
+	  <span ng-show="myForm.insts.$error.pattern">Enter valid institutes</span>
 	</span>
       </p>
 
@@ -49,6 +52,14 @@
         <span class="error" ng-show="myForm.labs.$error.number">Not valid number!</span>
 	<span style="color:red" ng-show="myForm.labs.$dirty && myForm.labs.$invalid">
 	  <span ng-show="myForm.labs.$error.required">Lab names required.</span>
+	</span>
+      </p>
+      <p>Experiments Conducted:<br>
+	<input type="number" name="exps" ng-model="message.experiments_conducted"  class="form-control"
+               placeholder="Experiments Conducted" min="0" required>
+        <span class="error" ng-show="myForm.labs.$error.number">Not valid number!</span>
+	<span style="color:red" ng-show="myForm.exps.$dirty && myForm.labs.$invalid">
+	  <span ng-show="myForm.exps.$error.required">Experiments conducted required.</span>
 	</span>
       </p>
 
@@ -81,3 +92,4 @@
   $("#datepicker").datepicker({ minDate: 0, dateFormat: 'yy-mm-dd'});
   });
 </script>
+

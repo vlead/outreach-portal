@@ -7,18 +7,15 @@
 #+OPTIONS: ^:nil
 
 * Commit id of the Source
-  Commit id : 914318ed8557efb927ce9d6872a6844039cea201
+  Commit id : 60574e6cdef6e75f7e8f676f520f19da54f704c6
 * Version Number of the Lab
   Version of the lab to be released : v2.0
 
 * New Features Added
 * Resolved Defects
-  - Scenario 1 : Implemented Institute name field
-  - Scenario 5 : Added validation for file type, file required and allowed file
-    format.
-  - Scenario 38: Combined three buttons into single button and
-    listed all files of each type under each heading.
-  - Scenario 7A & 23A Added to the existing scenario list
+  - S1  : 14,36,37,38,43,49,55.
+  - S2  : 3,4 to 40, 55,58,65,61,57,56,53.
+  - S3  : 6 and 10
 * Environment Settings 
    - OS : Windows 7, Linux
    - Browsers : Firefox, Chrome

@@ -5,22 +5,25 @@
    <span class="error"> {{ status }}</span>
     <form name="myForm" novalidate ng-submit="submit(myForm.$valid)">
       <p>Workshop Name:<br>
-	<input type="text" name="user" ng-model="name"  class="form-control"  placeholder="Workshop Name" required>
+	<input type="text" name="user" ng-model="name"  ng-pattern="/^[a-zA-Z\s]*$/"  class="form-control"  placeholder="Workshop Name" required>
 	<span style="color:red" ng-show="myForm.user.$dirty && myForm.user.$invalid">
 	  <span ng-show="myForm.user.$error.required">Workshop name is required.</span>
+	  <span ng-show="myForm.user.$error.pattern">Enter valid name</span>
 	</span>
       </p>
       <p>Location:<br>
-	<input type="text" name="location" ng-model="location"  class="form-control"  placeholder="Location" required>
+	<input type="text" name="location" ng-model="location" ng-pattern="/^[a-zA-Z\s,]*$/"  class="form-control"  placeholder="Location" required>
 	<span style="color:red" ng-show="myForm.location.$dirty && myForm.location.$invalid">
 	  <span ng-show="myForm.location.$error.required">Location is required.</span>
+	  <span ng-show="myForm.location.$error.pattern">Enter valid location</span>
 	</span>
       </p>
       <p>Participating Institues:<br>
-	<input type="text" name="insts" ng-model="insts" class="form-control"
+	<input type="text" name="insts" ng-model="insts"  ng-pattern="/^[a-zA-Z\s,]*$/" class="form-control"
                placeholder="Institute names" required>
 	<span style="color:red" ng-show="myForm.insts.$dirty && myForm.insts.$invalid">
 	  <span ng-show="myForm.insts.$error.required">Institute names required.</span>
+	  <span ng-show="myForm.insts.$error.pattern">Enter valid institutes</span>
 	</span>
       </p>
 

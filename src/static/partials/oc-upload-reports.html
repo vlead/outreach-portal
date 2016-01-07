@@ -1,6 +1,7 @@
 <div>
   <h1> Upload Photos </h1>
   <form method="post" id="upload-file" name="myForm" action="" style="margin-top:30px"  enctype="multipart/form-data">
+    <span class="error"></span>
     <input type="file" name="file" id="photo-file" required multiple/><br>
  
  
@@ -17,15 +18,33 @@
     <button type="button" id="upload-reports" class="btn btn-primary">Upload</button>
   </form>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-   <script>
+  <script>
+    var validFile = function(fileList){
+       for (var i=0; i < fileList.files.length; i++ ){           
+           var re = /(\.jpg|\.jpeg|\.png|\.gif|\.pdf|\.txt|\.csv)$/i;
+           if(!re.exec(fileList.files[i].name)){
+             return false;
+           }
+           
+       }
+       return true;                  
+   };  
    $(function() {
    $('#upload-reports').click(function() {
         var workshop_id = location.href.split("/").pop()
         console.log(number);
        
-        fileups = {'Photos':document.getElementById('photo-file'),
+        var fileups = {'Photos':document.getElementById('photo-file'),
                    'Attendance':document.getElementById('attendance-file'),
-                   'Reports': document.getElementById('reports-file')}
+                   'Reports': document.getElementById('reports-file')};
+        
+            if(fileups['Photos'].files.length == 0 || fileups['Attendance'].files.length == 0 || fileups['Reports'].files.length == 0){
+	    $('.error').html("Please select a file!<br>");
+            }else if(!validFile(fileups['Photos']) || !validFile(fileups['Attendance']) || !validFile(fileups['Reports'])){
+	    $('.error').html("Allowed file formats are: <br> [txt, pdf, png, jpg, jpeg, gif, csv]<br>");
+            }else{
+        
+   
         for (var key in fileups){
         data = {name: key, workshop: {id : workshop_id }};
         for (var i = 0; i < fileups[key].files.length; i++){
@@ -46,7 +65,7 @@
         var form_data = new FormData();
        
         form_data.append('file', fileups[key].files[i], fileups[key].files[i].name);
-        var url = '/upload_workshop_report/' + documentId ;
+        var url = '/upload_workshop_reports/' + documentId ;
    
         $.ajax({
             type: 'POST',
@@ -73,8 +92,9 @@
           console.log('Status: Approved');
         }
         });                    
-    window.history.back();                                  
+	window.history.back();
+      }
+     		    
     });                        
 });
  </script>
-</div>
