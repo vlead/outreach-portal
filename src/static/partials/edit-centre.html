@@ -2,7 +2,7 @@
   <div class="col-md-4"></div>
   <div class="col-md-4">
     <h2>Edit Nodal Centre</h2>
-   <span class="error"> {{ status }}</span>
+    <span class="error"> {{ status }}</span>
     <form name="myForm" novalidate ng-submit="submit(myForm.$valid)">
       <p>Centre Name :<br>
 	<input type="text" name="user" ng-pattern="/^[a-zA-Z\s]*$/" ng-model="centres.name"  class="form-control"  placeholder="User Name" required>
@@ -25,9 +25,7 @@
 	<input type="submit" value="submit" class="btn btn-primary"  ng-disabled="myForm.$invalid">
 	<a href="#/manage-centres">Cancel</a>
       </p>
-
     </form>
-
   </div>
   <div class="col-md-4"></div>
 </div>
