@@ -405,7 +405,7 @@ angular.module('outreachApp.controllers',[]).
         }
         else
         {
-            $scope.status = "Not empty"
+            $scope.status = "All fields are mandatory";
         }
         
     }
