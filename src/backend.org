@@ -110,6 +110,7 @@ import inspect
 from flask import session, render_template, Blueprint, request, jsonify, abort,\
     current_app, redirect, url_for
 from config import *
+from flask import current_app
 
 from flask import Flask, redirect, url_for
 from werkzeug import secure_filename
@@ -5129,7 +5130,6 @@ def typecheck(**typemap):
 ** The web application
 #+BEGIN_SRC python :tangle src/app.py :eval no
 # -*- coding: utf-8 -*-
-
 import os
 
 from flask import Flask, jsonify, make_response
@@ -5151,22 +5151,82 @@ def create_app(config):
     # init sqlalchemy db instance
     db.init_app(app)
     db.app = app
-
     # register blueprints
     app.register_blueprint(api)
-
- #   configure_errorhandlers(app)
- #   configure_cors(app)
- #   configure_logging(app)
-
+    configure_logging(app)
+    configure_errorhandlers(app)
+    #  configure_cors(app)
     # all set; return app object
     return app
+
+
+# custom error handlers to return JSON errors with appropiate status codes
+def configure_errorhandlers(app):
+
+    @app.errorhandler(400)
+    def bad_request(err):
+        resp = make_response(jsonify(error=err.description), 400)
+        app.logger.error("error = %s, error code = 400" % str(err))
+        return resp
+
+    @app.errorhandler(404)
+    def not_found(err):
+        resp = make_response(jsonify(error=err.description), 404)
+        app.logger.error("error = %s, error code = 404" % str(err))
+        return resp
+
+    @app.errorhandler(405)
+    def method_not_allowed(err):
+        resp = make_response(jsonify(error=err.description), 405)
+        app.logger.error("error = %s, error code = 405" % str(err))
+        return resp
+
+    @app.errorhandler(500)
+    def server_error(err):
+        resp = None
+        try:
+            resp = make_response(jsonify(error=err.description), 500)
+        except Exception:
+            try:
+                resp = make_response(jsonify(error=err.message), 500)
+            except Exception:
+                resp = make_response(jsonify(error=str(err)), 500)
+        app.logger.error("error = %s, error code = 500" % str(err))
+        return resp
+
+
+def configure_logging(app):
+    import logging
+    import logging.handlers
+    formatter = logging.Formatter('%(asctime)s: %(levelname)s: %(filename)s:'
+                                  ' %(funcName)s():%(lineno)d: %(message)s')
+
+    # Also error can be sent out via email. So we can also have a SMTPHandler?
+    log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                           '..',
+                           app.config['LOG_FILE_DIRECTORY'])
+    if not os.path.isdir(log_dir):
+        os.mkdir(log_dir)
+        os.system("chmod -R 777 %s" % log_dir)
+    log_file = "%s/%s" % (log_dir, app.config['LOG_FILE'])
+    os.system("sudo touch %s" % log_file)
+    os.system("sudo chmod 777 %s" % log_file)
+    max_size = 1024 * 1024 * 20  # Max Size for a log file: 20MB
+    log_handler = logging.handlers.RotatingFileHandler(log_file,
+                                                       maxBytes=max_size,
+                                                       backupCount=10)
+
+    log_level = app.config['LOG_LEVEL']
+    log_handler.setLevel(log_level)
+    log_handler.setFormatter(formatter)
+
+    app.logger.addHandler(log_handler)
 
 
 if __name__ == "__main__":
     app = create_app(config)
     app.run(debug=True, host='0.0.0.0', threaded=True)
-
+    
 #+END_SRC
 
 ** Configuring the application
@@ -5176,13 +5236,14 @@ Below is the configuration for the application
 # example DB URI:
 # mysql+oursql://scott:tiger@localhost/mydatabase
 # postgresql+psycopg2://scott:tiger@localhost/mydatabase
-SQLALCHEMY_DATABASE_URI = 'mysql+oursql://root:root@localhost/outreach'
+SQLALCHEMY_DATABASE_URI = 'mysql+oursql://<userid>:<password>@<servername>/<db_name>'
 # example
-#SQLALCHEMY_DATABASE_URI = 'mysql+oursql://root:mysql@localhost/outreach'
+# SQLALCHEMY_DATABASE_URI = 'mysql+oursql://root:mysql@localhost/outreach'
 
 # Debug from SQLAlchemy
 # Turn this to False on production
 SQLALCHEMY_ECHO = True
+SQLALCHEMY_TRACK_MODIFICATIONS = True
 
 # List of allowed origins for CORS
 ALLOWED_ORIGINS = "['*']"
@@ -5191,10 +5252,11 @@ ALLOWED_ORIGINS = "['*']"
 WHITELIST_IPS = ["127.0.0.1"]
 
 # Configure your log paths
-#LOG_FILE = 'outreach.log'
+LOG_FILE_DIRECTORY = 'logs'
+LOG_FILE = 'outreach.log'
 
 # Log level for the application
-#LOG_LEVEL = 'DEBUG'
+LOG_LEVEL = 'DEBUG'
 
 # destination for uploaded files
 # example value - '/static/uploads/'
@@ -5203,10 +5265,10 @@ UPLOAD_DIR_PATH = '/static/uploads/'
 # allowed file extensions that can be uploaded
 ALLOWED_FILE_EXTENSIONS = ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'csv']
 
-#APP_URL
+# APP_URL
 APP_URL = "http://localhost:5000"
 
-#Persona Verifier URL
+# Persona Verifier URL
 PERSONA_VERIFIER_URL = "https://verifier.login.persona.org/verify"
 
 #+END_SRC
@@ -5608,11 +5670,18 @@ def login():
                 'audience': APP_URL}
         resp = requests.post(PERSONA_VERIFIER_URL,
                              data=data, verify=True)
+        current_app.logger.debug("response from Persona = %s" %
+                                 resp.json())
         if resp.ok:
             verification_data = resp.json()
         if verification_data['status'] == 'okay':
-            backend_resp = requests.get(APP_URL + "/users?email="
-                                        +verification_data['email'])
+            url_for_getting_the_user = "%s/users?email=%s" % \
+                                       (APP_URL, verification_data['email'])
+            current_app.logger.debug("url_for_getting_the_user = %s" %
+                                     url_for_getting_the_user)
+            backend_resp = requests.get(url_for_getting_the_user)
+            current_app.logger.debug("backend response = %s" %
+                                     backend_resp.text)
             if (len(backend_resp.text.encode('ascii')) != 2):
                 session['email'] = verification_data['email']
                 role = backend_resp.json()[0]['role']['name'].encode('ascii')
@@ -5685,7 +5754,7 @@ def save_workshop_documents(id):
         url = APP_URL + "/workshop_reports/"\
               + id
         response = requests.get(url)
-        
+
         file = request.files['file']
         if response.ok:
             if file and allowed_file(file.filename):

@@ -13,6 +13,9 @@
   documents related to workshops/trainings are stored.
 
 * Requirements
+
+  The requirements are derived from the [[./outreach-portal-scenarios.org][scenarios]]. 
+
   1. Outreach portal has three types of users: Admin, Outreach coordinator and
      Nodal coordinator.
   2. Admin adds, updates and deletes an outreach coordinator.
