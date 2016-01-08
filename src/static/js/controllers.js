@@ -149,11 +149,11 @@ angular.module('outreachApp.controllers',[]).
                 var participants = 0;
                 var experiments = 0;
                 for(i=0;i<data.length;i++)
-                {
+                {   if (data[i].status.id == 3){
                     count = count +1;
                     participants = data[i].participants_attended + participants;
                     experiments = data[i].experiments_conducted + experiments;
-                    
+                }
                     //    alert(typeof(data[i].participants_attended));
                    
                 }
