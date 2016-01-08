@@ -2,7 +2,7 @@
   <div class="col-md-4"></div>
   <div class="col-md-4">
     <h2>Create Workshop</h2>
-   <span class="error"> {{ status }}</span>
+    <span class="error"> {{ status }}</span>
     <form name="myForm" novalidate ng-submit="submit(myForm.$valid)">
       <p>Workshop Name:<br>
 	<input type="text" name="user" ng-model="name"  ng-pattern="/^[a-zA-Z\s]*$/"  class="form-control"  placeholder="Workshop Name" required>
@@ -26,7 +26,6 @@
 	  <span ng-show="myForm.insts.$error.pattern">Enter valid institutes</span>
 	</span>
       </p>
-
       <p>Total Participants:<br>
 	<input type="number" name="parti" ng-model="parti"  min="0" class="form-control"
                placeholder="Participants " required/>
@@ -42,7 +41,6 @@
 	  <span ng-show="myForm.sessions.$error.required">Sessions required.</span>
 	</span>
       </p>
-
       <p>Duration of Session:<br>
 	<input type="number" name="session" ng-model="session"  min="0"  class="form-control"  placeholder="HH.MM" required>
         <span class="error" ng-show="myForm.session.$error.number">Not hours!</span>
@@ -50,7 +48,6 @@
 	  <span ng-show="myForm.session.$error.required">Sessions duration required.</span>
 	</span>
       </p>
-      
       <p>Labs Planned:<br>
 	<input type="number" name="labs" ng-model="labs"  min="0"  class="form-control" placeholder="Labs planned" required>
         <span class="error" ng-show="myForm.labs.$error.number">Not valid number!</span>
@@ -58,7 +55,6 @@
 	  <span ng-show="myForm.labs.$error.required">Lab names required.</span>
 	</span>
       </p>
-
       <p>Date:<br>
 	<input type="text" name="date" ng-model="date" id="datepicker"  class="form-control"  placeholder="YYYY-MM-DD" required>
         <span class="error" ng-show="myForm.date.$error.date">
@@ -67,14 +63,11 @@
 	  <span ng-show="myForm.date.$error.required">Date is required.</span>
 	</span>
       </p>
-
       <p>
 	<input type="submit" value="submit" class="btn btn-primary"  ng-disabled="myForm.$invalid">
 	<a href="#/manage-workshops">Cancel</a>
       </p>
-
     </form>
-
   </div>
   <div class="col-md-4"></div>
 </div>

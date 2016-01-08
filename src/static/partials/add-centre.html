@@ -2,7 +2,7 @@
   <div class="col-md-4"></div>
   <div class="col-md-4">
     <h2>Add Nodal Centre</h2>
-   <span class="error"> {{ status }}</span>
+    <span class="error"> {{ status }}</span>
     <form name="myForm" novalidate ng-submit="submit(myForm.$valid)">
       <p>Centre Name :<br>
 	<input type="text" name="name" ng-model="name"  class="form-control"
@@ -25,10 +25,8 @@
       <p>
 	<input type="submit" value="submit" class="btn btn-primary"  ng-disabled="myForm.$invalid">
 	<a href="#/manage-centres">Cancel</a>
-      </p>
-
-    </form>
-
+      </p>  
+    </form>    
   </div>
   <div class="col-md-4"></div>
 </div>

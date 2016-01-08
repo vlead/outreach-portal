@@ -1,5 +1,5 @@
 angular.module('outreachApp.controllers',[]).
-    controller('mapCtrl', function ($scope, $http, dataFactory){
+    controller('MapCtrl', function ($scope, $http, dataFactory){
         dataFactory.fetch("/workshops?status_id=1").success(function(workshops){
             $scope.workshops = workshops;
             for(i=0;i<workshops.length;i++){
@@ -30,7 +30,7 @@ angular.module('outreachApp.controllers',[]).
             });
         }  
         
-}).controller("adminController", function($scope, workshops, dataFactory, $http, $routeParams, $route,$window) {
+}).controller("AdminController", function($scope, workshops, dataFactory, $http, $routeParams, $route,$window) {
     dataFactory.fetch("/users/"+$window.number).success(function(response){
         $scope.user = response;
     });
@@ -277,7 +277,7 @@ angular.module('outreachApp.controllers',[]).
         }
     }
   
-}).controller("contactoc", function($scope, $http, $routeParams, $route, $window) {
+}).controller("contact-oc", function($scope, $http, $routeParams, $route, $window) {
    
     $http.get('/nodal_coordinator_details?user_id='+$window.number).
     success(function(data, status, headers, config) 
@@ -292,7 +292,7 @@ angular.module('outreachApp.controllers',[]).
       
     });
   
-}).controller("ncdocuments", function($scope, $http, $routeParams, $route, $window) {
+}).controller("nc-documents", function($scope, $http, $routeParams, $route, $window) {
    
     $http.get('/reference_documents').
     success(function(data, status, headers, config) 
@@ -307,7 +307,7 @@ angular.module('outreachApp.controllers',[]).
       
     });
   
-}).controller("nodalcenters", function($scope, $http, $routeParams, $route, $window) {
+}).controller("nodal-centers", function($scope, $http, $routeParams, $route, $window) {
    
     $http.get('/nodal_coordinator_details?user_id='+$window.number).
     success(function(data, status, headers, config) 
@@ -362,7 +362,7 @@ angular.module('outreachApp.controllers',[]).
         }
     }
   
-}).controller("editworkshop", function($scope, $http, $routeParams, $route, $window) {
+}).controller("edit-workshop", function($scope, $http, $routeParams, $route, $window) {
   $http.get('/workshops/'+$routeParams.id).
     success(function(data, status, headers, config) 
     {
@@ -994,7 +994,7 @@ angular.module('outreachApp.controllers',[]).
        
         });
 
-}).controller("uploadreports", function($scope, $http, $routeParams, $route, $window){
+}).controller("upload-reports", function($scope, $http, $routeParams, $route, $window){
     var photos = [];
     var attendance = [];
     var reports = [];
