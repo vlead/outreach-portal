@@ -1,10 +1,8 @@
-
-
 <div class="row">
   <div class="col-md-10"><h2>Nodal Centres  Details</h2></div>
   <div class="col-md-2">
-     <a href="#/add-centre" role="button" class="btn btn-success btn-large">ADD
-     NODAL CENTRE</a>
+    <a href="#/add-centre" role="button" class="btn btn-success btn-large">ADD
+      NODAL CENTRE</a>
   </div>
 </div>
 <div class="row">
@@ -15,7 +13,6 @@
 	  <th>Name</th>
 	  <th>Location</th>
           <th>&emsp;&emsp;&emsp;Action</th>
-	  
 	</tr>
       </thead>
       <tbody>
@@ -23,7 +20,7 @@
           <td>{{ centre.name }}</td>
           <td>{{ centre.location }}</td>
           <td><a href="#/edit-centre/{{centre.id}}" class="btn btn-primary">Edit</a>
-          &emsp;&emsp;<a class="btn btn-danger" ng-click="del(centre.id)">Delete</a></td>
+            &emsp;&emsp;<a class="btn btn-danger" ng-click="del(centre.id)">Delete</a></td>
 	</tr>
       </tbody>
     </table>

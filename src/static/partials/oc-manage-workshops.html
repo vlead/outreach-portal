@@ -6,7 +6,7 @@
 <div class="row" style="margin-top: 30px">
   <div class="col-md-10"></div>
   <div class="col-md-2">
-     <a href="#/add-workshop" role="button" class="btn btn-success btn-large">ADD WORKSHOP</a>
+    <a href="#/add-workshop" role="button" class="btn btn-success btn-large">ADD WORKSHOP</a>
   </div>
 </div>
 <div class="row">
@@ -31,7 +31,7 @@
           <td>{{ workshop.status.name }}</td>
           <td><button class="btn btn-primary" ng-click="cancel(workshop.id)">Cancel</button></td>
           <td ng-if="workshop.status.name == 'Upcoming'"><a href="#/editworkshop/{{workshop.id}}" class="btn btn-primary">Edit</a></td>
-          <td ng-if="workshop.status.name == 'Pending for Approval'"><a href="#/oc_upload_reports/{{workshop.id}}" class="btn btn-primary">Upload Reports</a></td>
+          <td ng-if="workshop.status.name == 'Pending for Approval'"><a href="#/oc-upload-reports/{{workshop.id}}" class="btn btn-primary">Upload Reports</a></td>
         </tr>
       </tbody>
     </table>
