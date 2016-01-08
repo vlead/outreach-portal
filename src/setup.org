@@ -82,7 +82,6 @@ if __name__ == "__main__":
   #+END_SRC
 * Program to migrate the data from old database to new database of outreach portal
 #+BEGIN_SRC python :tangle migrate_old_to_new_data.py :eval no
-
 #!/usr/bin/python
 import MySQLdb
 import sys
@@ -97,15 +96,15 @@ def populate_users():
     data = cursor1.fetchall()
 
     for row in data:
-        if row[1]=="Prof. (Dr.) K. Kamal":
+        if row[1] == "Prof. (Dr.) K. Kamal":
             name = Name("Prof.Dr.K. Kamal")
         else:
             name = Name(row[1].strip())
         email = Email(row[2].strip())
         if row[5] == 1:
-            role=Role.get_by_id(2)
+            role = Role.get_by_id(2)
         elif row[5] == 2:
-            role=Role.get_by_id(3)
+            role = Role.get_by_id(3)
         else:
             role = None
         new_user = User(name=name, email=email, role=role)
@@ -146,23 +145,23 @@ def populate_nodal_centres():
     data = cursor1.fetchall()
 
     for row in data:
-        name=''
-        location=''
-        if row[6]==None:
+        name = ''
+        location = ''
+        if row[6] == None:
             pass
         else:
             name_location = row[6].split(",")
-            if len(name_location)==1:
+            if len(name_location) == 1:
                 pass
             else:
-                name=name_location[0].strip()
-                location=name_location[1].strip()
+                name = name_location[0].strip()
+                location = name_location[1].strip()
                 user = User.query.filter_by(name=row[1]).first()
-                if user==None:
+                if user == None:
                     pass
                 else:
                     new_centre = NodalCentre(name=name, location=location, created_by=user)
-                    print new_centre.name, new_centre.location, new_centre.created_by.name
+                    #print new_centre.name, new_centre.location, new_centre.created_by.name
                     new_centre.save()
 
 def populate_nodal_coordinator_details():
@@ -172,8 +171,8 @@ def populate_nodal_coordinator_details():
 
     for row in data:
 
-        role1= Role.get_by_id(2)
-        role2=Role.get_by_id(3)
+        role1 = Role.get_by_id(2)
+        role2 = Role.get_by_id(3)
 
         user1 = User(name=Name("dummyuseroc"), email=Email("dummyuseroc@vlabs.ac.in"), role = role1 )
         user1.save()
@@ -183,9 +182,9 @@ def populate_nodal_coordinator_details():
 
         target_workshops = 0
 
-        nodal_centre=NodalCentre.get_by_id(1)
-        target_participants=row[1]
-        target_experiments=row[2]
+        nodal_centre = NodalCentre.get_by_id(1)
+        target_participants = row[1]
+        target_experiments = row[2]
 
         nodal_coordinator_detail = NodalCoordinatorDetail(user=user2,
                                                           target_workshops=target_workshops,
@@ -193,9 +192,9 @@ def populate_nodal_coordinator_details():
                                                           nodal_centre=nodal_centre,
                                                           target_participants=target_participants,
                                                           target_experiments=target_experiments)
-        print nodal_coordinator_detail.user.name, nodal_coordinator_detail.target_workshops,
-        print nodal_coordinator_detail.created_by.name, nodal_coordinator_detail.nodal_centre.name,
-        print nodal_coordinator_detail.target_participants, nodal_coordinator_detail.target_experiments
+       # print nodal_coordinator_detail.user.name, nodal_coordinator_detail.target_workshops,
+       # print nodal_coordinator_detail.created_by.name, nodal_coordinator_detail.nodal_centre.name,
+       # print nodal_coordinator_detail.target_participants, nodal_coordinator_detail.target_experiments
         nodal_coordinator_detail.save()
 
 def populate_workshop_reports():
@@ -204,8 +203,8 @@ def populate_workshop_reports():
     data = cursor1.fetchall()
 
     for row in data:
-        user= User.query.filter_by(name="dummyuseroc").first()
-        status =  Status.query.filter_by(name="Approved").first()
+        user = User.query.filter_by(name="dummyuseroc").first()
+        status = Status.query.filter_by(name="Approved").first()
 
         workshop1 = Workshop(name="dummyworkshop", location="IIIT-Hyd",
                              user=user, participating_institutes="HCU,\
@@ -227,35 +226,35 @@ def populate_reference_documents():
     data = cursor1.fetchall()
 
     for row in data:
-        user= User.query.filter_by(name="dummyuseroc").first()
+        user = User.query.filter_by(name="dummyuseroc").first()
 
-        if row[1]=='doc123':
-            name=Name('doc')
+        if row[1] == 'doc123':
+            name = Name('doc')
         elif '-'  in row[1]:
-            row[1].replace("-","")
+            row[1].replace("-", "")
         elif '&' in row[1]:
-            row[1].replace("&","")
+            row[1].replace("&", "")
         elif ';' in row[1]:
-            row[1].replace(";","")
+            row[1].replace(";", "")
         elif '/' in row[1]:
-            row[1].replace("/","")
+            row[1].replace("/", "")
         elif '/' in row[1]:
-            row[1].replace("/","")
+            row[1].replace("/", "")
         else:
             name = Name(row[1][:128].strip())
         path = row[2].strip()
         new_reference_document = ReferenceDocument(name=name, user=user,
-                                                    path=path)
+                                                   path=path)
 
         new_reference_document.save()
 
 if __name__ == "__main__":
-    connection1 = MySQLdb.connect(host = "localhost", user = "root",
-                                  passwd = "root", db = "old_outreach")
+    connection1 = MySQLdb.connect(host="localhost", user="root",
+                                  passwd="root", db="old_outreach")
     cursor1 = connection1.cursor()
 
-    connection2 = MySQLdb.connect(host = "localhost", user = "root",
-                                  passwd = "root", db = "outreach")
+    connection2 = MySQLdb.connect(host="localhost", user="root",
+                                  passwd="root", db="outreach")
     cursor2 = connection2.cursor()
 
     db.create_all(app=create_app(config))
@@ -274,6 +273,7 @@ if __name__ == "__main__":
     connection2.close()
 
     sys.exit()
+    
 #+END_SRC
 
 * Install all dependencies and setup the software
