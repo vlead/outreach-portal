@@ -1,61 +1,53 @@
 {% extends "layout.html" %}
-
 {% block content %}
-
-      {% raw %}
-      <div ng-app="outreachApp">
-      <div class="analytics-band">
-        <div class="container">
-          
-          <div class="row" ng-controller="AdminController">
-            <div class="col-md-4 analytics workshops-run">
-              WORKSHOPS RUN<br>
-              <span class="number">{{ totalworkshops }}</span>
-            </div>
-            <div class="col-md-4 analytics labs-taken">
-              LABS TAKEN<br>
-              <span class="number">{{ labs }}</span>
-            </div>
-            <div class="col-md-4 analytics nodal-centers">
-              NODAL CENTERS<br>
-              <span class="number">{{ ncentres }}</span>
-            </div>
-          </div>
+{% raw %}
+<div ng-app="outreachApp">
+  <div class="analytics-band">
+    <div class="container">
+      <div class="row" ng-controller="AdminController">
+        <div class="col-md-4 analytics workshops-run">
+          WORKSHOPS RUN<br>
+          <span class="number">{{ totalworkshops }}</span>
+        </div>
+        <div class="col-md-4 analytics labs-taken">
+          LABS TAKEN<br>
+          <span class="number">{{ labs }}</span>
+        </div>
+        <div class="col-md-4 analytics nodal-centers">
+          NODAL CENTERS<br>
+          <span class="number">{{ ncentres }}</span>
         </div>
       </div>
-      <div class="container">
-	<div ng-controller="MapCtrl">
-          <div class="section-one">
-            <div class="row">
-              <div class="col-md-12" id="map">
-
-              </div> 
-            </div>
-          </div>
-          <h3>Upcoming Workshops</h3>
-          <table class="table table-hover">
-            <thead>
-	      <tr>
-	  <th>Date</th>
-	  <th>Location</th>
-          <th>Participating Institutes</th>
-          
-
-        </tr>
-      </thead>
-      <tbody>
-	<tr ng-repeat="workshop in workshops">
-          <td>{{ workshop.date }}</td>
-          <td>{{ workshop.location }}</td>
-          <td>{{ workshop.participating_institutes }}</td>
-
-        </tr>
-      </tbody>
-    </table>
-          
+    </div>
+  </div>
+  <div class="container">
+    <div ng-controller="MapCtrl">
+      <div class="section-one">
+        <div class="row">
+          <div class="col-md-12" id="map"></div> 
         </div>
-
       </div>
-      {% endraw %}
-{% endblock %}
-    
+      <h3>Upcoming Workshops</h3>
+      <table class="table table-hover">
+        <thead>
+	  <tr>
+	    <th>Date</th>
+	    <th>Location</th>
+            <th>Participating Institutes</th>
+          </tr>
+	</thead>
+	<tbody>
+	  <tr ng-repeat="workshop in workshops">
+            <td>{{ workshop.date }}</td>
+            <td>{{ workshop.location }}</td>
+            <td>{{ workshop.participating_institutes }}</td>
+	  </tr>
+	</tbody>
+      </table>
+    </div>
+  </div>
+</div>
+  {% endraw %}
+  {% endblock %}
+  
+  
