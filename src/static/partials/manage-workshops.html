@@ -1,9 +1,12 @@
-
-
-<div class="row">
-  <div class="col-md-10"><h2>Outreach Coordinator Details</h2></div>
+<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#manage-workshops">Upcoming Workshops</a></li>
+  <li><a data-toggle="tab" href="#manage-workshops/pending-action">Pending Action Workshops</a></li>
+  <li><a data-toggle="tab" href="#manage-workshops/workshop-history">Workshop History</a></li>
+</ul>
+<div class="row" style="margin-top: 30px">
+  <div class="col-md-10"></div>
   <div class="col-md-2">
-     <a href="#/addoc" role="button" class="btn btn-success btn-large">ADD OC</a>
+    <a href="#/add-workshop" role="button" class="btn btn-success btn-large">ADD WORKSHOP</a>
   </div>
 </div>
 <div class="row">
@@ -12,58 +15,26 @@
       <thead>
 	<tr>
 	  <th>Name</th>
-	  <th>Email</th>
-	  <th>Last Active</th>
-	  <th>Created On</th>
-          <th>Manage</th>
+	  <th>Location</th>
+          <th>Participants</th>
+	  <th>Date</th>
+          <th>Status</th>
+          <th>&emsp;&emsp;&emsp;Action</th>
 	</tr>
       </thead>
       <tbody>
-	<tr ng-repeat="oc in message">
-          <td>{{ oc.name }}</td>
-          <td>{{ oc.email }}</td>
-          <td>{{ oc.last_active }}</td>
-          <td>{{ oc.created }}</td>
-          <td><a href="#/editoc/{{oc.id}}" class="btn btn-primary">Edit</a></td>
-          <td><a class="btn btn-danger" href="#/deloc/{{oc.id}}">Delete</a></td>
+	<tr ng-repeat="workshop in ups">
+          <td>{{ workshop.name }}</td>
+          <td>{{ workshop.location }}</td>
+          <td>{{ workshop.no_of_participants_expected }}</td>
+          <td>{{ workshop.date }}</td>
+          <td>{{ workshop.status.name }}</td>
+          <td><button class="btn btn-primary"
+                      ng-click="cancel(workshop.id)">Cancel</button>
+            &emsp;&emsp;
+          <a href="#/edit-workshop/{{workshop.id}}" class="btn btn-primary">Edit</a></td>
 	</tr>
       </tbody>
     </table>
   </div>
 </div>
-
-
-
-
-
-
-
-<!-- home.html
-    <div class="jumbotron text-center" >
-        <h1>Home Page</h1>
-        
-          <table border="1">
-            <th align="center"></th>
-            <tr>
-               <td>Name</td>
-              <td>Email</td>
-               <td>Edit</td>
-               <td>Delete</td>
-              
-             
-            </tr>
-           
-            <tr ng-repeat="oc in message">
-              
-              <td>{{ oc.name }}</td>
-              <td>{{ oc.email }}</td>
-              <td><a href="#/editoc/{{oc.id}}">Edit</a></td>
-              <td><a href="#/deloc/{{oc.id}}">Delete</a></td>
-              
-             
-            </tr>
-           
-          </table>
-        
-    </div>
--->
