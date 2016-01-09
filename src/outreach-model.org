@@ -1,0 +1,350 @@
+#+TITLE: Outreach Portal
+#+AUTHOR: VLEAD
+#+DATE: [2015-10-27 Tue]
+#+PROPERTY: results output
+#+PROPERTY: exports code
+#+SETUPFILE: ../org-templates/level-0.org
+#+options: ^:nil
+
+* Introduction
+  The purpose of this document is to describe the expected behaviour
+  of the outreach portal. It is a specification for the requirements
+  of this portal. 
+ 
+* Data Model
+** Entities
+   Following are the entities in our model:
+
+   + Outreach Coordinators
+   + Nodal Coordinators
+   + Nodal Centres
+   + Workshops
+   + Workshop Documents
+   + Workshop Reports
+   + Workshop Photos
+   + Nodal Coordinators Training
+    
+*** Outreach Coordinators
+   
+    + Name
+
+      This is a string indicating the name of the outreach coordinator.
+
+    + Email
+
+      A unique string indicating the email of the outreach coordinator.
+  
+    + Created 
+
+      This is a time stamp that tells when a coordinator was added in
+      the system.
+
+    + Last Active
+  
+      This time stamp reveals when the coordinator last made any
+      changes in the system/used the portal.
+
+*** Nodal Coordinators
+    
+    + Name
+
+      Name is a string indicating the name of the nodal coordinator.
+
+    + Email
+
+      A string type that tells the email of the coordinator. This field
+      must be unique.
+
+    + Created By
+
+      This is a string indicating the name of the outreach coordinator
+      who added this nodal coordinator in the system. This field is a
+      foreign key that uniquely identifies an outreach coordinator.
+
+    + Created
+
+      A time stamp indicating when this coordinator was added in the
+      system.
+
+    + Last Active
+
+      A time stamp that tells when the coordinator last made changes in
+      the system/used the portal.
+
+    + Target Workshop
+
+      An integer type that gives the workshops-to-conduct target for the
+      nodal coordinator. This is set by an outreach coordinator.
+
+    + Target Participants
+
+      An integer type that gives the participants target for the nodal
+      coordinator. This is set by an outreach coordinator.
+  
+    + Target Experiments
+
+      An integer type that gives the experiments-to-showcase target for
+      the nodal coordinator. This is set by an outreach coordinator.
+
+    + Current Workshops
+
+      An integer that tells the actual number of workshops conducted by
+      a coordinator. 
+
+    + Current Participants
+
+      An integer that tells the actual number of participants covered
+      by a coordinator.
+
+    + Current Experiments
+
+      An integer that tells the actual number of experiments used
+      through the workshops conducted by a coordinator.
+    
+*** Nodal Centres
+
+    + Name
+
+      Name of the institute chosen as a nodal centre.
+  
+    + Location
+
+      Location is a string that tells the address of the nodal centre.
+  
+    + Coordinator 
+
+      Coordinator who is in charge of the nodal centre. This is a
+      foreign key to Nodal Coordinators entity.
+  
+*** Workshops
+
+    + Location
+   
+      Address of the place where workshop will be conducted.
+
+    + Conducted By
+
+      This represents the nodal coordinator who is responsible for
+      conducting the workshop. As a result this is a foreign key to
+      Nodal Coordinators entity.
+
+    + Name
+
+      Name given to the workshop.
+
+    + Date
+
+      Date on which the workshop is scheduled.
+
+    + Institutes
+
+      Institutes that are expected to attend.
+
+    + No of Participants
+
+      Expected no of participants for the workshop.
+
+    + No Of Sessions
+
+      No of sessions planned.
+
+    + Duration Of Sessions
+    
+      Duration of each session.
+
+    + Discipline
+
+      Discipline on which session is being conducted.
+
+    + Labs Planned
+
+      Number of labs planned to be showcased through this workshop.
+  
+    + Other Details
+
+       Any relevant details pertaining to a workshop.
+
+    + Status
+  
+      This is a set that indicates the current status of the
+      workshop. 
+
+         Status : {Upcoming, Cancelled, Completed}.
+
+    + Created
+
+      A time stamp to indicate when this workshop was added as an event
+      in the system.
+  
+    + Last Updated
+
+      A time stamp that indicates when this workshop was last
+      updated. 
+
+*** Workshop Documents
+
+    + Name
+      
+      Name of the workshop document(template) being uploaded.
+
+    + Path
+
+      A string that denotes the path of the document.
+      
+*** Workshop Reports
+
+    + Workshop Id
+
+      A foreign key linking the reports to Workshops entity. This
+      connects the reports to a particular workshop.
+
+    + Attendance Sheet
+
+      Attendance sheet scanned and uploaded for a
+      workshop. Preferably, it should be a pdf.
+
+    + College Report
+
+      College report as uploaded by a nodal coordinator.
+
+    + Participants Attended
+
+      Number of participants that actually attended the workshop.
+
+    + Experiments Conducted
+  
+      Number of experiments conducted in the workshop.
+
+    + Status
+
+      Status of the workshop report after it is submitted to an
+      outreach coordinator. 
+
+         Status : {Pending, Approved, Rejected}.
+
+    + Created
+
+      A time stamp that tells when a report was created.
+
+    + Last Updated
+
+      A time stamp that tells when a workshop report was last
+      edited/updated.
+
+    + Positive Comments
+
+      Positive comments regarding the workshop.
+   
+    + Negative Comments
+
+      Any negative comments regarding the workshop.
+
+*** Workshop Photos
+
+    + Path
+
+      A string that denotes the path of the saved workshop photos.
+
+    + Workshop Report Id
+
+      This is a foreign key to Workshop Reports entity and links the
+      photos to a particular workshop report.
+
+*** Nodal Coordinators Training
+
+    + Name
+
+      Name of the nodal coordinators training workshop.
+
+    + Date
+
+      Date on which the workshop is scheduled.
+
+    + Location
+
+      Location of the workshop.
+
+    + Duration
+  
+      Duration of the workshop.
+
+    + Description
+
+      Any details regarding the workshop like agenda etc.
+
+    + Invitees
+
+      Invitees for the training workshop. Their emails would be entered
+      by the outreach coordinator and an invite would be sent notifying
+      them about the workshop. Also, each entry must be unique.
+
+    + Created By
+
+      This is a foreign key to Outreach Coordinators entity. This tells
+      the details of the outreach coordinator who created this
+      workshop.
+
+** Model Diagram
+   The model-diagram can be found below. This gives an overview of the
+   relationships between different entities.
+
+   [[https://github.com/vlead/outreach-portal/blob/master/outreach-model-diagram.jpg][Model-diagram]] 
+
+   This diagram highlights the following facts:
+
+   + An outreach coordinator can have multiple nodal coordinators
+     associated with it.
+
+   + An outreach coordinator can conduct multiple nodal coordinator
+     trainings.
+
+   + Each nodal centre is assigned to a unique nodal coordinator.
+ 
+   + A nodal coordinator can conduct multiple workshops.
+
+   + A workshop report is unique to a workshop and there can not be
+     multiple reports for a single workshop.
+
+   + Each workshop report can have multiple workshop photos.
+
+   + The workshop document is a separate entity and is only used by an
+     admin.
+
+* Operations of the application
+  + The outreach coordinators would broadly do the following operations
+    through this portal:
+
+    - Add Nodal Centres.
+    - Assign new or existing nodal coordinators to nodal centres.
+    - Set targets for nodal coordinators.
+    - Approve/reject workshop reports and comment on them.
+    - Add a nodal coordinator training workshop
+
+  + The nodal coordinators would perform the following operations:
+
+    - Create/edit/delete workshop.
+    - Submit/edit workshop report.
+
+  + Besides these users, an admin is part of the system and the
+    application assumes who the admin is. He can upload the relevant
+    workshop documents and add outreach coordinators. 
+
+* Link to wireframes 
+  A skeletal of the front-end is given below in different use-case
+  scenarios:
+
+  [[https://github.com/Virtual-Labs/outreach-portal/blob/master/vlead-effort/wireframes/Vlabs%20Outreach%20Portal%20design-%20Wireframes.pdf][Wireframes]]
+
+* Quality Parameters
+  Following standard practices need to be strictly observed:
+
+  + Issue tracking should be done via Github portal.
+  + The function and variable names should be relevant along with
+    proper casing.(Camel case or upper case)
+  + Complete code should be properly indented.
+  + There should be relevant comments in the code.
+  + The database tables should be normalized.
+  + The application should be properly secured from common web attacks
+    such as SQL injection.
+  + The directory structure of the different folders should be proper
+    and the documents should be checked in relevant folders only.

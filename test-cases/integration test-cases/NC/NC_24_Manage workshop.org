@@ -1,0 +1,31 @@
+* Author: Nihanth
+* Date Created: 22 Dec 2015
+* Environment
+  - OS: Windows 7, Ubuntu-16.04,Centos-6
+  - Browsers: Firefox-42.0,Chrome-47.0,chromium-45.0
+  - Bandwidth : 100Mbps
+  - Hardware Configuration:8GBRAM , 
+  - Processor:i5,
+  - Required fields:Workshop Name,Locatio,Participating institutes,Date,Total participants,No of sessions,Duration of sessions,Labs planned
+  - Data : @!#$,DJHV$%^,!#$%,SDFJH,abc
+
+* Objective
+  - To be able to add the new workshops
+
+* Pre conditions
+  - Refer to first test case [[https://github.com/Virtual-Labs/Outreach Portal/blob/master/test-cases/integration_test-cases/NC/NC_01_Feature.org][NC_01_Feature.org]]
+
+* Post conditions
+  - Nil
+* Test Steps
+  1. Refer to the step id 14
+  2. Enter the invalid data in the Total participants field and enter the valid data in remaining all the fields 
+  3. Hit enter or click submit button.
+
+* Expected result
+  1. Refer to the step id 14
+  2. An error message should be displayed on the screen as to enter the valid data in the Total participants field
+
+* Review/comments
+
+
