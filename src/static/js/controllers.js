@@ -609,132 +609,96 @@ app.controller("edit-centre", function($scope, dataFactory, $http, $routeParams,
             $scope.status = "Not empty"
         }
     }
-});app.controller("oc-manage-workshops", function($scope, $http, $routeParams, $route, $window) {
-   
-    $http.get('/workshops?user_id='+$window.number).
-    success(function(data, status, headers, config) 
-            {
-
-                today = new Date();
-                var upcoming = 0;
-                var ups = [];
-                var history = [];
-                var pending = [];
-	        for(i=0;i<data.length;i++)
-	        {
-                    
-                    workshop_date = new Date(data[i].date);
-                    var workshop_id = data[i].id ;
-                    if ((today > workshop_date) & (data[i].status.name == "Upcoming")){
-                        $http.put('/workshops/'+workshop_id.toString(), {'status': {'id': 2}}).success(function(data, status){ console.log('Status success'); });
-                    }
-                    if( (today <= workshop_date) ||(today.getDate() == workshop_date.getDate() & (today.getMonth() == workshop_date.getMonth()) 
-                                                    & (today.getFullYear() == workshop_date.getFullYear())))
-                    {
-                        
-                        ups.push(data[i]);
-                        
-		        upcoming = upcoming + 1;
-	            }
-	        
-                    else if(data[i].status.name == "Approved")
-                    {
-                        history.push(data[i]);
-                    }
-                    else if(data[i].status.name == "Pending for Approval")
-                    {
-                        ups.push(data[i]);
-                        upcoming = upcoming + 1;
-                    }
+});
+app.controller("oc-manage-workshops", function($scope, $http, $routeParams, dataFactory,$route, $window) {
+    dataFactory.fetch('/workshops?user_id='+$window.number).
+	success(function(data, status, headers, config) {
+            today = new Date();
+            var count = 0;
+            var upcoming = [];
+            var history = [];
+            var pending = [];
+	    for(i=0;i<data.length;i++){
+                workshop_date = new Date(data[i].date);
+                var workshop_id = data[i].id ;
+                if ((today > workshop_date) & (data[i].status.name == "Upcoming")){
+                    dataFactory.put('/workshops/'+workshop_id.toString(), {'status': {'id': 2}}).
+			success(function(data, status){ console.log('Status success'); });
                 }
-                $scope.history = history;
-                $scope.pending = pending;
-                $scope.ups = ups;
-                $scope.upcoming = upcoming;
-          //    $scope.experiments = experiments;
-          //    $scope.count = count;
-                
-                
-    }).
-    error(function(data, status, headers, config)
-    {
-      console.log(data);
-      
-    });
-    $scope.cancel = function(id)
-    {
-        if(confirm("Are you sure!") == true)
-        {
-            $http.delete('/workshops/'+id).
-                success(function(data, status, headers, config) 
-                        {
-                            $route.reload();
-                            
-                            
-                        }).
-                error(function(data, status, headers, config)
-                      {
-                          console.log(data);
-                          
-                      });
-            
+                if((today <= workshop_date) ||
+		   (today.getDate() == workshop_date.getDate() &
+		    (today.getMonth() == workshop_date.getMonth()) 
+                    & (today.getFullYear() == workshop_date.getFullYear()))){
+                    upcoming.push(data[i]);
+                    count = count + 1;
+	        }
+	        else if(data[i].status.name == "Approved"){
+                    history.push(data[i]);
+                }
+                else if(data[i].status.name == "Pending for Approval"){
+                    upcoming.push(data[i]);
+                    count = count + 1;
+                }
+            }
+            $scope.history = history;
+            $scope.pending = pending;
+            $scope.upcoming = upcoming;
+            $scope.count = count;
+            //    $scope.experiments = experiments;
+            //    $scope.count = count;
+        }).
+	error(function(data, status, headers, config){
+	    console.log(data);
+	});
+    $scope.cancel = function(id){
+        if(confirm("Are you sure!") == true){
+            dataFactory.del('/workshops/'+id).
+                success(function(data, status, headers, config) {
+                    $route.reload();
+                }).
+                error(function(data, status, headers, config){
+                    console.log(data);
+                });
         }
     }
-  
-});app.controller("oc-doclist", function($scope, $http, $routeParams, $route, $window) {
-    
-    $http.get('/reference_documents?user_id=' + $window.number).
-    success(function(data, status, headers, config) 
-    {
-        $scope.documents= data;
-              
-    }).
-    error(function(data, status, headers, config)
-    {
-      console.log(data);
-      
-    });
-    $http.get('/reference_documents?user_id=1').
-        success(function(data, status, headers, config) 
-                {
-                    $scope.admindocs = data;
-                    
-                }).
-        error(function(data, status, headers, config)
-              {
-                  console.log(data);
-                  
-              });
-    $scope.deldoc =  function(id)
-    {
-        $http.delete('/reference_documents/'+id).
-            success(function(data, status, headers, config) 
-                    {
-                        $scope.status= "Deleted";
-                        $route.reload();
-              
-                    }).
-            error(function(data, status, headers, config)
-                  {
-                      console.log(data);
-                      
-                  });
-               
+});
+app.controller("oc-doclist", function($scope, $http, $routeParams, dataFactory,$route, $window) {
+    dataFactory.fetch('/reference_documents?user_id=' + $window.number).
+	success(function(data, status, headers, config) {
+            $scope.documents= data;
+        }).
+	error(function(data, status, headers, config){
+	    console.log(data);
+        });
+    dataFactory.fetch('/reference_documents?user_id=1').
+        success(function(data, status, headers, config) {
+            $scope.admindocs = data;
+        }).
+        error(function(data, status, headers, config){
+            console.log(data);
+        });
+    $scope.deldoc =  function(id){
+        dataFactory.del('/reference_documents/'+id).
+            success(function(data, status, headers, config){
+                $scope.status= "Deleted";
+                $route.reload();
+	    }).
+            error(function(data, status, headers, config){
+                console.log(data);
+            });
     }
-
-
-});app.controller("nc-workshops", function($scope, $http, $routeParams, $window, $route) {
+});
+app.controller("nc-workshops", function($scope, $http, $routeParams, dataFactory, $window, $route) {
     var nc_workshops = []
-    $http.get('/nodal_coordinator_details?created_by_id='+ $window.number).success(function(data, status, headers, config){
+    dataFactory.fetch('/nodal_coordinator_details?created_by_id='+ $window.number).success(function(data, status, headers, config){
         for (i = 0 ; i < data.length; i++ ){
-            $http.get('/workshops?user_id='+data[i].user.id).success(function(data,status,headers,config){
+            dataFactory.fetch('/workshops?user_id='+data[i].user.id).success(function(data,status,headers,config){
                 for (i=0; i<data.length; i++){
                     if (data[i].status.id == 2 || data[i].status.id == 4){
                         nc_workshops.push(data[i]);
                     }else{
                         console.log(data[i].name);
                     }
-                   
                 }
             }).error(function(data,status,headers,config){
                 console.log("Failed");
@@ -744,70 +708,69 @@ app.controller("edit-centre", function($scope, dataFactory, $http, $routeParams,
         console.log("Failed");
     });
     $scope.workshops = nc_workshops;
-    
-});app.controller("review-reports", function($scope, $http, $routeParams, $route, $window){
+});
+app.controller("review-reports", function($scope, $http, $routeParams, dataFactory,  $route, $window){
     $scope.approve = function(){
-        $http.put('/workshops/'+$routeParams.id, {'status': {'id': 3}}).success(function(data, status, headers, config){
+        dataFactory.put('/workshops/'+$routeParams.id, {'status': {'id': 3}}).success(function(data, status, headers, config){
             console.log("Status: Approved");
             history.back();
         });
     }
-     $scope.disapprove = function(){
-         $http.put('/workshops/'+$routeParams.id, {'not_approval_reason': $scope.remarks,'status': {'id': 4}}).success(function(data, status, headers, config){
-             console.log("Status: Disapproved");
-             history.back();
-        });
+    $scope.disapprove = function(){
+        dataFactory.put('/workshops/'+$routeParams.id, {'not_approval_reason': $scope.remarks,
+							'status': {'id': 4}}).
+	    success(function(data, status, headers, config){
+		console.log("Status: Disapproved");
+		history.back();
+            });
     }
-    $http.get('/workshop_reports?workshop_id='+$routeParams.id).success(function(data,status,headers,config){
+    dataFactory.fetch('/workshop_reports?workshop_id='+$routeParams.id).success(function(data,status,headers,config){
         $scope.reports = data;
     }).error(function(data, status, headers, config){
         console.log("Failed");
     });
+});
 
-});app.controller("oc-workshop-history", function($scope, $http, $routeParams, $window, $route) {
+app.controller("oc-workshop-history", function($scope, $http, $routeParams, dataFactory, $window, $route) {
     var workshops = [] ;
-    $http.get('/nodal_coordinator_details?created_by_id='+ $window.number).success(function(data, status, headers, config){
-        for (i = 0 ; i < data.length; i++ ){
-            $http.get('/workshops?user_id='+data[i].user.id).success(function(data,status,headers,config){
-                for (i=0; i<data.length; i++){
-                    if (data[i].status.id == 3){
-                        workshops.push(data[i]);
-                    }else{
-                        console.log(data[i].name);
+    dataFactory.fetch('/nodal_coordinator_details?created_by_id='+ $window.number).
+	success(function(data, status, headers, config){
+            for (i = 0 ; i < data.length; i++ ){
+		dataFactory.fetch('/workshops?user_id='+data[i].user.id).success(function(data,status,headers,config){
+                    for (i=0; i<data.length; i++){
+			if (data[i].status.id == 3){
+                            workshops.push(data[i]);
+			}else{
+                            console.log(data[i].name);
+			}
                     }
-                   
-                }
-            }).error(function(data,status,headers,config){
-                console.log("Failed");
-            });
-        }
-    }).error(function(data, status, headers, config){
+		}).
+		    error(function(data,status,headers,config){
+			console.log("Failed");
+		    });
+            }
+	}).
+	error(function(data, status, headers, config){
         console.log("Failed");
     });
-     $http.get('/workshops?user_id='+$window.number). success(function(data, status, headers, config) {
-               
-	        for(i=0;i<data.length;i++){
-                    
-                    if(data[i].status.id == 3){
-                        workshops.push(data[i]);
-                    }else{
-                        console.log(data[i].name);
-                    }
-                    
-                    
-                }
-        
+    dataFactory.fetch('/workshops?user_id='+$window.number). success(function(data, status, headers, config) {
+        for(i=0;i<data.length;i++){
+            if(data[i].status.id == 3){
+                workshops.push(data[i]);
+            }else{
+                console.log(data[i].name);
+            }
+        }
     }).error(function(data, status, headers, config){
         console.log(data);
-        
     });
     $scope.workshops = workshops;
-
-});app.controller("upload-reports", function($scope, $http, $routeParams, $route, $window){
+});
+app.controller("upload-reports", function($scope, $http, $routeParams, dataFactory, $route, $window){
     var photos = [];
     var attendance = [];
     var reports = [];
-    $http.get('/workshop_reports?workshop_id='+$routeParams.id).success(function(data,status,headers,config){
+    dataFactory.fetch('/workshop_reports?workshop_id='+$routeParams.id).success(function(data,status,headers,config){
         for(i=0;i<data.length;i++){
             if (data[i].name == 'Photos'){
                 photos.push(data[i]);
@@ -817,26 +780,19 @@ app.controller("edit-centre", function($scope, dataFactory, $http, $routeParams,
                 reports.push(data[i]);
             }
         }
-    }).error(function(data, status, headers, config){
-        console.log("Failed");
-    });
-    $scope.delreport =  function(id)
-    {
-        $http.delete('/workshop_reports/'+id).
-            success(function(data, status, headers, config) 
-                    {
-                        $scope.status= "Deleted";
-                        $route.reload();
-              
-                    }).
-            error(function(data, status, headers, config)
-                  {
-                      console.log(data);
-                      
-                  });
-        
-        
-        
+    }).
+	error(function(data, status, headers, config){
+            console.log("Failed");
+	});
+    $scope.delreport =  function(id){
+        dataFactory.del('/workshop_reports/'+id).
+            success(function(data, status, headers, config) {
+                $scope.status= "Deleted";
+                $route.reload();
+	    }).
+            error(function(data, status, headers, config){
+                console.log(data);
+            });
     }
     $scope.photos = photos;
     $scope.attendance = attendance;
