@@ -23,14 +23,14 @@
 	</tr>
       </thead>
       <tbody>
-	<tr ng-repeat="workshop in ups">
+	<tr ng-repeat="workshop in upcoming">
           <td>{{ workshop.name }}</td>
           <td>{{ workshop.location }}</td>
           <td>{{ workshop.no_of_participants_expected }}</td>
           <td>{{ workshop.date }}</td>
           <td>{{ workshop.status.name }}</td>
           <td><button class="btn btn-primary" ng-click="cancel(workshop.id)">Cancel</button></td>
-          <td ng-if="workshop.status.name == 'Upcoming'"><a href="#/editworkshop/{{workshop.id}}" class="btn btn-primary">Edit</a></td>
+          <td ng-if="workshop.status.name == 'Upcoming'"><a href="#/edit-workshop/{{workshop.id}}" class="btn btn-primary">Edit</a></td>
           <td ng-if="workshop.status.name == 'Pending for Approval'"><a href="#/oc-upload-reports/{{workshop.id}}" class="btn btn-primary">Upload Reports</a></td>
         </tr>
       </tbody>
