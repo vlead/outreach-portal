@@ -35,6 +35,7 @@ setup(
 
 * Program to set up the database
   #+BEGIN_SRC python :tangle db_setup.py :eval no
+
 from src.app import create_app
 from src.db import *
 import src.config as config
@@ -50,8 +51,18 @@ def create_roles():
     role3 = Role(name=Name("NC"))
     role3.save()
 
-    user = User(name=Name("admin"), email=Email("outreach-admin@vlabs.ac.in"), role = role1)
-    user.save()
+    user1 = User(name=Name("admin"), email=Email("outreach-admin@vlabs.ac.in"), role = role1)
+    user1.save()
+    user2 = User(name=Name("dummyuseroc"), email=Email("dummyuseroc@vlabs.ac.in"), role = role2 )
+    user2.save()
+
+    user3 = User(name=Name("dummyusernc"), email=Email("dummyusernc@vlabs.ac.in"), role = role3 )
+    user3.save()
+
+    centre = NodalCentre(name="dummycentre", location="dummylocation",
+                                   created_by=user1)
+
+    centre.save()
 
 def create_status():
     status1 = Status(name=Name("Upcoming"))
@@ -78,17 +89,17 @@ if __name__ == "__main__":
     create_roles()
     create_status()
 
-
   #+END_SRC
 * Program to migrate the data from old database to new database of outreach portal
 #+BEGIN_SRC python :tangle migrate_old_to_new_data.py :eval no
+
 #!/usr/bin/python
 import MySQLdb
 import sys
 from src.app import create_app
 from src.db import *
 import src.config as config
-
+import requests
 
 def populate_users():
     print "Populating users table.."
@@ -119,11 +130,19 @@ def populate_workshops():
     for row in data:
         name = row[1].strip()
         location = row[2].strip()
-        user = User.get_by_id(row[12]+1)
+        if row[12] == 3:
+            user = User.query.filter_by(name="Rakesh T").first()
+        elif row[12] == 4:
+            user = User.query.filter_by(name="M.Srinath reddy").first()
+        elif row[12] == 5:
+            user = User.query.filter_by(name="P Saikumar").first()
+        elif row[12] == 13:
+            user = User.get_by_id(15)
+        else:
+            continue
         participating_institutes = row[3].strip()
         status = Status.get_by_id(4)
         labs_planned = len(row[9].split(","))
-
         if row[4] == '' or row[5] == '' or row[6] == '' or row[9] == '':
             pass
         else:
@@ -137,7 +156,7 @@ def populate_workshops():
                                 no_of_sessions=no_of_sessions, labs_planned=labs_planned,
                                 status=status, date=date)
 
-        new_workshop.save()
+       # new_workshop.save()
 
 def populate_nodal_centres():
     print "Populating nodal centres table.."
@@ -147,54 +166,136 @@ def populate_nodal_centres():
     for row in data:
         name = ''
         location = ''
-        if row[6] == None:
-            pass
-        else:
+        user = User.query.filter_by(name=row[1]).first()
+        if row[6] == 'TASK':
+            name = 'TASK'
+            location = 'Null'
+        elif row[6] == None:
+            name = 'Null'
+            location = 'Null'
+        elif ',' in row[6]:
             name_location = row[6].split(",")
-            if len(name_location) == 1:
-                pass
-            else:
-                name = name_location[0].strip()
-                location = name_location[1].strip()
-                user = User.query.filter_by(name=row[1]).first()
-                if user == None:
-                    pass
-                else:
-                    new_centre = NodalCentre(name=name, location=location, created_by=user)
-                    #print new_centre.name, new_centre.location, new_centre.created_by.name
-                    new_centre.save()
+            name = name_location[0].strip()
+            location = name_location[1].strip()
+        else:
+            name = row[6]
+            location = 'Null'
+            #new_centre.save()
+        if user == None:
+            user = User.query.filter_by(name="dummyuseroc").first()
+        new_centre = NodalCentre(name=name, location=location, created_by=user)
+        new_centre.save()
+       # print new_centre.name, new_centre.location, new_centre.created_by.name
 
 def populate_nodal_coordinator_details():
     print "Populating nodal coordinator details table.."
-    cursor1.execute("select * from nodalcoordinatortraining")
+    cursor1.execute("select * from va_users")
     data = cursor1.fetchall()
 
     for row in data:
-
-        role1 = Role.get_by_id(2)
-        role2 = Role.get_by_id(3)
-
-        user1 = User(name=Name("dummyuseroc"), email=Email("dummyuseroc@vlabs.ac.in"), role = role1 )
-        user1.save()
-
-        user2 = User(name=Name("dummyusernc"), email=Email("dummyusernc@vlabs.ac.in"), role = role2)
-        user2.save()
-
-        target_workshops = 0
+        if row[9] == None:
+            target_workshops = 0
+        else:
+            target_workshops = int(row[9])
+        if row[10] == None or row[10] == '':
+            target_participants = 0
+        else:
+            target_participants = int(row[10])
+        if row[11] == None:
+            target_experiments = 0
+        else:
+            target_experiments = int(row[11])
 
         nodal_centre = NodalCentre.get_by_id(1)
-        target_participants = row[1]
-        target_experiments = row[2]
+        user1 = User.query.filter_by(name=row[1]).first()
+        user2 = User.get_by_id(2)
 
-        nodal_coordinator_detail = NodalCoordinatorDetail(user=user2,
+        if row[1] == None or row[1] == 'test':
+            continue
+
+        if row[8] == None:
+            continue
+
+        if row[8] == 1:
+            user2 = User.query.filter_by(name="sripathi").first()
+        elif row[8] == 2:
+            user2 = User.query.filter_by(name="Geeta Bose").first()
+        elif row[8] == 6:
+            user2 = User.query.filter_by(name="karunakar").first()
+        elif row[8] == 8:
+            user2 = User.query.filter_by(name="Kantesh Balani").first()
+        elif row[8] == 9:
+            user2 = User.query.filter_by(name="Pushpdeep Mishra").first()
+        elif row[8] == 16:
+            user2 = User.query.filter_by(name="Yogesh").first()
+        elif row[8] == 20:
+            user2 = User.query.filter_by(name="Sanjeet Kumar").first()
+        elif row[8] == 22:
+            user2 = User.query.filter_by(name="Dr Vinod Kumar").first()
+        else:
+            continue
+
+        if row[6] == "Modern Institute of Technology and Research Centre, Alwar":
+            nodal_centre = NodalCentre.query.filter_by(name="Modern Institute of Technology and Research Centre").first()
+        if row[6] == "Noida Institute of Engineering and Technology, Greater Noida":
+            nodal_centre = NodalCentre.query.filter_by(name="Noida Institute of Engineering and Technology").first()
+        if row[6] == "Asia Pacific Institute of Information Technology, Panipat":
+            nodal_centre = NodalCentre.query.filter_by(name="Asia Pacific Institute of Information Technology").first()
+        if row[6] == "Meerut Institute of Technology, Meerut":
+            nodal_centre = NodalCentre.query.filter_by(name="Meerut Institute of Technology").first()
+        if row[6] == "Desh Bhagat University, Punjab":
+            nodal_centre = NodalCentre.query.filter_by(name="Desh Bhagat University").first()
+        if row[6] == "Lingaya's University, Faridabad":
+            nodal_centre = NodalCentre.query.filter_by(name="Lingaya's University").first()
+        if row[6] == "Krishna Institute of Engineering and Technology, Ghaziabad":
+            nodal_centre = NodalCentre.query.filter_by(name="Krishna Institute of Engineering and Technology").first()
+        if row[6] == "Dronacharya College of Engineering, Gurgaon":
+            nodal_centre = NodalCentre.query.filter_by(name="Dronacharya College of Engineering").first()
+        if row[6] == "Dronacharya Group of Institution, Greater Noida":
+            nodal_centre = NodalCentre.query.filter_by(name="Dronacharya Group of Institution").first()
+        if row[6] == "IIMT College of Engineering, Greater Noida":
+            nodal_centre = NodalCentre.query.filter_by(name="IIMT College of Engineering").first()
+        if row[6] == "Chandigarh University, Gauruan, Punjab.":
+            nodal_centre = NodalCentre.query.filter_by(name="Chandigarh University, Gauruan").first()
+        if row[6] == "Swami Vivekanand College of Engineering, Indore":
+            nodal_centre = NodalCentre.query.filter_by(name="Swami Vivekanand College of Engineering").first()
+        if row[6] == "Global Group of Institutions, Lucknow":
+            nodal_centre = NodalCentre.query.filter_by(name="Global Group of Institutions").first()
+        if row[6] == "Dr. Ambedkar Institute of Technology for Handicapped, Kanpur":
+            nodal_centre = NodalCentre.query.filter_by(name="Dr. Ambedkar Institute of Technology for Handicapped").first()
+        if row[6] == "Hindustan Institute of Technology and Management, Agra":
+            nodal_centre = NodalCentre.query.filter_by(name="Hindustan Institute of Technology and Management").first()
+        if row[6] == "Pranveer Singh Institute of Technology, Kanpur":
+            nodal_centre = NodalCentre.query.filter_by(name="Pranveer Singh Institute of Technology").first()
+        if row[6] == "Saraswati Gyan Mandir Inter College, Indira Nagar, Kanpur":
+            nodal_centre = NodalCentre.query.filter_by(name="Saraswati Gyan Mandir Inter College, Indira Nagar").first()
+        if row[6] == "Kendriya Vidyalaya, IIT Kanpur":
+            nodal_centre = NodalCentre.query.filter_by(name="Kendriya Vidyalaya").first()
+        if row[6] == "Babu Banarasi Das University, Lucknow":
+            nodal_centre = NodalCentre.query.filter_by(name="Babu Banarasi Das University").first()
+        if row[6] == "Krishna Engineering College, Ghaziabad":
+            nodal_centre = NodalCentre.query.filter_by(name="Krishna Engineering College").first()
+        if row[6] == "Bharat Institute of Technology, Meerut":
+            nodal_centre = NodalCentre.query.filter_by(name="Bharat Institute of Technology").first()
+        if row[6] == "JSSATE, Noida":
+            nodal_centre = NodalCentre.query.filter_by(name="JSSATE").first()
+        if row[6] == "Seth Anandram Jaipuria, Kanpur":
+            nodal_centre = NodalCentre.query.filter_by(name="Seth Anandram Jaipuria").first()
+        if row[6] == "KV Cant, Kanpur":
+            nodal_centre = NodalCentre.query.filter_by(name="KV Cant").first()
+        if nodal_centre == None:
+            nodal_centre = NodalCentre.query.filter_by(name="dummycentre").first()
+
+
+        nodal_coordinator_detail = NodalCoordinatorDetail(user=user1,
                                                           target_workshops=target_workshops,
-                                                          created_by=user1,
+                                                          created_by=user2,
                                                           nodal_centre=nodal_centre,
                                                           target_participants=target_participants,
                                                           target_experiments=target_experiments)
-       # print nodal_coordinator_detail.user.name, nodal_coordinator_detail.target_workshops,
-       # print nodal_coordinator_detail.created_by.name, nodal_coordinator_detail.nodal_centre.name,
-       # print nodal_coordinator_detail.target_participants, nodal_coordinator_detail.target_experiments
+        print nodal_coordinator_detail.user.name, nodal_coordinator_detail.target_workshops,
+        print nodal_coordinator_detail.created_by.name, nodal_coordinator_detail.nodal_centre.name,
+        print nodal_coordinator_detail.target_participants, nodal_coordinator_detail.target_experiments
         nodal_coordinator_detail.save()
 
 def populate_workshop_reports():
@@ -248,6 +349,8 @@ def populate_reference_documents():
 
         new_reference_document.save()
 
+
+
 if __name__ == "__main__":
     connection1 = MySQLdb.connect(host="localhost", user="root",
                                   passwd="root", db="old_outreach")
@@ -262,9 +365,9 @@ if __name__ == "__main__":
     populate_workshops()
     populate_nodal_centres()
     populate_nodal_coordinator_details()
-    populate_workshop_reports()
-    populate_reference_documents()
-
+#    populate_workshop_reports()
+#    populate_reference_documents()
+#    populate_file_path()
 
     cursor1.close()
     connection1.close()
@@ -273,7 +376,6 @@ if __name__ == "__main__":
     connection2.close()
 
     sys.exit()
-    
 #+END_SRC
 
 * Install all dependencies and setup the software
