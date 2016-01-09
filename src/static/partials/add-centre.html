@@ -3,7 +3,7 @@
   <div class="col-md-4">
     <h2>Add Nodal Centre</h2>
     <span class="error"> {{ status }}</span>
-    <form name="myForm" novalidate ng-submit="submit(myForm.$valid)">
+    <form name="myForm" novalidate ng-submit="add_centre(myForm.$valid)">
       <p>Centre Name :<br>
 	<input type="text" name="name" ng-model="name"  class="form-control"
                ng-pattern="/^[a-zA-Z\s]*$/" placeholder="Centre Name" required>
