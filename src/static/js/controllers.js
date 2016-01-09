@@ -276,14 +276,18 @@ app.controller("nodal-centers", function($scope, $http, dataFactory, $routeParam
         });
   
 });
-app.controller("add-workshop", function($scope, $location, $http, $routeParams, $route, $window) {
+app.controller("add-workshop", function($scope, $location, $http, dataFactory,$routeParams, $route, $window){
     $scope.submit = function(isvalid){
         if(isvalid){
-            $http.post('/workshops',
-                       { "name" : $scope.name, "duration_of_sessions" : Number($scope.session), "location" : $scope.location,  "user" : {"id" : $window.number }, "participating_institutes" : $scope.insts,
-                         "no_of_participants_expected" : $scope.parti, "no_of_sessions" : Number($scope.sessions),  "labs_planned" : Number($scope.labs),
-                         "status" : {"id": 1},  "date" : $scope.date }).
-                success(function(data, status, headers, config){
+            dataFactory.post('/workshops', { "name" : $scope.name,
+					     "duration_of_sessions" : Number($scope.session),
+					     "location" : $scope.location,  "user" : {"id" : $window.number },
+					     "participating_institutes" : $scope.insts,
+					     "no_of_participants_expected" : $scope.parti,
+					     "no_of_sessions" : Number($scope.sessions),
+					     "labs_planned" : Number($scope.labs),
+					     "status" : {"id": 1},  "date" : $scope.date }).
+		success(function(data, status, headers, config){
                     $scope.status = "Successfully created workshop";
                     history.back();
                 }).
@@ -303,23 +307,33 @@ app.controller("add-workshop", function($scope, $location, $http, $routeParams, 
             $scope.status = "Fill Details"
         }
     }
-  
+    
 });
 
-app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParams, $route, $window) {
-  dataFactory.fetch('/workshops/'+$routeParams.id).
-        success(function(data, status, headers, config) {
+app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParams, $route, $window){
+    dataFactory.fetch('/workshops/'+$routeParams.id).
+        success(function(data, status, headers, config){
             $scope.message= data;
         }).
         error(function(data, status, headers, config){
             console.log(data);
         });
-    $scope.submit = function(isvalid) {
+    $scope.submit = function(isvalid){
         if(isvalid){
-            dataFactory.put('/workshops/'+$routeParams.id, { "name" : $scope.message.name, "location" : $scope.message.location, "user" : {"id" : $window.number }, "participating_institutes" : $scope.message.participating_institutes,"no_of_participants_expected" : $scope.message.no_of_participants_expected, "no_of_sessions" : Number($scope.message.no_of_sessions),  "labs_planned" : Number($scope.message.labs_planned),"status" : {"id":1},  "date" : $scope.message.date, "experiments_conducted": $scope.message.experiments_conducted}).success(function(data, status, headers, config){
-                $scope.status = "Success";
-                history.back();
-            }).
+            dataFactory.put('/workshops/'+$routeParams.id,
+			    { "name" : $scope.message.name,
+			      "location" : $scope.message.location,
+			      "user" : {"id" : $window.number },
+			      "participating_institutes" : $scope.message.participating_institutes,
+			      "no_of_participants_expected" : $scope.message.no_of_participants_expected,
+			      "no_of_sessions" : Number($scope.message.no_of_sessions),
+			      "labs_planned" : Number($scope.message.labs_planned),
+			      "status" : {"id":1},  "date" : $scope.message.date,
+			      "experiments_conducted": $scope.message.experiments_conducted}).
+		success(function(data, status, headers, config){
+                    $scope.status = "Success";
+                    history.back();
+		}).
                 error(function(data, status, headers, config){
                     if(status == 500){
                         $scope.status = "Duplicate Email";
@@ -338,7 +352,7 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
         }
         
     }
-
+    
 });
 app.controller("oc-dashboard", function($scope, $http, dataFactory, $routeParams, $route, $window) {
     var workshop = 0;
