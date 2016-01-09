@@ -340,118 +340,75 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
     }
 
 });
-app.controller("oc-dashboard", function($scope, $http, $routeParams, $route, $window) {
+app.controller("oc-dashboard", function($scope, $http, dataFactory, $routeParams, $route, $window) {
     var workshop = 0;
     var participants = 0;
     var experiments = 0;
-    $http.put('/users/'+$window.number, {'last_active': Date()}).success(function(data, status){ console.log('Status success'); });
-    $http.get("/nodal_centres?created_by_id="+$window.number).success(function(data, status, headers, config){
+    dataFactory.put('/users/'+$window.number, {'last_active': Date()}).success(function(data, status){ console.log('Status success'); });
+    dataFactory.fetch("/nodal_centres?created_by_id="+$window.number).success(function(data, status, headers, config){
         $scope.ncentres = data.length;
     }).error(function(data,status,headers,config){
         console.log("Failed")
     });
-    $http.get('/nodal_coordinator_details?created_by_id='+ $window.number).success(function(data, status, headers, config)
-                                                                                   {   
-                                                                                       var coordinators = [];
-                                                                                      
-        for( i=0;i<data.length;i++)
-        {
-                       
-            $http.get('/workshops?user_id='+ data[i].user.id).success(function(data, status, headers, config)
-                                                          {
-                                                              for(i=0;i<data.length;i++)
-                                                              {
-                                                                  if(data[i].status.name == "Approved")
-                                                                  {
-                                                                      workshop=workshop+1;
-                                                                      participants=participants+data[i].participants_attended;
-                                                                      experiments=experiments+data[i].experiments_conducted;
-                                                                      $scope.workshops=workshop;
-                                                                      $scope.participants=participants;
-                                                                      $scope.experiments=experiments;
-                                                                  }
-                                                              }
-
-                                                             
-                                                             
-                                                
-                                            }).error(function(data, status, headers, config)
-                                                     {
-                                                        // console.log(data);
-                                                         
-                                                     });
-        }
-                                                                                       
-
-
-               
-    }).error(function(data, status, headers, config)
-    {
-      console.log(data);
-      
-    });
-    
-});app.controller("manage-nc", function($scope, $http, $routeParams, $window, $route) {
-    $http.get('/nodal_coordinator_details?created_by_id='+ $window.number).success(function(data, status, headers, config){
-        var coordinators = [];                                                                             
+    dataFactory.fetch('/nodal_coordinator_details?created_by_id='+ $window.number).success(function(data, status, headers, config){
+        var coordinators = [];
         for( i=0;i<data.length;i++){
-            var b = data[i].id;
-            //var ncentre = data[i].nodal_centre;
-            //  var nc_id=data[i].user.id;
-            $http.get('/users/'+ data[i].user.id).success(function(data, status, headers, config){
-                data.nc_details_id= b;
-                data.nc_user_id=data.id;
-                coordinators.push(data);
-                
+            dataFactory.fetch('/workshops?user_id='+ data[i].user.id).success(function(data, status, headers, config){
+                for(i=0;i<data.length;i++){
+                    if(data[i].status.name == "Approved"){
+                        workshop=workshop+1;
+                        participants=participants+data[i].participants_attended;
+                        experiments=experiments+data[i].experiments_conducted;
+                        $scope.workshops=workshop;
+                        $scope.participants=participants;
+                        $scope.experiments=experiments;
+                    }
+                }
             }).error(function(data, status, headers, config){
-                
             });
         }
-        
-        $scope.coordinators=coordinators;
-        
-               
-    }).error(function(data, status, headers, config)
-    {
-      console.log(data);
-      
+    }).error(function(data, status, headers, config){
+        console.log(data);
     });
-    $scope.del =  function(a, b)
-    {
-        if(confirm("Are you sure!") == true)
-        {
-            $http.delete('/nodal_coordinator_details/'+a).
-                success(function(data, status, headers, config) 
-                        {
-                           $route.reload();
-                          // window.location.href = "#/manage-nc";
-                            
-                        }).
-                error(function(data, status, headers, config)
-                      {
-                          console.log(data);
-                      
-                      });
-            $http.delete('/users/'+b).
-                success(function(data, status, headers, config) 
-                        {
-                           $route.reload();
-                          // window.location.href = "#/manage-nc";
-                            
-                        }).
-                error(function(data, status, headers, config)
-                      {
-                          console.log(data);
-                      
-                      });
-            
+    
+});
+app.controller("manage-nc", function($scope, $http, $routeParams, dataFactory, $window, $route) {
+    dataFactory.fetch('/nodal_coordinator_details?created_by_id='+ $window.number).success(function(data, status, headers, config){
+        var coordinators = [];                                                                             
+        for( i=0;i<data.length;i++){
+            var nc_id = data[i].id;
+            dataFactory.fetch('/users/'+ data[i].user.id).success(function(data, status, headers, config){
+                data.nc_details_id=nc_id;
+                data.nc_user_id=data.id;
+                coordinators.push(data);
+            }).error(function(data, status, headers, config){
+            });
         }
-        else
-            return;
-         
+        $scope.coordinators=coordinators;
+    }).error(function(data, status, headers, config){
+        console.log(data);
+    });
+    $scope.del =  function(nc_details_id, user_id){
+        if(confirm("Are you sure!") == true){
+            dataFactory.del('/nodal_coordinator_details/'+nc_details_id).
+                success(function(data, status, headers, config){ 
+                    $route.reload();
+                }).
+                error(function(data, status, headers, config){
+                    console.log(data);
+                });
+            dataFactory.del('/users/'+ user_id).
+                success(function(data, status, headers, config) {
+                    $route.reload();
+                }).
+                error(function(data, status, headers, config){
+                    console.log(data);
+                });
+        }
     }
     
-});app.controller("edit-nc", function($scope, $http, $routeParams, $window, $route) {
+});
+app.controller("edit-nc", function($scope, $http, $routeParams, $window, $route) {
    
     $http.get("/nodal_centres?created_by_id="+$window.number).success(function(data, status, headers, config){
 
