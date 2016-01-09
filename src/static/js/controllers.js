@@ -144,58 +144,57 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
     
 });
 
-app.controller("nc-dashboard", function($scope, $http, $routeParams, $route, $window) {
-    $http.put('/users/'+$window.number, {'last_active': Date()}).success(function(data, status){ console.log('Status success'); });
-    $http.get('/workshops?user_id='+$window.number).
-        success(function(data, status, headers, config) 
-                {
-                    var count = 0;
-                    var participants = 0;
-                    var experiments = 0;
-                    for(i=0;i<data.length;i++)
-                    {   if (data[i].status.id == 3){
-                        count = count +1;
-                        participants = data[i].participants_attended + participants;
-                        experiments = data[i].experiments_conducted + experiments;
-                    }
-                    }
-                    $scope.participants = participants;
-                    $scope.experiments = experiments;
-                    $scope.count = count;
-                                    
-                }).
-        error(function(data, status, headers, config)
-              {
-                  console.log(data);
-                  
-              });
-    $http.get('/nodal_coordinator_details?user_id='+$window.number).
-        success(function(data, status, headers, config) 
-                {
-                    
-                    var target_workshops = 0;
-                    var target_experiments = 0;
-                    var target_participants = 0;
-                    
-                    for(i=0;i<data.length;i++)
-                    {
-                        
-                        target_workshops = data[i].target_workshops + target_workshops;
-                        target_experiments = data[i].target_experiments + target_experiments;
-                        target_participants = data[i].target_participants + target_participants;
-                        
-                        
-                    }
-                    $scope.target_workshops = target_workshops;
-                    $scope.target_experiments = target_experiments;
-                $scope.target_participants = target_participants;
-                }).
-        error(function(data, status, headers, config)
-              {
-      console.log(data);
-                  
-              });
-        
+app.controller("nc-dashboard", function($scope, $http, dataFactory, $routeParams, $route, $window) {
+    dataFactory.put('/users/'+$window.number, {'last_active': Date()}).success(function(response){
+    }).error(function(data, status, headers, config){
+        if(status == 500){
+            $scope.status = "Server error";
+        }
+        else if(status == 400){
+            $scope.status = "Invalid date"
+        }
+        else{
+            $scope.status = "Failed"
+        }
+    });
+    dataFactory.fetch('/workshops?user_id='+$window.number).
+        success(function(data, status, headers, config) {
+            var count = 0;
+            var participants = 0;
+            var experiments = 0;
+            for(i=0;i<data.length;i++){
+                if (data[i].status.id == 3){
+                    count = count +1;
+                    participants = data[i].participants_attended + participants;
+                    experiments = data[i].experiments_conducted + experiments;
+                }
+            }
+            $scope.participants = participants;
+            $scope.experiments = experiments;
+            $scope.count = count;
+            
+        }).
+        error(function(data, status, headers, config){        
+            console.log(data);
+        });
+    dataFactory.fetch('/nodal_coordinator_details?user_id='+$window.number).
+        success(function(data, status, headers, config) {
+            var target_workshops = 0;
+            var target_experiments = 0;
+            var target_participants = 0;
+            for(i=0;i<data.length;i++){
+                target_workshops = data[i].target_workshops + target_workshops;
+                target_experiments = data[i].target_experiments + target_experiments;
+                target_participants = data[i].target_participants + target_participants;
+            }
+            $scope.target_workshops = target_workshops;
+            $scope.target_experiments = target_experiments;
+            $scope.target_participants = target_participants;
+        }).
+        error(function(data, status, headers, config){
+            console.log(data);
+        });
+    
 }).controller("manage-workshops", function($scope, $http, $routeParams, $route, $window) {
     
     $http.get('/workshops?user_id='+$window.number).
@@ -267,141 +266,102 @@ app.controller("nc-dashboard", function($scope, $http, $routeParams, $route, $wi
         }
     }
   
-});app.controller("contact-oc", function($scope, $http, $routeParams, $route, $window) {
-   
-    $http.get('/nodal_coordinator_details?user_id='+$window.number).
-    success(function(data, status, headers, config) 
-            {
-                $scope.oc = data;
-                
-                
-    }).
-    error(function(data, status, headers, config)
-    {
-      console.log(data);
-      
-    });
+});
+app.controller("contact-oc", function($scope, dataFactory, $http, $routeParams, $route, $window) {
+    dataFactory.fetch('/nodal_coordinator_details?user_id='+$window.number).
+        success(function(data, status, headers, config){
+            $scope.oc = data;
+        }).
+        error(function(data, status, headers, config){    
+            console.log(data);
+        });
   
-});app.controller("nc-documents", function($scope, $http, $routeParams, $route, $window) {
-   
-    $http.get('/reference_documents').
-    success(function(data, status, headers, config) 
-            {
-                $scope.docs = data;
-                
-                
-    }).
-    error(function(data, status, headers, config)
-    {
-      console.log(data);
-      
-    });
+});
+app.controller("nc-documents", function($scope, dataFactory, $http, $routeParams, $route, $window) {
+    dataFactory.fetch('/reference_documents').
+        success(function(data, status, headers, config) {
+            $scope.docs = data;
+        }).
+        error(function(data, status, headers, config){
+            console.log(data);
+        });
+    
+});
+app.controller("nodal-centers", function($scope, $http, dataFactory, $routeParams, $route, $window) {
+    dataFactory.fetch('/nodal_coordinator_details?user_id='+$window.number).
+        success(function(data, status, headers, config) {
+            $scope.centers = data[0].nodal_centre;
+        }).
+        error(function(data, status, headers, config){
+            console.log(data);
+        });
   
-});app.controller("nodal-centers", function($scope, $http, $routeParams, $route, $window) {
-   
-    $http.get('/nodal_coordinator_details?user_id='+$window.number).
-    success(function(data, status, headers, config) 
-            {
-                console.log(data[0]);
-                $scope.centers = data[0].nodal_centre;
-                
-                
-    }).
-    error(function(data, status, headers, config)
-    {
-      console.log(data);
-      
-    });
-  
-});app.controller("add-workshop", function($scope, $location, $http, $routeParams, $route, $window) {
-    $scope.submit = function(isvalid)
-    {
-        if(isvalid)
-        {
+});
+app.controller("add-workshop", function($scope, $location, $http, $routeParams, $route, $window) {
+    $scope.submit = function(isvalid){
+        if(isvalid){
             $http.post('/workshops',
                        { "name" : $scope.name, "duration_of_sessions" : Number($scope.session), "location" : $scope.location,  "user" : {"id" : $window.number }, "participating_institutes" : $scope.insts,
                          "no_of_participants_expected" : $scope.parti, "no_of_sessions" : Number($scope.sessions),  "labs_planned" : Number($scope.labs),
                          "status" : {"id": 1},  "date" : $scope.date }).
-            success(function(data, status, headers, config)
-            {
-                $scope.status = "Successfully created workshop";
-                history.back();
-
-                
-            }).
-            error(function(data, status, headers, config)
-                  {alert(status);
-                if(status == 500)
-                {
-                    $scope.status = "Duplicate Entry";
-                }
-                else if(status == 400)
-                {
-                    $scope.status = "Invalid username"
-                }
-                else
-                {
-                    $scope.status = "Failed"
-                }
-            });
-  
+                success(function(data, status, headers, config){
+                    $scope.status = "Successfully created workshop";
+                    history.back();
+                }).
+                error(function(data, status, headers, config){
+                    if(status == 500){
+                        $scope.status = "Duplicate Entry";
+                    }
+                    else if(status == 400){
+                        $scope.status = "Invalid username"
+                    }
+                    else {
+                        $scope.status = "Failed"
+                    }
+                });
         }
-        else
-        {
+        else{
             $scope.status = "Fill Details"
         }
     }
   
-});app.controller("edit-workshop", function($scope, $http, $routeParams, $route, $window) {
-  $http.get('/workshops/'+$routeParams.id).
-    success(function(data, status, headers, config) 
-    {
-        $scope.message= data;
-              
-    }).
-    error(function(data, status, headers, config)
-    {
-      console.log(data);
-      
-    });
+});
 
-    $scope.submit = function(isvalid) 
-    {
-        if(isvalid)
-        {
-            $http.put('/workshops/'+$routeParams.id, { "name" : $scope.message.name, "location" : $scope.message.location,  "user" : {"id" : $window.number }, "participating_institutes" : $scope.message.participating_institutes,"no_of_participants_expected" : $scope.message.no_of_participants_expected, "no_of_sessions" : Number($scope.message.no_of_sessions),  "labs_planned" : Number($scope.message.labs_planned),"status" : {"id":1},  "date" : $scope.message.date, "experiments_conducted": $scope.message.experiments_conducted}).success(function(data, status, headers, config)
-                {
-                    $scope.status = "Success";
-                    history.back();
-                                      
-                }).
-                error(function(data, status, headers, config)
-                {
-                    if(status == 500)
-                    {
-                        
+app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParams, $route, $window) {
+  dataFactory.fetch('/workshops/'+$routeParams.id).
+        success(function(data, status, headers, config) {
+            $scope.message= data;
+        }).
+        error(function(data, status, headers, config){
+            console.log(data);
+        });
+    $scope.submit = function(isvalid) {
+        if(isvalid){
+            dataFactory.put('/workshops/'+$routeParams.id, { "name" : $scope.message.name, "location" : $scope.message.location, "user" : {"id" : $window.number }, "participating_institutes" : $scope.message.participating_institutes,"no_of_participants_expected" : $scope.message.no_of_participants_expected, "no_of_sessions" : Number($scope.message.no_of_sessions),  "labs_planned" : Number($scope.message.labs_planned),"status" : {"id":1},  "date" : $scope.message.date, "experiments_conducted": $scope.message.experiments_conducted}).success(function(data, status, headers, config){
+                $scope.status = "Success";
+                history.back();
+            }).
+                error(function(data, status, headers, config){
+                    if(status == 500){
                         $scope.status = "Duplicate Email";
                     }
-                    else if(status == 400)
-                    {
+                    else if(status == 400){                    
                         $scope.status = "Invalid username"
                     }
-                    else
-                    {
+                    else {
                         $scope.status = "Failed"
                     }
                     
                 });
         }
-        else
-        {
+        else{
             $scope.status = "All fields are mandatory";
         }
         
     }
 
-
-});app.controller("oc-dashboard", function($scope, $http, $routeParams, $route, $window) {
+});
+app.controller("oc-dashboard", function($scope, $http, $routeParams, $route, $window) {
     var workshop = 0;
     var participants = 0;
     var experiments = 0;
@@ -969,18 +929,6 @@ app.controller("nc-dashboard", function($scope, $http, $routeParams, $route, $wi
         
     });
     $scope.workshops = workshops;
-    
-});app.controller('testCtrl',function($scope,dataFactory){
-    
-    dataFactory.fetch("/users").success(function(response){
-        $scope.hello = response[1];
-        
-    });
-    var data={name : "sripathi"};
-    dataFactory.fetchbyid(data).success(function(response){
-        $scope.helloo = response;
-       
-        });
 
 });app.controller("upload-reports", function($scope, $http, $routeParams, $route, $window){
     var photos = [];
