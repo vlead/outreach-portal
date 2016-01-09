@@ -422,270 +422,193 @@ app.controller("manage-nc", function($scope, $http, $routeParams, dataFactory, $
     }
     
 });
-app.controller("edit-nc", function($scope, $http, $routeParams, $window, $route) {
+app.controller("edit-nc", function($scope, dataFactory, $http, $routeParams, $window, $route) {
    
-    $http.get("/nodal_centres?created_by_id="+$window.number).success(function(data, status, headers, config){
-
+    dataFactory.fetch("/nodal_centres?created_by_id="+$window.number).success(function(data, status, headers, config){
         $scope.ncentres = data;
-        $scope.ncentre_id = data[0];$scope.email = data.email;
-        
+        $scope.ncentre_id = data[0];
+        //$scope.email = data.email;
     }).error(function(data,status,headers,config){
         console.log("Failed")
     });
-    $http.get("/users/"+$routeParams.id).success(function(data, status, headers, config){
-
+    dataFactory.fetch("/users/"+$routeParams.id).success(function(data, status, headers, config){
         $scope.user = data.name;
         $scope.user_id = data.id;
         $scope.email = data.email;
         $scope.inst_name = data.institute_name;
-       
-        
     }).error(function(data,status,headers,config){
         console.log("Failed")
     });
-    $http.get("/nodal_coordinator_details?user_id="+$routeParams.id).success(function(data, status, headers, config){
-
+    dataFactory.fetch("/nodal_coordinator_details?user_id="+$routeParams.id).success(function(data, status, headers, config){
         $scope.workshops = data[0].target_workshops;
         $scope.nc_id=data[0].id;
         $scope.expts = data[0].target_experiments;
         $scope.parti = data[0].target_participants;
         console.log($scope.workshops);
-       
-        
     }).error(function(data,status,headers,config){
         console.log("Failed")
     });
     $scope.id = 0;
-    $scope.submit = function(user_id, nc_id)
-    {
-        
-        if(true)
-        {
-            $http.put('/users/'+user_id,{'name' : $scope.user,'email' : $scope.email} ).
-                success(function(data, status, headers, config)
-                        {
-            
-                            id = data.id;       
-                            $scope.status = "Success";
-                                      
-                  $http.put('/nodal_coordinator_details/'+nc_id,
-                             {"target_workshops":Number($scope.workshops),"target_experiments":Number($scope.expts), "target_participants":Number($scope.parti),"created_by":{"id": $window.number},
-                        "nodal_centre":{"id":$scope.ncentre_id.id}} ).success(function(data, status, headers, config)
-                            {
-                                                                                                                                                                                                       window.location.href = "#/manage-nc";                                                                                                                                                                                   
-                                                                                                                                                                                                                  }).error(function(data, status, headers, config)
-                                                                                                                                                                                                                  {
-                                                                                                                                                                                                                  });  
-                //window.location.href = "#/manage-nc";
-                //$scope.message= $routeParams.id;
-                
-            }).
-            error(function(data, status, headers, config)
-            {
-                if(status == 500)
-                {
-                    $scope.status = "Duplicate Entry";
-                }
-                else if(status == 400)
-                {
-                    $scope.status = "Invalid username"
-                }
-                else
-                {
-                    $scope.status = "Failed"
-                }
-            });
-            //alert(id);
-            
-        }
-        else
-        {
-            $scope.status = "Fill Details"
-        }
-    }
-    
-});app.controller("add-nc", function($scope, $http, $routeParams, $window, $route) {
-    
-    $http.get("/nodal_centres?created_by_id="+$window.number).success(function(data, status, headers, config){
-
-        $scope.ncentres = data;
-        $scope.ncentre_id = data[0];
-        
-    }).error(function(data,status,headers,config){
-        console.log("Failed")
-    });
-    $scope.id = 0;
-    $scope.submit = function(isvalid)
-    {
-               
-        if(isvalid)
-        {
-            $http.post('/users',{'name' : $scope.name,"institute_name" : $scope.inst_name, 'email' : $scope.email,'role' : { 'id' : 3 } } ).
-                success(function(data, status, headers, config)
-                        {
-            
-                 id = data.id;       
-                            $scope.status = "Success";
-                                      
-                  $http.post('/nodal_coordinator_details',
-                             {"user": {"id": id}, "target_workshops":Number($scope.workshops),"target_experiments":Number($scope.expts), "target_participants":Number($scope.parti),"created_by":{"id": $window.number},
-                        "nodal_centre":{"id":$scope.ncentre_id.id}} ).success(function(data, status, headers, config)
-                            {
-                                                                                                                                                                                                       window.location.href = "#/manage-nc";                                                                                                                                                                                   
-                                                                                                                                                                                                                  }).error(function(data, status, headers, config)
-                                                                                                                                                                                                                  {
-                                                                                                                                                                                                                  });  
-                //window.location.href = "#/manage-nc";
-                //$scope.message= $routeParams.id;
-                
-            }).
-            error(function(data, status, headers, config)
-            {
-                if(status == 500)
-                {
-                    $scope.status = "Duplicate Entry";
-                }
-                else if(status == 400)
-                {
-                    $scope.status = "Invalid username"
-                }
-                else
-                {
-                    $scope.status = "Failed"
-                }
-            });
-            //alert(id);
-            
-        }
-        else
-        {
-            $scope.status = "Fill Details"
-        }
-    }
-    
-});app.controller("manage-centres", function($scope, $http, $routeParams, $window, $route) {
-    $http.get('/nodal_centres?created_by_id='+$window.number).success(function(data, status, headers, config)
-    {
-        $scope.centres= data;
-        
-      
-    }).error(function(data, status, headers, config)
-    {
-      console.log(data);
-      
-    });
-    $scope.del =  function(a)
-    {
-        if(confirm("Are you sure!") == true)
-        {
-            $http.delete('/nodal_centres/'+a).
-                success(function(data, status, headers, config) 
-                        {
-                            $route.reload();
-                           
-                            
-                        }).
-                error(function(data, status, headers, config)
-                      {
-                          alert("Delete the nodal coordinator first which is associated with nodal center");
-                          console.log(data);
-                      
-                      });
-            
-        }
-        else
-            return;
-         
-    }
-    
-});app.controller("add-centre", function($scope, $http, $routeParams, $window) {
-
-    $scope.submit = function(isvalid)
-    {
-        if(isvalid)
-        {
-            
-            $http.post('/nodal_centres',{'name' : $scope.name,'location' : $scope.centre,'created_by' : { 'id' : $window.number } } ).
-                success(function(data, status, headers, config)
-            {
-                $scope.status = "Success";
-                window.location.href = "#/manage-centres";
-                //$scope.message= $routeParams.id;
-                
-            }).
-            error(function(data, status, headers, config)
-            {
-                if(status == 500)
-                {
-                    $scope.status = "Duplicate Entry";
-                }
-                else if(status == 400)
-                {
-                    $scope.status = "Invalid username"
-                }
-                else
-                {
-                    $scope.status = "Failed"
-                }
-            });
-  
-        }
-        else
-        {
-            $scope.status = "Fill Details"
-        }
-    }
-});app.controller("edit-centre", function($scope, $http, $routeParams, $route, $window) {
-  $http.get('/nodal_centres/'+$routeParams.id).
-    success(function(data, status, headers, config) 
-    {
-        $scope.centres= data;
-              
-    }).
-    error(function(data, status, headers, config)
-    {
-      console.log(data);
-      
-    });
-
-    $scope.submit = function(isvalid) 
-    {
-        
-        if(isvalid)
-        {
-            
-            $http.put('/nodal_centres/'+$routeParams.id, { "name" : $scope.centres.name, "location" : $scope.centres.location,'created_by' : { 'id' : $window.number } }).success(function(data, status, headers, config)
-                {
+    $scope.submit = function(user_id, nc_id){
+        if(true){
+            dataFactory.put('/users/'+user_id,{'name' : $scope.user,'email' : $scope.email} ).
+                success(function(data, status, headers, config){
+                    id = data.id;       
                     $scope.status = "Success";
-                    window.location.href = "#/manage-centres";
-                                      
+                    dataFactory.put('/nodal_coordinator_details/'+nc_id,
+                                    {"target_workshops":Number($scope.workshops),
+                                     "target_experiments":Number($scope.expts),
+                                     "target_participants":Number($scope.parti),
+                                     "created_by":{"id": $window.number},
+                                     "nodal_centre":{"id":$scope.ncentre_id.id}}
+                                   )
+                        .success(function(data, status, headers, config){
+                            window.location.href = "#/manage-nc";                                                                                                                                     }).error(function(data, status, headers, config){
+                            });  
                 }).
-                error(function(data, status, headers, config)
-                {
-                    if(status == 500)
-                    {
-                        
-                        $scope.status = "Duplicate Email";
+                error(function(data, status, headers, config){
+                    if(status == 500){
+                        $scope.status = "Duplicate Entry";
                     }
-                    else if(status == 400)
-                    {
+                    else if(status == 400){
                         $scope.status = "Invalid username"
                     }
-                    else
-                    {
+                    else{
+                        $scope.status = "Failed"
+                    }
+                });
+        }
+        else {
+            $scope.status = "Fill Details"
+        }
+    }
+    
+});
+
+app.controller("add-nc", function($scope, $http, dataFactory, $routeParams, $window, $route) {
+    dataFactory.fetch("/nodal_centres?created_by_id="+$window.number).success(function(data, status, headers, config){
+        $scope.ncentres = data;
+        $scope.ncentre_id = data[0];
+    }).error(function(data,status,headers,config){
+        console.log("Failed")
+    });
+    $scope.id = 0;
+    $scope.submit = function(isvalid){
+        if(isvalid){
+            dataFactory.post('/users',{'name' : $scope.name,"institute_name" : $scope.inst_name, 'email' : $scope.email,'role' : { 'id' : 3 } } ).
+                success(function(data, status, headers, config){
+                    id = data.id;       
+                    $scope.status = "Success";
+                    dataFactory.post('/nodal_coordinator_details',
+                                     {"user": {"id": id},
+                                      "target_workshops":Number($scope.workshops),
+                                      "target_experiments":Number($scope.expts),
+                                      "target_participants":Number($scope.parti),
+                                      "created_by":{"id": $window.number},
+                                      "nodal_centre":{"id":$scope.ncentre_id.id}} ).success(function(data, status, headers, config){
+                                          window.location.href = "#/manage-nc";                                                                                                                                    }).error(function(data, status, headers, config){
+                                          });  
+                }).
+                error(function(data, status, headers, config){
+                    if(status == 500){
+                        $scope.status = "Duplicate Entry";
+                    }
+                    else if(status == 400){
+                        $scope.status = "Invalid username"
+                    }
+                    else {
+                        $scope.status = "Failed"
+                    }
+                });
+        }
+        else {
+            $scope.status = "Fill Details"
+        }
+    }
+    
+});
+app.controller("manage-centres", function($scope, $http, dataFactory, $routeParams, $window, $route) {
+    dataFactory.fetch('/nodal_centres?created_by_id='+$window.number).success(function(data, status, headers, config){
+        $scope.centres= data;
+    }).error(function(data, status, headers, config){
+        console.log(data);
+    });
+    $scope.add_centre = function(isvalid){
+        if(isvalid){
+            dataFactory.post('/nodal_centres',
+                             {'name' : $scope.name,
+                              'location' : $scope.centre,
+                              'created_by' : { 'id' : $window.number } } ).
+                success(function(data, status, headers, config){
+                    $scope.status = "Success";
+                    window.location.href = "#/manage-centres";
+                }).
+                error(function(data, status, headers, config){
+                    if(status == 500){
+                        $scope.status = "Duplicate Entry";
+                    }
+                    else if(status == 400){
+                        $scope.status = "Invalid username"
+                    }
+                    else{
+                        $scope.status = "Failed"
+                    }
+                });
+  
+        }
+        else{
+            $scope.status = "Fill Details"
+        }
+    }
+    $scope.del_centre =  function(id){
+        if(confirm("Are you sure!") == true){
+            dataFactory.del('/nodal_centres/'+id).
+                success(function(data, status, headers, config) {
+                    $route.reload();
+                }).
+                error(function(data, status, headers, config){
+                    alert("Delete the nodal coordinator first which is associated with nodal center");
+                    console.log(data);
+                });
+        }
+    }
+    
+});
+
+app.controller("edit-centre", function($scope, dataFactory, $http, $routeParams, $route, $window) {
+    dataFactory.fetch('/nodal_centres/'+$routeParams.id).
+        success(function(data, status, headers, config) {
+            $scope.centres= data;
+        }).
+        error(function(data, status, headers, config){
+            console.log(data);
+        });
+    $scope.submit = function(isvalid) {
+        if(isvalid){
+            $http.put('/nodal_centres/'+$routeParams.id,
+                      { "name" : $scope.centres.name,
+                        "location" : $scope.centres.location,
+                        'created_by' : { 'id' : $window.number } }).success(function(data, status, headers, config){
+                            $scope.status = "Success";
+                            window.location.href = "#/manage-centres";
+                        }).
+                error(function(data, status, headers, config){
+                    if(status == 500){
+                        $scope.status = "Duplicate Email";
+                    }
+                    else if(status == 400){
+                        $scope.status = "Invalid username"
+                    }
+                    else {
                         $scope.status = "Failed"
                     }
                     
                 });
         }
-        else
-        {
+        else{
             $scope.status = "Not empty"
         }
-        
     }
-
-
 });app.controller("oc-manage-workshops", function($scope, $http, $routeParams, $route, $window) {
    
     $http.get('/workshops?user_id='+$window.number).

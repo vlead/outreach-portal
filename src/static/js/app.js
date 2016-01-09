@@ -107,7 +107,7 @@ app.config(function($routeProvider){
 	})
         .when('/add-centre', {
 	    templateUrl : '/static/partials/add-centre.html',
-	    controller  : 'add-centre'
+	    controller  : 'manage-centres'
 	})
         .when('/edit-centre/:id', {
 	    templateUrl : '/static/partials/edit-centre.html',
