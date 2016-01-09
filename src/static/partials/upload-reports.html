@@ -86,7 +86,7 @@
         var form_data = new FormData();
        
         form_data.append('file', fileups[key].files[i], fileups[key].files[i].name);
-        var url = '/upload_workshop_report/' + documentId ;
+        var url = '/upload_workshop_reports/' + documentId ;
    
         $.ajax({
             type: 'POST',
