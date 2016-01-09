@@ -31,6 +31,7 @@
       <table class="table table-hover">
         <thead>
 	  <tr>
+	    <th>Name</th>
 	    <th>Date</th>
 	    <th>Location</th>
             <th>Participating Institutes</th>
@@ -38,6 +39,7 @@
 	</thead>
 	<tbody>
 	  <tr ng-repeat="workshop in workshops">
+	    <td>{{ workshop.name }}</td>
             <td>{{ workshop.date }}</td>
             <td>{{ workshop.location }}</td>
             <td>{{ workshop.participating_institutes }}</td>

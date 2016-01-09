@@ -195,77 +195,56 @@ app.controller("nc-dashboard", function($scope, $http, dataFactory, $routeParams
             console.log(data);
         });
     
-}).controller("manage-workshops", function($scope, $http, $routeParams, $route, $window) {
-    
-    $http.get('/workshops?user_id='+$window.number).
-        success(function(data, status, headers, config) 
-                {
-                    today = new Date();
-                    var upcoming = 0;
-                    var ups = [];
-                    var history = [];
-                    var pending = [];
-	            for(i=0;i<data.length;i++)
-	        {
-                    workshop_date = new Date(data[i].date);
-                    var workshop_id = data[i].id ;
-                    if (((today > workshop_date) & !(today.toDateString() == workshop_date.toDateString())) & (data[i].status.name == "Upcoming")){
-                        $http.put('/workshops/'+workshop_id.toString(), {'status': {'id': 2}}).success(function(data, status){ console.log('Status success'); });
-                    }
-                    if( (today <= workshop_date) ||(today.getDate() == workshop_date.getDate() & (today.getMonth() == workshop_date.getMonth()) 
-                                                    & (today.getFullYear() == workshop_date.getFullYear())))
-                    {
-                        if(data[i].cancellation_reason == null)
-                        {
-                            
-                            ups.push(data[i]);
-                            console.log(ups);
-		            upcoming = upcoming + 1;
-
-                        }
-	            }
-                    else if(data[i].status.name == "Approved")
-                    {
-                        history.push(data[i]);
-                    }
-                    else if(data[i].status.name == "Pending for Approval" || data[i].status.id == 4)
-                    {
-                        pending.push(data[i]);
-                    }
-                }
-                $scope.history = history;
-                $scope.pending = pending;
-                $scope.ups = ups;
-                $scope.upcoming = upcoming;
-                    
-    }).
-    error(function(data, status, headers, config)
-    {
-      console.log(data);
-      
+});
+app.controller("manage-workshops", function($scope, $http, $routeParams, dataFactory,$route, $window) {
+    dataFactory.fetch('/workshops?user_id='+$window.number).success(function(data, status, headers, config){
+        today = new Date();
+        var count = 0;
+        var upcoming = [];
+        var history = [];
+        var pending = [];
+	for(i=0;i<data.length;i++){
+            workshop_date = new Date(data[i].date);
+                var workshop_id = data[i].id ;
+            if (((today > workshop_date) & !(today.toDateString() == workshop_date.toDateString())) &
+		(data[i].status.name == "Upcoming")){
+                dataFactory.put('/workshops/'+workshop_id.toString(),
+				{'status': {'id': 2}}).success(function(data, status){
+				    console.log('Status success'); });
+            }
+            if( (today <= workshop_date) ||(today.getDate() == workshop_date.getDate() &
+					    (today.getMonth() == workshop_date.getMonth())  &
+					    (today.getFullYear() == workshop_date.getFullYear()))){
+                if(data[i].cancellation_reason == null){
+                    upcoming.push(data[i]);
+                    count = count + 1;
+		}
+	    }
+            else if(data[i].status.name == "Approved"){
+                history.push(data[i]);
+            }
+            else if(data[i].status.name == "Pending for Approval" || data[i].status.id == 4){
+                pending.push(data[i]);
+            }
+        }
+        $scope.history = history;
+        $scope.pending = pending;
+        $scope.upcoming = upcoming;
+        $scope.count = count;
+    }).error(function(data, status, headers, config){
+	console.log(data);
     });
-    $scope.cancel = function(id)
-    {
-        if(confirm("Are you sure!") == true)
-        {
+    $scope.cancel = function(id){
+        if(confirm("Are you sure!") == true){
             var reason = prompt("Please enter your reason");
-            
-            $http.put('/workshops/'+id, {"cancellation_reason" : reason, "status" : {"id": 6} }).
-                success(function(data, status, headers, config) 
-                        {
-                            $route.reload();
-                            
-                            
-                        }).
-                error(function(data, status, headers, config)
-                      {
-                          console.log(data);
-                          
-                      });
+            dataFactory.put('/workshops/'+id, {"cancellation_reason" : reason, "status" : {"id": 6} }).success(function(data, status, headers, config) {
+                $route.reload();
+	    }).error(function(data, status, headers, config){
+                console.log(data);
+            });
             
         }
     }
-  
 });
 app.controller("contact-oc", function($scope, dataFactory, $http, $routeParams, $route, $window) {
     dataFactory.fetch('/nodal_coordinator_details?user_id='+$window.number).
