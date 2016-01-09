@@ -24,7 +24,7 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
         var marker = new google.maps.Marker({
             map: $scope.map,
             animation: google.maps.Animation.DROP,
-            draggable: true,
+            draggable: false,
             label : String(label),
             position: new google.maps.LatLng(geo_code.lat(), geo_code.lng()),
             title: workshop.location
