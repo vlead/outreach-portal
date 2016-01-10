@@ -91,8 +91,7 @@ if __name__ == "__main__":
 
   #+END_SRC
 * Program to migrate the data from old database to new database of outreach portal
-#+BEGIN_SRC python :tangle migrate_old_to_new_data.py :eval no
-
+#+BEGIN_SRC python :tangle migrate_old_to_new_data.py :eval noa 
 #!/usr/bin/python
 import MySQLdb
 import sys
@@ -121,15 +120,6 @@ def populate_users():
         new_user = User(name=name, email=email, role=role)
        # print new_user.name, new_user.email
         new_user.save()
-
-#def populate_labs_plan():
-#    print "Populating workshops table.."
-#    cursor1.execute("select * from workshop")
-#    data = cursor1.fetchall()
-#    cursor1.execute("select experiments from va_users")
-#    exp = cursor1.fetchall()
-#    print type(exp)
-#    print exp[0][0],exp[1][0],len(exp)
 
 def populate_workshops():
     print "Populating workshops table.."
@@ -245,7 +235,6 @@ def populate_nodal_centres():
             user = User.query.filter_by(name="Dr Vinod Kumar").first()
         else:
             continue
-
 
         if row[6] == 'TASK':
             name = 'TASK'
@@ -423,32 +412,29 @@ def populate_workshop_reports():
 
 def populate_reference_documents():
     print "Populating reference documents table.."
+    cursor1.execute("select * from workshop_documents")
+    data1 = cursor1.fetchall()
+
     cursor1.execute("select * from workshop_metirial_documents")
-    data = cursor1.fetchall()
+    data2 = cursor1.fetchall()
 
-    for row in data:
-        user = User.query.filter_by(name="dummyuseroc").first()
-
-        if row[1] == 'doc123':
-            name = Name('doc')
-        elif '-'  in row[1]:
-            row[1].replace("-", "")
-        elif '&' in row[1]:
-            row[1].replace("&", "")
-        elif ';' in row[1]:
-            row[1].replace(";", "")
-        elif '/' in row[1]:
-            row[1].replace("/", "")
-        elif '/' in row[1]:
-            row[1].replace("/", "")
-        else:
-            name = Name(row[1][:128].strip())
-        path = row[2].strip()
+    for row in data1:
+        user = User.query.filter_by(name="admin").first()
+        name = Name("Guidance Metirial")
+        path = "/static/uploads/" + row[2]
         new_reference_document = ReferenceDocument(name=name, user=user,
                                                    path=path)
 
         new_reference_document.save()
 
+    for row in data2:
+        user = User.query.filter_by(name="admin").first()
+        name = Name("Workshop Metirial")
+        path = "/static/uploads/" + row[2]
+        new_reference_document = ReferenceDocument(name=name, user=user,
+                                                   path=path)
+
+        new_reference_document.save()
 
 
 if __name__ == "__main__":
@@ -462,13 +448,11 @@ if __name__ == "__main__":
 
     db.create_all(app=create_app(config))
     populate_users()
- #   populate_labs_plan()
     populate_workshops()
     populate_nodal_centres()
     populate_nodal_coordinator_details()
     populate_workshop_reports()
-#    populate_reference_documents()
-#    populate_file_path()
+    populate_reference_documents()
 
     cursor1.close()
     connection1.close()
@@ -479,7 +463,6 @@ if __name__ == "__main__":
     sys.exit()
 
 #+END_SRC
-
 * Install all dependencies and setup the software
 Install all dependencies, including the OS related packages, Python packages,
 setup the database, configure the webserver, and finally deploy the
