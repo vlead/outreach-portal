@@ -122,6 +122,15 @@ def populate_users():
        # print new_user.name, new_user.email
         new_user.save()
 
+#def populate_labs_plan():
+#    print "Populating workshops table.."
+#    cursor1.execute("select * from workshop")
+#    data = cursor1.fetchall()
+#    cursor1.execute("select experiments from va_users")
+#    exp = cursor1.fetchall()
+#    print type(exp)
+#    print exp[0][0],exp[1][0],len(exp)
+
 def populate_workshops():
     print "Populating workshops table.."
     cursor1.execute("select * from workshop")
@@ -130,19 +139,69 @@ def populate_workshops():
     for row in data:
         name = row[1].strip()
         location = row[2].strip()
+        no_of_participants_expected = 0
+        no_of_sessions = 0
+        date = ''
+
         if row[12] == 3:
             user = User.query.filter_by(name="Rakesh T").first()
-        elif row[12] == 4:
-            user = User.query.filter_by(name="M.Srinath reddy").first()
+            status = Status.get_by_id(3)
         elif row[12] == 5:
             user = User.query.filter_by(name="P Saikumar").first()
+            status = Status.get_by_id(3)
+        elif row[12] == 4:
+            user = User.query.filter_by(name="M Srinath Reddy").first()
+            status = Status.get_by_id(3)
         elif row[12] == 13:
             user = User.get_by_id(15)
+            status = Status.get_by_id(4)
         else:
             continue
+
+        if row[0] == 3 or row[0] == 4 or row[0] == 5:
+            labs_planned = 10000
+        elif row[0] == 35 or row[0] == 41 or row[0] == 46:
+            labs_planned = 22
+        elif row[0] == 32 or row[0] == 33:
+            labs_planned = 2000
+        elif row[0] == 11 or row[0] == 28:
+            labs_planned = 3000
+        elif row[0] == 20 or row[0] == 27:
+            labs_planned = 6000
+        elif row[0] == 12 or row[0] == 15:
+            labs_planned = 10
+        elif row[0] == 13:
+            labs_planned = 30
+        elif row[0] == 10:
+            labs_planned = 5000
+        elif row[0] == 19:
+            labs_planned = 2973
+        elif row[0] == 21:
+            labs_planned = 1080
+        elif row[0] == 22:
+            labs_planned = 3750
+        elif row[0] == 23:
+            labs_planned = 800
+        elif row[0] == 24:
+            labs_planned = 2880
+        elif row[0] == 25:
+            labs_planned = 2700
+        elif row[0] == 26:
+            labs_planned = 584
+        elif row[0] == 34:
+            labs_planned = 12
+        elif row[0] == 36:
+            labs_planned = 37
+        elif row[0] == 39:
+            labs_planned = 23
+        elif row[0] == 42:
+            labs_planned = 66
+        else:
+            labs_planned = 0
+
+
         participating_institutes = row[3].strip()
-        status = Status.get_by_id(4)
-        labs_planned = len(row[9].split(","))
+
         if row[4] == '' or row[5] == '' or row[6] == '' or row[9] == '':
             pass
         else:
@@ -156,7 +215,8 @@ def populate_workshops():
                                 no_of_sessions=no_of_sessions, labs_planned=labs_planned,
                                 status=status, date=date)
 
-       # new_workshop.save()
+        new_workshop.save()
+
 
 def populate_nodal_centres():
     print "Populating nodal centres table.."
@@ -166,7 +226,27 @@ def populate_nodal_centres():
     for row in data:
         name = ''
         location = ''
-        user = User.query.filter_by(name=row[1]).first()
+     #   user = User.query.filter_by(name=row[1]).first()
+        if row[8] == 1:
+            user = User.query.filter_by(name="sripathi").first()
+        elif row[8] == 2:
+            user = User.query.filter_by(name="Geeta Bose").first()
+        elif row[8] == 6:
+            user = User.query.filter_by(name="karunakar").first()
+        elif row[8] == 8:
+            user = User.query.filter_by(name="Kantesh Balani").first()
+        elif row[8] == 9:
+            user = User.query.filter_by(name="Pushpdeep Mishra").first()
+        elif row[8] == 16:
+            user = User.query.filter_by(name="Yogesh").first()
+        elif row[8] == 20:
+            user = User.query.filter_by(name="Sanjeet Kumar").first()
+        elif row[8] == 22:
+            user = User.query.filter_by(name="Dr Vinod Kumar").first()
+        else:
+            continue
+
+
         if row[6] == 'TASK':
             name = 'TASK'
             location = 'Null'
@@ -183,6 +263,7 @@ def populate_nodal_centres():
             #new_centre.save()
         if user == None:
             user = User.query.filter_by(name="dummyuseroc").first()
+
         new_centre = NodalCentre(name=name, location=location, created_by=user)
         new_centre.save()
        # print new_centre.name, new_centre.location, new_centre.created_by.name
@@ -207,14 +288,15 @@ def populate_nodal_coordinator_details():
             target_experiments = int(row[11])
 
         nodal_centre = NodalCentre.get_by_id(1)
-        user1 = User.query.filter_by(name=row[1]).first()
-        user2 = User.get_by_id(2)
+#        user1 = User.query.filter_by(name=row[1]).first()
+#        user2 = User.get_by_id(2)
 
-        if row[1] == None or row[1] == 'test':
+        if  row[1] == 'test':
             continue
-
-        if row[8] == None:
-            continue
+        else:
+            user1 = User.query.filter_by(name=row[1]).first()
+#        if row[8] == None:
+#            continue
 
         if row[8] == 1:
             user2 = User.query.filter_by(name="sripathi").first()
@@ -285,6 +367,11 @@ def populate_nodal_coordinator_details():
             nodal_centre = NodalCentre.query.filter_by(name="KV Cant").first()
         if nodal_centre == None:
             nodal_centre = NodalCentre.query.filter_by(name="dummycentre").first()
+
+        if user2 == None:
+            user2 = User.query.filter_by(name="dummyuseroc").first()
+        if user1 == None:
+            user1 = User.query.filter_by(name="dummyusernc").first()
 
 
         nodal_coordinator_detail = NodalCoordinatorDetail(user=user1,
@@ -362,6 +449,7 @@ if __name__ == "__main__":
 
     db.create_all(app=create_app(config))
     populate_users()
+ #   populate_labs_plan()
     populate_workshops()
     populate_nodal_centres()
     populate_nodal_coordinator_details()
@@ -376,6 +464,7 @@ if __name__ == "__main__":
     connection2.close()
 
     sys.exit()
+
 #+END_SRC
 
 * Install all dependencies and setup the software
