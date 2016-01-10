@@ -387,26 +387,39 @@ def populate_nodal_coordinator_details():
 
 def populate_workshop_reports():
     print "Populating workshop reports table.."
-    cursor1.execute("select * from workshop_metirial_documents")
+    cursor1.execute("select * from workshop_report")
     data = cursor1.fetchall()
 
     for row in data:
-        user = User.query.filter_by(name="dummyuseroc").first()
-        status = Status.query.filter_by(name="Approved").first()
+        if row[1] == 11:
+            workshop = Workshop.get_by_id(6)
+        elif row[1] == 12:
+            workshop = Workshop.get_by_id(7)
+        else:
+            workshop = Workshop.get_by_id(row[1])
 
-        workshop1 = Workshop(name="dummyworkshop", location="IIIT-Hyd",
-                             user=user, participating_institutes="HCU,\
-                             IIIT-Hyd", no_of_participants_expected=100,
-                             no_of_sessions=3, labs_planned=4,
-                             status=status, date="Mon Nov 23 2015 06:18:26\
-                             GMT-0500 (EST)")
-        name = row[1][:128].strip()
-        path = row[2].strip()
-
-        new_workshop_report = WorkshopReport(name=name, workshop=workshop1,
+        if row[5] != None:
+            name = "Attendance Sheet"
+            path = "/static/uploads/" + row[5]
+            new_workshop_report = WorkshopReport(name=name, workshop=workshop,
                                              path=path)
+            new_workshop_report.save()
 
-        new_workshop_report.save()
+        if row[8] != None:
+            name = "Workshop Photos"
+            path = "/static/uploads/" + row[8]
+
+            new_workshop_report = WorkshopReport(name=name, workshop=workshop,
+                                             path=path)
+            new_workshop_report.save()
+
+        if row[7] != None:
+            name = "College Report"
+            path = "/static/uploads/" + row[7]
+
+            new_workshop_report = WorkshopReport(name=name, workshop=workshop,
+                                             path=path)
+            new_workshop_report.save()
 
 def populate_reference_documents():
     print "Populating reference documents table.."
@@ -453,7 +466,7 @@ if __name__ == "__main__":
     populate_workshops()
     populate_nodal_centres()
     populate_nodal_coordinator_details()
-#    populate_workshop_reports()
+    populate_workshop_reports()
 #    populate_reference_documents()
 #    populate_file_path()
 
