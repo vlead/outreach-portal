@@ -5,18 +5,19 @@
   <div class="analytics-band">
     <div class="container">
       <div class="row" ng-controller="admin-ctrl">
+        <div class="col-md-4 analytics nodal-centers">
+          NODAL CENTRES<br>
+          <span class="number">{{ nodal_centres }}</span>
+        </div>
         <div class="col-md-4 analytics workshops-run">
           WORKSHOPS RUN<br>
-          <span class="number">{{ totalworkshops }}</span>
+          <span class="number">{{ total_workshops }}</span>
         </div>
         <div class="col-md-4 analytics labs-taken">
-          LABS TAKEN<br>
-          <span class="number">{{ labs }}</span>
+          PARTICIPANTS ATTENDED<br>
+          <span class="number">{{ total_participants }}</span>
         </div>
-        <div class="col-md-4 analytics nodal-centers">
-          NODAL CENTERS<br>
-          <span class="number">{{ ncentres }}</span>
-        </div>
+        
       </div>
     </div>
   </div>
