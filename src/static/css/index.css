@@ -26,8 +26,8 @@ h1,h2,h3{
 }
 .analytics-band .analytics{
 	padding: 10px 20px;
-	font-size:12px;
-	font-weight: 300;
+	font-size:16px;
+	font-weight: 600;
 }
 .analytics-band .workshops-run{
 	background: #C76135;
@@ -131,9 +131,7 @@ h1,h2,h3{
     padding: 10px 5px;
     color: #fff;
 }
-.box1:hover {
-    background: #028482;
-}
+
 
 .profile{
     background-color: #3799FA;
