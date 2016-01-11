@@ -145,7 +145,7 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
 });
 
 app.controller("nc-dashboard", function($scope, $http, dataFactory, $routeParams, $route, $window) {
-    dataFactory.put('/users/'+$window.number, {'last_active': Date()}).success(function(response){
+    dataFactory.put('/users/'+$window.number, {'last_active': Date().toLocaleString()}).success(function(response){
     }).error(function(data, status, headers, config){
         if(status == 500){
             $scope.status = "Server error";
