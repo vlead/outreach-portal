@@ -3,43 +3,43 @@ app.config(function($routeProvider){
     $routeProvider
 	.when('/manage-oc', {
 	    templateUrl : '/static/partials/manage-ocs.html',
-	    controller  : 'AdminController'
+	    controller  : 'admin-ctrl'
 	})
         .when('/workshop-list', {
 	    templateUrl : '/static/partials/workshop-list.html',
-	    controller  : 'AdminController'
+	    controller  : 'admin-ctrl'
 	})
         .when('/nc-users-list', {
 	    templateUrl : '/static/partials/nc-users-list.html',
-	    controller  : 'AdminController'
+	    controller  : 'admin-ctrl'
 	})
         .when('/oc-users-list', {
 	    templateUrl : '/static/partials/oc-users-list.html',
-	    controller  : 'AdminController'
+	    controller  : 'admin-ctrl'
 	})
         .when('/edit-oc/:id', {
 	    templateUrl : '/static/partials/edit-oc.html',
-	    controller  : 'AdminController'
+	    controller  : 'admin-ctrl'
 	})
         .when('/documents', {
 	    templateUrl : '/static/partials/upload-doc.html',
-	    controller  : 'AdminController'
+	    controller  : 'admin-ctrl'
 	})
         .when('/profile', {
 	    templateUrl : '/static/partials/profile.html',
-	    controller  : 'AdminController'
+	    controller  : 'admin-ctrl'
 	})
     	.when('/add-oc', {
 	    templateUrl : '/static/partials/add-oc.html',
-	    controller  : 'AdminController'
+	    controller  : 'admin-ctrl'
         })
 	.when('/admin-dashboard', {
 	    templateUrl : '/static/partials/admin-dashboard.html',
-	    controller  : 'AdminController'
+	    controller  : 'admin-ctrl'
 	})
         .when('/add-doc', {
 	    templateUrl : '/static/partials/add-doc.html',
-	    controller  : 'AdminController'
+	    controller  : 'admin-ctrl'
 	})
         .when('/nc-dashboard', {
 	    templateUrl : '/static/partials/nc-dashboard.html',
@@ -107,7 +107,7 @@ app.config(function($routeProvider){
 	})
         .when('/add-centre', {
 	    templateUrl : '/static/partials/add-centre.html',
-	    controller  : 'add-centre'
+	    controller  : 'manage-centres'
 	})
         .when('/edit-centre/:id', {
 	    templateUrl : '/static/partials/edit-centre.html',
@@ -140,21 +140,3 @@ app.config(function($routeProvider){
     
 }
 );
-
-app.factory('workshops', function($http){
-        return {
-            list: function(callback){
-                $http.get('/workshops').success(callback);
-                
-          }
-        };
-      });
-
-app.factory('users', function($http){
-        return {
-            list: function(callback){
-                $http.get('/users').success(callback);
-                
-          }
-        };
-      });
