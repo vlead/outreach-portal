@@ -13,6 +13,7 @@
           <th>Participants</th>
 	  <th>Date</th>
           <th>Status</th>
+	  <th>View Reports</th>
 	</tr>
       </thead>
       <tbody>
@@ -22,6 +23,7 @@
           <td>{{ workshop.no_of_participants_expected }}</td>
           <td>{{ workshop.date }}</td>
           <td>{{ workshop.status.name }}</td>
+	  <td><a href="#view-reports/{{workshop.id}}" class="btn btn-primary">View Reports</a><td>
         </tr>
       </tbody>
     </table>

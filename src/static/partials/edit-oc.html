@@ -20,8 +20,11 @@
 	  <span ng-show="myForm.email.$error.email">Please enter the valid email-id</span>
 	</span>
       </p>
-      <p>Institute Name <br>
-	<input type="text" name="inst_name" ng-model="oc_user.institute_name"  class="form-control"  placeholder="IIIT-H">
+      <p>Institute Name:<br>
+	<input type="text" name="inst_name" ng-model="oc_user.institute_name"  class="form-control"  placeholder="Institute Name" required>
+	<span style="color:red" ng-show="myForm.inst_name.$dirty && myForm.inst_name.$invalid">
+	  <span ng-show="myForm.oc_user.institute_name.$error.required">Institute name is required.</span>
+	</span>
       </p>
       <p>
 	<input type="submit" value="Save" class="btn btn-primary"  ng-disabled="myForm.$invalid">
