@@ -328,6 +328,7 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
 			      "participating_institutes" : $scope.message.participating_institutes,
 			      "no_of_participants_expected" : $scope.message.no_of_participants_expected,
 			      "no_of_sessions" : Number($scope.message.no_of_sessions),
+			      "duration_of_sessions": $scope.message.duration_of_sessions,
 			      "labs_planned" : Number($scope.message.labs_planned),
 			      "status" : {"id":1},  "date" : $scope.message.date,
 			      "experiments_conducted": $scope.message.experiments_conducted}).
@@ -337,7 +338,7 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
 		}).
                 error(function(data, status, headers, config){
                     if(status == 500){
-                        $scope.status = "Duplicate Email";
+                        $scope.status = "Internal server error";
                     }
                     else if(status == 400){                    
                         $scope.status = "Invalid username"

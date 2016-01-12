@@ -35,13 +35,21 @@
 	  <span ng-show="myForm.parti.$error.required">Participants required.</span>
 	</span>
      </p>
-     <p>Session:<br>
+     <p>Sessions:<br>
        <input type="number" name="sessions" ng-model="message.no_of_sessions"
                class="form-control"  min="0" placeholder="Sessions" required>
        <span class="error" ng-show="myForm.sessions.$error.number">Not valid number!</span>
        <span style="color:red" ng-show="myForm.sessions.$dirty && myForm.sessions.$invalid">
 	 <span ng-show="myForm.sessions.$error.required">Sessions required.</span>
 	</span>
+     </p>
+     <p>Duration of Session:<br>
+       <input type="text" name="session" ng-model="message.duration_of_sessions" ng-pattern="/^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$/"  min="0"  class="form-control"  placeholder="HH:MM" required>
+       
+       <span style="color:red" ng-show="myForm.session.$dirty && myForm.session.$invalid">
+	  <span ng-show="myForm.session.$error.required">Sessions duration required.</span>
+	  <span ng-show="myForm.session.$error.pattern">Enter valid time</span>
+       </span>
      </p>
      <p>Labs Planned:<br>
        <input type="number" name="labs" ng-model="message.labs_planned"  class="form-control"
@@ -68,9 +76,7 @@
 	</span>
      </p>
      <p>
-	<input type="submit" value="submit" class="btn btn-primary"  ng-disabled="myForm.user.$dirty && myForm.user.$invalid ||
-										  myForm.email.$dirty &&
-										  myForm.email.$invalid">
+	<input type="submit" value="submit" class="btn btn-primary"  ng-disabled="myForm.$invalid">
 	<a href="#/manage-workshops">Cancel</a>
      </p>
    </form>
