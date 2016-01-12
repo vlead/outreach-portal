@@ -54,8 +54,8 @@
       <p>Experiments Conducted:<br>
 	<input type="number" name="exps" ng-model="message.experiments_conducted"  class="form-control"
                placeholder="Experiments Conducted" min="0" required>
-        <span class="error" ng-show="myForm.labs.$error.number">Not valid number!</span>
-	<span style="color:red" ng-show="myForm.exps.$dirty && myForm.labs.$invalid">
+        <span class="error" ng-show="myForm.exps.$error.number">Not valid number!</span>
+	<span style="color:red" ng-show="myForm.exps.$dirty && myForm.exps.$invalid">
 	  <span ng-show="myForm.exps.$error.required">Experiments conducted required.</span>
 	</span>
       </p>
