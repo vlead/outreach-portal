@@ -26,8 +26,8 @@ h1,h2,h3{
 }
 .analytics-band .analytics{
 	padding: 10px 20px;
-	font-size:12px;
-	font-weight: 300;
+	font-size:16px;
+	font-weight: 600;
 }
 .analytics-band .workshops-run{
 	background: #C76135;
@@ -120,6 +120,18 @@ h1,h2,h3{
     cursor: pointer;
     background: #028482;
 }
+.box1{
+    background: #3799FA;
+    width: 150px;
+    border-radius: 5px;
+    height: 100px;
+    font-size: 18px;
+    margin: 0 10px 10px 10px;
+    text-align: center;
+    padding: 10px 5px;
+    color: #fff;
+}
+
 
 .profile{
     background-color: #3799FA;

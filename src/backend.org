@@ -5172,35 +5172,68 @@ def create_app(config):
 # custom error handlers to return JSON errors with appropiate status codes
 def configure_errorhandlers(app):
 
-    @app.errorhandler(400)
-    def bad_request(err):
-        resp = make_response(jsonify(error=err.description), 400)
-        app.logger.error("error = %s, error code = 400" % str(err))
-        return resp
-
-    @app.errorhandler(404)
-    def not_found(err):
-        resp = make_response(jsonify(error=err.description), 404)
-        app.logger.error("error = %s, error code = 404" % str(err))
+    @app.errorhandler(500)
+    def server_error(err):
+        app.logger.error("error code = %s" % "500")
+        resp = None
+        try:
+            app.logger.error("error desc = %s" % err.description)
+            resp = make_response(jsonify(error=err.description), 500)
+        except Exception:
+            try:
+                app.logger.error("error mesg = %s" % err.message)
+                resp = make_response(jsonify(error=err.message), 500)
+            except Exception:
+                resp = make_response(jsonify(error=str(err)), 500)
+                app.logger.error("error = %s" % str(err))
         return resp
 
     @app.errorhandler(405)
     def method_not_allowed(err):
-        resp = make_response(jsonify(error=err.description), 405)
-        app.logger.error("error = %s, error code = 405" % str(err))
-        return resp
-
-    @app.errorhandler(500)
-    def server_error(err):
+        app.logger.error("error code = %s" % "405")
         resp = None
         try:
-            resp = make_response(jsonify(error=err.description), 500)
+            app.logger.error("error desc = %s" % err.description)
+            resp = make_response(jsonify(error=err.description), 405)
         except Exception:
             try:
-                resp = make_response(jsonify(error=err.message), 500)
+                app.logger.error("error mesg = %s" % err.message)
+                resp = make_response(jsonify(error=err.message), 405)
             except Exception:
-                resp = make_response(jsonify(error=str(err)), 500)
-        app.logger.error("error = %s, error code = 500" % str(err))
+                resp = make_response(jsonify(error=str(err)), 405)
+                app.logger.error("error = %s" % str(err))
+        return resp
+
+    @app.errorhandler(404)
+    def not_found(err):
+        app.logger.error("error code = %s" % "404")
+        resp = None
+        try:
+            app.logger.error("error desc = %s" % err.description)
+            resp = make_response(jsonify(error=err.description), 404)
+        except Exception:
+            try:
+                app.logger.error("error mesg = %s" % err.message)
+                resp = make_response(jsonify(error=err.message), 404)
+            except Exception:
+                resp = make_response(jsonify(error=str(err)), 404)
+                app.logger.error("error = %s" % str(err))
+        return resp
+
+    @app.errorhandler(400)
+    def bad_request(err):
+        app.logger.error("error code = %s" % "400")
+        resp = None
+        try:
+            app.logger.error("error desc = %s" % err.description)
+            resp = make_response(jsonify(error=err.description), 400)
+        except Exception:
+            try:
+                app.logger.error("error mesg = %s" % err.message)
+                resp = make_response(jsonify(error=err.message), 400)
+            except Exception:
+                resp = make_response(jsonify(error=str(err)), 400)
+                app.logger.error("error = %s" % str(err))
         return resp
 
 
@@ -5214,9 +5247,7 @@ def configure_logging(app):
     log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                            '..',
                            app.config['LOG_FILE_DIRECTORY'])
-    if not os.path.isdir(log_dir):
-        os.mkdir(log_dir)
-        os.system("chmod -R 777 %s" % log_dir)
+
     log_file = "%s/%s" % (log_dir, app.config['LOG_FILE'])
     os.system("sudo touch %s" % log_file)
     os.system("sudo chmod 777 %s" % log_file)
@@ -5235,7 +5266,7 @@ def configure_logging(app):
 if __name__ == "__main__":
     app = create_app(config)
     app.run(debug=True, host='0.0.0.0', threaded=True)
-    
+
 #+END_SRC
 
 ** Configuring the application
@@ -5289,7 +5320,7 @@ PERSONA_VERIFIER_URL = "https://verifier.login.persona.org/verify"
 #+BEGIN_SRC python :tangle outreach.wsgi :eval no
 import sys, os
 
-BASE_DIR = os.path.join(os.path.dirname(__file__))
+BASE_DIR = BASE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)))
 
 sys.path.insert(0, BASE_DIR)
 
