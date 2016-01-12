@@ -390,7 +390,7 @@ class User(Entity):
     institute_name = db.Column(db.String(128))
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     reference_documents = db.relationship('ReferenceDocument', backref='user')
-    created = db.Column(db.DateTime(), default=datetime.utcnow)
+    created = db.Column(db.String(128))
     last_active = db.Column(db.String(128))
     workshops = db.relationship('Workshop', backref='user')
 
@@ -402,6 +402,7 @@ class User(Entity):
                 email=<instance of class Email>,
                 role=<instance of class Role>
                 [,last_active=str]
+                [,created=str]
                 [,institute_name=str])
                                             
 #+END_EXAMPLE
@@ -422,22 +423,26 @@ class User(Entity):
         if 'last_active' in kwargs:
             self.set_last_active(kwargs['last_active'])
 
+        if 'created' in kwargs:
+            self.set_toc(kwargs['created'])
+
         if 'institute_name' in kwargs:
             self.set_institute_name(kwargs['institute_name'])
         
         
     def __str__(self):
-        return "Name = %s, e-mail id = %s,\
+        return "Name = %s, e-mail id = %s,\ created = %s,\
         institute_name = %s, role=%s, last_active = %s"\
-        % (self.name, self.email, self.institute_name,\
-           self.role.name, self.last_active)
+        % (self.name, self.email, self.created,
+           self.institute_name, self.role.name,
+           self.last_active)
 
     def __repr__(self):
-        return "Name = %s, e-mail id = %s,\
+        return "Name = %s, e-mail id = %s, created=%s\
         institute_name = %s, role=%s, last_active = %s"\
-        % (self.name, self.email, self.institute_name,\
-           self.role.name, self.last_active)
-
+        % (self.name, self.email, self.created,
+           self.institute_name, self.role.name,
+           self.last_active)
 
 #+END_SRC
      
@@ -597,7 +602,7 @@ class TestUser(TestCase):
         self.assertEqual(user_role, role)
 #+END_SRC
 
-***** timeOfCreation: User --> Datetime
+***** gettimeOfCreation: User --> Datetime
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_created(self):
         return self.created
@@ -608,24 +613,10 @@ class TestUser(TestCase):
     def test_get_user_toc(self):
         print "test_get_user_toc"
         role = Role(name=Name("Admin"))
-        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role,\
+                    created ="Mon Nov 23 2015 06:18:26 GMT-0500 (EST)")
         user.save()
-        time = datetime.utcnow()
-        year = time.year
-        month = time.month    
-        day = time.day
-        minute = time.minute
-
-        user_toc = user.get_created()
-        user_year = user_toc.year
-        user_month = user_toc.month
-        user_day = user_toc.day
-        user_min = user_toc.minute
-
-        self.assertEqual(user_year, year)
-        self.assertEqual(user_month, month)
-        self.assertEqual(user_day, day)
-        self.assertEqual(user_min, minute)
+        self.assertEqual(user.created, "Mon Nov 23 2015 06:18:26 GMT-0500 (EST)")
 #+END_SRC
 
 ***** getLastActive: User --> String
@@ -722,6 +713,24 @@ class TestUser(TestCase):
         self.assertEqual("Mon Nov 23 2015 06:18:26 GMT-0500 (EST)", user.last_active)
 #+END_SRC
 
+***** set timeOfCreation: User, Time --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def set_toc(self, created):
+        self.created = created
+#+END_SRC
+
+***** Test settimeOfCreation: User, Time --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_set_user_last_active(self):
+        print "test_set_user_last_active"
+        role = Role(name=Name("Admin"))
+        user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)     
+        user.save()
+        user.set_toc("Mon Nov 23 2015 06:18:26 GMT-0500 (EST)")
+        user.save()
+        self.assertEqual("Mon Nov 23 2015 06:18:26 GMT-0500 (EST)", user.last_active)
+#+END_SRC
+
 ***** setRole: User, Role --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(role=Role)
@@ -754,7 +763,7 @@ class TestUser(TestCase):
             'role': self.role.to_client(),
             'last_active': self.last_active,
             'institute_name': self.institute_name,
-            'created': self.created.isoformat()
+            'created': self.created
         }
 #+END_SRC
       
@@ -1254,7 +1263,7 @@ class Workshop(Entity):
     no_of_participants_expected = db.Column(db.Integer)
     participants_attended = db.Column(db.Integer)
     no_of_sessions = db.Column(db.Integer)
-    duration_of_sessions = db.Column(db.Integer)
+    duration_of_sessions = db.Column(db.String(128))
     labs_planned = db.Column(db.Integer)
     disciplines = db.Column(db.String(128))
     experiments_conducted = db.Column(db.Integer)
@@ -1275,7 +1284,7 @@ class Workshop(Entity):
                       no_of_participants_expected=int
                       [,participants_attended=int],
                       no_of_sessions=int
-                      [,duration_of_sessions=int]
+                      [,duration_of_sessions=str]
                       [,disciplines=str],
                       labs_planned=int
                       [,experiments_conducted=int]
@@ -2255,7 +2264,7 @@ class TestWorkshop(TestCase):
 #+END_SRC
 ***** setDurationOfSessions: Workshop, DurationOfSessions --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(duration_of_sessions=int)
+    @typecheck(duration_of_sessions=str)
     def set_duration_of_sessions(self, duration_of_sessions):
         self.duration_of_sessions = duration_of_sessions
 #+END_SRC
@@ -2276,10 +2285,10 @@ class TestWorkshop(TestCase):
                             GMT-0500 (EST)")
         
         workshop.save()
-        workshop.set_duration_of_sessions(2)
+        workshop.set_duration_of_sessions("2.5")
         workshop.save()
         workshop = Workshop.get_by_id(1)
-        self.assertEqual(2, workshop.duration_of_sessions)
+        self.assertEqual("2.5", workshop.duration_of_sessions)
 #+END_SRC
 
 ***** setDisciplines: Workshop, Disciplines --> Void
@@ -5294,7 +5303,7 @@ LOG_LEVEL = 'DEBUG'
 UPLOAD_DIR_PATH = '/static/uploads/'
 
 # allowed file extensions that can be uploaded
-ALLOWED_FILE_EXTENSIONS = ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'csv']
+ALLOWED_FILE_EXTENSIONS = ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'csv' , 'doc' , 'docx']
 
 # APP_URL
 APP_URL = "http://localhost:5000"
@@ -5897,7 +5906,7 @@ entity_map_types = {
             'institute_name': str,
             'role': Role,
             'last_active': str,
-            'created': datetime
+            'created': str
         }
     },
     'reference_documents': {
@@ -5924,7 +5933,7 @@ entity_map_types = {
             'no_of_participants_expected': int,
             'participants_attended': int,
             'no_of_sessions': int,
-            'duration_of_sessions': int,
+            'duration_of_sessions': str,
             'disciplines': str,
             'labs_planned': int,
             'experiments_conducted': int,
