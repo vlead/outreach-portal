@@ -31,7 +31,7 @@
         }else if (fileups.files.length == 0){
             $('.error').html("Please select a file!<br>") ;
         }else if (!validFile(fileups)){                 
-            $('.error').html("Allowed file formats are: <br> [txt, pdf, png, jpg, jpeg, gif, csv]<br>") ;
+            $('.error').html("Allowed file formats are: <br> [txt, pdf, png, jpg, jpeg, gif, csv, doc, docx]<br>") ;
         }else{
         data = {name: name, user: {id : number}};
         for (var i = 0; i < fileups.files.length; i++){
