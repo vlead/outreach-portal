@@ -64,7 +64,7 @@
   <script>
     var validFile = function(fileList){
        for (var i=0; i < fileList.files.length; i++ ){           
-           var re = /(\.jpg|\.jpeg|\.png|\.gif|\.pdf|\.txt|\.csv)$/i;
+           var re = /(\.jpg|\.jpeg|\.png|\.gif|\.pdf|\.txt|\.csv|\.doc|\.docx)$/i;
            if(!re.exec(fileList.files[i].name)){
              return false;
            }
@@ -82,9 +82,9 @@
                    'Reports': document.getElementById('reports-file')};
         
             if(fileups['Photos'].files.length == 0 || fileups['Attendance'].files.length == 0 || fileups['Reports'].files.length == 0){
-	    $('.error').html("Please select a file!<br>");
+	    $('.error').html("All files are mandatory!<br>");
             }else if(!validFile(fileups['Photos']) || !validFile(fileups['Attendance']) || !validFile(fileups['Reports'])){
-	    $('.error').html("Allowed file formats are: <br> [txt, pdf, png, jpg, jpeg, gif, csv]<br>");
+	    $('.error').html("Allowed file formats are: <br> [txt, pdf, png, jpg, jpeg, gif, csv, doc, docx]<br>");
             }else{
         
    
