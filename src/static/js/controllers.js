@@ -357,36 +357,63 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
     
 });
 app.controller("oc-dashboard", function($scope, $http, dataFactory, $routeParams, $route, $window) {
-    var workshop = 0;
+    var workshops = 0;
     var participants = 0;
     var experiments = 0;
-    dataFactory.put('/users/'+$window.number, {'last_active': Date()}).success(function(data, status){ console.log('Status success'); });
-    dataFactory.fetch("/nodal_centres?created_by_id="+$window.number).success(function(data, status, headers, config){
-        $scope.ncentres = data.length;
-    }).error(function(data,status,headers,config){
-        console.log("Failed")
-    });
-    dataFactory.fetch('/nodal_coordinator_details?created_by_id='+ $window.number).success(function(data, status, headers, config){
-        var coordinators = [];
-        for( i=0;i<data.length;i++){
-            dataFactory.fetch('/workshops?user_id='+ data[i].user.id).success(function(data, status, headers, config){
-                for(i=0;i<data.length;i++){
-                    if(data[i].status.name == "Approved"){
-                        workshop=workshop+1;
-                        participants=participants+data[i].participants_attended;
-                        experiments=experiments+data[i].experiments_conducted;
-                        $scope.workshops=workshop;
-                        $scope.participants=participants;
-                        $scope.experiments=experiments;
+    var ncentres = 0;
+    dataFactory.put('/users/'+$window.number, {'last_active': Date()}).
+	success(function(data, status){ console.log('Status success'); });
+    dataFactory.fetch('/nodal_coordinator_details?created_by_id='+ $window.number).
+	success(function(data, status, headers, config){
+            for (i = 0 ; i < data.length; i++ ){
+		dataFactory.fetch('/workshops?user_id='+data[i].user.id).success(function(data,status,headers,config){
+                    for (i=0; i<data.length; i++){
+			if (data[i].status.name == "Approved"){
+			    console.log(workshops);
+			    workshops = workshops + 1;
+			    console.log(experiments);
+                            participants = participants + data[i].participants_attended ;
+			    experiments = experiments + data[i].experiments_conducted ;
+			    $scope.workshops = workshops;
+			    $scope.participants = participants;
+			    $scope.experiments = experiments;
+			}else{
+                            console.log(data[i].name);
+			}
                     }
-                }
-            }).error(function(data, status, headers, config){
-            });
+		}).
+		    error(function(data,status,headers,config){
+			console.log("Failed");
+		    });
+            }
+	}).
+	error(function(data, status, headers, config){
+        console.log("Failed");
+    });
+    dataFactory.fetch('/workshops?user_id='+$window.number). success(function(data, status, headers, config) {
+        for(i=0;i<data.length;i++){
+            if(data[i].status.name == "Approved"){
+		workshops = workshops + 1 ;
+		console.log(experiments)
+                participants = participants +  data[i].participants_attended ;
+		experiments = experiments + data[i].experiments_conducted ;
+	        $scope.workshops =  $scope.workshops +  workshops;
+		$scope.participants = 	$scope.participants + participants;
+		$scope.experiments = 	$scope.experiments + experiments;
+            }else{
+                console.log(data[i].name);
+            }
         }
     }).error(function(data, status, headers, config){
         console.log(data);
     });
-    
+    dataFactory.fetch('/nodal_centres?created_by_id='+$window.number). success(function(data, status, headers, config) {
+	$scope.ncentres = data.length ;
+    }).error(function(data, status, headers, config){
+        console.log(data);
+    });
+  
+  
 });
 app.controller("manage-nc", function($scope, $http, $routeParams, dataFactory, $window, $route) {
     dataFactory.fetch('/nodal_coordinator_details?created_by_id='+ $window.number).success(function(data, status, headers, config){
