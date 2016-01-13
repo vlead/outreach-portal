@@ -727,7 +727,22 @@ app.controller("review-reports", function($scope, $http, $routeParams, dataFacto
             });
     }
     dataFactory.fetch('/workshop_reports?workshop_id='+$routeParams.id).success(function(data,status,headers,config){
-        $scope.reports = data;
+        var photos = [];
+	var attendance = [];
+	var reports = [];
+	
+	for(var i=0; i < data.length; i++){
+	    if(data[i].name == "Photos"){
+		photos.push(data[i]);
+	    }else if(data[i].name == "Attendance"){
+		attendance.push(data[i]);
+	    }else{
+		reports.push(data[i]);
+	    }
+	}
+	$scope.photos = photos;
+	$scope.attendance = attendance;
+        $scope.reports = reports;
     }).error(function(data, status, headers, config){
         console.log("Failed");
     });
