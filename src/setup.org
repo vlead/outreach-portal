@@ -51,8 +51,12 @@ def create_roles():
     role3 = Role(name=Name("NC"))
     role3.save()
 
+    role4 = Role(name=Name("dummyrole"))
+    role4.save()
+
     user1 = User(name=Name("admin"), email=Email("outreach-admin@vlabs.ac.in"), role = role1)
     user1.save()
+
     user2 = User(name=Name("dummyuseroc"), email=Email("dummyuseroc@vlabs.ac.in"), role = role2 )
     user2.save()
 
@@ -115,9 +119,18 @@ def populate_users():
             role = Role.get_by_id(2)
         elif row[5] == 2:
             role = Role.get_by_id(3)
+        elif row[5] == None:
+            role = Role.get_by_id(4)
         else:
-            role = None
-        new_user = User(name=name, email=email, role=role)
+            continue
+
+        created = str(row[14])
+        if row[15] == None:
+            last_active = "Null"
+        else:
+            last_active = str(row[15])
+        new_user = User(name=name, email=email, role=role, created=created,
+                        last_active=last_active)
        # print new_user.name, new_user.email
         new_user.save()
 
@@ -129,9 +142,17 @@ def populate_workshops():
     for row in data:
         name = row[1].strip()
         location = row[2].strip()
-        no_of_participants_expected = 0
+        participants_attended = int(row[5])
         no_of_sessions = 0
         date = ''
+        labs_planned = len(row[9].split(","))
+
+        if row[12] == 3 or row[12] == 4 or row[12] == 5:
+            no_of_participants_expected = 1000
+        elif row[12] == 13:
+            no_of_participants_expected = 100
+        else:
+            no_of_participants_expected = 0
 
         if row[12] == 3:
             user = User.query.filter_by(name="Rakesh T").first()
@@ -149,45 +170,45 @@ def populate_workshops():
             continue
 
         if row[0] == 3 or row[0] == 4 or row[0] == 5:
-            labs_planned = 10000
+            experiments_conducted = 10000
         elif row[0] == 35 or row[0] == 41 or row[0] == 46:
-            labs_planned = 22
+            experiments_conducted = 22
         elif row[0] == 32 or row[0] == 33:
-            labs_planned = 2000
+            experiments_conducted = 2000
         elif row[0] == 11 or row[0] == 28:
-            labs_planned = 3000
+            experiments_conducted = 3000
         elif row[0] == 20 or row[0] == 27:
-            labs_planned = 6000
+            experiments_conducted = 6000
         elif row[0] == 12 or row[0] == 15:
-            labs_planned = 10
+            experiments_conducted = 10
         elif row[0] == 13:
-            labs_planned = 30
+            experiments_conducted = 30
         elif row[0] == 10:
-            labs_planned = 5000
+            experiments_conducted = 5000
         elif row[0] == 19:
-            labs_planned = 2973
+            experiments_conducted = 2973
         elif row[0] == 21:
-            labs_planned = 1080
+            experiments_conducted = 1080
         elif row[0] == 22:
-            labs_planned = 3750
+            experiments_conducted = 3750
         elif row[0] == 23:
-            labs_planned = 800
+            experiments_conducted = 800
         elif row[0] == 24:
-            labs_planned = 2880
+            experiments_conducted = 2880
         elif row[0] == 25:
-            labs_planned = 2700
+            experiments_conducted = 2700
         elif row[0] == 26:
-            labs_planned = 584
+            experiments_conducted = 584
         elif row[0] == 34:
-            labs_planned = 12
+            experiments_conducted = 12
         elif row[0] == 36:
-            labs_planned = 37
+            experiments_conducted = 37
         elif row[0] == 39:
-            labs_planned = 23
+            experiments_conducted = 23
         elif row[0] == 42:
-            labs_planned = 66
+            experiments_conducted = 66
         else:
-            labs_planned = 0
+            experiments_conducted = 0
 
 
         participating_institutes = row[3].strip()
@@ -195,14 +216,16 @@ def populate_workshops():
         if row[4] == '' or row[5] == '' or row[6] == '' or row[9] == '':
             pass
         else:
-            no_of_participants_expected = int(row[5])
             no_of_sessions = int(row[6])
             date = str(row[4])
 
         new_workshop = Workshop(name=name, location=location, user=user,
                                 participating_institutes=participating_institutes,
-                                no_of_participants_expected=no_of_participants_expected,
-                                no_of_sessions=no_of_sessions, labs_planned=labs_planned,
+                                participants_attended = participants_attended,
+                                no_of_sessions=no_of_sessions,
+                                no_of_participants_expected = no_of_participants_expected,
+                                experiments_conducted=experiments_conducted,
+                                labs_planned=labs_planned,
                                 status=status, date=date)
 
         new_workshop.save()
@@ -391,7 +414,7 @@ def populate_workshop_reports():
             name = "Attendance Sheet"
             path = "/static/uploads/" + row[5]
             new_workshop_report = WorkshopReport(name=name, workshop=workshop,
-                                             path=path)
+                                                 path=path)
             new_workshop_report.save()
 
         if row[8] != None:
@@ -399,7 +422,7 @@ def populate_workshop_reports():
             path = "/static/uploads/" + row[8]
 
             new_workshop_report = WorkshopReport(name=name, workshop=workshop,
-                                             path=path)
+                                                 path=path)
             new_workshop_report.save()
 
         if row[7] != None:
@@ -407,36 +430,78 @@ def populate_workshop_reports():
             path = "/static/uploads/" + row[7]
 
             new_workshop_report = WorkshopReport(name=name, workshop=workshop,
-                                             path=path)
+                                                 path=path)
             new_workshop_report.save()
 
 def populate_reference_documents():
     print "Populating reference documents table.."
-    cursor1.execute("select * from workshop_documents")
-    data1 = cursor1.fetchall()
+    user = User.query.filter_by(name="admin").first()
+    
+    name1 = Name("Prerequisites of Workshop")
+    path1 = "/static/uploads/1440048323-17.pdf"   
+    new_reference_document1 = ReferenceDocument(name=name1, user=user,
+                                                path=path1)
+    new_reference_document1.save()
 
-    cursor1.execute("select * from workshop_metirial_documents")
-    data2 = cursor1.fetchall()
+    name2 = Name("Eligibility System Configuration Infrastructure")
+    path2 = "/static/uploads/1440048369-12.doc"   
+    new_reference_document2 = ReferenceDocument(name=name2, user=user,
+                                                path=path2)
+    new_reference_document2.save()
 
-    for row in data1:
-        user = User.query.filter_by(name="admin").first()
-        name = Name("Guidance Metirial")
-        path = "/static/uploads/" + row[2]
-        new_reference_document = ReferenceDocument(name=name, user=user,
-                                                   path=path)
+    name3 = Name("College Report")
+    path3 = "/static/uploads/1437747400-13.docx"   
+    new_reference_document3 = ReferenceDocument(name=name3, user=user,
+                                                path=path3)
+    new_reference_document3.save()
 
-        new_reference_document.save()
+    name4 = Name("Virtual Labs Handout")
+    path4 = "/static/uploads/1440044856-79.pdf"   
+    new_reference_document4 = ReferenceDocument(name=name4, user=user,
+                                                path=path4)
+    new_reference_document4.save()
+    
+    name5 = Name("Feedback Form")
+    path5 = "/static/uploads/1440045014-23.pdf"   
+    
+    new_reference_document5 = ReferenceDocument(name=name5, user=user,
+                                                path=path5)
+    new_reference_document5.save()
 
-    for row in data2:
-        user = User.query.filter_by(name="admin").first()
-        name = Name("Workshop Metirial")
-        path = "/static/uploads/" + row[2]
-        new_reference_document = ReferenceDocument(name=name, user=user,
-                                                   path=path)
+    name6 = Name("Attendance Sheet")
+    path6 = "/static/uploads/1440045279-57.pdf"   
+    new_reference_document6 = ReferenceDocument(name=name6, user=user,
+                                                path=path6)
+    new_reference_document6.save()
 
-        new_reference_document.save()
+    name7 = Name("College Report Format")
+    path7 = "/static/uploads/1437747400-13.docx"   
+    new_reference_document7 = ReferenceDocument(name=name7, user=user,
+                                                path=path7)
+    new_reference_document7.save()
 
+    user8 = User.get_by_id(4)
+    name8 = Name("Attendance Sheet")
+    path8 = "/static/uploads/Screenshot-1.png"
+    new_reference_document8 = ReferenceDocument(name=name8, user=user8,
+                                                path=path8)
+    new_reference_document8.save()
+    
+    user9 = User.get_by_id(4)
+    name9 = Name("College Report")
+    path9 = "/static/uploads/analytics-release-v2-0-0-100.pdf"
+    new_reference_document9 = ReferenceDocument(name=name9, user=user9,
+                                                path=path9)
+    new_reference_document9.save()
+        
+    user10 = User.get_by_id(6)
+    name10 = Name("College Report")
+    path10 = "/static/uploads/IMG_20151003_213714039_HDR.jpg"
+    new_reference_document10 = ReferenceDocument(name=name10, user=user10,
+                                                 path=path10)
+    new_reference_document10.save()
 
+    
 if __name__ == "__main__":
     connection1 = MySQLdb.connect(host="localhost", user="root",
                                   passwd="root", db="old_outreach")
@@ -460,7 +525,6 @@ if __name__ == "__main__":
     cursor2.close()
     connection2.close()
 
-    sys.exit()
 
 #+END_SRC
 * Install all dependencies and setup the software
