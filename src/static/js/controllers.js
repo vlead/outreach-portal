@@ -615,15 +615,16 @@ app.controller("edit-centre", function($scope, dataFactory, $http, $routeParams,
 app.controller("oc-manage-workshops", function($scope, $http, $routeParams, dataFactory,$route, $window) {
     dataFactory.fetch('/workshops?user_id='+$window.number).
 	success(function(data, status, headers, config) {
-            today = new Date();
+            var today = new Date();
             var count = 0;
             var upcoming = [];
             var history = [];
             var pending = [];
 	    for(i=0;i<data.length;i++){
-                workshop_date = new Date(data[i].date);
+                var workshop_date = new Date(data[i].date);
                 var workshop_id = data[i].id ;
-                if ((today > workshop_date) & (data[i].status.name == "Upcoming")){
+                if (((today > workshop_date) & !(today.toDateString() == workshop_date.toDateString())) &
+		(data[i].status.name == "Upcoming")){
                     dataFactory.put('/workshops/'+workshop_id.toString(), {'status': {'id': 2}}).
 			success(function(data, status){ console.log('Status success'); });
                 }
