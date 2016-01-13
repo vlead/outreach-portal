@@ -81,7 +81,7 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
     
     $scope.add_oc = function(isvalid){    
         if(isvalid){
-            data = {'name' : $scope.name,'email' : $scope.email, 'institute_name' : $scope.inst_name, 'role' : { 'id' : 2 } };
+            data = {'name' : $scope.name,'created' : Date(), 'email' : $scope.email, 'institute_name' : $scope.inst_name, 'role' : { 'id' : 2 } };
             dataFactory.post("/users", data).success(function(response){
                 history.back();
             }).error(function(data, status, headers, config){
@@ -281,7 +281,7 @@ app.controller("add-workshop", function($scope, $location, $http, dataFactory,$r
     $scope.submit = function(isvalid){
         if(isvalid){
             dataFactory.post('/workshops', { "name" : $scope.name,
-					     "duration_of_sessions" : Number($scope.session),
+					     "duration_of_sessions" : $scope.session,
 					     "location" : $scope.location,  "user" : {"id" : $window.number },
 					     "participating_institutes" : $scope.insts,
 					     "no_of_participants_expected" : $scope.parti,
@@ -328,6 +328,7 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
 			      "participating_institutes" : $scope.message.participating_institutes,
 			      "no_of_participants_expected" : $scope.message.no_of_participants_expected,
 			      "no_of_sessions" : Number($scope.message.no_of_sessions),
+			      "duration_of_sessions": $scope.message.duration_of_sessions,
 			      "labs_planned" : Number($scope.message.labs_planned),
 			      "status" : {"id":1},  "date" : $scope.message.date,
 			      "experiments_conducted": $scope.message.experiments_conducted}).
@@ -337,7 +338,7 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
 		}).
                 error(function(data, status, headers, config){
                     if(status == 500){
-                        $scope.status = "Duplicate Email";
+                        $scope.status = "Internal server error";
                     }
                     else if(status == 400){                    
                         $scope.status = "Invalid username"
@@ -496,7 +497,7 @@ app.controller("add-nc", function($scope, $http, dataFactory, $routeParams, $win
     $scope.id = 0;
     $scope.submit = function(isvalid){
         if(isvalid){
-            dataFactory.post('/users',{'name' : $scope.name,"institute_name" : $scope.inst_name, 'email' : $scope.email,'role' : { 'id' : 3 } } ).
+            dataFactory.post('/users',{'name' : $scope.name, 'created' : Date(), "institute_name" : $scope.inst_name, 'email' : $scope.email,'role' : { 'id' : 3 } } ).
                 success(function(data, status, headers, config){
                     id = data.id;       
                     $scope.status = "Success";
@@ -726,7 +727,22 @@ app.controller("review-reports", function($scope, $http, $routeParams, dataFacto
             });
     }
     dataFactory.fetch('/workshop_reports?workshop_id='+$routeParams.id).success(function(data,status,headers,config){
-        $scope.reports = data;
+        var photos = [];
+	var attendance = [];
+	var reports = [];
+	
+	for(var i=0; i < data.length; i++){
+	    if(data[i].name == "Photos"){
+		photos.push(data[i]);
+	    }else if(data[i].name == "Attendance"){
+		attendance.push(data[i]);
+	    }else{
+		reports.push(data[i]);
+	    }
+	}
+	$scope.photos = photos;
+	$scope.attendance = attendance;
+        $scope.reports = reports;
     }).error(function(data, status, headers, config){
         console.log("Failed");
     });
