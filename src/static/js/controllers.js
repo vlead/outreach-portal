@@ -374,13 +374,14 @@ app.controller("oc-dashboard", function($scope, $http, dataFactory, $routeParams
 			    console.log(experiments);
                             participants = participants + data[i].participants_attended ;
 			    experiments = experiments + data[i].experiments_conducted ;
-			    $scope.workshops = workshops;
-			    $scope.participants = participants;
-			    $scope.experiments = experiments;
+			    
 			}else{
                             console.log(data[i].name);
 			}
                     }
+                    $scope.workshops = workshops;
+		    $scope.participants = participants;
+		    $scope.experiments = experiments;
 		}).
 		    error(function(data,status,headers,config){
 			console.log("Failed");
@@ -389,21 +390,25 @@ app.controller("oc-dashboard", function($scope, $http, dataFactory, $routeParams
 	}).
 	error(function(data, status, headers, config){
         console.log("Failed");
-    });
+        });
+    var ocworkshops=0;
+    var ocparticipants=0;
+    var ocexperiments=0;
     dataFactory.fetch('/workshops?user_id='+$window.number). success(function(data, status, headers, config) {
         for(i=0;i<data.length;i++){
             if(data[i].status.name == "Approved"){
-		workshops = workshops + 1 ;
+		ocworkshops = ocworkshops + 1 ;
 		console.log(experiments)
-                participants = participants +  data[i].participants_attended ;
-		experiments = experiments + data[i].experiments_conducted ;
-	        $scope.workshops =  $scope.workshops +  workshops;
-		$scope.participants = 	$scope.participants + participants;
-		$scope.experiments = 	$scope.experiments + experiments;
+                ocparticipants = ocparticipants +  data[i].participants_attended ;
+		ocexperiments = ocexperiments + data[i].experiments_conducted ;
+	        
             }else{
                 console.log(data[i].name);
             }
         }
+        $scope.ocworkshops =  ocworkshops;
+	$scope.ocparticipants = ocparticipants;
+	$scope.ocexperiments = 	ocexperiments;
     }).error(function(data, status, headers, config){
         console.log(data);
     });
