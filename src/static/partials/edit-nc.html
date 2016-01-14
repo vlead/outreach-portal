@@ -5,9 +5,12 @@
     <span class="error"> {{ status }}</span>
     <form name="myForm" novalidate ng-submit="submit(user_id, nc_id)">
       <p>Coordinator Name:<br>
-        <input type="text" name="user" ng-model="user"  class="form-control"  placeholder="Coordinator Name" required>
+        <input type="text" name="user" ng-model="user"
+               ng-pattern="/^[a-zA-Z\s]*$/" class="form-control"  placeholder="Coordinator Name" required>
 	<span style="color:red" ng-show="myForm.user.$dirty && myForm.user.$invalid">
-	  <span ng-show="myForm.user.$error.required">Username is required.</span>
+	  <span ng-show="myForm.user.$error.required">Username is
+	    required.</span>
+          <span ng-show="myForm.user.$error.pattern">Enter valid name</span>
 	</span>
       </p>
       <p>Nodal Centre Name:<br>
@@ -15,7 +18,7 @@
          </select>
       </p>
       <p>Email:<br>
-	<input type="email" name="email" ng-model="email"  class="form-control"  placeholder="example@ex.com" required>
+	<input type="email" name="email" ng-model="email" class="form-control"  placeholder="example@ex.com" required>
 	<span style="color:red" ng-show="myForm.email.$dirty && myForm.email.$invalid">
 	  <span ng-show="myForm.email.$error.required">Email is required.</span>
 	  <span ng-show="myForm.email.$error.email">Invalid email address.</span>
