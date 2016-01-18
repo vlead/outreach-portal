@@ -5,7 +5,7 @@
    <span class="error"> {{ status }}</span>
    <form name="myForm" novalidate ng-submit="submit(myForm.$valid)">
      <p>Workshop Name:<br>
-       <input type="text" name="user" ng-model="message.name"  ng-pattern="/^[a-zA-Z\s]*$/"  class="form-control"  placeholder="Workshop Name" required>
+       <input type="text" name="user" ng-model="message.name"  ng-pattern="/^[a-zA-Z0-9._-\s]*$/"  class="form-control"  placeholder="Workshop Name" required>
 	<span style="color:red" ng-show="myForm.user.$dirty && myForm.user.$invalid">
 	  <span ng-show="myForm.user.$error.required">Workshop name is required.</span>
 	  <span ng-show="myForm.user.$error.pattern">Enter valid name</span>
@@ -20,7 +20,7 @@
       </p>
      <p>Participating Institues:<br>
 	<input type="text" name="insts"
-               ng-model="message.participating_institutes"  ng-pattern="/^[a-zA-Z\s,]*$/" class="form-control"
+               ng-model="message.participating_institutes"  ng-pattern="/^[a-zA-Z._-\s]*$/" class="form-control"
                placeholder="Institute names" required>
 	<span style="color:red" ng-show="myForm.insts.$dirty && myForm.insts.$invalid">
 	  <span ng-show="myForm.insts.$error.required">Institute names required.</span>
