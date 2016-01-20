@@ -210,7 +210,7 @@ app.controller("manage-workshops", function($scope, $http, $routeParams, dataFac
             if (((today > workshop_date) & !(today.toDateString() == workshop_date.toDateString())) &
 		(data[i].status.name == "Upcoming")){
                 dataFactory.put('/workshops/'+workshop_id.toString(),
-				{'status': {'id': 5}}).success(function(data, status){
+				{'status': {'id': 2}}).success(function(data, status){
 				    console.log('Status success'); });
             }
             if( (today <= workshop_date) ||(today.getDate() == workshop_date.getDate() &
