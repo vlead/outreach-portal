@@ -83,8 +83,11 @@
                    'Attendance':document.getElementById('attendance-file'),
                    'Reports': document.getElementById('reports-file')};
         
-            if(fileups['Photos'].files.length + fileups['Attendance'].files.length + fileups['Reports'].files.length == 0 || fileups['Photos'].files.length + Number(photoCount) == 0 || fileups['Attendance'].files.length + Number(attendanceCount) == 0 || fileups['Reports'].files.length + Number(reportCount) == 0){
-	    $('.error').html("Atleast one file per section totally is mandatory!<br>");
+			 if(fileups['Photos'].files.length + fileups['Attendance'].files.length + fileups['Reports'].files.length == 0){
+			 
+			 $('.error').html("Select atleast one file to be uploaded!<br>");
+			 }else if(fileups['Photos'].files.length + Number(photoCount) == 0 || fileups['Attendance'].files.length + Number(attendanceCount) == 0 || fileups['Reports'].files.length + Number(reportCount) == 0){
+	    $('.error').html("Upload atleast one file per section!<br>");
             }else if(!validFile(fileups['Photos']) || !validFile(fileups['Attendance']) || !validFile(fileups['Reports'])){
 	    $('.error').html("Allowed file formats are: <br> [txt, pdf, png, jpg, jpeg, gif, csv, doc, docx]<br>");
             }else{
