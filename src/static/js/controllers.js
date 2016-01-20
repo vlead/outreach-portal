@@ -114,7 +114,7 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
                  
     }
     dataFactory.fetch("/users?role_id=2").success(function(response){
-        $scope.total_ocs = response.length;
+        $scope.totaloc = response.length;
         $scope.oc_users = response;
         
     });
@@ -122,24 +122,21 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
         $scope.nodal_centres = response.length;
     });
     dataFactory.fetch("/users?role_id=3").success(function(response){
-        $scope.total_ncs = response.length;
+        $scope.totalnc = response.length;
         $scope.nc_users = response;
         
     });
     dataFactory.fetch("/workshops?status_id=3").success(function(workshops){
         var participants_count = 0;
         var workshop_list = [];
-        var expts_count = 0;
         var labs = 0;
         for(workshop=0;workshop<workshops.length;workshop++)
         {
             workshop_list.push(workshops[workshop]);
             participants_count = participants_count + workshops[workshop].participants_attended;
-            expts_count = expts_count + workshops[workshop].experiments_conducted;
             labs = labs + workshops[workshop].labs_planned;
 
         }
-        $scope.total_expts = expts_count;
         $scope.total_workshops = workshops.length;
         $scope.total_participants = participants_count;
         $scope.labs = labs;
@@ -213,7 +210,7 @@ app.controller("manage-workshops", function($scope, $http, $routeParams, dataFac
             if (((today > workshop_date) & !(today.toDateString() == workshop_date.toDateString())) &
 		(data[i].status.name == "Upcoming")){
                 dataFactory.put('/workshops/'+workshop_id.toString(),
-				{'status': {'id': 2}}).success(function(data, status){
+				{'status': {'id': 5}}).success(function(data, status){
 				    console.log('Status success'); });
             }
             if( (today <= workshop_date) ||(today.getDate() == workshop_date.getDate() &
@@ -329,7 +326,7 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
 			      "location" : $scope.message.location,
 			      "user" : {"id" : $window.number },
 			      "participating_institutes" : $scope.message.participating_institutes,
-			      "no_of_participants_expected" : $scope.message.no_of_participants_expected,
+			      "participants_attended" : $scope.message.participants_attended,
 			      "no_of_sessions" : Number($scope.message.no_of_sessions),
 			      "duration_of_sessions": $scope.message.duration_of_sessions,
 			      "labs_planned" : Number($scope.message.labs_planned),
