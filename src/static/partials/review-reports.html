@@ -3,7 +3,7 @@
 </div>
 <div class="row">
   <div class="col-md-12">
-    <h1> Photos </h1>
+    <h3> Photos </h3>
     <table class="table table-hover">
       <thead>
 	<tr>
@@ -18,7 +18,7 @@
 	</tr>
       </tbody>
     </table><br>
-    <h1> Attendance </h1>
+    <h3> Attendance </h3>
     <table class="table table-hover">
       <thead>
 	<tr>
@@ -33,7 +33,7 @@
 	</tr>
       </tbody>
     </table><br>
-    <h1> College Reports </h1>
+    <h3> College Reports </h3>
     <table class="table table-hover">
       <thead>
 	<tr>
@@ -48,6 +48,62 @@
 	</tr>
       </tbody>
     </table><br>
+
+    <h2>Workshop Details</h2>
+    <table class="table table-hover">
+      <tr>
+	<td>Name</td>
+	<td>{{ data.name }}</td>
+      </tr>
+      <tr>
+	<td>Created</td>
+	<td>{{ data.created }}</td>
+      </tr>
+      <tr>
+	<td>Date</td>
+	<td>{{ data.date }}</td>
+      </tr>
+      <tr>
+	<td>Duration of sessions</td>
+	<td>{{ data.duration_of_sessions }}</td>
+      </tr>
+      <tr>
+	<td>Experiments Conducted</td>
+	<td>{{ data.experiments_conducted }}</td>
+      </tr>
+      <tr>
+	<td>Labs Planned</td>
+	<td>{{ data.labs_planned }}</td>
+      </tr>
+      <tr>
+	<td>Location</td>
+	<td>{{ data.location }}</td>
+      </tr>
+      <tr>
+	<td>Participants Expected</td>
+	<td>{{ data.no_of_participants_expected }}</td>
+      </tr>
+      <tr>
+	<td>Sessions</td>
+	<td>{{ data.no_of_sessions }}</td>
+      </tr>
+      <tr>
+	<td>Participants Attended</td>
+	<td>{{ data.participants_attended }}</td>
+      </tr>
+      <tr>
+	<td>Participating Institutes</td>
+	<td>{{ data.participating_institutes }}</td>
+      </tr>
+      <tr>
+	<td>Reasons for disapproval (if any)</td>
+	<td>{{ data.not_approval_reason }}</td>
+      </tr>
+       <tr>
+	<td>Status</td>
+	<td>{{ data.status.name }}</td>
+      </tr>
+    </table><br><br>
     Reasons for disapproval (if any):<br><br>
     <textarea rows="4" cols="50" ng-model="remarks">
     </textarea><br><br>

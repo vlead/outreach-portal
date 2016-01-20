@@ -767,6 +767,9 @@ app.controller("review-reports", function($scope, $http, $routeParams, dataFacto
 		history.back();
             });
     }
+    dataFactory.fetch('/workshops/'+$routeParams.id).success(function(data,status,headers,config){
+	$scope.data = data;
+    });
     dataFactory.fetch('/workshop_reports?workshop_id='+$routeParams.id).success(function(data,status,headers,config){
         var photos = [];
 	var attendance = [];
