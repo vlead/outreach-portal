@@ -238,14 +238,16 @@ app.controller("manage-workshops", function($scope, $http, $routeParams, dataFac
     $scope.cancel = function(id){
         if(confirm("Are you sure!") == true){
             var reason = prompt("Please enter your reason");
-            if(reason != ""){
+	    if(reason == "" || reason == null){
+		console.log("Failed!");
+	    }else{
                 dataFactory.put('/workshops/'+id, {"cancellation_reason" : reason, "status" : {"id": 6} }).success(function(data, status, headers, config) {
                     $route.reload();
 	        }).error(function(data, status, headers, config){
                     console.log(data);
                 });
             }
-            else {}
+
         }
     }
 });
@@ -690,14 +692,16 @@ app.controller("oc-manage-workshops", function($scope, $http, $routeParams, data
     $scope.cancel = function(id){
         if(confirm("Are you sure!") == true){
             var reason = prompt("Please enter your reason");
-            if(reason != ""){
+	    if(reason == "" || reason == null){
+		console.log("Failed!");
+	    }else{
                 dataFactory.put('/workshops/'+id, {"cancellation_reason" : reason, "status" : {"id": 6} }).success(function(data, status, headers, config) {
                     $route.reload();
 	        }).error(function(data, status, headers, config){
                     console.log(data);
                 });
             }
-            else {}
+	    
         }
     }
 });
