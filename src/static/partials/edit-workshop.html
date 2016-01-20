@@ -12,7 +12,7 @@
 	</span>
      </p>
      <p>Location:<br>
-       <input type="text" name="location" ng-model="message.location" ng-pattern="/^[a-zA-Z\s,]*$/" class="form-control"  placeholder="Location" required>
+       <input type="text" name="College Name, City Name, State Name, Country Name" ng-model="message.location" ng-pattern="/^[a-zA-Z\s,]*$/" class="form-control"  placeholder="Location" required>
        <span style="color:red" ng-show="myForm.location.$dirty && myForm.location.$invalid">
 	  <span ng-show="myForm.location.$error.required">Location is required.</span>
 	  <span ng-show="myForm.location.$error.pattern">Enter valid location</span>
@@ -20,7 +20,7 @@
       </p>
      <p>Participating Institues:<br>
 	<input type="text" name="insts"
-               ng-model="message.participating_institutes"  ng-pattern="/^[a-zA-Z._-\s]*$/" class="form-control"
+               ng-model="message.participating_institutes"  ng-pattern="/^[a-zA-Z._-\s,]*$/" class="form-control"
                placeholder="Institute names" required>
 	<span style="color:red" ng-show="myForm.insts.$dirty && myForm.insts.$invalid">
 	  <span ng-show="myForm.insts.$error.required">Institute names required.</span>
