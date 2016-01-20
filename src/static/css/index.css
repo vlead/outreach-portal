@@ -3,13 +3,13 @@
 @import url(https://fonts.googleapis.com/css?family=Open+Sans);
 
 body{
-    font-family: 'Raleway', sans-serif;
+    font-family: 'Open Sans', sans-serif;
 }
 #number{
     font-family: 'Open Sans', sans-serif;
 }
 h1,h2,h3{
-    font-family: 'Raleway' !important;
+    font-family: 'Open Sans' !important;
 }
 .navbar-custom{
 	min-height: 90px;
