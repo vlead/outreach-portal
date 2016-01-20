@@ -164,8 +164,8 @@ def populate_workshops():
             user = User.query.filter_by(name="M Srinath Reddy").first()
             status = Status.get_by_id(3)
         elif row[12] == 13:
-            user = User.get_by_id(15)
-            status = Status.get_by_id(4)
+            user = User.get_by_id(4)
+            status = Status.get_by_id(3)
         else:
             continue
 
@@ -436,70 +436,85 @@ def populate_workshop_reports():
 def populate_reference_documents():
     print "Populating reference documents table.."
     user = User.query.filter_by(name="admin").first()
-    
+
     name1 = Name("Prerequisites of Workshop")
-    path1 = "/static/uploads/1440048323-17.pdf"   
+    path1 = "/static/uploads/1440048323-17.pdf"
     new_reference_document1 = ReferenceDocument(name=name1, user=user,
                                                 path=path1)
     new_reference_document1.save()
 
     name2 = Name("Eligibility System Configuration Infrastructure")
-    path2 = "/static/uploads/1440048369-12.doc"   
+    path2 = "/static/uploads/1440048369-12.doc"
     new_reference_document2 = ReferenceDocument(name=name2, user=user,
                                                 path=path2)
     new_reference_document2.save()
 
-    name3 = Name("College Report")
-    path3 = "/static/uploads/1437747400-13.docx"   
+    name3 = Name("Virtual Labs Handout")
+    path3 = "/static/uploads/1440044856-79.pdf"
     new_reference_document3 = ReferenceDocument(name=name3, user=user,
                                                 path=path3)
     new_reference_document3.save()
 
-    name4 = Name("Virtual Labs Handout")
-    path4 = "/static/uploads/1440044856-79.pdf"   
+    name4 = Name("Feedback Form")
+    path4 = "/static/uploads/1440045014-23.pdf"
+
     new_reference_document4 = ReferenceDocument(name=name4, user=user,
                                                 path=path4)
     new_reference_document4.save()
-    
-    name5 = Name("Feedback Form")
-    path5 = "/static/uploads/1440045014-23.pdf"   
-    
+
+    name5 = Name("Attendance Sheet")
+    path5 = "/static/uploads/1440045279-57.pdf"
     new_reference_document5 = ReferenceDocument(name=name5, user=user,
                                                 path=path5)
     new_reference_document5.save()
 
-    name6 = Name("Attendance Sheet")
-    path6 = "/static/uploads/1440045279-57.pdf"   
+    name6 = Name("College Report Format")
+    path6 = "/static/uploads/1437747400-13.docx"
     new_reference_document6 = ReferenceDocument(name=name6, user=user,
                                                 path=path6)
     new_reference_document6.save()
 
-    name7 = Name("College Report Format")
-    path7 = "/static/uploads/1437747400-13.docx"   
-    new_reference_document7 = ReferenceDocument(name=name7, user=user,
+    user7 = User.get_by_id(4)
+    name7 = Name("Attendance Sheet")
+    path7 = "/static/uploads/Screenshot-1.png"
+    new_reference_document7 = ReferenceDocument(name=name7, user=user7,
                                                 path=path7)
     new_reference_document7.save()
 
     user8 = User.get_by_id(4)
-    name8 = Name("Attendance Sheet")
-    path8 = "/static/uploads/Screenshot-1.png"
+    name8 = Name("College Report")
+    path8 = "/static/uploads/APSEC2015-Visa-Invitation letter to Dongjin Yu.pdf"
     new_reference_document8 = ReferenceDocument(name=name8, user=user8,
                                                 path=path8)
     new_reference_document8.save()
-    
-    user9 = User.get_by_id(4)
+
+    user9 = User.get_by_id(6)
     name9 = Name("College Report")
-    path9 = "/static/uploads/analytics-release-v2-0-0-100.pdf"
+    path9 = "/static/uploads/IMG_20151003_213714039_HDR.jpg"
     new_reference_document9 = ReferenceDocument(name=name9, user=user9,
-                                                path=path9)
+                                                 path=path9)
     new_reference_document9.save()
-        
+
     user10 = User.get_by_id(6)
     name10 = Name("College Report")
-    path10 = "/static/uploads/IMG_20151003_213714039_HDR.jpg"
+    path10 = "/static/uploads/IMG_20151003_213448124_HDR.jpg"
     new_reference_document10 = ReferenceDocument(name=name10, user=user10,
                                                  path=path10)
     new_reference_document10.save()
+
+    user11 = User.get_by_id(6)
+    name11 = Name("College Report")
+    path11 = "/static/uploads/Bits Clg report.pdf"
+    new_reference_document11 = ReferenceDocument(name=name11, user=user11,
+                                                 path=path11)
+    new_reference_document11.save()
+
+    user12 = User.get_by_id(15)
+    name12 = Name("College Report")
+    path12 = "/static/uploads/APSEC2015-Visa-Invitation letter to Dongjin Yu.pdf"
+    new_reference_document12 = ReferenceDocument(name=name12, user=user12,
+                                                 path=path12)
+    new_reference_document12.save()
 
     
 if __name__ == "__main__":
