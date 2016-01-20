@@ -130,15 +130,17 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
         var participants_count = 0;
         var workshop_list = [];
         var labs = 0;
+        var expts_count = 0;
         for(workshop=0;workshop<workshops.length;workshop++)
         {
             workshop_list.push(workshops[workshop]);
             participants_count = participants_count + workshops[workshop].participants_attended;
             labs = labs + workshops[workshop].labs_planned;
-
+            expts_count = expts_count + workshops[workshop].experiments_conducted;
         }
         $scope.total_workshops = workshops.length;
         $scope.total_participants = participants_count;
+        $scope.totalexpts = expts_count;
         $scope.labs = labs;
         $scope.workshops = workshop_list;
     });
