@@ -114,7 +114,7 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
                  
     }
     dataFactory.fetch("/users?role_id=2").success(function(response){
-        $scope.totaloc = response.length;
+        $scope.total_ocs = response.length;
         $scope.oc_users = response;
         
     });
@@ -122,21 +122,24 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
         $scope.nodal_centres = response.length;
     });
     dataFactory.fetch("/users?role_id=3").success(function(response){
-        $scope.totalnc = response.length;
+        $scope.total_ncs = response.length;
         $scope.nc_users = response;
         
     });
     dataFactory.fetch("/workshops?status_id=3").success(function(workshops){
         var participants_count = 0;
         var workshop_list = [];
+        var expts_count = 0;
         var labs = 0;
         for(workshop=0;workshop<workshops.length;workshop++)
         {
             workshop_list.push(workshops[workshop]);
             participants_count = participants_count + workshops[workshop].participants_attended;
+            expts_count = expts_count + workshops[workshop].experiments_conducted;
             labs = labs + workshops[workshop].labs_planned;
 
         }
+        $scope.total_expts = expts_count;
         $scope.total_workshops = workshops.length;
         $scope.total_participants = participants_count;
         $scope.labs = labs;
