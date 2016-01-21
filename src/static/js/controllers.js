@@ -336,7 +336,7 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
 			      "no_of_sessions" : Number($scope.message.no_of_sessions),
 			      "duration_of_sessions": $scope.message.duration_of_sessions,
 			      "labs_planned" : Number($scope.message.labs_planned),
-			      "status" : {"id":1},  "date" : $scope.message.date,
+			      "status" : {"id": $scope.message.status.id},  "date" : $scope.message.date,
 			      "experiments_conducted": $scope.message.experiments_conducted}).
 		success(function(data, status, headers, config){
                     $scope.status = "Success";
