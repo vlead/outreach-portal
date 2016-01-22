@@ -264,13 +264,32 @@ app.controller("contact-oc", function($scope, dataFactory, $http, $routeParams, 
   
 });
 app.controller("nc-documents", function($scope, dataFactory, $http, $routeParams, $route, $window) {
-    dataFactory.fetch('/reference_documents').
+    
+    dataFactory.fetch('/reference_documents?user_id=1').
         success(function(data, status, headers, config) {
-            $scope.docs = data;
+            $scope.docsAdmin = data;
         }).
         error(function(data, status, headers, config){
             console.log(data);
         });
+    
+    dataFactory.fetch('/nodal_coordinator_details?user_id='+$window.number).
+        success(function(data, status, headers, config){
+	    var OCid = data[0].created_by.id ;
+	    dataFactory.fetch('/reference_documents?user_id='+OCid).
+		success(function(data, status, headers, config) {
+		    $scope.docsOC = data;
+		}).
+		error(function(data, status, headers, config){
+		    console.log(data);
+		});
+        }).
+        error(function(data, status, headers, config){    
+            console.log(data);
+        });
+    
+   
+   
     
 });
 app.controller("nodal-centers", function($scope, $http, dataFactory, $routeParams, $route, $window) {
