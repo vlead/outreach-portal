@@ -22,7 +22,12 @@
      entities - workshops, nodal_coordinator_details, nodal_centres,
      college_reports, attendance_sheets, workshop_photos, feedbacks.
   
-* Design & Implementation  
+* Design
+** ER Diagram
+[[./diagrams/model-diagram.jpg][schema diagram]] 
+** API's
+[[./api_doc.org][API Documentation]]
+* Implementation  
 ** Some initialization and boilerplate code
 *** __init__
 #+BEGIN_SRC python :tangle src/__init__.py :eval no
