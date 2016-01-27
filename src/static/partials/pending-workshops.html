@@ -13,7 +13,7 @@
           <th>Reasons for rejection (If any)</th>
 	  <th>Date</th>
           <th>Status</th>
-          <th>Action</th>
+
 	</tr>
       </thead>
       <tbody>
@@ -23,6 +23,7 @@
           <td>{{ workshop.not_approval_reason }}</td>
           <td>{{ workshop.date }}</td>
           <td>{{ workshop.status.name }}</td>
+	  <td><a href="#/edit-workshop/{{workshop.id}}" class="btn btn-primary">Edit</a></td>
           <td><a class="btn btn-primary" href="#/upload-reports/{{workshop.id}}">Upload Reports</a></td>
         </tr>
       </tbody>

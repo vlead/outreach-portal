@@ -114,7 +114,7 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
                  
     }
     dataFactory.fetch("/users?role_id=2").success(function(response){
-        $scope.total_ocs = response.length;
+        $scope.totaloc = response.length;
         $scope.oc_users = response;
         
     });
@@ -122,26 +122,25 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
         $scope.nodal_centres = response.length;
     });
     dataFactory.fetch("/users?role_id=3").success(function(response){
-        $scope.total_ncs = response.length;
+        $scope.totalnc = response.length;
         $scope.nc_users = response;
         
     });
     dataFactory.fetch("/workshops?status_id=3").success(function(workshops){
         var participants_count = 0;
         var workshop_list = [];
-        var expts_count = 0;
         var labs = 0;
+        var expts_count = 0;
         for(workshop=0;workshop<workshops.length;workshop++)
         {
             workshop_list.push(workshops[workshop]);
             participants_count = participants_count + workshops[workshop].participants_attended;
-            expts_count = expts_count + workshops[workshop].experiments_conducted;
             labs = labs + workshops[workshop].labs_planned;
-
+            expts_count = expts_count + workshops[workshop].experiments_conducted;
         }
-        $scope.total_expts = expts_count;
         $scope.total_workshops = workshops.length;
         $scope.total_participants = participants_count;
+        $scope.totalexpts = expts_count;
         $scope.labs = labs;
         $scope.workshops = workshop_list;
     });
@@ -241,12 +240,16 @@ app.controller("manage-workshops", function($scope, $http, $routeParams, dataFac
     $scope.cancel = function(id){
         if(confirm("Are you sure!") == true){
             var reason = prompt("Please enter your reason");
-            dataFactory.put('/workshops/'+id, {"cancellation_reason" : reason, "status" : {"id": 6} }).success(function(data, status, headers, config) {
-                $route.reload();
-	    }).error(function(data, status, headers, config){
-                console.log(data);
-            });
-            
+	    if(reason == "" || reason == null){
+		console.log("Failed!");
+	    }else{
+                dataFactory.put('/workshops/'+id, {"cancellation_reason" : reason, "status" : {"id": 6} }).success(function(data, status, headers, config) {
+                    $route.reload();
+	        }).error(function(data, status, headers, config){
+                    console.log(data);
+                });
+            }
+
         }
     }
 });
@@ -261,13 +264,32 @@ app.controller("contact-oc", function($scope, dataFactory, $http, $routeParams, 
   
 });
 app.controller("nc-documents", function($scope, dataFactory, $http, $routeParams, $route, $window) {
-    dataFactory.fetch('/reference_documents').
+    
+    dataFactory.fetch('/reference_documents?user_id=1').
         success(function(data, status, headers, config) {
-            $scope.docs = data;
+            $scope.docsAdmin = data;
         }).
         error(function(data, status, headers, config){
             console.log(data);
         });
+    
+    dataFactory.fetch('/nodal_coordinator_details?user_id='+$window.number).
+        success(function(data, status, headers, config){
+	    var OCid = data[0].created_by.id ;
+	    dataFactory.fetch('/reference_documents?user_id='+OCid).
+		success(function(data, status, headers, config) {
+		    $scope.docsOC = data;
+		}).
+		error(function(data, status, headers, config){
+		    console.log(data);
+		});
+        }).
+        error(function(data, status, headers, config){    
+            console.log(data);
+        });
+    
+   
+   
     
 });
 app.controller("nodal-centers", function($scope, $http, dataFactory, $routeParams, $route, $window) {
@@ -329,11 +351,11 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
 			      "location" : $scope.message.location,
 			      "user" : {"id" : $window.number },
 			      "participating_institutes" : $scope.message.participating_institutes,
-			      "no_of_participants_expected" : $scope.message.no_of_participants_expected,
+			      "participants_attended" : $scope.message.participants_attended,
 			      "no_of_sessions" : Number($scope.message.no_of_sessions),
 			      "duration_of_sessions": $scope.message.duration_of_sessions,
 			      "labs_planned" : Number($scope.message.labs_planned),
-			      "status" : {"id":1},  "date" : $scope.message.date,
+			      "status" : {"id": $scope.message.status.id},  "date" : $scope.message.date,
 			      "experiments_conducted": $scope.message.experiments_conducted}).
 		success(function(data, status, headers, config){
                     $scope.status = "Success";
@@ -690,13 +712,17 @@ app.controller("oc-manage-workshops", function($scope, $http, $routeParams, data
 	});
     $scope.cancel = function(id){
         if(confirm("Are you sure!") == true){
-            dataFactory.del('/workshops/'+id).
-                success(function(data, status, headers, config) {
+            var reason = prompt("Please enter your reason");
+	    if(reason == "" || reason == null){
+		console.log("Failed!");
+	    }else{
+                dataFactory.put('/workshops/'+id, {"cancellation_reason" : reason, "status" : {"id": 6} }).success(function(data, status, headers, config) {
                     $route.reload();
-                }).
-                error(function(data, status, headers, config){
+	        }).error(function(data, status, headers, config){
                     console.log(data);
                 });
+            }
+	    
         }
     }
 });
@@ -762,6 +788,9 @@ app.controller("review-reports", function($scope, $http, $routeParams, dataFacto
 		history.back();
             });
     }
+    dataFactory.fetch('/workshops/'+$routeParams.id).success(function(data,status,headers,config){
+	$scope.data = data;
+    });
     dataFactory.fetch('/workshop_reports?workshop_id='+$routeParams.id).success(function(data,status,headers,config){
         var photos = [];
 	var attendance = [];

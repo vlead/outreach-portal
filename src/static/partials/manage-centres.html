@@ -12,15 +12,14 @@
 	<tr>
 	  <th>Name</th>
 	  <th>Location</th>
-          <th>&emsp;&emsp;&emsp;Action</th>
 	</tr>
       </thead>
       <tbody>
 	<tr ng-repeat="centre in centres">
           <td>{{ centre.name }}</td>
           <td>{{ centre.location }}</td>
-          <td><a href="#/edit-centre/{{centre.id}}" class="btn btn-primary">Edit</a>
-            &emsp;&emsp;<a class="btn btn-primary" ng-click="del_centre(centre.id)">Delete</a></td>
+          <td><a href="#/edit-centre/{{centre.id}}" class="btn btn-primary">Edit</a></td>
+          <td><a class="btn btn-primary" ng-click="del_centre(centre.id)">Delete</a></td>
 	</tr>
       </tbody>
     </table>

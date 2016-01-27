@@ -13,14 +13,14 @@
           <th>Participants</th>
 	  <th>Date</th>
           <th>Status</th>
-	  <th>View Reports</th>
+	 
 	</tr>
       </thead>
       <tbody>
 	<tr ng-repeat="workshop in history">
           <td>{{ workshop.name }}</td>
           <td>{{ workshop.location }}</td>
-          <td>{{ workshop.no_of_participants_expected }}</td>
+          <td>{{ workshop.participants_attended }}</td>
           <td>{{ workshop.date }}</td>
           <td>{{ workshop.status.name }}</td>
 	  <td><a href="#view-reports/{{workshop.id}}" class="btn btn-primary">View Reports</a><td>
