@@ -1,3 +1,11 @@
+#+TITLE: Front end for Outreach Portal 
+#+AUTHOR: VLEAD
+#+DATE: [2015-10-27 Tue]
+#+PROPERTY: results output
+#+PROPERTY: exports code
+#+SETUPFILE: ../org-templates/level-1.org
+#+options: ^:nil
+
 * AngularJS
 * Bootstrap
 * Persona library
