@@ -2,11 +2,27 @@ var app = angular.module('outreachApp.controllers',[]);
 
 app.controller('map-ctrl', function ($scope, $http, dataFactory){
     dataFactory.fetch("/workshops?status_id=1").success(function(workshops){
-        $scope.workshops = workshops;
+      var workshop_list = [];
+      var today = new Date();
         for(i=0;i<workshops.length;i++){
-	    get_geocode(workshops[i].location, (i+1));
+            workshop_date = new Date(workshops[i].date);
+            var workshop_id = workshops[i].id ;
+            if (((today > workshop_date) & !(today.toDateString() == workshop_date.toDateString())) &
+		(workshops[i].status.name == "Upcoming")){
+                dataFactory.put('/workshops/'+workshop_id.toString(),
+				{'status': {'id': 2}}).success(function(data, status){
+				    console.log('Status success'); });
+            }else{
+              workshop_list.push(workshops[i]);
+              get_geocode(workshops[i].location, (i+1));
+            }
+	   
         }
+      $scope.workshops = workshop_list;
     });
+   
+   
+
     var mapOptions = { zoom: 4, center: new google.maps.LatLng(20,80) };
     $scope.map = new google.maps.Map(document.getElementById('map'), mapOptions);
     var geocoder = new google.maps.Geocoder();
