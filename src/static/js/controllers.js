@@ -367,7 +367,13 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
             console.log(data);
         });
     $scope.submit = function(isvalid){
-        if(isvalid){
+      if(isvalid){
+            var today = new Date();
+            var workshop_date = new Date($scope.message.date);
+            var status_id = $scope.message.status.id;
+            if((today > workshop_date) & !(today.toDateString() == workshop_date.toDateString())){
+              status_id = 2;
+            }
             dataFactory.put('/workshops/'+$routeParams.id,
 			    { "name" : $scope.message.name,
 			      "location" : $scope.message.location,
@@ -377,7 +383,7 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
 			      "no_of_sessions" : Number($scope.message.no_of_sessions),
 			      "duration_of_sessions": $scope.message.duration_of_sessions,
 			      "labs_planned" : Number($scope.message.labs_planned),
-			      "status" : {"id": $scope.message.status.id},  "date" : $scope.message.date,
+			      "status" : {"id": status_id},  "date" : $scope.message.date,
 			      "experiments_conducted": $scope.message.experiments_conducted}).
 		success(function(data, status, headers, config){
                     $scope.status = "Success";
