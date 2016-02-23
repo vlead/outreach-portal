@@ -320,7 +320,13 @@ app.controller("nodal-centers", function($scope, $http, dataFactory, $routeParam
 });
 app.controller("add-workshop", function($scope, $location, $http, dataFactory,$routeParams, $route, $window){
     $scope.submit = function(isvalid){
-        if(isvalid){
+      if(isvalid){
+            var today = new Date();
+            var workshop_date = new Date($scope.date);
+            var status_id = 1;
+            if((today > workshop_date) & !(today.toDateString() == workshop_date.toDateString())){
+              status_id = 2;
+            }
             dataFactory.post('/workshops', { "name" : $scope.name,
 					     "duration_of_sessions" : $scope.session,
 					     "location" : $scope.location,  "user" : {"id" : $window.number },
@@ -328,7 +334,7 @@ app.controller("add-workshop", function($scope, $location, $http, dataFactory,$r
 					     "no_of_participants_expected" : $scope.parti,
 					     "no_of_sessions" : Number($scope.sessions),
 					     "labs_planned" : Number($scope.labs),
-					     "status" : {"id": 1},  "date" : $scope.date }).
+					     "status" : {"id": status_id},  "date" : $scope.date }).
 		success(function(data, status, headers, config){
                     $scope.status = "Successfully created workshop";
                     history.back();
