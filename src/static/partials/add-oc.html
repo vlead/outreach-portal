@@ -14,7 +14,7 @@
       </p>
       <p>Email:<br>
 	<input type="text" name="email" ng-model="email"
-               ng-pattern="/^[A-Za-z]+[A-Za-z0-9._-]+@[A-Za-z]+\.[A-Za-z.]{2,5}$/" class="form-control"  placeholder="example@ex.com" required>
+               ng-pattern="/^[A-Za-z]+[A-Za-z0-9._-]+@[A-Za-z]+\.[A-Za-z.]{2,20}$/" class="form-control"  placeholder="example@ex.com" required>
 	<span style="color:red" ng-show="myForm.email.$dirty && myForm.email.$invalid">
 	  <span ng-show="myForm.email.$error.required">Email-id is
 	    required.</span>
