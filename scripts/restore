@@ -8,7 +8,7 @@ BACKUP_FILE=$1
 
 # Absolute path to the scripts directory
 SCRIPTS_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-
+DOC_FOLDER=$(cd ../src/static && pwd)
 usage() {
   echo "Usage:"
   echo "$0 <path/to/the/backup/file.tar>"
@@ -22,7 +22,7 @@ if [ -z $BACKUP_FILE ]; then
 fi
 
 # untar the $BACKUP_FILE file
-tar xfvz $BACKUP_FILE
+tar -xvf $BACKUP_FILE
 if [ $? -ne 0 ]; then
   echo "Error: Something went wrong while untaring."
   echo "Aborting restore."
