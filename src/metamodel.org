@@ -1,0 +1,296 @@
+#+title:   Metamodel of Outreach Portal
+
+
+* Metamodel
+
+A user is one who interacts with the system.   A user may
+assume multiple roles.  At any given time, the user is
+interacting with the system in a given role.  The role
+decides the user's capabilities of interacting with the
+system (e.g, can the user read, write or delete or add a
+certain field, etc.)
+
+An outreach activity is an event.  Events have attributes.
+Events may be created by a user in a certain role.  An event
+may be marked as cancelled.  Activities carry status.
+
+A document is a unit of information stored internally as a
+file.  Documents may be created or deleted.  Some of their
+attributes (eg., names, types, etc.) may be edited. 
+
+A location is organization e.g., a college.  
+
+ - User
+ - Role
+ - Activity
+ - Document
+ - Location (Nodal Centre) 
+ - Inst
+
+** Data Type model 
+
+*** Entity types
+This is obtained by instantiating the meta model to the
+following:
+
+ - User = 
+ - Inst = {i1, i2}
+ - College =
+ - NC = {nc1, nc2}
+ - Role(Inst, NC) = IOC + NCC + Admin + Guest
+ - IOC = {ioc} x Inst
+ - NCC = {ncc} X NC
+ - Admin = {(admin, nil)}
+ - Guest = {(guest, nil)} 
+ - Role = {(ioc, i1), (ioc, i2), (ncc, nc1), (ncc, nc2),
+           admin, guest}
+ 
+ - Role = {ioc(i1), ioc(i2), ncc(nc1), ncc(nc2), admin, guest}
+
+
+ - Activity = [type: {WS, meeting, seminar}, location:
+   Address, participants: set[students], ncc: NCC]
+ - Document = {ref-docs, target-report, ws-report, photos, user-report}
+ - Target = [start: Date, end: Date, usages: Nat, target-report: Doc]
+ - DocType
+
+**** User
+ + roles: set[Role] 
+    * viewable by anyone
+    * editable by {admin} 
+ + logged-in-status: logged-out + logged-in(roles)
+    * viewable by self
+    * editable by none
+ + name: Name 
+    * viewable by all
+    * editable by self, admin
+ + email: Email
+    * viewable by all
+    * editable by self, admin
+ + created: Date
+    * viewable by all
+    * editable by none
+ + last-active: Date
+    * viewable by all
+    * editable by none
+ + expires: Date
+    * viewable by all
+    * editable by admin
+
+ + status:  active + blocked([date:  Date, reason: Text, blocked-by: User])
+    * viewable by all
+    * editable by admin
+
+**** Roles               
+
+A role adds certain additional attributes to a user.
+
+***** Admin
+
+***** OC
++ ncs: set[NC]
++ region:  Region
+
+***** NC
++ oc: User
+  * 
+Viewable by all
+  * Editable by admin
+  
++ targets: set[Target]
+  * Viewable by all
+  * Editable by oc  (add, delete)
+
++ nodal-centre: Location
+  * Viewable by all
+  * Editable by oc
+
+***** Guest
+
+
+**** Document
+
++ doc-type:  {attendance, mou, ...}
++ created-on: Date
++ created-by: User
++ versions: seq[Version]
++ file-format: FileFormat
+
+
+**** Version
++ id:  Id
++ created-on: Date
++ created-by: User
++ format: FileFormat
+
+*  Dynamics 
+
+
+landing page:
+    Login
+
+    some other graphics, data, india map etc.
+    
+Login page
+   username
+   password
+   role
+
+User-logged-in-page:
+
+  base-attributes
+  additional attributes based on role
+
+eg., if you are admin, you will see a button called
+list-of-users
+
+For an oc, a list of nc's under him/her
+
+
+* Version 0:
+Version 0 of the system just has the following four state
+variables.
+
+  - Users = {boss}
+  - Insts = {}
+  - NCs   = {} 
+  - Roles = {Admin, Guest}
+
+
+Initially the system comes with one user called boss, who
+has the role Admin.
+
+   boss: Admin
+
+
+* Logging in into a session
+
+Each user logs in with credentials. 
+
+After a user logs in successfully, the user is presented
+with a choice of one the possibly many roles that the user
+may wish to don during that session.  The user u chooses
+exactly one role r.  The user commences that session with
+the role r.
+
+* Capabilities 
+** Admin
+A user in Admin role has the CRUD capabilities on the
+following variables:
+
+  - Users
+  - Insts
+  - NCs
+  - Roles(NCs, Insts)
+
+
+A user in Admin role has the capability to assign roles to
+users.   The assignment in many to many.
+
+** ioc(Inst) 
+
+A user in the role ioc(i)  for some institute i has the
+following capabilities: 
+
+  - NCs: CRUD
+
+  - ncc(NC): create, delete
+
+** ncc(NC)
+
+A user in the role ncc(n) , where n:NC has the following
+capabilities:
+
+   - update info about that user.
+
+
+** Guest
+
+A user in the role of guest has the following capabilities:
+
+  - view Insts, NCs
+
+
+
+
+* Views
+
+** u loggged in as guest
+
+
+*** Main page
+
+ - insts
+ - ncs
+ - 
+
+** u logged in as  ioc(i)
+
+*** Main Page: 
+  - ncs-under-inst(i): set[NCs]: element selectable  by u
+  - profile(u):   (editable by u)
+  - addNewNC()
+  - addNewUser() : default role of this user is guest
+  - setUserAsNCC(u':User, nc: NC) : u' and nc should have
+    been created either by admin or u.
+  - deleteUser(u') : u' created by u. 
+
+*** nc: NC
+  - NC profile : editable by u.
+  - nccs: set[User]: 
+  - delete() : nc should have been created by u.
+
+*** u': ncc(nc)
+  
+  - delete() : nc should have been created by u
+  - dissociate(): nc should have been created by u.  If u'
+    has no NC's associated with it, then u assume role of
+    guest.
+* Inst
+ - name: Name
+ - iocs: set[Users]
+ - ncs: set[NCs]
+ - nccs: set[Users]
+
+* NC
+
+  - name: Name
+  - ncs: set[Users]
+  - inst: Insts
+  - iocs: set[Users]
+  
+   
+* User
+
+ - name: Name
+ - email: Email
+ - mobile: PhNo
+ - roles: set[Roles]
+ 
+ 
+
+
+   
+
+
+
+
+
+
+
+
+  *users*: set[User]
+  *insts*: set[Inst]
+  *ncs*:   set[NC] 
+  *roles*: set[Role]  = ioc(insts) + ncc(ncs) + admin + guest
+
+
+  ncs-under-inst(i): *insts* -> set[*ncs*]
+  user-name:  *users* -> Name
+  user-roles: *users* -> set[*roles*]
+  user-email: *users* -> Email
+  user-ph:    *users* -> Ph [+91-ddd-ddd-dddd]
+  
+  
+  
+   
