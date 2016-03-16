@@ -1,0 +1,264 @@
+#+title:   Simple Model for Outreach Portal
+
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="local.css" />
+
+* Introduction
+
+We start with a simple model of the outreach portal that
+consists of users, roles, sessions, outreach centres, nodal
+centres. 
+
+* Types
+
+#+begin_example
+ - User
+ - OC            ;; outreach centre
+ - NC            ;; nodal centre
+ - Session       ;; 
+
+ - Role = ocd(OC) + ncd(NC) + admin() + guest() ;; roles
+ - Location      ;; 
+ - Inst          ;; 
+ - Email
+#+end_example
+
+* Local Variables
+
+#+begin_example
+ - var s : Session
+ - var u : User
+ - var o : OC
+ - var n : NC
+ - var e : Email
+ - var l : Location
+#+end_example
+
+* Projection functions 
+A projection function =f: A -> B= applied to an object =a:A= may
+be written as =f(a)= or =a.f=. 
+
+** On =User=
+#+begin_example
+ - email: User  -> Email  ;; KEY
+ - name:  User  -> Name
+#+end_example
+
+** On =Session=
+#+begin_example
+ - id: Session  -> String ;; KEY
+ - user: Session -> User
+ - role: Session -> Role
+#+end_example
+
+** On =Inst=  
+#+begin_example
+ - [name,loc]: Inst -> [Name, Location] ;; KEY
+#+end_example
+
+* Subtype Relations
+
+#+begin_example
+ - OC <= Inst
+ - NC <= Inst 
+#+end_example
+
+* Privilege Lattice
+
+#+begin_example
+  admin > occ(...) > ncc(...) > guest
+#+end_example
+
+
+* System
+
+** Primary System State Variables:
+  - =*users*: set[User]= ;; set of all users created so far
+  - =*insts*: set[Inst]= ;; set of all institutes created so far
+  - =*ocs*:   set[OC]=   ;; set of all OCs created so far 
+  - =*ncs*:   set[NC]=   ;; set of all NCs created so far
+   
+  - =*sessions*: set[Session]= ;; current set of sessions.
+
+** Derived State Variables:
+  - =*roles*: set[Role] = ioc(*ocs*) + ncc(*ncs*) + admin + guest=
+
+** Constraints
+
+  - =*ocs*= subset of =*insts*=
+  - =*ncs*= subset of =*insts*=
+
+* Functions
+
+We start with raw (unsafe) functions that directly apply on
+the database.
+
+
+Functions are applied at  levels: 
+
+- data model level :: At this level the functions only
+     check for 
+               + argument type and bound constraints
+               + referential integrity constraints
+                 
+   There is no notion of a session.
+
+- session level :: At this level, additional constraints
+     come in.  The =safe-apply= below suggests how the
+
+
+get-roles(u:*users*) -> set[Role]
+
+get-roles(u:User) -> set[Role]
+
+#+begin_src scheme
+(define safe-apply
+  (lambda (function)
+    (lambda (args-type-check?)
+      (lambda (semantic-check?)
+        (lambda (session args)
+        (cond 
+        [(not (args-type-check? args)) 
+         (error 'safe-apply "failed args type-check")]
+        [(not (semantic-check? session args))
+         (error 'safe-apply "failed semantic-check")]
+        [else (apply function args)]))))))
+
+#+end_src
+|-----------+---------------------------+---------------------+------------------------------+---+---|
+| name      | function (unsafe version) | args-type-check?    | semantic-check?              |   |   |
+|-----------+---------------------------+---------------------+------------------------------+---+---|
+| get-roles | (lambda (args) ...)       | (lambda (args) ...) | (lambda (session args  ....) |   |   |
+|-----------+---------------------------+---------------------+------------------------------+---+---|
+
+
+
+* Session based Functions
+
+Each function is applied in the context of a session
+=s.f(arg, ...)= means that the function =f= is available to
+in the session =s=.  Application of the function =f=
+requires arguments =args,...= that are either supplied by
+the session (e.g, the screen that the user is viewing at
+that instant.)  Typically, additional constraints are
+imposed on =s= for =f= to be available.  E.g., =s= may need
+to contain a user =u= be logged in as a particular role.
+
+If the session is not mentioned, then the function may be
+applied in any session.  (E.g., the show functions)
+
+** =s.show-users: () -> set[User]=
+- Pre-condition :: =s.role = admin=
+- Action :: returns the set =*users*=
+
+** =s.show-ocs:   () -> set[OC]=
+- Action :: returns the set =*ocs*=
+
+** =s.show-ncs:   () -> set[NC]= 
+ - Action :: returns the set =*ncs*=
+
+** =s.show-roles: () -> set[Role]=
+ - Action :: returns the set =*roles*=
+ 
+** =s.get-roles: [u:*users*] -> set[*roles*]=
+
+ - Pre-condition :: =s.role = admin=  OR =s.user = u=. 
+ - Action :: returns the set of roles associated with user =u=.
+
+** =s.active?: (u: *users*) -> Boolean=  
+
+  - Precondition ::
+      + =s.role = admin=  OR
+      + =s.user = u=
+
+  - Action :: returns true if the user is active, false
+       otherwise.
+
+** =s.make-user: (e: Email, n:Name, m:Phone) -> Void=
+
+ -  Pre-condition ::
+    
+     + 1 : =s.role = admin=, AND
+     + 2 : =e= is not the email of any user in =*users*=
+
+ - Action :: creates a new user, with given profile
+      =(e,n,m)= and adds it to *users*.  Makes user active.
+
+
+** =s.activate-user: (u: User) -> Void=
+  - Precondition ::
+  
+       + :: =s.role = admin=
+
+  - Action :: marks user as active.
+
+** =s.retire-user: (u: User) -> Void 
+
+  - Precondition ::
+     + :: =s.role = admin=
+
+  - Action :: marks user as inactive.   
+
+
+** =s.make-inst (n: Name, l: Location) -> Inst=
+
+ - Pre-condition ::
+     + 1. =(n,l)= is not the name and location of any
+         institute in =*insts*=  AND
+
+          * 2.  =s.role = admin=
+
+ - Action :: 
+     + Creates a new institute and adds it to =*insts*=.
+     + Marks the new institute as active
+
+** =s.retire-inst(i: Inst) -> Void=
+
+ - Pre-condition :: =s.role = admin= 
+
+ - Action :: 
+    + Marks institute as inactive 
+
+** =s.make-oc: (n: Name, l: Loc) -> oc: OC= 
+
+- Precondition :: 
+   +  =s.role = admin=
+   +  =(n,l)= do not identify an oc already in *ocs*.  
+
+- Action :: 
+     + adds  to *ocs* 
+     + marks =i= as active
+
+** =s.retire-oc: (i: Inst) -> Void
+
+  - Precondition ::
+      + =s.role = admin=  AND
+      + =i= in =*ocs*=.
+
+  - Action ::
+
+      + =i= removed from =*ocs*=.
+
+      + =i= marked inactive.
+
+** deactivate-oc(o:*ocs*) -> void
+Sets active-status of o to *inactive*.  o must be part of *ocs*.
+
+** make-nc: (NCName, Location) -> NC
+** add-nc:(n: NC) -> void
+** =s.retire-nc(nc: *ncs*) -> Void= 
+
+ - Pre-condition ::
+       + =s.role = admin= OR 
+       + =s.role = occ(oc)= AND =nc in get-ncs(oc)=
+
+
+** get-ncs-of-oc(i): *ocs* -> set[*ncs*]
+
+  
+  user-name:  *users* -> Name
+  user-roles: *users* -> set[*roles*]
+  user-email: *users* -> Email
+  user-ph:    *users* -> Ph [+91-ddd-ddd-dddd]
+  
+  
+  

@@ -1,0 +1,13 @@
+body { 
+	margin-left: 10%; 
+	margin-right: 10%; 
+	font-family: Verdana;
+        color: #808080;
+	}
+
+
+/* Color */
+h1, h2, h3, h4  { color: navy;}
+
+
+.example, code { color: #CC6600; font-size: 100%; font-weight: normal}

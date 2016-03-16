@@ -1,14 +1,15 @@
 #+title:   Metamodel of Outreach Portal
 
-
 * Metamodel
 
-A user is one who interacts with the system.   A user may
+A user is one who interacts with the system.  A user may
 assume multiple roles.  At any given time, the user is
-interacting with the system in a given role.  The role
-decides the user's capabilities of interacting with the
-system (e.g, can the user read, write or delete or add a
-certain field, etc.)
+interacting with the system in a given role in a session.
+Two sessions are distinguished by their id's, not their
+users or roles.  Therefore two distinct sessions may have
+the same user in the same role.  The role decides the user's
+capabilities of interacting with the system (e.g, can the
+user read, write or delete or add a certain field, etc.)
 
 An outreach activity is an event.  Events have attributes.
 Events may be created by a user in a certain role.  An event
@@ -278,19 +279,3 @@ A user in the role of guest has the following capabilities:
 
 
 
-
-  *users*: set[User]
-  *insts*: set[Inst]
-  *ncs*:   set[NC] 
-  *roles*: set[Role]  = ioc(insts) + ncc(ncs) + admin + guest
-
-
-  ncs-under-inst(i): *insts* -> set[*ncs*]
-  user-name:  *users* -> Name
-  user-roles: *users* -> set[*roles*]
-  user-email: *users* -> Email
-  user-ph:    *users* -> Ph [+91-ddd-ddd-dddd]
-  
-  
-  
-   
