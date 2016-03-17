@@ -23,7 +23,7 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
    
    
 
-    var mapOptions = { zoom: 4, center: new google.maps.LatLng(20,80) };
+    var mapOptions = { zoom: 3, center: new google.maps.LatLng(20,80) };
     $scope.map = new google.maps.Map(document.getElementById('map'), mapOptions);
     var geocoder = new google.maps.Geocoder();
     var get_geocode = function (workshop_location, label){
