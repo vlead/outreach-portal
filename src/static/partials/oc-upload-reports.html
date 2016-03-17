@@ -1,15 +1,64 @@
 <div>
   <h1> Upload Photos </h1>
-  <form method="post" id="upload-file" name="myForm" action="" style="margin-top:30px"  enctype="multipart/form-data">
+  <form method="post" id="upload-file" name="myForm" action=""  style="margin-top:30px"  enctype="multipart/form-data">
     <span class="error"></span>
+    <table class="table table-hover">
+      <thead>
+	<tr>
+	  <th>Name</th>
+
+	</tr>
+      </thead>
+      <tbody>
+	<span id="photo-count" style="visibility: hidden">{{photos.length}}</span>
+	<tr ng-repeat="doc in photos">
+          <td>{{ doc.name }}</td>
+          <td><a href="{{ doc.path }}" class="btn btn-primary" target="_blank" >View</a></td>
+          <td><a ng-click="delreport(doc.id)" class="btn btn-primary">Delete</a></td>
+        </tr>
+      </tbody>
+    </table><br>
     <input type="file" name="file" id="photo-file" required multiple/><br>
     <br><br>
     <h1> Upload Attendance Sheets </h1>
+    <table class="table table-hover">
+      <thead>
+	<tr>
+	  <th>Name</th>
+
+	</tr>
+      </thead>
+      <tbody>
+	<span id="attendance-count" style="visibility: hidden">{{attendance.length}}</span>
+	<tr ng-repeat="doc in attendance">
+          <td>{{ doc.name }}</td>
+          <td><a href="{{ doc.path }}" class="btn btn-primary" target="_blank">View</a></td>
+          <td><a ng-click="delreport(doc.id)" class="btn btn-primary">Delete</a></td>
+	</tr>
+      </tbody>
+    </table><br>
     <input type="file" name="file" id="attendance-file" required multiple/><br>
     <br><br>
-    <h1> Upload College Reports </h1>
-    <input type="file" name="file" id="reports-file" required multiple/><br>
-    <button type="button" id="upload-reports" class="btn btn-primary">Upload</button>
+   <h1> Upload College Reports </h1>
+
+   <table class="table table-hover">
+      <thead>
+	<tr>
+	  <th>Name</th>
+
+	</tr>
+      </thead>
+      <tbody>
+	<span id="report-count" style="visibility: hidden">{{reports.length}}</span>
+	<tr ng-repeat="doc in reports">
+          <td>{{ doc.name }}</td>
+          <td><a href="{{ doc.path }}" class="btn btn-primary" target="_blank">View</a></td>
+          <td><a ng-click="delreport(doc.id)" class="btn btn-primary">Delete</a></td>
+	</tr>
+      </tbody>
+   </table><br>
+   <input type="file" name="file" id="reports-file" required multiple/><br>
+   <button type="button" id="upload-reports" class="btn btn-primary">Upload</button>
   </form>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
   <script>
@@ -25,15 +74,20 @@
    };  
    $(function() {
    $('#upload-reports').click(function() {
-        var workshop_id = location.href.split("/").pop()
-        console.log(number);
-       
+        var workshop_id = location.href.split("/").pop();
+	console.log(number);
+	var photoCount = document.getElementById('photo-count').textContent;
+	var attendanceCount = document.getElementById('attendance-count').textContent;
+	var reportCount = document.getElementById('report-count').textContent;		 
         var fileups = {'Photos':document.getElementById('photo-file'),
                    'Attendance':document.getElementById('attendance-file'),
                    'Reports': document.getElementById('reports-file')};
         
-            if(fileups['Photos'].files.length == 0 || fileups['Attendance'].files.length == 0 || fileups['Reports'].files.length == 0){
-	    $('.error').html("All files are mandatory!<br>");
+			 if(fileups['Photos'].files.length + fileups['Attendance'].files.length + fileups['Reports'].files.length == 0){
+			 
+			 $('.error').html("Select atleast one file to be uploaded!<br>");
+			 }else if(fileups['Photos'].files.length + Number(photoCount) == 0 || fileups['Attendance'].files.length + Number(attendanceCount) == 0 || fileups['Reports'].files.length + Number(reportCount) == 0){
+	    $('.error').html("Upload atleast one file per section!<br>");
             }else if(!validFile(fileups['Photos']) || !validFile(fileups['Attendance']) || !validFile(fileups['Reports'])){
 	    $('.error').html("Allowed file formats are: <br> [txt, pdf, png, jpg, jpeg, gif, csv, doc, docx]<br>");
             }else{
@@ -83,7 +137,7 @@
         contentType: 'application/json',
         data: JSON.stringify({status: {id: 3}}),
         success: function (data){
-          console.log('Status: Approved');
+          console.log('Status: Pending for Approval');
         }
         });                    
 	window.history.back();
@@ -92,3 +146,4 @@
     });                        
 });
  </script>
+</div>
