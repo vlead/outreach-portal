@@ -16,7 +16,7 @@
       </p>
       <p>Nodal Centre Name:<br>
         <select class="form-control" name="centre" ng-model="ncentre_id"
-                ng-options="centre.location for centre in ncentres" required>
+                ng-options="centre.name as (centre.name + ',&nbsp; ' + centre.location) for centre in ncentres" required>
          </select>
         <span style="color:red" ng-show="myForm.centre.$dirty && myForm.centre.$invalid">
            <span ng-show="!ncentre_id">Sorry, the field is empty!</span>
