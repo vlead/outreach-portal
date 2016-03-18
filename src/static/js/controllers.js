@@ -23,7 +23,7 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
    
    
 
-    var mapOptions = { zoom: 4, center: new google.maps.LatLng(20,80) };
+    var mapOptions = { zoom: 3, center: new google.maps.LatLng(20,80) };
     $scope.map = new google.maps.Map(document.getElementById('map'), mapOptions);
     var geocoder = new google.maps.Geocoder();
     var get_geocode = function (workshop_location, label){
@@ -372,7 +372,11 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
             var workshop_date = new Date($scope.message.date);
             var status_id = $scope.message.status.id;
             if((today > workshop_date) & !(today.toDateString() == workshop_date.toDateString())){
-              status_id = 2;
+              if(status_id == 3){
+                status_id = 3;
+              }else{
+                status_id = 2;
+              }
             }else{
               status_id = 1;
             }
@@ -584,7 +588,7 @@ app.controller("add-nc", function($scope, $http, dataFactory, $routeParams, $win
     $scope.id = 0;
     $scope.submit = function(isvalid){
         if(isvalid){
-            dataFactory.post('/users',{'name' : $scope.name, 'created' : Date(), "institute_name" : $scope.inst_name, 'email' : $scope.email,'role' : { 'id' : 3 } } ).
+            dataFactory.post('/users',{'name' : $scope.name, 'created' : Date(), 'email' : $scope.email,'role' : { 'id' : 3 } } ).
                 success(function(data, status, headers, config){
                     id = data.id;       
                     $scope.status = "Success";
