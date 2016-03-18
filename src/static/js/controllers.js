@@ -372,7 +372,11 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
             var workshop_date = new Date($scope.message.date);
             var status_id = $scope.message.status.id;
             if((today > workshop_date) & !(today.toDateString() == workshop_date.toDateString())){
-              status_id = 2;
+              if(status_id == 3){
+                status_id = 3;
+              }else{
+                status_id = 2;
+              }
             }else{
               status_id = 1;
             }
