@@ -16,7 +16,7 @@
       </p>
       <p>Nodal Centre Name:<br>
         <select class="form-control" name="centre" ng-model="ncentre_id"
-                ng-options="centre.name as (centre.name + ',&nbsp; ' + centre.location) for centre in ncentres" required>
+                ng-options="centre as (centre.name + ',&nbsp; ' + centre.location) for centre in ncentres" required>
          </select>
         <span style="color:red" ng-show="myForm.centre.$dirty && myForm.centre.$invalid">
            <span ng-show="!ncentre_id">Sorry, the field is empty!</span>
@@ -33,14 +33,14 @@
           <span ng-show="myForm.email.$error.pattern">Enter valid email-id</span>
 	</span>
       </p>
-      <p>Institute Name:<br>
+
+      <!--<p>Institute Name:<br>
 	<input type="text" name="inst_name" ng-model="inst_name"  class="form-control"  placeholder="Institute Name" required>
 	<span style="color:red" ng-show="myForm.inst_name.$dirty && myForm.inst_name.$invalid">
 	  <span ng-show="myForm.inst_name.$error.required">Institute name is required.</span>
 	</span>
       </p>
       
-      <!--
 	  <p>Phone No:<br>
 	<input type="number" name="phone"  ng-pattern="/^[(]{0,1}[0-9]{3}[)\.\-
                ]{0,1}[0-9]{3}[\.\-
