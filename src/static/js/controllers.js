@@ -496,22 +496,36 @@ app.controller("manage-nc", function($scope, $http, $routeParams, dataFactory, $
         console.log(data);
     });
     $scope.del =  function(nc_details_id, user_id){
-        if(confirm("Are you sure!") == true){
-            dataFactory.del('/nodal_coordinator_details/'+nc_details_id).
+        dataFactory.get('/workshops?user_id='+user_id).
                 success(function(data, status, headers, config){ 
-                    $route.reload();
+                    if(data.length == 0)
+                    	{
+                    	   if(confirm("Are you sure!") == true){
+            			dataFactory.del('/nodal_coordinator_details/'+nc_details_id).
+                		success(function(data, status, headers, config){ 
+                    		$route.reload();
+                		}).
+                		error(function(data, status, headers, config){
+                		 console.log(data);
+                		});
+            			dataFactory.del('/users/'+ user_id).
+                		success(function(data, status, headers, config) {
+                    		$route.reload();
+                		}).
+        			error(function(data, status, headers, config){
+                    		console.log(data);
+                		});
+        			}	
+                    	}
+                    	else {
+                    		alert("Can't delete user !! Since the workshops are associated with this user and To delete this user delete workshop first");
+                    		$route.reload();
+                    	}
                 }).
                 error(function(data, status, headers, config){
                     console.log(data);
                 });
-            dataFactory.del('/users/'+ user_id).
-                success(function(data, status, headers, config) {
-                    $route.reload();
-                }).
-                error(function(data, status, headers, config){
-                    console.log(data);
-                });
-        }
+      
     }
     
 });
