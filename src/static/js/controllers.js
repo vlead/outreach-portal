@@ -156,7 +156,7 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
         }
         $scope.total_workshops = workshops.length;
         $scope.total_participants = participants_count;
-        $scope.totalexpts = expts_count;
+        $scope.total_usage = expts_count;
         $scope.labs = labs;
         $scope.workshops = workshop_list;
     });
