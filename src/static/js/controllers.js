@@ -496,7 +496,7 @@ app.controller("manage-nc", function($scope, $http, $routeParams, dataFactory, $
         console.log(data);
     });
     $scope.del =  function(nc_details_id, user_id){
-        dataFactory.get('/workshops?user_id='+user_id).
+        dataFactory.fetch('/workshops?user_id='+user_id).
                 success(function(data, status, headers, config){ 
                     if(data.length == 0)
                     	{
@@ -515,10 +515,11 @@ app.controller("manage-nc", function($scope, $http, $routeParams, dataFactory, $
         			error(function(data, status, headers, config){
                     		console.log(data);
                 		});
-        			}	
+        			}
+        		$route.reload();
                     	}
                     	else {
-                    		alert("Can't delete user !! Since the workshops are associated with this user and To delete this user delete workshop first");
+                    		alert("Can't delete user !! Since the workshops are associated with this user and to delete this user delete workshops under him first");
                     		$route.reload();
                     	}
                 }).
