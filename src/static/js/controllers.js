@@ -156,7 +156,7 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
         }
         $scope.total_workshops = workshops.length;
         $scope.total_participants = participants_count;
-        $scope.totalexpts = expts_count;
+        $scope.total_usage = expts_count;
         $scope.labs = labs;
         $scope.workshops = workshop_list;
     });
@@ -496,22 +496,37 @@ app.controller("manage-nc", function($scope, $http, $routeParams, dataFactory, $
         console.log(data);
     });
     $scope.del =  function(nc_details_id, user_id){
-        if(confirm("Are you sure!") == true){
-            dataFactory.del('/nodal_coordinator_details/'+nc_details_id).
+        dataFactory.fetch('/workshops?user_id='+user_id).
                 success(function(data, status, headers, config){ 
-                    $route.reload();
+                    if(data.length == 0)
+                    	{
+                    	   if(confirm("Are you sure!") == true){
+            			dataFactory.del('/nodal_coordinator_details/'+nc_details_id).
+                		success(function(data, status, headers, config){ 
+                    		$route.reload();
+                		}).
+                		error(function(data, status, headers, config){
+                		 console.log(data);
+                		});
+            			dataFactory.del('/users/'+ user_id).
+                		success(function(data, status, headers, config) {
+                    		$route.reload();
+                		}).
+        			error(function(data, status, headers, config){
+                    		console.log(data);
+                		});
+        			}
+        		$route.reload();
+                    	}
+                    	else {
+                    		alert("Can't delete user !! Since the workshops are associated with this user and to delete this user delete workshops under him first");
+                    		$route.reload();
+                    	}
                 }).
                 error(function(data, status, headers, config){
                     console.log(data);
                 });
-            dataFactory.del('/users/'+ user_id).
-                success(function(data, status, headers, config) {
-                    $route.reload();
-                }).
-                error(function(data, status, headers, config){
-                    console.log(data);
-                });
-        }
+      
     }
     
 });
