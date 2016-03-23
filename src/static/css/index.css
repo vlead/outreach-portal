@@ -42,6 +42,9 @@ h1,h2,h3{
 .analytics-band .nodal-centers{
 	background: #2F3F3A;
 }
+.analytics-band .usage{
+	background: #FFCC00;
+}
 .number{
 	font-family: 'Lato', sans-serif;
 	font-weight: 400;
