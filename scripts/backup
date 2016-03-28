@@ -3,7 +3,7 @@
 # Absolute path to the scripts directory
 SCRIPTS_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 #DOC_FOLDER=$(cd ../src/static/uploads && pwd)
-DOC_FOLDER="../src/static/uploads"
+DOC_FOLDER="/var/www/src/static/uploads"
 DB_NAME="outreach"
 DB_PASS="root"
 

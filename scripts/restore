@@ -30,7 +30,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # stop the services before restoring..
-$SCRIPTS_DIR/stop
+#$SCRIPTS_DIR/stop
 # restore from the dump folder
 mysql -u root -p$DB_PASS $DB_NAME < $DB_NAME.sql
 if [ $? -ne 0 ]; then
@@ -40,6 +40,6 @@ if [ $? -ne 0 ]; then
 fi
 # start back the services
 $SCRIPTS_DIR/start
-
+mv var/www/src/static/uploads /var/www/src/static
 echo "Restore successful."
 exit 0;
