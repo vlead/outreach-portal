@@ -2,9 +2,10 @@
 
 # Absolute path to the scripts directory
 SCRIPTS_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-DOC_FOLDER=$(cd ../src/static/uploads)
+#DOC_FOLDER=$(cd ../src/static/uploads && pwd)
+DOC_FOLDER="/var/www/src/static/uploads"
 DB_NAME="outreach"
-DB_PASS=$(cat ../build/code/db_pass.txt)
+DB_PASS="root"
 
 OUT_FILE_NAME="outreachbackup"
 VERSION="v0.2.0"
@@ -24,16 +25,7 @@ fi
 # start back the services
 $SCRIPTS_DIR && ./start
 
-# tar the $DB_NAME.sql file
-tar cfvz $OUT_FILE $DB_NAME.sql
-if [ $? -ne 0 ]; then
-  echo "Error: Something went wrong while tar-ing the sql dump."
-  echo "Aborting backup."
-  exit 1;
-fi
-
-# tar the Documents folder
-tar cvpzf $DOC_FOLDER
+tar --append --file=$OUT_FILE $DOC_FOLDER $DB_NAME.sql
 if [ $? -ne 0 ]; then
   echo "Error: Something went wrong while tar-ing the static folderdump."
   echo "Aborting backup."
