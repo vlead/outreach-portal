@@ -1,0 +1,166 @@
+* Outreach Database
+** User-Tbl
+| UsrId         | PK, NUMERIC                                        |
+| UsrTitle      | NOT NULL, VARCHAR                                  |
+| UsrFirstName  | NOT NULL, VARCHAR                                  |
+| UsrLastName   | NOT NULL, VARCHAR                                  |
+| UsrEmailId    | NOT NULL, VARCHAR, UNIQUE                          |
+| UsrAltEmailId | NULL, VARCHAR                                      |
+| UsrTelNo      | NOT NULL, NUMERIC                                  |
+| UsrAltTelNo   | NULL, NUMERIC                                      |
+| UsrInst_Id    | NOT NULL, NUMERIC                                  |
+| UsrMgrId      | NULL (Selfmapping..Emp/Mgr relationship), NUMERIC  |
+| UsrStatus     | NOT NULL, CHAR, A/I (Default - A)                  |
+| CreaDt        | NOT NULL,DATETIME,SystemGenerated(DDMMYYH H24:MI:SS) |
+| ModiDt        | NOT NULL,DATETIME,SystemGenerated(DDMMYYH H24:MI:SS) |
+** UsrRoles
+| UsrRolesId | PK, NUMERIC                                       |
+| UsrId      | NOT NULL, NUMERIC{Composite Key}                  |
+| RoleId     | NOT NULL, NUMERIC{Composite Key}                  |
+| Status     | NOT NULL, CHAR,A/I (Default - A)                  |
+| CreaDt     | NOT NULL, DATETIME, SystemGenerated(DDMMYY HH24:MI:SS) |
+| ModiDt     | NOT NULL, DATETIME, SystemGenerated(DDMMYY HH24:MI:SS) |
+** Role-Tbl
+| RoleId     | PK, NUMERIC                                      |
+| RoleName   | NOT NULL, VARCHAR, UNIQUE                        |
+| RoleCode   | NOT NULL, VARCHAR, UNIQUE                        |
+| RoleStatus | NOT NULL, CHAR, A/I (Default - A)                |
+| CreaDt     | NOT NULL, DATETIME, SystemGenerated(DDMMYY HH24:MI:SS) |
+| ModiDt     | NOT NULL, DATETIME, SystemGenerated(DDMMYY HH24:MI:SS) |
+** Priv-Tbl
+| PrivId     | PK, NUMERIC                                                                                                             |
+| PrivName   | NOT NULL, VARCHAR, UNIQUE (E.g.OCUser, NCUser, Target, Workshop, etc is a standard list maintained in Configtable/file) |
+| EntityName | NOT NULL, VARCHAR {Composite Key}                                                                                       |
+| PrivType   | NOT NULL, CHAR C/R/U/D {   }                                                                                            |
+| PrivStatus | NOT NULL, CHAR, A/I (Default - A)                                                                                       |
+| CreaDt     | NOT NULL, DATETIME, SystemGenerated(DDMMYY HH24:MI:SS)                                                                  |
+| ModiDt     | NOT NULL, DATETIME, SystemGenerated(DDMMYY HH24:MI:SS)                                                                  |
+** RolePriv-Tbl
+| RolePrivId | PK, NUMERIC                                      |
+| RoleId     | NOT NULL, NUMERIC {Composite Key}                |
+| PrivId     | NOT NULL, NUMERIC {   }                          |
+| PrivStatus | NOT NULL, CHAR, A/I (Default - A)                |
+| CreaDt     | NOT NULL, DATETIME, SystemGenerated(DDMMYY HH24:MI:SS) |
+| ModiDt     | NOT NULL, DATETIME, SystemGenerated(DDMMYY HH24:MI:SS) |
+** Inst-Tbl
+| Inst_Id       | PK, NUMERIC                                      |
+| InstName      | NOT NULL, VARCHAR, UNIQUE {Composite Key}        |
+| InstCity/Town | NOT NULL, VARCHAR {  }                           |
+| InstDistrict  | NOT NULL, VARCHAR                                |
+| InstState     | NOT NULL, VARCHAR                                |
+| InstZip       | NOT NULL, NUMERIC                                |
+| InstStatus    | NOT NULL, CHAR, A/I (Default - A)                |
+| CreaDt        | NOT NULL, DATETIME, SystemGenerated(DDMMYY HH24:MI:SS) |
+| ModiDt        | NOT NULL, DATETIME, SystemGenerated(DDMMYY HH24:MI:SS) |
+** Target-Tbl
+| Target_Id       | PK, NUMERIC                                      |
+| TargetUsage     | NOT NULL, NUMERIC                                |
+| TargetStartDate | NOT NULL, DATE                                   |
+| TargetEndDate   | NOT NULL, DATE                                   |
+| TarRemarks      | NULL, VARCHAR                                    |
+| User_Id         | NOT NULL, NUMERIC (person getting the target)    |
+| CreaDt          | NOT NULL, DATETIME, SystemGenerated(DDMMYY HH24:MI:SS) |
+| ModiDt          | NOT NULL, DATETIME, SystemGenerated(DDMMYY HH24:MI:SS) |
+** TargCollege-Tbl
+| TargCollege_Id       | PK, NUMERIC                                      |  
+| Target_Id            | PK, NUMERIC                                      |  
+| Inst_Id              | NULL, NUMERIC                                    | 
+| TargCollegeStudents  | NULL, NUMERIC                                    |  
+| TarCollege_StartDate | NOT NULL, DATE                                   | 
+| TarCollege_EndDate   | NOT NULL, DATE                                   |
+| CreaDt               | NOT NULL, DATETIME, SystemGenerated(DDMMYY HH24:MI:SS) |  
+| ModiDt               | NOT NULL, DATETIME, SystemGenerated(DDMMYY HH24:MI:SS) | 
+** Workshop-Tbl
+| Workshop_Id       | PK, NUMERIC                                             |
+| Workshop_Name     | VARCHAR, NOT NULL {Composite Key}                       |
+| WorkshopCond_Date | DATE, NOT NULL{   }                                     |
+| Target_ID         | VARCHAR, NOT NULL                                       |
+| Workshop_StatID   | NOT NULL, VARCHAR(DRAFT SUBMIT APPROVED REJECTED-Status table) |
+| CreaDt            | NOT NULL, DATETIME, SystemGenerated(DDMMYY HH24:MI:SS)  |
+| ModiDtn           | NOT NULL, DATETIME, SystemGenerated(DDMMYY HH24:MI:SS)  |
+** WorkshopInstUsr-Tbl
+| WorkshopInstUsr_Id | PK, NUMERIC                                      |                        
+| Workshop_Id        | NOT NULL, NUMERIC {Composite key}                |         
+| Inst_Id            | NOT, NULL,NUMERIC {   } Institute where it is conducted |  
+| Usr_Id             | NOT, NULL, NUMERIC {  } person conducting workshop |  
+| Sessions           | NOT NULL, NUMERIC                                |                        
+| Participants       | NOT NULL, NUMERIC                                |                       
+| Feedback_Id        | NOT NULL, NUMERIC                                |                   
+| CreaDt             | NOT NULL, DATETIME, SystemGenerated(DDMMYY HH24:MI:SS) |     
+| ModiDt             | NOT NULL, DATETIME, SystemGenerated(DDMMYY HH24:MI:SS)                                              |
+** Statu-Tbl
+| Status_Id     | PK, NUMERIC                                                             |
+| StatusPurp    | NOT NULL, VARCHAR (WORKSHOP TARGET etc ){COMPOSITE KEY}..Can be further normalized |
+| Status        | NOT NULL, VARCHAR{}                                                     |
+| Status_PrevID | NULL, NUMERIC, NULL at initial status stage {Composite Key}             |
+| Status_NextID | NULL, NUMERIC, NULL at Final status stage {Composite Key}               |
+| Notify_ID     | NULL, NUMERIC                                                           |
+| CreaDt        | NOT NULL, DATETIME, SystemGenerated (DDMMYY HH24:MI:SS)                 |
+| ModiDt        | NOT NULL, DATETIME, SystemGenerated (DDMMYY HH24:MI:SS)                 |
+** Notify-Tbl
+| Notify_Id  | PK, NUMERIC                                      |
+| NotSub_Txt | NOT NULL, VARCHAR                                |
+| NotMsg_Txt | NOT NULL, VARCHAR                                |
+| CreaDt     | NOT NULL, DATETIME, SystemGenerated (DDMMYY HH24:MI:SS) |
+| ModiDt     | NOT NULL, DATETIME, SystemGenerated (DDMMYY HH24:MI:SS) |
+** Stream-Tbl
+| Stream_Id  | PK, NUMERIC                                      |
+| StreamName | VARCHAR, NOT NULL, UNIQUE                        |
+| StreamCode | VARCHAR, NOT NULL, UNIQUE                        |
+| Inst_Id    | NOT NULL, NUMERIC                                |
+| CreaDt     | NOT NULL, DATETIME, SystemGenerated (DDMMYY HH24:MI:SS) |
+| ModiDt     | NOT NULL, DATETIME, SystemGenerated (DDMMYY HH24:MI:SS) |
+** Lab-Tbl
+| Lab_Id    | PK, NUMERIC                                             |
+| StreamID  | NOT NULL, NUMERIC                                       |
+| LabName   | VARCHAR, NOT NULL, UNIQUE                               |
+| LabURL    | VARCHAR, NOTNULL                                        |
+| Inst_Id   | NOT NULL, NUMERIC                                       |
+| LabStatus | NOT NULL, CHAR, A/I (Default - A)                       |
+| CreaDt    | NOT NULL, DATETIME, SystemGenerated (DDMMYY HH24:MI:SS) |
+| ModiDt    | NOT NULL, DATETIME, SystemGenerated (DDMMYY HH24:MI:SS) |
+
+* Other attributes such as FOSS,L6,GIT can be added
+** Exp-Tbl
+| Exp_Id    | PK, NUMERIC                                      |
+| ExpName   | VARCHAR, NOT NULL, UNIQUE                        |
+| Lab_Id    | NOT NULL, NUMERIC                                |
+| ExpStatus | NOT NULL, CHAR, A/I (Default - A)                |
+| CreaDt    | NOT NULL, DATETIME, SystemGenerated (DDMMYY HH24:MI:SS) |
+| ModiDt    | NOT NULL, DATETIME, SystemGenerated (DDMMYY HH24:MI:SS) |
+** Feedback-Tbl
+| Feedback_Id      | PK, NUMERIC                                      |
+| Inst_Id          | NULL, NUMERIC                                    |
+| LabId            | NULL, NUMERIC                                    |
+| ExpId            | NULL, NUMERIC                                    |
+| Feedback_Email   | NULL, VARCHAR                                    |
+| Feedback_Like    | NULL, VARCHAR                                    |
+| Feedback_Impr    | NULL, VARCHAR                                    |
+| Feedback_Rating  | NOT NULL, NUMERIC                                |
+| IPAddress        | NOT NULL, VARCHAR                                |
+| FeedbackDoc_Link | NULL, VARCHAR                                    |
+| CreaDt           | NOT NULL, DATETIME, SystemGenerated(DDMMYY HH24:MI:SS) |
+| ModiDt           | NOT NULL, DATETIME, SystemGenerated(DDMMYY HH24:MI:SS) |
+** Audit-Tbl
+| Audit_Id      | PK, NUMERIC                                        |
+| AuditTbl_Name | NOT NULL, VARCHAR (validate against data dictionary) |
+| Audit_PKId    | NOT NULL, NUMERIC                                  |
+| AuditUserID   | NOT NULL, NUMERIC                                  |
+| Audit_Action  | NOT NULL, VARCHAR (INSERT/UPDATE/DELETE/ALTER) - NOT NULL |
+| Audit_Rec     | NOT NULL (~)                                       |
+| CreaDt        | NOT NULL, DATETIME, SystemGenerated(DDMMYY HH24:MI:SS) |
+| ModiDt        | NOT NULL, DATETIME, SystemGenerated(DDMMYY HH24:MI:SS) |
+** TradeOffs
+All data in the database should be saved as entered. However, for Dup
+check - please compare on application side - converting all entered
+data to lower case Are not incorporating auto assignment of approvals
+in case there are not available/handled/responded to the approval
+queue for x days No screen for managing privileges
+
+Workshop is removed from Target. As the usage could happen through
+workshops, web, push/pull,etc The target set PI(Prof Ranjan or Sanjeet
+for Prof Ranjan) for all institutes as Principal Outreach Coordinator
+is not part of the scope
+
+We are not capturing the "remarks" for every change
+
