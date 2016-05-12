@@ -5342,7 +5342,7 @@ application = create_app(config)
 
 ** REST APIs to read and query data
    These are the set of REST APIs for read operations.
-
+   
 *** Design
    The REST APIs to get and query data are designed in a generic
    way. That is, APIs for each entity is not designed and implemented
@@ -5657,7 +5657,7 @@ entity_pairs = {
 #+END_SRC
      
 **** GET APIS
-#+BEGIN_SRC python :tangle src/api.py :eval no
+#+BEGIN_SRC python :tangle src/api.py :eval 
 @api.route("/")
 def index():
     return render_template("index.html")
@@ -5687,10 +5687,10 @@ def admin():
             return render_template("admin.html", documents=documents)
         else:
             return redirect("/")
-
+        
 @api.route("/oc")
 def outreach_coordinator():
-
+    
     if ('email' in session) and (session['role'] == 'OC'):
         return render_template("oc.html")
     else:
@@ -5698,7 +5698,6 @@ def outreach_coordinator():
 
 @api.route("/nc")
 def nodal_coordinator():
-
     if ('email' in session) and (session['role'] == 'NC'):
         return render_template("nc.html")
     else:
@@ -5744,7 +5743,7 @@ def logout_handler():
     session.pop('name', None)
     session.pop('role', None)
     return "Ok"
-
+    
 @api.route('/upload_reference_documents/<id>', methods=['GET', 'POST'])
 def save_reference_documents(id):
     if request.method == 'GET':
@@ -5757,33 +5756,20 @@ def save_reference_documents(id):
         <input type=submit value=Upload>
         </form>
         '''
-
+      
     if request.method == 'POST':
         url = APP_URL + "/reference_documents/"\
               + id
         response = requests.get(url)
-
+        
         file = request.files['file']
         if response.ok:
-            if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                outreach_directory_path = os.path.dirname(os.path.abspath(__file__))
-                dir_path = outreach_directory_path + UPLOAD_DIR_PATH
-                timestamp = datetime.utcnow().strftime("-%Y-%m-%d-%H-%M-%S.")
-                file_name = filename.split(".")
-                new_file_name = "%s%s%s" % (file_name[0], timestamp, file_name[1])    
-                file_path = "%s%s" % (dir_path, new_file_name)
-                db_path = "%s%s" % (UPLOAD_DIR_PATH, new_file_name)
-                file.save(file_path)
-
-                path = {'path': db_path}
-                response = requests.put(url, data=path)
-                return file_path
-            else:
-                return "file format is not in Allowed Extensions"
+            file_path = upload_file(file, url)
+            return file_path
         else:
             return "No entry for 'ReferenceDocuments' entity with given id"
-
+          
+          
 @api.route('/upload_workshop_reports/<id>', methods=['GET', 'POST'])
 def save_workshop_documents(id):
     if request.method == 'GET':
@@ -5800,38 +5786,71 @@ def save_workshop_documents(id):
         url = APP_URL + "/workshop_reports/"\
               + id
         response = requests.get(url)
-
+        
         file = request.files['file']
         if response.ok:
-            if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                outreach_directory_path = os.path.dirname(os.path.abspath(__file__))
-                dir_path = outreach_directory_path + UPLOAD_DIR_PATH
-                timestamp = datetime.utcnow().strftime("-%Y-%m-%d-%H-%M-%S.")
-                file_name = filename.split(".")
-                new_file_name = "%s%s%s" % (file_name[0], timestamp, file_name[1])    
-                file_path = "%s%s" % (dir_path, new_file_name)
-                db_path = "%s%s" % (UPLOAD_DIR_PATH, new_file_name)
-                file.save(file_path)
-
-                path = {'path': db_path}
-                response = requests.put(url, data=path)
-                return file_path
-            else:
-                return "file format is not in Allowed Extensions"
+            file_path = upload_file(file, url)
+            return file_path
         else:
             return "No entry for 'WorkshopReports' entity with given id"
 
 def allowed_file(filename):
     return '.' in filename and \
-           filename.rsplit('.', 1)[1] in set(ALLOWED_FILE_EXTENSIONS)
+        filename.rsplit('.', 1)[1] in set(ALLOWED_FILE_EXTENSIONS)
+
+def upload_file(file, url):
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        current_app.logger.debug("filename = %s" %
+                                 filename)
+        outreach_directory_path = os.path.dirname(os.path.abspath(__file__))
+        current_app.logger.debug("outreach_directory_path = %s" %
+                                 outreach_directory_path)
+        dir_path = outreach_directory_path + UPLOAD_DIR_PATH
+        current_app.logger.debug("dir_path = %s" %
+                                 dir_path)
+        timestamp = datetime.utcnow().strftime("-%Y-%m-%d-%H-%M-%S.")
+        file_name = filename.split(".")
+        new_file_name = "%s%s%s" % (file_name[0], timestamp, file_name[1])    
+        current_app.logger.debug("new_file_name = %s" %
+                                 new_file_name)
+  
+        file_path = "%s%s" % (dir_path, new_file_name)
+        current_app.logger.debug("file_path = %s" %
+                                 file_path)
+  
+        db_path = "%s%s" % (UPLOAD_DIR_PATH, new_file_name)
+        current_app.logger.debug("db_path = %s" %
+                                 db_path)
+        try:
+            file.save(file_path)                   
+            current_app.logger.debug("file saved successfully")      
+        except Exception, e:
+            current_app.logger.error("Error unable to save file: " + str(e))
+            raise e
+            abort(500, 'error is %s' % (str(e)))
+            
+        try:
+            path = {'path': db_path}
+            current_app.logger.debug("db path is set successfully")
+        except Exception, e:
+            current_app.logger.error("Error unable to set db_path: " + str(e))
+            raise e
+            abort(500, 'error is %s' % (str(e)))
+          
+        response = requests.put(url, data=path)
+        return file_path
+    else:
+        return "file format is not in Allowed Extensions"
+      
+
 # query an entity
 # =/<:entity>s?query_param1=val1&query_param2=val2&..query_paramn=valn=
 @api.route('/<entity>', methods=['GET'])
 def query_an_entity(entity):
     if entity not in entity_pairs:
         abort(400, 'Entity %s is not valid.' % entity)
-
+        
     curr_entity = entity_pairs[entity]['entity_class']
     arg_tuple_list = request.args.lists()
     if not arg_tuple_list:
@@ -5850,8 +5869,7 @@ def query_an_entity(entity):
         entities = query.all()
         print "data: %s" % [ent.to_client() for ent in entities]
         return jsonify_list([ent.to_client() for ent in entities])
-
-
+        
 def create_filters(entity_map, curr_entity, args, values):
     if len(args) == 1:
         try:
@@ -5880,7 +5898,6 @@ def create_filters(entity_map, curr_entity, args, values):
                                    args[1:], values))
             except Exception, e:
                 abort(400, 'error is %s' % (str(e)))
-
 
 @api.route('/<entity>/<id>', methods=['GET'])
 def get_specific_entity(entity, id):
