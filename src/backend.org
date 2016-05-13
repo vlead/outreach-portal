@@ -111,16 +111,14 @@ import inspect
 from flask import session, render_template, Blueprint, request, jsonify, abort,\
     current_app, redirect, url_for
 from config import *
+from flask import current_app
+
 from flask import Flask, redirect, url_for
 from werkzeug import secure_filename
+
 from db import *
 from utils import parse_request, jsonify_list
 from maps import *
-from outreach_logging import OutreachLogger
-
-outreach_logger = OutreachLogger()
-app_logger = outreach_logger.get_logger()
-
 api = Blueprint('APIs', __name__)
 #+END_SRC
 *** Imports and Initialization of testcases for Python API
@@ -5144,6 +5142,8 @@ def typecheck(**typemap):
 ** The web application
 #+BEGIN_SRC python :tangle src/app.py :eval no
 # -*- coding: utf-8 -*-
+import os
+
 from flask import Flask, jsonify, make_response
 # from flask.ext.cors import CORS
 
@@ -5151,11 +5151,6 @@ from db import db
 from api import api
 # import config file
 import config
-
-from outreach_logging import OutreachLogger
-
-outreach_logger = OutreachLogger()
-app_logger = outreach_logger.get_logger()
 
 
 def create_app(config):
@@ -5170,6 +5165,7 @@ def create_app(config):
     db.app = app
     # register blueprints
     app.register_blueprint(api)
+    configure_logging(app)
     configure_errorhandlers(app)
     #  configure_cors(app)
     # all set; return app object
@@ -5181,114 +5177,100 @@ def configure_errorhandlers(app):
 
     @app.errorhandler(500)
     def server_error(err):
-        app_logger.error("error code = %s" % "500")
+        app.logger.error("error code = %s" % "500")
         resp = None
         try:
-            app_logger.error("error desc = %s" % err.description)
+            app.logger.error("error desc = %s" % err.description)
             resp = make_response(jsonify(error=err.description), 500)
         except Exception:
             try:
-                app_logger.error("error mesg = %s" % err.message)
+                app.logger.error("error mesg = %s" % err.message)
                 resp = make_response(jsonify(error=err.message), 500)
             except Exception:
                 resp = make_response(jsonify(error=str(err)), 500)
-                app_logger.error("error = %s" % str(err))
+                app.logger.error("error = %s" % str(err))
         return resp
 
     @app.errorhandler(405)
     def method_not_allowed(err):
-        app_logger.error("error code = %s" % "405")
+        app.logger.error("error code = %s" % "405")
         resp = None
         try:
-            app_logger.error("error desc = %s" % err.description)
+            app.logger.error("error desc = %s" % err.description)
             resp = make_response(jsonify(error=err.description), 405)
         except Exception:
             try:
-                app_logger.error("error mesg = %s" % err.message)
+                app.logger.error("error mesg = %s" % err.message)
                 resp = make_response(jsonify(error=err.message), 405)
             except Exception:
                 resp = make_response(jsonify(error=str(err)), 405)
-                app_logger.error("error = %s" % str(err))
+                app.logger.error("error = %s" % str(err))
         return resp
 
     @app.errorhandler(404)
     def not_found(err):
-        app_logger.error("error code = %s" % "404")
+        app.logger.error("error code = %s" % "404")
         resp = None
         try:
-            app_logger.error("error desc = %s" % err.description)
+            app.logger.error("error desc = %s" % err.description)
             resp = make_response(jsonify(error=err.description), 404)
         except Exception:
             try:
-                app_logger.error("error mesg = %s" % err.message)
+                app.logger.error("error mesg = %s" % err.message)
                 resp = make_response(jsonify(error=err.message), 404)
             except Exception:
                 resp = make_response(jsonify(error=str(err)), 404)
-                app_logger.error("error = %s" % str(err))
+                app.logger.error("error = %s" % str(err))
         return resp
 
     @app.errorhandler(400)
     def bad_request(err):
-        app_logger.error("error code = %s" % "400")
+        app.logger.error("error code = %s" % "400")
         resp = None
         try:
-            app_logger.error("error desc = %s" % err.description)
+            app.logger.error("error desc = %s" % err.description)
             resp = make_response(jsonify(error=err.description), 400)
         except Exception:
             try:
-                app_logger.error("error mesg = %s" % err.message)
+                app.logger.error("error mesg = %s" % err.message)
                 resp = make_response(jsonify(error=err.message), 400)
             except Exception:
                 resp = make_response(jsonify(error=str(err)), 400)
-                app_logger.error("error = %s" % str(err))
+                app.logger.error("error = %s" % str(err))
         return resp
+
+
+def configure_logging(app):
+    import logging
+    import logging.handlers
+    formatter = logging.Formatter('%(asctime)s: %(levelname)s: %(filename)s:'
+                                  ' %(funcName)s():%(lineno)d: %(message)s')
+
+    # Also error can be sent out via email. So we can also have a SMTPHandler?
+    log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                           '..',
+                           app.config['LOG_FILE_DIRECTORY'])
+
+    log_file = "%s/%s" % (log_dir, app.config['LOG_FILE'])
+    os.system("sudo touch %s" % log_file)
+    os.system("sudo chmod 777 %s" % log_file)
+    max_size = 1024 * 1024 * 20  # Max Size for a log file: 20MB
+    log_handler = logging.handlers.RotatingFileHandler(log_file,
+                                                       maxBytes=max_size,
+                                                       backupCount=10)
+
+    log_level = app.config['LOG_LEVEL']
+    log_handler.setLevel(log_level)
+    log_handler.setFormatter(formatter)
+
+    app.logger.addHandler(log_handler)
 
 
 if __name__ == "__main__":
     app = create_app(config)
     app.run(debug=True, host='0.0.0.0', threaded=True)
+
 #+END_SRC
-
-
-** Logging 
-#+BEGIN_SRC python :tangle src/outreach_logging.py :eval no 
-import logging
-import logging.handlers
-from config import LOG_FILE_DIRECTORY
-from config import LOG_FILE
-from config import LOG_LEVEL
-import os
-
-class OutreachLogger:
-
-    outreach_logger = None
-
-    def __init__(self):
-
-        self.outreach_logger = logging.getLogger("outreach")
-        formatter = logging.Formatter('%(asctime)s: %(levelname)s: %(filename)s:'
-                                        ' %(funcName)s():%(lineno)d: %(message)s')
-
-        log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                '..',
-                                LOG_FILE_DIRECTORY)
-
-        log_file = "%s/%s" % (log_dir, LOG_FILE)
-        os.system("touch %s" % log_file)
-        os.system("chmod 777 %s" % log_file)
-        max_size = 1024 * 1024 * 20  # Max Size for a log file: 20MB
-        log_handler = logging.handlers.RotatingFileHandler(log_file,
-                                                            maxBytes=max_size,
-                                                            backupCount=10)
-        log_handler.setFormatter(formatter)
-        self.outreach_logger.addHandler(log_handler)
-        self.outreach_logger.setLevel(LOG_LEVEL)
-
-    def get_logger(self):
-        return self.outreach_logger
-
-#+END_SRC   
-
 
 ** Configuring the application
 Below is the configuration for the application
@@ -5303,7 +5285,7 @@ SQLALCHEMY_DATABASE_URI = 'mysql+oursql://<userid>:<password>@<servername>/<db_n
 
 # Debug from SQLAlchemy
 # Turn this to False on production
-SQLALCHEMY_ECHO = False
+SQLALCHEMY_ECHO = True
 SQLALCHEMY_TRACK_MODIFICATIONS = True
 
 # List of allowed origins for CORS
@@ -5317,7 +5299,7 @@ LOG_FILE_DIRECTORY = 'logs'
 LOG_FILE = 'outreach.log'
 
 # Log level for the application
-LOG_LEVEL = 10 #DEBUG
+LOG_LEVEL = 'DEBUG'
 
 # destination for uploaded files
 # example value - '/static/uploads/'
@@ -5694,6 +5676,7 @@ def admin():
         file_path = "%s%s" % (dir_path, filename)  
         file.save(os.getcwd()+"/build/code/src/"+file_path)
         path = {'path': file_path}
+        print path
         response = requests.put(APP_URL + "/reference_documents/"+ str(ID), data=path)
         return redirect("/admin#documents")
     else:
@@ -5730,17 +5713,17 @@ def login():
                 'audience': APP_URL}
         resp = requests.post(PERSONA_VERIFIER_URL,
                              data=data, verify=True)
-        app_logger.debug("response from Persona = %s" %
+        current_app.logger.debug("response from Persona = %s" %
                                  resp.json())
         if resp.ok:
             verification_data = resp.json()
         if verification_data['status'] == 'okay':
             url_for_getting_the_user = "%s/users?email=%s" % \
                                        (APP_URL, verification_data['email'])
-            app_logger.debug("url_for_getting_the_user = %s" %
+            current_app.logger.debug("url_for_getting_the_user = %s" %
                                      url_for_getting_the_user)
             backend_resp = requests.get(url_for_getting_the_user)
-            app_logger.debug("backend response = %s" %
+            current_app.logger.debug("backend response = %s" %
                                      backend_resp.text)
             if (len(backend_resp.text.encode('ascii')) != 2):
                 session['email'] = verification_data['email']
@@ -5852,6 +5835,7 @@ def query_an_entity(entity):
     curr_entity = entity_pairs[entity]['entity_class']
     arg_tuple_list = request.args.lists()
     if not arg_tuple_list:
+        print "data: %s" % [i.to_client() for i in curr_entity.get_all()]
         return jsonify_list([i.to_client() for i in curr_entity.get_all()])
     else:
         query = curr_entity.query
@@ -5864,6 +5848,7 @@ def query_an_entity(entity):
         for filter in filters:
             query = query.filter(filter)
         entities = query.all()
+        print "data: %s" % [ent.to_client() for ent in entities]
         return jsonify_list([ent.to_client() for ent in entities])
 
 
@@ -6056,6 +6041,7 @@ def delete_record(entity, id):
             else:
                 record.delete()
         except Exception, e:
+            print e
             abort(500, str(e))
 
     return jsonify(id=id, status="success")
@@ -6093,10 +6079,13 @@ def update_record(entity_name, entity, id):
         abort(400, "The data should be in JSON format")
 
     data = typecast_data(entity_name, data)
+    print "typecasted data: %s" % data
 
     try:
+        print "Updating record: %s with data: %s" % (record, data)
         record.update(**data)
     except Exception, e:
+        print e
         abort(500, str(e))
 
     return jsonify(record.to_client())
@@ -6116,9 +6105,11 @@ over it.
 def typecast_data(entity, data):
     updated_data = {}
     for attr, val in data.iteritems():
+        print "attr: %s, val: %s" % (attr, val)
         if attr not in entity_map_types[entity]['types']:
             abort(400, '%s attribute not in %s' % (attr, entity))
         const = entity_map_types[entity]['types'][attr]
+        print "const for %s is %s" % (attr, const)
 
         if type(val) is list:
             new_val = map(lambda item: typecast_item(const, attr, item), val)
@@ -6151,6 +6142,7 @@ def typecast_item(const, attr, val):
     except TypeError:
         abort(400, '%s is not a valid %s' % (val, attr))
 
+    print "new val after const: %s" % new_val
     return new_val
 
 #+END_SRC
@@ -6177,6 +6169,7 @@ def typecast_compound_item(const, attr, val):
 
     if not new_val:
         abort(404, 'id %s of %s is not found' % (val['id'], attr))
+    print "new val after const: %s" % new_val
     return new_val
 
 #+END_SRC
@@ -6225,11 +6218,14 @@ def create_record(entity_name, entity):
         abort(400, "The data should be in JSON format")
 
     data = typecast_data(entity_name, data)
+    print "creating new, typecasted data: %s" % data
 
     try:
+        print "Creating record: %s with data: %s" % (entity_name, data)
         new_record = entity(**data)
         new_record.save()
     except Exception, e:
+        print e
         abort(500, str(e))
 
     return jsonify(new_record.to_client())
