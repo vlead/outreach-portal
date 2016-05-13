@@ -50,13 +50,17 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
 });
 
 app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, $route,$window) {
-    dataFactory.fetch("/users/"+$window.number).success(function(response){
-        $scope.user = response;
-    });
-    dataFactory.fetch("/users/"+$routeParams.id).success(function(response){
-        $scope.oc_user = response;
-        
-    });
+   if ($window.number != 0 || $window.number == undefined) {
+     
+     dataFactory.fetch("/users/"+$window.number).success(function(response){
+       $scope.user = response;
+     });
+     
+     dataFactory.fetch("/users/"+$routeParams.id).success(function(response){
+       $scope.oc_user = response;
+       
+     });
+   }
     dataFactory.fetch("/reference_documents?user_id=1").success(function(response){
         $scope.documents = response;
     });
