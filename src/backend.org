@@ -5260,11 +5260,11 @@ def configure_logging(app):
                                                        backupCount=10)
 
     log_level = app.config['LOG_LEVEL']
-    log_handler.setLevel(log_level)
+    
     log_handler.setFormatter(formatter)
 
     app.logger.addHandler(log_handler)
-
+    app.logger.setLevel(log_level)
 
 if __name__ == "__main__":
     app = create_app(config)
@@ -5285,7 +5285,7 @@ SQLALCHEMY_DATABASE_URI = 'mysql+oursql://<userid>:<password>@<servername>/<db_n
 
 # Debug from SQLAlchemy
 # Turn this to False on production
-SQLALCHEMY_ECHO = True
+SQLALCHEMY_ECHO = False
 SQLALCHEMY_TRACK_MODIFICATIONS = True
 
 # List of allowed origins for CORS
@@ -5299,7 +5299,8 @@ LOG_FILE_DIRECTORY = 'logs'
 LOG_FILE = 'outreach.log'
 
 # Log level for the application
-LOG_LEVEL = 'DEBUG'
+#10=DEBUG, 20=INFO, 30=WARNING, 40=ERROR, 50=CRITICAL",
+LOG_LEVEL = 10
 
 # destination for uploaded files
 # example value - '/static/uploads/'
@@ -5676,7 +5677,6 @@ def admin():
         file_path = "%s%s" % (dir_path, filename)  
         file.save(os.getcwd()+"/build/code/src/"+file_path)
         path = {'path': file_path}
-        print path
         response = requests.put(APP_URL + "/reference_documents/"+ str(ID), data=path)
         return redirect("/admin#documents")
     else:
@@ -5835,7 +5835,6 @@ def query_an_entity(entity):
     curr_entity = entity_pairs[entity]['entity_class']
     arg_tuple_list = request.args.lists()
     if not arg_tuple_list:
-        print "data: %s" % [i.to_client() for i in curr_entity.get_all()]
         return jsonify_list([i.to_client() for i in curr_entity.get_all()])
     else:
         query = curr_entity.query
@@ -5848,7 +5847,6 @@ def query_an_entity(entity):
         for filter in filters:
             query = query.filter(filter)
         entities = query.all()
-        print "data: %s" % [ent.to_client() for ent in entities]
         return jsonify_list([ent.to_client() for ent in entities])
 
 
@@ -6041,7 +6039,6 @@ def delete_record(entity, id):
             else:
                 record.delete()
         except Exception, e:
-            print e
             abort(500, str(e))
 
     return jsonify(id=id, status="success")
@@ -6079,13 +6076,10 @@ def update_record(entity_name, entity, id):
         abort(400, "The data should be in JSON format")
 
     data = typecast_data(entity_name, data)
-    print "typecasted data: %s" % data
 
     try:
-        print "Updating record: %s with data: %s" % (record, data)
         record.update(**data)
     except Exception, e:
-        print e
         abort(500, str(e))
 
     return jsonify(record.to_client())
@@ -6105,11 +6099,9 @@ over it.
 def typecast_data(entity, data):
     updated_data = {}
     for attr, val in data.iteritems():
-        print "attr: %s, val: %s" % (attr, val)
         if attr not in entity_map_types[entity]['types']:
             abort(400, '%s attribute not in %s' % (attr, entity))
         const = entity_map_types[entity]['types'][attr]
-        print "const for %s is %s" % (attr, const)
 
         if type(val) is list:
             new_val = map(lambda item: typecast_item(const, attr, item), val)
@@ -6142,7 +6134,6 @@ def typecast_item(const, attr, val):
     except TypeError:
         abort(400, '%s is not a valid %s' % (val, attr))
 
-    print "new val after const: %s" % new_val
     return new_val
 
 #+END_SRC
@@ -6169,7 +6160,6 @@ def typecast_compound_item(const, attr, val):
 
     if not new_val:
         abort(404, 'id %s of %s is not found' % (val['id'], attr))
-    print "new val after const: %s" % new_val
     return new_val
 
 #+END_SRC
@@ -6218,14 +6208,11 @@ def create_record(entity_name, entity):
         abort(400, "The data should be in JSON format")
 
     data = typecast_data(entity_name, data)
-    print "creating new, typecasted data: %s" % data
 
     try:
-        print "Creating record: %s with data: %s" % (entity_name, data)
         new_record = entity(**data)
         new_record.save()
     except Exception, e:
-        print e
         abort(500, str(e))
 
     return jsonify(new_record.to_client())
