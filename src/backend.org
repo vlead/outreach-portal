@@ -5792,6 +5792,8 @@ def save_workshop_documents(id):
             file_path = upload_file(file, url)
             return file_path
         else:
+            current_app.logger.error("response code = %s" % response)
+            current_app.logger.debug("No entry for 'WorkshopReports' entity with given id")
             return "No entry for 'WorkshopReports' entity with given id"
 
 def allowed_file(filename):
@@ -5849,6 +5851,7 @@ def upload_file(file, url):
 @api.route('/<entity>', methods=['GET'])
 def query_an_entity(entity):
     if entity not in entity_pairs:
+        current_app.logger.error("Entity %s is not valid " % entity)	
         abort(400, 'Entity %s is not valid.' % entity)
         
     curr_entity = entity_pairs[entity]['entity_class']
@@ -5873,11 +5876,13 @@ def create_filters(entity_map, curr_entity, args, values):
         try:
             return getattr(curr_entity, args[0]).in_(values)
         except Exception, e:
+            current_app.logger.error("Error is %s" % (str(e)))		
             abort(400, 'error is %s' % (str(e)))
     else:
         result = filter(lambda item: item['name'] == args[0],
                         entity_map['attributes'])
         if not result:
+            current_app.logger.error("%s is not attribute of %s"  % (args[0], str(entity_map['entity_class'])))		
             abort(400, '%s is not attribute of %s' %
                   (args[0], str(entity_map['entity_class'])))
 
@@ -5888,6 +5893,7 @@ def create_filters(entity_map, curr_entity, args, values):
                     create_filters(entity_map, result[0]['class'], \
                                    args[1:], values))
             except Exception, e:
+                current_app.logger.error("Error is %s"  % (str(e)))		
                 abort(400, 'error is %s' % (str(e)))
         else:
             try:
@@ -5895,15 +5901,18 @@ def create_filters(entity_map, curr_entity, args, values):
                     create_filters(entity_map, result[0]['class'], \
                                    args[1:], values))
             except Exception, e:
+                current_app.logger.error("Error is %s"  % (str(e)))		
                 abort(400, 'error is %s' % (str(e)))
 
 @api.route('/<entity>/<id>', methods=['GET'])
 def get_specific_entity(entity, id):
     if entity not in entity_pairs:
+        current_app.logger.error("Entity %s is not valid."  % entity)		
         abort(400, 'Entity %s is not valid.' % entity)
     curr_entity = entity_pairs[entity]['entity_class']
     record = curr_entity.get_by_id(id)
     if not record:
+        current_app.logger.error("No entry for %s with id: %s found."  % (entity, id))		
         abort(404, "No entry for %s with id: %s found." % (entity, id))
 
     return jsonify(record.to_client())
@@ -6017,6 +6026,7 @@ delete or update an existing record.
 @api.route('/<entity>/<id>', methods=['PUT', 'DELETE'])
 def modify_entity(entity, id):
     if entity not in entity_map_types:
+        current_app.logger.error("Entity %s is not valid."  % entity)		
         abort(400, 'Entity %s is not valid.' % entity)
 
     curr_entity = entity_map_types[entity]['entity']
@@ -6042,6 +6052,7 @@ corresponding error.
 def delete_record(entity, id):
     record = entity.get_by_id(id)
     if not record:
+        current_app.logger.error("No %s with id %s"  % (entity, id))		
         abort(404, 'No %s with id %s' % (entity, id))
     else:
         try:
@@ -6056,6 +6067,7 @@ def delete_record(entity, id):
             else:
                 record.delete()
         except Exception, e:
+	    current_app.logger.error("Error is %s"  % (str(e)))
             abort(500, str(e))
 
     return jsonify(id=id, status="success")
@@ -6086,10 +6098,12 @@ def update_record(entity_name, entity, id):
     record = entity.get_by_id(id)
 
     if not record:
+       	current_app.logger.error("No %s with id %s"  % (entity_name, id))
         abort(404, 'No %s with id %s' % (entity_name, id))
 
     data = parse_request(request)
     if not data or type(data) is not dict:
+    	current_app.logger.error("The data should be in JSON format")
         abort(400, "The data should be in JSON format")
 
     data = typecast_data(entity_name, data)
@@ -6097,6 +6111,7 @@ def update_record(entity_name, entity, id):
     try:
         record.update(**data)
     except Exception, e:
+	current_app.logger.error("Error is %s"  % (str(e)))
         abort(500, str(e))
 
     return jsonify(record.to_client())
@@ -6117,6 +6132,7 @@ def typecast_data(entity, data):
     updated_data = {}
     for attr, val in data.iteritems():
         if attr not in entity_map_types[entity]['types']:
+            current_app.logger.error("%s attribute not in %s"  % (attr, entity))
             abort(400, '%s attribute not in %s' % (attr, entity))
         const = entity_map_types[entity]['types'][attr]
 
@@ -6149,6 +6165,7 @@ def typecast_item(const, attr, val):
     try:
         new_val = const(val)
     except TypeError:
+        current_app.logger.error("%s is not a valid %s"  % (val, attr))
         abort(400, '%s is not a valid %s' % (val, attr))
 
     return new_val
@@ -6173,9 +6190,11 @@ def typecast_compound_item(const, attr, val):
     try:
         new_val = const.get_by_id(val['id'])
     except TypeError:
+        current_app.logger.error("%s is not a valid %s"  % (val, attr))
         abort(400, '%s is not a valid %s' % (val, attr))
 
     if not new_val:
+        current_app.logger.error("id %s of %s is not found"  % (val['id'], attr))
         abort(404, 'id %s of %s is not found' % (val['id'], attr))
     return new_val
 
@@ -6207,6 +6226,7 @@ interpreter expects them to be.
 @api.route('/<entity>', methods=['POST'])
 def create_entity(entity):
     if entity not in entity_map_types:
+        current_app.logger.error("Entity %s is not valid."  % entity)
         abort(400, 'Entity %s is not valid.' % entity)
 
     curr_entity = entity_map_types[entity]['entity']
@@ -6222,6 +6242,7 @@ def create_record(entity_name, entity):
 
     data = parse_request(request)
     if not data or type(data) is not dict:
+        current_app.logger.error("The data should be in JSON format")
         abort(400, "The data should be in JSON format")
 
     data = typecast_data(entity_name, data)
@@ -6230,6 +6251,7 @@ def create_record(entity_name, entity):
         new_record = entity(**data)
         new_record.save()
     except Exception, e:
+        current_app.logger.error("Error is %s" % (str(e)))
         abort(500, str(e))
 
     return jsonify(new_record.to_client())
