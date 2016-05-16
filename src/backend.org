@@ -5786,7 +5786,7 @@ def save_workshop_documents(id):
         url = APP_URL + "/workshop_reports/"\
               + id
         response = requests.get(url)
-        
+
         file = request.files['file']
         if response.ok:
             file_path = upload_file(file, url)
