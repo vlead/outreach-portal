@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-md-4"></div>
   <div class="col-md-4">
-    <h2>Add Nodal Coordinator</h2>
+    <h2>Edit Nodal Coordinator</h2>
     <span class="error"> {{ status }}</span>
     <form name="myForm" novalidate ng-submit="submit(user_id, nc_id)">
       <p>Coordinator Name:<br>
@@ -14,7 +14,7 @@
 	</span>
       </p>
       <p>Nodal Centre Name:<br>
-         <select class="form-control" ng-model="ncentre_id" ng-options="centre.location for centre in ncentres ">
+         <select class="form-control" ng-model="ncentre_id" ng-options="centre as (centre.name + ',&nbsp; ' + centre.location) for centre in ncentres ">
          </select>
       </p>
       <p>Email:<br>
@@ -26,19 +26,19 @@
 	  <span ng-show="myForm.email.$error.pattern">Invalid email address.</span>
 	</span>
       </p>
+      <!--
       <p>Institute Name:<br>
 	<input type="text" name="inst_name" ng-model="inst_name"  class="form-control"  placeholder="Institute Name" required>
 	<span style="color:red" ng-show="myForm.inst_name.$dirty && myForm.inst_name.$invalid">
 	  <span ng-show="myForm.inst_name.$error.required">Institute name is required.</span>
 	</span>
       </p>
-      <!--
-	  <p>Phone No:<br>
-	    <input type="number" name="phone"  ng-pattern="/^[(]{0,1}[0-9]{3}[)\.\-
-                   ]{0,1}[0-9]{3}[\.\-
-                                                       ]{0,1}[0-9]{4}$/"
-		   ng-model="phone" ng-minlength="10" ng-maxlength="10" class="form-control"
-		   placeholder="Mobile Number" required>
+      <p>Phone No:<br>
+	<input type="number" name="phone"  ng-pattern="/^[(]{0,1}[0-9]{3}[)\.\-
+               ]{0,1}[0-9]{3}[\.\-
+               ]{0,1}[0-9]{4}$/"
+	       ng-model="phone" ng-minlength="10" ng-maxlength="10" class="form-control"
+	       placeholder="Mobile Number" required>
 	<span style="color:red" ng-show="myForm.phone.$dirty && myForm.phone.$invalid">
 	  <span ng-show="myForm.phone.$error.required">Phone number is
 	    required.</span>
@@ -46,8 +46,8 @@
           <span ng-show="myForm.phone.$error.maxlength">Enter valid phone number</span>
           <span ng-show="myForm.phone.$error.number">Phone number is required.</span>
 	</span>
-	  </p>
-	  -->
+      </p>
+      -->
       <p>Target Workshops<br>
 	<input type="number" name="workshops" min="0" ng-model="workshops"  class="form-control"
                placeholder="No of workshops" required>

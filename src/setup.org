@@ -3,15 +3,16 @@
 #+Date: [2015-08-25 Tue]
 #+PROPERTY: results output
 #+PROPERTY: exports code
-#+SETUPFILE: ../org-templates/level-1.org
+#+SETUPFILE: ./org-templates/level-0.org
+#+options: ^:nil
 
 * Introduction
-This will install all the dependencies required for setting up the
-outreach portal 2.0.
+  This will install all the dependencies required for setting up the outreach
+  portal 2.0.
 
 * Install dependendent python packages
-Here we use the =setuptools= module from the standard lib, to make a
-=setup.py= file, which will install all the python library dependencies.
+  Here we use the =setuptools= module from the standard lib, to make a
+  =setup.py= file, which will install all the python library dependencies.
 
 #+BEGIN_SRC python :tangle setup.py :eval no
 from setuptools import setup
@@ -543,9 +544,9 @@ if __name__ == "__main__":
 
 #+END_SRC
 * Install all dependencies and setup the software
-Install all dependencies, including the OS related packages, Python packages,
-setup the database, configure the webserver, and finally deploy the
-application.
+  Install all dependencies, including the OS related packages, Python packages,
+  setup the database, configure the webserver, and finally deploy the
+  application.
 
 #+BEGIN_SRC sh :tangle setup.sh :eval no
 #!/bin/bash
@@ -623,6 +624,7 @@ exit 0
   The following program configures the application, configures the web server
   to use WSGI and use the application scripts, and finally calls the database
   setup scripts to actually setup the database with tables.
+
 #+BEGIN_SRC sh :tangle configure.sh :eval no
 #!/bin/bash
 # Configure the application in the deployment environment

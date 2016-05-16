@@ -50,8 +50,12 @@
 ** High Level Design
 #+CAPTION: High Level Design Diagram
   [[./diagrams/outreach.svg]]
-** [[./frontend.org][View & Controller]]
-** [[./backend.org][REST API & DB Layer]]
+** View & Controller
+   [[./frontend.org][Front end for Outreach Portal]]
+
+** REST API & DB Layer
+   [[./backend.org][Back end for Outreach Portal ]]
+
 * Test Cases
 * Provisioning
 * Releases
