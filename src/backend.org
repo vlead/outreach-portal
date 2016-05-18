@@ -172,7 +172,10 @@ class Name(object):
         # if the string contains any non-alphabet and non-space character, raise
         # a type error
         if re.search('[^a-zA-Z. ]+', value):
-            raise TypeError('%s is not a Name!' % value)
+            current_app.logger.info("Type Error...")
+            current_app.logger.debug("%s is not a Name type! "  % value)
+            current_app.logger.error("%s is not a Name type! "  % value)
+            raise TypeError('%s is not a Name type!' % value)
 
         self.value = value
 
@@ -187,6 +190,9 @@ class Name(object):
 class Email(object):
     def __init__(self, value):
         if not re.search('[^@]+@[^@]+\.[^@]+', value):
+            current_app.logger.info("Type Error...")
+            current_app.logger.debug("%s is not an Email type! "  % value)
+            current_app.logger.error("%s is not an Email type! "  % value)
             raise TypeError('%s is not an email!' % value)
         self.value = value
         
@@ -250,6 +256,8 @@ class Role(Entity):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def __init__(self, **kwargs):
         if 'name' not in kwargs:
+            current_app.logger.info("Missing Attribute...")
+            current_app.logger.error("mandatory attribute `name` is missing")
             raise AttributeRequired("mandatory attribute `name` is missing")
         self.set_name(kwargs['name'])
 
@@ -294,6 +302,8 @@ class TestRole(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_by_id(id):
+        current_app.logger.info("get by Role id")
+        current_app.logger.debug("get by Role id: %s"  % id)
         return Role.query.get(id)
 
 #+END_SRC
@@ -310,6 +320,8 @@ class TestRole(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_all():
+        current_app.logger.info("get all rows of Role entity")
+        current_app.logger.debug("get all rows of Role entity")
         return Role.query.all()
 #+END_SRC
 ***** Test getAll: Nil --> set[Role]
@@ -324,6 +336,7 @@ class TestRole(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_name(self):
         return self.name
+
 #+END_SRC
 ***** Test getName: Role --> Name 
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
@@ -359,7 +372,7 @@ class TestRole(TestCase):
         }
 
 #+END_SRC
-
+	
 ***** Test Role to_client
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_role_to_client(self):
@@ -412,18 +425,26 @@ class User(Entity):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def __init__(self, **kwargs):
         if 'name' not in kwargs:
+            current_app.logger.info("Missing Attribute...")
+            current_app.logger.error("mandatory attribute `name` is missing")
             raise AttributeRequired("mandatory attribute `name` is missing")
         self.set_name(kwargs['name'])
 
         if 'email' not in kwargs:
+            current_app.logger.info("Missing Attribute...")
+            current_app.logger.error("mandatory attribute `email` is missing")
             raise AttributeRequired("mandatory attribute `email` is missing")
         self.set_email(kwargs['email'])
 
         if 'role' not in kwargs:
+            current_app.logger.info("Missing Attribute...")
+            current_app.logger.error("mandatory attribute `role` is missing")
             raise AttributeRequired("mandatory attribute `role` is missing")
         self.set_role(kwargs['role'])
 
         if 'last_active' in kwargs:
+            current_app.logger.info("Missing Attribute...")
+            current_app.logger.error("mandatory attribute `last_active` is missing")
             self.set_last_active(kwargs['last_active'])
 
         if 'created' in kwargs:
@@ -496,6 +517,8 @@ class TestUser(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_all():
+        current_app.logger.info("get all rows of User entity")
+        current_app.logger.debug("get all rows of User entity")
         return User.query.all()
 
 #+END_SRC
@@ -525,6 +548,8 @@ class TestUser(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_by_id(id):
+        current_app.logger.info("get by User id")
+        current_app.logger.debug("get by User id: %s"  % id)
         return User.query.get(id)
 
 #+END_SRC
@@ -557,6 +582,8 @@ class TestUser(TestCase):
 ***** getEmail: User --> Email
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_email(self):
+        current_app.logger.info("get email of the User: %s" % email)
+        current_app.logger.debug("get email of the User: %s" % email)
         return self.email
 #+END_SRC
 
@@ -592,7 +619,6 @@ class TestUser(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_role(self):
         return self.role
-
 #+END_SRC
 
 ***** Test getRole: User --> Role
@@ -625,6 +651,8 @@ class TestUser(TestCase):
 ***** getLastActive: User --> String
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_last_active(self):
+        current_app.logger.info("get last active time of the User: %s" % last_active)
+        current_app.logger.debug("get last active time of the User: %s" % last_active)
         return self.last_active
 #+END_SRC
       
@@ -644,6 +672,8 @@ class TestUser(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(name=Name)
     def set_name(self, name):
+        current_app.logger.info("set name of the User with name: %s" % name.value)
+        current_app.logger.debug("set name of the User with name: %s" % name.value)
         self.name = name.value
 #+END_SRC
 
@@ -664,6 +694,8 @@ class TestUser(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(email=Email)
     def set_email(self, email):
+        current_app.logger.info("set email of the User with email id: %s" % email.value)
+        current_app.logger.debug("set email of the User with email id: %s" % email.value)
         self.email = email.value
 #+END_SRC
 
@@ -683,6 +715,8 @@ class TestUser(TestCase):
 ***** setInstituteName: User, InstituteName --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def set_institute_name(self, institute_name):
+        current_app.logger.info("set institute name of the User with institute: %s" % institute_name.value)
+        current_app.logger.debug("set institute name of the User with institute: %s" % institute_name.value)
         self.institute_name = institute_name
 #+END_SRC
 
@@ -701,6 +735,8 @@ class TestUser(TestCase):
 ***** setLastActive: User, Time --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def set_last_active(self, last_active):
+        current_app.logger.info("set last active of the User with time: %s" % last_active)
+        current_app.logger.debug("set last active of the User with time: %s" % last_active)
         self.last_active = last_active
 #+END_SRC
 
@@ -719,6 +755,8 @@ class TestUser(TestCase):
 ***** set timeOfCreation: User, Time --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def set_toc(self, created):
+        current_app.logger.info("set time of creation of the User with time: %s" % created)
+        current_app.logger.debug("set time of creation of the User with time: %s" % created)
         self.created = created
 #+END_SRC
 
@@ -738,6 +776,8 @@ class TestUser(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(role=Role)
     def set_role(self, role):
+        current_app.logger.info("set role of the User with role: %s" % role)
+        current_app.logger.debug("set role of the User with role: %s" % role)
         self.role = role
 
 #+END_SRC
@@ -885,6 +925,9 @@ class TestReferenceDocument(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_all():
+        current_app.logger.info("get all rows of Reference Document entity")
+        current_app.logger.debug("get all rows of Reference Document entity")
+
         return ReferenceDocument.query.all()
 
 #+END_SRC
@@ -910,6 +953,8 @@ class TestReferenceDocument(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_by_id(id):
+        current_app.logger.info("get by ReferenceDocument id")
+        current_app.logger.debug("get by ReferenceDocument id: %s"  % id)
         return ReferenceDocument.query.get(id)
 
 #+END_SRC
@@ -989,6 +1034,8 @@ class TestReferenceDocument(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(name=Name)
     def set_name(self, name):
+        current_app.logger.info("set the name of the ReferenceDocument: %s" % name.value)
+        current_app.logger.debug("set the name of the ReferenceDocument: %s" % name.value)
         self.name = name.value
 #+END_SRC
 
@@ -1013,6 +1060,8 @@ class TestReferenceDocument(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no 
     @typecheck(path=str)
     def set_path(self, path):
+        current_app.logger.info("set the path of the ReferenceDocument: %s" % path)
+        current_app.logger.debug("set the path of the ReferenceDocument: %s" % path)
         self.path = path
 #+END_SRC
 
@@ -1040,6 +1089,8 @@ class TestReferenceDocument(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(user=User)
     def set_user(self, user):
+        current_app.logger.info("set the user of the ReferenceDocument: %s" % user)
+        current_app.logger.debug("set the user of the ReferenceDocument: %s" % user)
         self.user = user
 
 #+END_SRC
@@ -1146,6 +1197,8 @@ class TestStatus(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_by_id(id):
+        current_app.logger.info("get by Status id")
+        current_app.logger.debug("get by Status id: %s"  % id)
         return Status.query.get(id)
 
 #+END_SRC
@@ -1162,6 +1215,9 @@ class TestStatus(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_all():
+        current_app.logger.info("get all rows of Status entity")
+        current_app.logger.debug("get all rows of Status entity")
+
         return Status.query.all()
 #+END_SRC
 ***** Test getAll: Nil --> set[Status]
@@ -1190,6 +1246,8 @@ class TestStatus(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(name=Name)
     def set_name(self, name):
+        current_app.logger.info("get the name of Status entity: %s" % name.value)
+        current_app.logger.debug("get all rows of Status entity: %s" % name.value)
         self.name = name.value
 #+END_SRC
 ***** Test setName: Status, Name --> Void
@@ -1459,6 +1517,8 @@ class TestWorkshop(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_all():
+        current_app.logger.info("get all rows of Workshop entity")
+        current_app.logger.debug("get all rows of Workshop entity")
         return Workshop.query.all()
 
 #+END_SRC
@@ -1505,6 +1565,8 @@ class TestWorkshop(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_by_id(id):
+        current_app.logger.info("get by Status id")
+        current_app.logger.debug("get by Status id: %s"  % id)
         return Workshop.query.get(id)
 
 #+END_SRC
@@ -2031,6 +2093,8 @@ class TestWorkshop(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(name=str)
     def set_name(self, name):
+        current_app.logger.info("set the name of Workshop entity with name: %s" % name)
+        current_app.logger.debug("set the name of Workshop entity with name: %s" % name)
         self.name = name
 #+END_SRC
       
@@ -2061,6 +2125,8 @@ class TestWorkshop(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(location=str)
     def set_location(self, location):
+        current_app.logger.info("set the location of Workshop entity with name: %s" % location)
+        current_app.logger.debug("set the location of Workshop entity with name: %s" % location)
         self.location = location
 #+END_SRC
 
@@ -2091,6 +2157,8 @@ class TestWorkshop(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(user=User)
     def set_user(self, user):
+        current_app.logger.info("set the user of Workshop entity : %s" % user)
+        current_app.logger.debug("set the user of Workshop entity : %s" % user)
         self.user = user
 #+END_SRC
 ***** Test setUser: Workshop, User --> Void
@@ -2122,6 +2190,8 @@ class TestWorkshop(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(date=str)
     def set_date(self, date):
+        current_app.logger.info("set the date of Workshop entity: %s" % date)
+        current_app.logger.debug("set the date of Workshop entity: %s" % date)
         self.date = date
 #+END_SRC
 ***** Test setDate: Workshop, String --> Void
@@ -2157,6 +2227,8 @@ class TestWorkshop(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(participating_institutes=str)
     def set_participating_institutes(self, participating_institutes):
+        current_app.logger.info("set the participating_institutes of Workshop entity: %s" % participating_institutes)
+        current_app.logger.debug("set the participating_institutes of Workshop entity: %s" % participating_institutes)
         self.participating_institutes = participating_institutes
 #+END_SRC
 ***** Test setParticipatingInstitutes: Workshop, Institutes --> Void
@@ -2185,6 +2257,8 @@ class TestWorkshop(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(no_of_participants_expected=int)
     def set_no_of_participants_expected(self, no_of_participants_expected):
+        current_app.logger.info("set the participants_expected of Workshop entity: %s" % participants_expected)
+        current_app.logger.debug("set the participants_expected of Workshop entity: %s" % participants_expected)
         self.no_of_participants_expected = no_of_participants_expected
 #+END_SRC
 ***** Test setNoOfParticipantsExpected: Workshop, NoOfParticipants --> Void
@@ -2213,6 +2287,8 @@ class TestWorkshop(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(participants_attended=int)
     def set_participants_attended(self, participants_attended):
+        current_app.logger.info("set the participants_attended of Workshop entity: %s" % participants_attended)
+        current_app.logger.debug("set the participants_attended of Workshop entity: %s" % participants_attended)
         self.participants_attended = participants_attended
 #+END_SRC
 ***** Test setParticipantsAttended: Workshop, ParticipantsAttended --> Void
@@ -2241,6 +2317,8 @@ class TestWorkshop(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(no_of_sessions=int)
     def set_no_of_sessions(self, no_of_sessions):
+        current_app.logger.info("set the no_of_sessions of Workshop entity: %s" % no_of_sessions)
+        current_app.logger.debug("set the no_of_sessions of Workshop entity: %s" % no_of_sessions)
         self.no_of_sessions = no_of_sessions
 #+END_SRC
 ***** Test setNoOfSessions: Workshop, NoOfSessions --> Void
@@ -2269,6 +2347,8 @@ class TestWorkshop(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(duration_of_sessions=str)
     def set_duration_of_sessions(self, duration_of_sessions):
+        current_app.logger.info("set the duration_of_sessions of Workshop entity: %s" % duration_of_sessions)
+        current_app.logger.debug("set the duration_of_sessions of Workshop entity: %s" % duration_of_sessions)
         self.duration_of_sessions = duration_of_sessions
 #+END_SRC
 ***** Test setDurationOfSessions: Workshop, DurationOfSessions --> Void
@@ -2298,6 +2378,8 @@ class TestWorkshop(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(disciplines=str)
     def set_disciplines(self, disciplines):
+        current_app.logger.info("set the disciplines of Workshop entity: %s" % disciplines)
+        current_app.logger.debug("set the disciplines of Workshop entity: %s" % disciplines)
         self.disciplines = disciplines
 #+END_SRC
 ***** Test setDisciplines: Workshop, Disciplines --> Void
@@ -2326,6 +2408,8 @@ class TestWorkshop(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(last_updated=str)
     def set_last_updated(self, last_updated):
+        current_app.logger.info("set the last_updated time of Workshop entity: %s" % last_updated)
+        current_app.logger.debug("set the last_updated time of Workshop entity: %s" % last_updated)
         self.last_updated = last_updated
 #+END_SRC
 
@@ -2356,6 +2440,8 @@ class TestWorkshop(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(labs_planned=int)
     def set_labs_planned(self, labs_planned):
+        current_app.logger.info("set the labs_planned of Workshop entity: %s" % labs_planned)
+        current_app.logger.debug("set the labs_planned of Workshop entity: %s" % labs_planned)
         self.labs_planned = labs_planned
 #+END_SRC
 ***** Test setLabsPlanned: Workshop, LabsPlanned --> Void
@@ -2384,6 +2470,8 @@ class TestWorkshop(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(experiments_conducted=int)
     def set_experiments_conducted(self, experiments_conducted):
+        current_app.logger.info("set the experiments_conducted  of Workshop entity: %s" % experiments_conducted)
+        current_app.logger.debug("set the experiments_conducted of Workshop entity: %s" % experiments_conducted)
         self.experiments_conducted = experiments_conducted
 #+END_SRC
 ***** Test setExperimentsConducted: Workshop, ExperimentsConducted --> Void
@@ -2412,6 +2500,8 @@ class TestWorkshop(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(other_details=str)
     def set_other_details(self, other_details):
+        current_app.logger.info("set the other_details of Workshop entity: %s" % other_details)
+        current_app.logger.debug("set the other_details of Workshop entity: %s" % other_details)
         self.other_details = other_details
 #+END_SRC
 ***** Test setOtherDetails: Workshop, OtherDetails --> Void
@@ -2440,6 +2530,8 @@ class TestWorkshop(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(status=Status)
     def set_status(self, status):
+        current_app.logger.info("set the status of Workshop entity: %s" % status)
+        current_app.logger.debug("set the status of Workshop entity: %s" % status)
         self.status = status
 #+END_SRC
 ***** Test setStatus: Workshop, Status --> Void
@@ -2474,6 +2566,8 @@ class TestWorkshop(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(cancellation_reason=str)
     def set_cancellation_reason(self, cancellation_reason):
+        current_app.logger.info("set the cancellation_reason of Workshop entity: %s" % cancellation_reason)
+        current_app.logger.debug("set the cancellation_reason of Workshop entity: %s" % cancellation_reason)
         self.cancellation_reason = cancellation_reason
 #+END_SRC
 ***** Test setCancellationReason: Workshop, Reason --> Void
@@ -2502,6 +2596,8 @@ class TestWorkshop(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(not_approval_reason=str)
     def set_not_approval_reason(self, not_approval_reason):
+        current_app.logger.info("set the not_approval_reason of Workshop entity: %s" % not_approval_reason)
+        current_app.logger.debug("set the not_approval_reason of Workshop entity: %s" % not_approval_reason)
         self.not_approval_reason = not_approval_reason
 #+END_SRC
 ***** Test setNotApprovalReason: Workshop, Reason --> Void
@@ -2698,6 +2794,8 @@ class TestNodalCentre(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no 
     @staticmethod
     def get_all():
+        current_app.logger.info("get all rows of Nodal Centre entity")
+        current_app.logger.debug("get all rows of Nodal Centre entity")
         return NodalCentre.query.all()
 
 #+END_SRC
@@ -2744,6 +2842,8 @@ class TestNodalCentre(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no 
     @staticmethod
     def get_by_id(id):
+        current_app.logger.info("get by NodalCentre id")
+        current_app.logger.debug("get by NodalCentre id: %s"  % id)
         return NodalCentre.query.get(id)
 
 #+END_SRC
@@ -2906,6 +3006,8 @@ class TestNodalCentre(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(created_by=User)
     def set_created_by(self, created_by):
+        current_app.logger.info("set created by user of the NodalCentre: %s" % created_by)
+        current_app.logger.debug("set created by user of the NodalCentre: %s" % created_by)
         self.created_by = created_by
 
 #+END_SRC
@@ -2951,6 +3053,8 @@ class TestNodalCentre(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no 
     @typecheck(name=str)
     def set_name(self, name):
+        current_app.logger.info("set name of the NodalCentre: %s" % name)
+        current_app.logger.debug("set name of the NodalCentre: %s" % name)
         self.name = name
 #+END_SRC
       
@@ -2994,6 +3098,8 @@ class TestNodalCentre(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no 
     @typecheck(location=str)
     def set_location(self, location):
+        current_app.logger.info("set location of the NodalCentre: %s" % location)
+        current_app.logger.debug("set location of the NodalCentre: %s" % location)
         self.location = location
 #+END_SRC
 
@@ -3271,6 +3377,8 @@ class TestNodalCoordinatorDetail(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_all():
+        current_app.logger.info("get all rows of NodalCoordinatorDetail entity")
+        current_app.logger.debug("get all rows of NodalCoordinatorDetail entity")
         return NodalCoordinatorDetail.query.all()
 
 #+END_SRC
@@ -3337,6 +3445,8 @@ class TestNodalCoordinatorDetail(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_by_id(id):
+        current_app.logger.info("get by NodalCoordinatorDetail id")
+        current_app.logger.debug("get by NodalCoordinatorDetail id: %s"  % id)
         return NodalCoordinatorDetail.query.get(id)
 
 #+END_SRC
@@ -3937,6 +4047,8 @@ class TestNodalCoordinatorDetail(TestCase):
 ***** setLastUpdated: NodalCoordinatorDetail, String --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def set_last_updated(self, last_updated):
+        current_app.logger.info("set last updated time of the NodalCoordinatorDetail : %s" % last_updated)
+        current_app.logger.debug("set last updated time of the NodalCoordinatorDetail: %s" % last_updated)
         self.last_updated = last_updated
 #+END_SRC
 
@@ -4008,6 +4120,8 @@ class TestNodalCoordinatorDetail(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(user=User)
     def set_user(self, user):
+        current_app.logger.info("set user of the NodalCoordinatorDetail : %s" % user)
+        current_app.logger.debug("set user of the NodalCoordinatorDetail: %s" % user)
         self.user = user
 
 #+END_SRC
@@ -4083,6 +4197,8 @@ class TestNodalCoordinatorDetail(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(created_by=User)
     def set_created_by(self, created_by):
+        current_app.logger.info("set created by user of the NodalCoordinatorDetail : %s" % created_by)
+        current_app.logger.debug("set created by user of the NodalCoordinatorDetail: %s" % created_by)
         self.created_by = created_by
 
 #+END_SRC
@@ -4156,6 +4272,8 @@ class TestNodalCoordinatorDetail(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(nodal_centre=NodalCentre)
     def set_nodal_centre(self, nodal_centre):
+        current_app.logger.info("set nodal centre of the NodalCoordinatorDetail : %s" % nodal_centre)
+        current_app.logger.debug("set target workshops of the NodalCoordinatorDetail: %s" % nodal_centre)
         self.nodal_centre = nodal_centre
 
 #+END_SRC
@@ -4229,6 +4347,8 @@ class TestNodalCoordinatorDetail(TestCase):
 ***** setTargetWorkshops: NodalCoordinatorDetail, Int --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def set_target_workshops(self, target_workshops):
+        current_app.logger.info("set target workshops of the NodalCoordinatorDetail : %s" % target_workshops)
+        current_app.logger.debug("set target workshops of the NodalCoordinatorDetail: %s" % target_workshops)
         self.target_workshops = target_workshops
 #+END_SRC
 
@@ -4296,6 +4416,8 @@ class TestNodalCoordinatorDetail(TestCase):
 ***** setTargetParticipants: NodalCoordinatorDetail, Int --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def set_target_participants(self, target_participants):
+        current_app.logger.info("set target participants of the NodalCoordinatorDetail : %s" % target_participants)
+        current_app.logger.debug("set target participants of the NodalCoordinatorDetail: %s" % target_participants)
         self.target_participants = target_participants
 #+END_SRC
       
@@ -4367,6 +4489,8 @@ class TestNodalCoordinatorDetail(TestCase):
 ***** setTargetExperiments: NodalCoordinatorDetail, Int --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def set_target_experiments(self, target_experiments):
+        current_app.logger.info("set target experiments of the NodalCoordinatorDetail : %s" % target_experiments)
+        current_app.logger.debug("set target experiments of the NodalCoordinatorDetail: %s" % target_experiments)
         self.target_experiments = target_experiments
 #+END_SRC
 
@@ -4623,6 +4747,8 @@ class TestWorkshopReport(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @staticmethod
     def get_all():
+        current_app.logger.info("get all rows of WorkshopReport entity")
+        current_app.logger.debug("get all rows of WorkshopReport entity")
         return WorkshopReport.query.all()
 
 #+END_SRC
@@ -4672,6 +4798,8 @@ class TestWorkshopReport(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no 
     @staticmethod
     def get_by_id(id):
+        current_app.logger.info("get by WorkshopReport id")
+        current_app.logger.debug("get by WorkshopReport id: %s"  % id)
         return WorkshopReport.query.get(id)
 
 #+END_SRC
@@ -4813,6 +4941,8 @@ class TestWorkshopReport(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no 
     @typecheck(path=str)
     def set_path(self, path):
+        current_app.logger.info("set path of the  WorkshopReport: %s" % path)
+        current_app.logger.debug("set path of the WorkshopReport: %s" % path)
         self.path = path
 #+END_SRC
 
@@ -4853,6 +4983,8 @@ class TestWorkshopReport(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no 
     @typecheck(name=str)
     def set_name(self, name):
+        current_app.logger.info("set name of the  WorkshopReport: %s" % name)
+        current_app.logger.debug("set name of the WorkshopReport: %s" % name)
         self.name = name
 #+END_SRC
 
@@ -4893,6 +5025,8 @@ class TestWorkshopReport(TestCase):
 #+BEGIN_SRC python :tangle src/db.py :eval no
     @typecheck(workshop=Workshop)
     def set_workshop(self, workshop):
+        current_app.logger.info("set workshop of the  WorkshopReport: %s" % workshop)
+        current_app.logger.debug("set workshop of the WorkshopReport: %s" % workshop)
         self.workshop = workshop
 
 #+END_SRC
@@ -6026,6 +6160,7 @@ delete or update an existing record.
 @api.route('/<entity>/<id>', methods=['PUT', 'DELETE'])
 def modify_entity(entity, id):
     if entity not in entity_map_types:
+        current_app.logger.debug("Entity %s not present in entity map types"  % entity)
         current_app.logger.error("Entity %s is not valid."  % entity)		
         abort(400, 'Entity %s is not valid.' % entity)
 
@@ -6036,6 +6171,8 @@ def modify_entity(entity, id):
         return status
 
     if request.method == 'PUT':
+        current_app.logger.debug("Updating record of %s Entity with id: %s" % (curr_entity, id))
+        current_app.logger.error("Updating record of %s Entity with id: %s" % (curr_entity, id))
         status = update_record(entity, curr_entity, id)
         return status
     
@@ -6052,20 +6189,32 @@ corresponding error.
 def delete_record(entity, id):
     record = entity.get_by_id(id)
     if not record:
-        current_app.logger.error("No %s with id %s"  % (entity, id))		
-        abort(404, 'No %s with id %s' % (entity, id))
+        current_app.logger.debug("Record not found with id %s..." % id)
+        current_app.logger.error("No %s exists with id %s"  % (entity, id))		
+        abort(404, 'No %s exists with id %s' % (entity, id))
     else:
         try:
             if entity.__name__=="WorkshopReport" or entity.__name__=="ReferenceDocument":
                 if record.path==None:
                     record.delete()
+      	            current_app.logger.info("The record of %s entity deleted sucessfully..." % entity)
+    	            current_app.logger.debug("The record of %s entity deleted sucessfully..." % entity)
+
                 else:
                     dir_path=os.path.dirname(os.path.abspath(__file__))
                     file_loc=dir_path+record.path
                     os.remove(file_loc)
+                    current_app.logger.info("Deleted file from location %s:" % file_loc)
+                    current_app.logger.debug("Deleted file from location %s:" % file_loc)
+
                     record.delete()
+                    current_app.logger.info("Deleted record of %s Entity with id: %s" % (entity, id))
+                    current_app.logger.debug("Deleted record of %s Entity with id: %s" % (entity, id))
             else:
                 record.delete()
+                current_app.logger.info("Deleted record of %s Entity with id: %s" % (entity, id))
+                current_app.logger.debug("Deleted record of %s Entity with id: %s" % (entity, id))
+
         except Exception, e:
 	    current_app.logger.error("Error is %s"  % (str(e)))
             abort(500, str(e))
@@ -6099,7 +6248,7 @@ def update_record(entity_name, entity, id):
 
     if not record:
        	current_app.logger.error("No %s with id %s"  % (entity_name, id))
-        abort(404, 'No %s with id %s' % (entity_name, id))
+        abort(404, "No %s with id %s" % (entity_name, id))
 
     data = parse_request(request)
     if not data or type(data) is not dict:
@@ -6110,6 +6259,8 @@ def update_record(entity_name, entity, id):
 
     try:
         record.update(**data)
+    	current_app.logger.info("The data of %s entity updated sucessfully..." % entity_name)
+    	current_app.logger.debug("The data of %s entity updated sucessfully..." % entity_name)
     except Exception, e:
 	current_app.logger.error("Error is %s"  % (str(e)))
         abort(500, str(e))
@@ -6226,12 +6377,17 @@ interpreter expects them to be.
 @api.route('/<entity>', methods=['POST'])
 def create_entity(entity):
     if entity not in entity_map_types:
+        current_app.logger.info("creating entity...")
+        current_app.logger.debug("Entity %s not present in entity map types"  % entity)
         current_app.logger.error("Entity %s is not valid."  % entity)
         abort(400, 'Entity %s is not valid.' % entity)
 
     curr_entity = entity_map_types[entity]['entity']
+    current_app.logger.debug("current entity is %s"  % curr_entity)	
 
     status = create_record(entity, curr_entity)
+    current_app.logger.debug("status is %s"  % status)	
+
     return status
 
 #+END_SRC
@@ -6242,15 +6398,19 @@ def create_record(entity_name, entity):
 
     data = parse_request(request)
     if not data or type(data) is not dict:
+        current_app.logger.debug("Unsupported data...")
         current_app.logger.error("The data should be in JSON format")
         abort(400, "The data should be in JSON format")
 
     data = typecast_data(entity_name, data)
 
     try:
+        current_app.logger.info("creating record...")
         new_record = entity(**data)
         new_record.save()
+        current_app.logger.info("Record of %s entity created sucessfully..." % entity_name)
     except Exception, e:
+        current_app.logger.debug("Unable create new record...")
         current_app.logger.error("Error is %s" % (str(e)))
         abort(500, str(e))
 
