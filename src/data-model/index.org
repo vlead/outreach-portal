@@ -80,8 +80,14 @@ Encodes the following items of information:
 TYPE User
 TYPE Email
 TYPE Name
-TYPE Role = {admin, user}
-TYPE Session
+TYPE Role = {admin, OC, NC}
+TYPE Workshop
+TYPE ReferenceDocument
+TYPE Status
+TYPE NodalCentre
+TYPE NodalCoordinatorDetails
+TYPE WorkshopReport
+
 #+END_SRC
 
 * Relations and cardinality constraints over entity types 
@@ -93,7 +99,10 @@ For each relation, we define its inverse next to it.
 [email, user]  :  User?    > Email!
 [name, user]   :  User     > Name!
 [role, user]   :  User     > Role!
-[user, session]:  Session  > User!
+[workshop, user] : User!    > Workshop
+[workshop, report]: Workshop! > Report!
+
+
 #+END_SRC
 
 ** Keys
