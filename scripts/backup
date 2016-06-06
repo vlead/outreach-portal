@@ -25,7 +25,7 @@ fi
 # start back the services
 $SCRIPTS_DIR && ./start
 
-tar --append --file=$OUT_FILE $DOC_FOLDER $DB_NAME.sql
+tar -cvf $OUT_FILE $DOC_FOLDER $DB_NAME.sql
 if [ $? -ne 0 ]; then
   echo "Error: Something went wrong while tar-ing the static folderdump."
   echo "Aborting backup."
