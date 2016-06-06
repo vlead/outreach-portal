@@ -96,12 +96,15 @@ For each relation, we define its inverse next to it.
 
 ;;; Relations with cardinality constraints
 
-[email, user]  :  User?    > Email!
-[name, user]   :  User     > Name!
-[role, user]   :  User     > Role!
-[workshop, user] : User!    > Workshop
-[workshop, report]: Workshop! > Report!
-
+[email, user]                          : User?                    > Email!
+[name, user]                           : User                     > Name!
+[role, user]                           : User                     > Role!
+[workshop, user]                       : User!                    > Workshop
+[workshopreport, workshop]             : Workshop!                > WorkshopReport?
+[status, workshop]                     : Workshop                 > Status!
+[nodalcentre, user]                    : User                     > NodalCentre? 
+[nodalcentre, nodalcoordinatordetails] : NodalCoordinatorDetails  > NodalCentre!
+[user, nodalcoordinatordetails]        : NodalCoordinatorDetails? > User!
 
 #+END_SRC
 
@@ -110,12 +113,15 @@ For each relation, we define its inverse next to it.
 An entity =K= is called a /key for/ an entity =A= if there
 is a relation =r: A? > K!=.
 
-|---------+-------+---+---+---|
-| Entity  | Key   |   |   |   |
-|---------+-------+---+---+---|
-| User    | Email |   |   |   |
-|---------+-------+---+---+---|
-
+|-------------------------+----------+---+---+---|
+| Entity                  | Key      |   |   |   |
+|-------------------------+----------+---+---+---|
+| User                    | Email    |   |   |   |
+|-------------------------+----------+---+---+---|
+| WorkshopReport          | Workshop |   |   |   |
+|-------------------------+----------+---+---+---|
+| NodalCoordinatorDetails | User     |   |   |   |
+|-------------------------+----------+---+---+---|
 
 
 * System state
@@ -123,67 +129,45 @@ is a relation =r: A? > K!=.
   variables/.  
 ** Primary Entity sets
 
-For the purpose of /the application/, we maintain two primary
+For the purpose of /the application/, we maintain five primary
 state variables.  
 
  #+BEGIN_SRC spec
 
 ;;; Primary state variables
- user-set    : set[User]    ; set of users in the system
- session-set : set[Session] ; set of sessions in the system
+ user-set                : set[User]               ; set of users in the system
+ workshop-set            : set[Workshops]          ; set of workshops in the system
+ nodal-centre-set        : set[NodalCentre]        ; set of nodal centres
+ reference-documents-set : set[ReferenceDocuments] ; set of reference documents
+ workshop-reports-set    : set[WorkshopReports]    ; set of Workshop Reports
+ 
  #+END_SRC
-
-and five relations
-
- #+BEGIN_SRC spec
-
-;;; Relations
- email:      User > Email!
- name :      User > Name!
- role:       User > Role!
- user:       Session > User!
- #+END_SRC
-
-*** Applying relations to sets
-#+begin_example
-1.role = admin
-2.role = user
-5.role = user
-{1,2,5}.role = {admin, user,user} = {admin, user}
-
-{1,2,5}.succ = {2,3,6}
-{1,2,6}.factors = {{1}, {1,2}, {1,2,3,6}}
-{1,2,6}.factors.union = {{1}, {1,2}, {1,2,3,6}}.union = {1,2,3,6}
-#+end_example
 
 ** Derived Entity sets
- #+BEGIN_SRC spec :tangle spec.txt
+#+BEGIN_SRC spec :tangle spec.txt
 
 ;;; Derived Entity sets
- email-set   : set[Email]   = user-set.email        ; set of emails in the system
- name-set    : set[Name]    = user-set.name         ; set of names in the system
- role-set    : set[Role]    = user-set.role         ; set of all roles of all users
- logged-in-user-set : set[User]   = session-set.user   
- logged-in-role-set :  set[Role]  = session-set.user.role
- #+END_SRC
+ email-set      : set[Email]   = user-set.email                ; set of emails in the system
+ name-set       : set[Name]    = user-set.name                 ; set of names in the system
+ role-set       : set[Role]    = user-set.role                 ; set of all roles of all users
+ admin-user-set : set[Users]   = admin-user-set.role = "admin" ; set of all users who are admins
+ 
+ 
+#+END_SRC
 
 ** Referential Integrity Constraints over entity-sets
 
 *** =user-set=
 
-There is exactly one user (called =admin-user=) whose role is =admin=.
+There is atleast one user  whose role is =admin=.
 
     #+BEGIN_SRC spec :tangle spec.txt
 
     ;;; The admin-user
 
-    admin-user: user-set ; there is a user called admin-user in user-set
-
-    admin-user.role = admin ; that user's role is admin.
-
-    FORALL u:user-set  u.role=admin IMPLIES u = admin-user   ; there is only
-                                                             ; one user with
-                                                             ; role admin.
+    For all elements u in admin-user-set, u belongs to user-set  ; there is atleast
+                                                                 ; one user with
+                                                                 ; role admin.
     #+END_SRC
 
 These specifications also capture referential integrity.
@@ -193,7 +177,7 @@ These specifications also capture referential integrity.
 [email, user]    :  user-set!    > email-set!
 [name, users]    :  user-set+    > name-set!    
 [role, users]    :  user-set+    > role-set!   
-[role, session]  :  session-set  >  role-set!
+
 #+END_SRC
 
 * Operations 
@@ -210,51 +194,54 @@ actor performing the operation.
  - D  delete a user      
 
 ** Actor
-Operations are performed by Actors.  Our application has two
-types of actors:  =system= and =session=. 
+Operations are performed by Actors.  Our application has one
+type of actor:  =user=. 
 
-|----------------------------------------+------------------------+----------------+-------------------|
-| Operation                              | Actor                  | Ref.           | Result            |
-|                                        | Credentials            | Integrity      |                   |
-|----------------------------------------+------------------------+----------------+-------------------|
-| addUser(u:User, s:Session)             | s.user.role=admin      | u:~user-set    | Succ or           |
-|                                        |                        | s:session-set  | Failure           |
-|----------------------------------------+------------------------+----------------+-------------------|
-| showUsers(s:Session)                   |                        | s:session-set  |                   |
-|----------------------------------------+------------------------+----------------+-------------------|
-| delUser(u:User, s:Session)             | s.user.role=admin AND  | u:user-set     | Succ or Fail      |
-|                                        | u.role != admin        | s:session-set  |                   |
-|----------------------------------------+------------------------+----------------+-------------------|
-| getUserByEmail(e: Email, s:Session)    |                        | s:session-set  | return user       |
-|----------------------------------------+------------------------+----------------+-------------------|
-| makeUser(e: Email, n:Name, s: Session) | s.user.role = admin    | e:~email-set   |                   |
-|                                        |                        | s:session-set  |                   |
-|----------------------------------------+------------------------+----------------+-------------------|
-| getEmail(u: User, s:Session)           |                        | u:user-set     |                   |
-|                                        |                        | s:session-set  |                   |
-|----------------------------------------+------------------------+----------------+-------------------|
-| getName(u: User,  s:Session)           |                        | u:user-set     |                   |
-|                                        |                        | s:session-set  |                   |
-|----------------------------------------+------------------------+----------------+-------------------|
-| getRole(u: User, s:Session)            |                        | u:user-set     |                   |
-|                                        |                        | s:session-set  |                   |
-|----------------------------------------+------------------------+----------------+-------------------|
-| setEmail(u: User, e:Email, s:Session)  | s.user.role = admin OR | u:user-set     |                   |
-|                                        | s.user = u             | s:session-set  |                   |
-|----------------------------------------+------------------------+----------------+-------------------|
-| setName(u: User, n:Name, s:Session)    | s.user.role =admin OR  | u:user-set     |                   |
-|                                        | s.user = u             | s:session-set  |                   |
-|----------------------------------------+------------------------+----------------+-------------------|
-| login(u: User, s:System)               |                        | u:user-set     | creates a session |
-|                                        |                        |                | and adds it to    |
-|                                        |                        |                | =session-set=     |
-|----------------------------------------+------------------------+----------------+-------------------|
-| delSession(es:Session, s:System)       |                        | es:session-set |                   |
-|----------------------------------------+------------------------+----------------+-------------------|
-| showSessions(s:Session)                | s.user.role=admin      |                |                   |
-|----------------------------------------+------------------------+----------------+-------------------|
-
-
+|--------------------+-------------+-----------+---------------------------------|
+| Operation          | Actor       | Ref.      | Result                          |
+|                    | Credentials | Integrity |                                 |
+|--------------------+-------------+-----------+---------------------------------|
+| getAll()           | N/A         | N/A       | Return all users                |
+|                    |             |           |                                 |
+|--------------------+-------------+-----------+---------------------------------|
+| getById(id)        | N/A         | N/A       | Return user with particluar id  |
+|                    |             |           |                                 |
+|--------------------+-------------+-----------+---------------------------------|
+| getInstituteName() | N/A         | N/A       | Return institute name of a user |
+|                    |             |           |                                 |
+|--------------------+-------------+-----------+---------------------------------|
+| getCreated()       | N/A         | N/A       | Return created timestamp        |
+|--------------------+-------------+-----------+---------------------------------|
+| getLastActive()    | N/A         | N/A       | Return last active of user      |
+|                    |             |           |                                 |
+|--------------------+-------------+-----------+---------------------------------|
+| getEmail()         | N/A         | N/A       | Return email of user            |
+|                    |             |           |                                 |
+|--------------------+-------------+-----------+---------------------------------|
+| getName()          | N/A         | N/A       | Return name of user             |
+|                    |             |           |                                 |
+|--------------------+-------------+-----------+---------------------------------|
+| getRole()          | N/A         | N/A       | Return role of user             |
+|                    |             |           |                                 |
+|--------------------+-------------+-----------+---------------------------------|
+| setEmail(e:Email)  | N/A         | N/A       | Sets email of a user            |
+|                    |             |           |                                 |
+|--------------------+-------------+-----------+---------------------------------|
+| setName(n:Name)    | N/A         | N/A       | Sets name of a user             |
+|                    |             |           |                                 |
+|--------------------+-------------+-----------+---------------------------------|
+| setLastActive()    | N/A         | N/A       | Sets last active of user        |
+|                    |             |           |                                 |
+|                    |             |           |                                 |
+|--------------------+-------------+-----------+---------------------------------|
+| setInstituteName() | N/A         | N/A       | Sets institute name of user     |
+|--------------------+-------------+-----------+---------------------------------|
+| setTOC()           | N/A         | N/A       | Sets Time of creation           |
+|--------------------+-------------+-----------+---------------------------------|
+| setRole()          | N/A         | N/A       | Sets role of user               |
+|--------------------+-------------+-----------+---------------------------------|
+| toClient()         | N/A         | N/A       | Returns data of user            |
+|--------------------+-------------+-----------+---------------------------------|
 ** Remarks
 
 - =makeUser(e: Email, n:Name, s: Session)= :: WHen a user is created by an
