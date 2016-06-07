@@ -113,15 +113,15 @@ For each relation, we define its inverse next to it.
 An entity =K= is called a /key for/ an entity =A= if there
 is a relation =r: A? > K!=.
 
-|-------------------------+----------+---+---+---|
-| Entity                  | Key      |   |   |   |
-|-------------------------+----------+---+---+---|
-| User                    | Email    |   |   |   |
-|-------------------------+----------+---+---+---|
-| WorkshopReport          | Workshop |   |   |   |
-|-------------------------+----------+---+---+---|
-| NodalCoordinatorDetails | User     |   |   |   |
-|-------------------------+----------+---+---+---|
+|-------------------------+----------|
+| Entity                  | Key      |
+|-------------------------+----------|
+| User                    | Email    |
+|-------------------------+----------|
+| WorkshopReport          | Workshop |
+|-------------------------+----------|
+| NodalCoordinatorDetails | User     |
+|-------------------------+----------|
 
 
 * System state
@@ -196,6 +196,9 @@ actor performing the operation.
 ** Actor
 Operations are performed by Actors.  Our application has one
 type of actor:  =user=. 
+
+These 'get' and 'set' methods are similar and common for all the entities.
+The CRUD operations are done in the REST API layer, not the db layer.
 
 |--------------------+-------------+-----------+---------------------------------|
 | Operation          | Actor       | Ref.      | Result                          |
