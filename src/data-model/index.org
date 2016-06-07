@@ -242,12 +242,12 @@ type of actor:  =user=.
 |--------------------+-------------+-----------+---------------------------------|
 | toClient()         | N/A         | N/A       | Returns data of user            |
 |--------------------+-------------+-----------+---------------------------------|
-** Remarks
 
-- =makeUser(e: Email, n:Name, s: Session)= :: WHen a user is created by an
-     admin, that user is assigned the role =user=. 
 
-- =delUser(u:User, s: Session)= ::  Only =admin-user= can delete another user.
-     The =admin-user= may not delete him/herself.
+
+
+
+
+
 
 
