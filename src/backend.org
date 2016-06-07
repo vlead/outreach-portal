@@ -5905,6 +5905,7 @@ def upload_file(file, url):
             file.save(file_path)                   
             current_app.logger.debug("file saved successfully")      
         except Exception, e:
+            response = requests.delete(url)
             current_app.logger.error("Error unable to save file: " + str(e))
             raise e
             abort(500, 'error is %s' % (str(e)))
