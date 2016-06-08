@@ -48,33 +48,11 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
     }  
     
 });
-
-app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, $route,$window) {
-   if ($window.number != 0 || $window.number == undefined) {
-     
-     dataFactory.fetch("/users/"+$window.number).success(function(response){
-       $scope.user = response;
-     });
-     
-     dataFactory.fetch("/users/"+$routeParams.id).success(function(response){
-       $scope.oc_user = response;
-       
-     });
-   }
-    dataFactory.fetch("/reference_documents?user_id=1").success(function(response){
-        $scope.documents = response;
-    });
-    $scope.deldoc =  function(id)
-    {
-        if(confirm("Are you sure!") == true){
-            dataFactory.del("/reference_documents/"+id).success(function(response){
-                $route.reload();
-            }).error(function(data, status){
-                
-            });
-            
-        }
-    }
+app.controller("oc-ctrl", function($scope, $routeParams, dataFactory, $route, $window){
+    dataFactory.fetch("/users/"+$routeParams.id).success(function(response){
+	$scope.oc_user = response;
+	
+    }).error(function(response){alert("Failed to fetch data");});
     
     $scope.edit_oc = function(isvalid){
         if(isvalid){
@@ -92,10 +70,36 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
                     $scope.status = "Failed"
                 }
             });
-            
+
         }
         else{
             $scope.status = "Fill Details"
+        }
+    }
+
+});
+
+app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, $route,$window) {
+   if ($window.number != 0 || $window.number == undefined) {
+     
+     dataFactory.fetch("/users/"+$window.number).success(function(response){
+       $scope.user = response;
+     }).error(function(response){alert("Failed to fetch data");});
+
+   }
+    dataFactory.fetch("/reference_documents?user_id=1").success(function(response){
+        $scope.documents = response;
+    }).error(function(response){alert("Failed to fetch data");});
+
+    $scope.deldoc =  function(id)
+    {
+        if(confirm("Are you sure!") == true){
+            dataFactory.del("/reference_documents/"+id).success(function(response){
+                $route.reload();
+            }).error(function(data, status){
+                
+            });
+            
         }
     }
     

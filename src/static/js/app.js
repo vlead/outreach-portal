@@ -19,7 +19,7 @@ app.config(function($routeProvider){
 	})
         .when('/edit-oc/:id', {
 	    templateUrl : '/static/partials/edit-oc.html',
-	    controller  : 'admin-ctrl'
+	    controller  : 'oc-ctrl'
 	})
         .when('/documents', {
 	    templateUrl : '/static/partials/upload-doc.html',
