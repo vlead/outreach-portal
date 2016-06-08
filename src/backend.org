@@ -5920,6 +5920,7 @@ entity_pairs = {
               response = requests.delete(url) # Delete the record in database
               try:
                   ##delete the file
+                  delete_file(file_path)
               except Exception, e:
                   current_app.logger.error("Unable to delete the file from the filesystem")
                   abort(500, 'error is %s' % (str(e)))
@@ -5930,6 +5931,13 @@ entity_pairs = {
       else:
           return "file format is not in Allowed Extensions"
         
+  def delete_file(file_path):
+      try:
+          if os.path.exists(file_path):
+              os.remove(file_path)
+      except Exception, e:
+          current_app.logger.error(" IO Error: no such file or directory")
+          abort(500, 'error is %s' % (str(e)))
 
   # query an entity
   # =/<:entity>s?query_param1=val1&query_param2=val2&..query_paramn=valn=
