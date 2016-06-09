@@ -3,7 +3,7 @@
 # Absolute path to the scripts directory
 SCRIPTS_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 #DOC_FOLDER=$(cd ../src/static/uploads && pwd)
-DOC_FOLDER="/var/www/src/static/uploads"
+#DOC_FOLDER="/var/www/src/static/uploads"
 DB_NAME="outreach"
 DB_PASS="root"
 
@@ -25,12 +25,13 @@ fi
 # start back the services
 $SCRIPTS_DIR && ./start
 
-tar -cvf $OUT_FILE $DOC_FOLDER $DB_NAME.sql
-if [ $? -ne 0 ]; then
-  echo "Error: Something went wrong while tar-ing the static folderdump."
-  echo "Aborting backup."
-  exit 1;
-fi
+tar -cvf $OUT_FILE $DB_NAME.sql
+#tar -cvf $OUT_FILE $DOC_FOLDER $DB_NAME.sql
+#if [ $? -ne 0 ]; then
+#  echo "Error: Something went wrong while tar-ing the static folderdump."
+#  echo "Aborting backup."
+#  exit 1;
+#fi
 
 echo "Backup successful."
 exit 0;

@@ -8,7 +8,7 @@ BACKUP_FILE=$1
 
 # Absolute path to the scripts directory
 SCRIPTS_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-DOC_FOLDER=$(cd ../src/static && pwd)
+#DOC_FOLDER=$(cd ../src/static && pwd)
 usage() {
   echo "Usage:"
   echo "$0 <path/to/the/backup/file.tar>"
@@ -40,6 +40,6 @@ if [ $? -ne 0 ]; then
 fi
 # start back the services
 $SCRIPTS_DIR/start
-mv var/www/src/static/uploads /var/www/src/static
+#mv var/www/src/static/uploads /var/www/src/static
 echo "Restore successful."
 exit 0;
