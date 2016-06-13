@@ -5877,6 +5877,7 @@ def allowed_file(filename):
     return '.' in filename and \
         filename.rsplit('.', 1)[1] in set(ALLOWED_FILE_EXTENSIONS)
 
+
 def upload_file(file, url):
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
@@ -5907,24 +5908,23 @@ def upload_file(file, url):
         except Exception, e:
             response = requests.delete(url)
             current_app.logger.error("Error unable to save file: " + str(e))
-            raise e
             abort(500, 'error is %s' % (str(e)))
 
         path = {'path': db_path}
-        response = requests.put(url, data=path)
-        current_app.logger.debug("db path is set successfully")
+        try:
+            response = requests.put(url, data=path)
+            if response.status_code == 200:
+                current_app.logger.debug("db path is set successfully")
+            else:
+                current_app.logger.debug("Unable to save file path in database")
+                response = requests.delete(url) # Delete the record in database
 
-        if response.status_code != 200:
-
-            current_app.logger.error("Unable to save file path in database")
-            response = requests.delete(url) # Delete the record in database
-            try:
-                ##delete the file
-                delete_file(file_path)
-            except Exception, e:
-                current_app.logger.error("Unable to delete the file from the filesystem")
-                abort(500, 'error is %s' % (str(e)))
-
+                if response.status_code == 200:
+                    current_app.logger.error("Sucessfully deleted record from database")
+                    ##delete the file
+                    delete_file(file_path)
+                    abort(500)
+        except Exception, e:
             abort(500, 'error is %s' % (str(e)))
 
         return file_path
@@ -5935,6 +5935,7 @@ def delete_file(file_path):
     try:
         if os.path.exists(file_path):
             os.remove(file_path)
+            current_app.logger.debug("Successfully deleted file from filesystem")
     except Exception, e:
         current_app.logger.error(" IO Error: no such file or directory")
         abort(500, 'error is %s' % (str(e)))
