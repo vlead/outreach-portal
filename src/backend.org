@@ -5229,6 +5229,9 @@ from db import db
 from api import api
 # import config file
 import config
+from config import LOG_FILE_DIRECTORY
+from config import LOG_FILE
+from config import LOG_LEVEL
 
 
 def create_app(config):
@@ -5327,9 +5330,9 @@ def configure_logging(app):
     # Also error can be sent out via email. So we can also have a SMTPHandler?
     log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                            '..',
-                           app.config['LOG_FILE_DIRECTORY'])
+                           LOG_FILE_DIRECTORY)
 
-    log_file = "%s/%s" % (log_dir, app.config['LOG_FILE'])
+    log_file = "%s/%s" % (log_dir, LOG_FILE)
     os.system("sudo touch %s" % log_file)
     os.system("sudo chmod 777 %s" % log_file)
     max_size = 1024 * 1024 * 20  # Max Size for a log file: 20MB
@@ -5337,7 +5340,7 @@ def configure_logging(app):
                                                        maxBytes=max_size,
                                                        backupCount=10)
 
-    log_level = app.config['LOG_LEVEL']
+    log_level = LOG_LEVEL
     
     log_handler.setFormatter(formatter)
 
