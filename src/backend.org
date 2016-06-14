@@ -5737,27 +5737,21 @@ entity_pairs = {
      
 **** GET APIS
 #+BEGIN_SRC python :tangle src/api.py :eval 
+session_list = {}
+def check_authorization(email, key):
+    try:
+        if session_list[email] == key:
+            return True
+    except Exception, e:
+        return False
+
 @api.route("/")
 def index():
     return render_template("index.html")
 
 @api.route("/admin", methods=['GET','POST'])
 def admin():
-    if request.method == 'POST':
-        file = request.files['file']
-        name = request.form['name']
-        name_data = json.dumps({"name": name, "user": {"id":session['id']}})
-        r = requests.post(APP_URL+"/reference_documents",data=name_data)
-        r_json = json.loads(r.text)
-        ID = r_json['id']
-        filename = secure_filename(file.filename)
-        dir_path = "%s" % (UPLOAD_DIR_PATH)
-        file_path = "%s%s" % (dir_path, filename)  
-        file.save(os.getcwd()+"/build/code/src/"+file_path)
-        path = {'path': file_path}
-        response = requests.put(APP_URL + "/reference_documents/"+ str(ID), data=path)
-        return redirect("/admin#documents")
-    else:
+    if request.method == 'GET':
         if ('email' in session) and (session['role'] == 'admin'):
             rg = requests.get(APP_URL + "/reference_documents?user_id="+str(session['id']))
             rg_json = json.loads(rg.text)
@@ -5795,6 +5789,9 @@ def login():
         if resp.ok:
             verification_data = resp.json()
         if verification_data['status'] == 'okay':
+            email = str(verification_data['email'])
+            key = str(request.form['assertion'])
+            session_list[email] = key
             url_for_getting_the_user = "%s/users?email=%s" % \
                                        (APP_URL, verification_data['email'])
             current_app.logger.debug("url_for_getting_the_user = %s" %
@@ -5809,6 +5806,7 @@ def login():
                 session['role'] = role
                 session['name'] = name
                 session['id'] = backend_resp.json()[0]['id']
+                session['key'] = key
                 if backend_resp.json()[0]['email'].encode('ascii') == \
                    str(session['email']):
                     return role
@@ -5820,6 +5818,7 @@ def logout_handler():
     session.pop('email', None)
     session.pop('name', None)
     session.pop('role', None)
+    session.pop('key', None)
     return "Ok"
 
 @api.route('/upload_reference_documents/<id>', methods=['GET', 'POST'])
@@ -6119,6 +6118,14 @@ delete or update an existing record.
 #+BEGIN_SRC python
 @api.route('/<entity>/<id>', methods=['PUT', 'DELETE'])
 def modify_entity(entity, id):
+    email = str(request.headers.get('email'))
+    key = str(request.headers.get('key'))
+    if email is None or key is None:
+        abort(500, "Invalid arguments")
+
+    if(not check_authorization(email, key)):
+        abort(401, "Unauthorized user")
+    
     if entity not in entity_map_types:
         current_app.logger.debug("Entity %s not in entity map types"  % entity)
         abort(400, 'Entity %s is not valid.' % entity)
@@ -6328,6 +6335,14 @@ interpreter expects them to be.
 #+BEGIN_SRC python
 @api.route('/<entity>', methods=['POST'])
 def create_entity(entity):
+    email = str(request.headers.get('email'))
+    key = str(request.headers.get('key'))
+    if email is None or key is None:
+        abort(500, "Invalid arguments")
+
+    if(not check_authorization(email, key)):
+        abort(401, "Unauthorized user")
+
     if entity not in entity_map_types:
         current_app.logger.debug("Entity %s not present in entity map types"  % entity)
         abort(400, 'Entity %s is not valid.' % entity)
