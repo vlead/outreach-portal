@@ -105,7 +105,7 @@
             data: JSON.stringify(data),
             success: function (data){
                 return data ;
-            },
+            },headers: {'email' : window.email, 'key' : window.key },
         }).responseText;
 
         var documentId = JSON.parse(jqxhr).id;
@@ -137,7 +137,7 @@
         type: 'PUT',
         async:false,
         contentType: 'application/json',
-        data: JSON.stringify({status: {id: 2}}),
+        data: JSON.stringify({status: {id: 2}}),headers: {'email' : window.email, 'key' : window.key },
         success: function (data){
           console.log('Status: Pending for Approval');
         }

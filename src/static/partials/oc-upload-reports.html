@@ -102,7 +102,7 @@
             global: false,
             async:false,
             contentType: 'application/json',
-            data: JSON.stringify(data),
+            data: JSON.stringify(data),headers: {'email' : window.email, 'key' : window.key },
             success: function (data){
                 return data ;
             },
@@ -137,7 +137,7 @@
         type: 'PUT',
         async:false,
         contentType: 'application/json',
-        data: JSON.stringify({status: {id: 3}}),
+        data: JSON.stringify({status: {id: 3}}),headers: {'email' : window.email, 'key' : window.key },
         success: function (data){
           console.log('Status: Pending for Approval');
         }
