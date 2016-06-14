@@ -329,7 +329,7 @@ class TestRole(TestCase):
 ***** getName: Role --> Name
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_name(self):
-        current_app.logger.debug("get name of the Role: %s" % name)
+        current_app.logger.debug("get name of the Role: %s" % self.name)
         return self.name
 
 #+END_SRC
@@ -555,7 +555,7 @@ class TestUser(TestCase):
 ***** getName: User --> Name
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_name(self):
-        current_app.logger.debug("get name of the User: %s" % name)
+        current_app.logger.debug("get name of the User: %s" % self.name)
         return self.name
 #+END_SRC
 
@@ -572,7 +572,7 @@ class TestUser(TestCase):
 ***** getEmail: User --> Email
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_email(self):
-        current_app.logger.debug("get email of the User: %s" % email)
+        current_app.logger.debug("get email of the User: %s" % self.email)
         return self.email
 #+END_SRC
 
@@ -589,7 +589,7 @@ class TestUser(TestCase):
 ***** getInstituteName: User --> String
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_institute_name(self):
-        current_app.logger.debug("get institute_name of the User: %s" % institute_name)
+        current_app.logger.debug("get institute_name of the User: %s" % self.institute_name)
         return self.institute_name
 #+END_SRC
       
@@ -608,7 +608,7 @@ class TestUser(TestCase):
 ***** getRole: User --> Role
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_role(self):
-        current_app.logger.debug("get role of the User: %s" % role.name)
+        current_app.logger.debug("get role of the User: %s" % self.role)
         return self.role
 #+END_SRC
 
@@ -625,7 +625,7 @@ class TestUser(TestCase):
 ***** gettimeOfCreation: User --> Datetime
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_created(self):
-        current_app.logger.debug("get time of creation of the User: %s" % created)
+        current_app.logger.debug("get time of creation of the User: %s" % self.created)
         return self.created
 #+END_SRC
 
@@ -643,7 +643,7 @@ class TestUser(TestCase):
 ***** getLastActive: User --> String
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_last_active(self):
-        current_app.logger.debug("get last active time of the User: %s" % last_active)
+        current_app.logger.debug("get last active time of the User: %s" % self.last_active)
         return self.last_active
 #+END_SRC
       
@@ -743,14 +743,14 @@ class TestUser(TestCase):
 
 ***** Test settimeOfCreation: User, Time --> Void
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
-    def test_set_user_last_active(self):
-        print "test_set_user_last_active"
+    def test_set_user_toc(self):
+        print "test_set_user_toc"
         role = Role(name=Name("Admin"))
         user = User(name=Name("ambika"), email=Email("ambika@vlabs.ac.in"), role=role)     
         user.save()
         user.set_toc("Mon Nov 23 2015 06:18:26 GMT-0500 (EST)")
         user.save()
-        self.assertEqual("Mon Nov 23 2015 06:18:26 GMT-0500 (EST)", user.last_active)
+        self.assertEqual("Mon Nov 23 2015 06:18:26 GMT-0500 (EST)", user.created)
 #+END_SRC
 
 ***** setRole: User, Role --> Void
@@ -957,7 +957,7 @@ class TestReferenceDocument(TestCase):
 ***** getName: ReferenceDocument --> Name
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_name(self):
-        current_app.logger.debug("get name of the Reference Document: %s" % name)
+        current_app.logger.debug("get name of the Reference Document: %s" % self.name)
         return self.name
 #+END_SRC
 
@@ -981,7 +981,7 @@ class TestReferenceDocument(TestCase):
 ***** getPath: ReferenceDocument --> String
 #+BEGIN_SRC python :tangle src/db.py :eval no 
     def get_path(self):
-        current_app.logger.debug("get path of the Reference Document: %s" % path)
+        current_app.logger.debug("get path of the Reference Document: %s" % self.path)
         return self.path
 #+END_SRC
 
@@ -1006,7 +1006,7 @@ class TestReferenceDocument(TestCase):
 ***** getUser: ReferenceDocument --> User
 #+BEGIN_SRC python :tangle src/db.py :eval no 
     def get_user(self):
-        current_app.logger.debug("get user of the Reference Document: %s" % user.name)
+        current_app.logger.debug("get user of the Reference Document: %s" % self.user)
         return self.user
 #+END_SRC
 ***** TestUser: ReferenceDocument --> User
@@ -1203,7 +1203,7 @@ class TestStatus(TestCase):
 ***** getName: Status --> Name
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_name(self):
-        current_app.logger.debug("set the name of the status: %s" % name)
+        current_app.logger.debug("set the name of the status: %s" % self.name)
         return self.name
 #+END_SRC
 ***** Test getName: Status --> Name 
@@ -1566,7 +1566,7 @@ class TestWorkshop(TestCase):
 ***** getName: Workshop --> Name
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_name(self):
-        current_app.logger.debug("get the name of the Workshop: %s" % name)
+        current_app.logger.debug("get the name of the Workshop: %s" % self.name)
         return self.name
 #+END_SRC
 
@@ -1596,7 +1596,7 @@ class TestWorkshop(TestCase):
 ***** getLocation: Workshop --> Location
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_location(self):
-        current_app.logger.debug("get the name of the Workshop: %s" % name)
+        current_app.logger.debug("get the name of the Workshop: %s" % self.name)
         return self.location
 #+END_SRC
 
@@ -1627,7 +1627,7 @@ class TestWorkshop(TestCase):
 ***** getDate: Workshop --> String
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_date(self):
-        current_app.logger.debug("get the date of the Workshop: %s" % date)
+        current_app.logger.debug("get the date of the Workshop: %s" % self.date)
         return self.date
 #+END_SRC
 ***** Test getDate: Workshop --> String
@@ -1655,7 +1655,7 @@ class TestWorkshop(TestCase):
 ***** getUser: Workshop --> User
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_user(self):
-        current_app.logger.debug("get the user of the Workshop: %s" % user.name)
+        current_app.logger.debug("get the user of the Workshop: %s" % self.user)
         return self.user
 
 #+END_SRC
@@ -1684,7 +1684,7 @@ class TestWorkshop(TestCase):
 ***** timeOfCreation: Workshop --> Datetime
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_created(self):
-        current_app.logger.debug("get the time of creation of the Workshop: %s" % created)
+        current_app.logger.debug("get the time of creation of the Workshop: %s" % self.created)
         return self.created
 #+END_SRC
 
@@ -1726,7 +1726,7 @@ class TestWorkshop(TestCase):
 ***** getLastUpdated: Workshop --> String
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_last_updated(self):
-        current_app.logger.debug("get the last updated time of the Workshop: %s" % last_updated)
+        current_app.logger.debug("get the last updated time of the Workshop: %s" % self.last_updated)
         return self.last_updated
 #+END_SRC
       
@@ -1755,7 +1755,7 @@ class TestWorkshop(TestCase):
 ***** getParticipatingInstitutes: Workshop --> ParticipatingInstitutes
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_participating_institutes(self):
-        current_app.logger.debug("get the participating_institutes of the Workshop: %s" % participating_institutes)
+        current_app.logger.debug("get the participating_institutes of the Workshop: %s" % self.participating_institutes)
         return self.participating_institutes
 #+END_SRC
 ***** Test getParticipatingInstitutes: Workshop --> ParticipatingInstitutes
@@ -1782,7 +1782,7 @@ class TestWorkshop(TestCase):
 ***** getNoOfParticipantsExpected: Workshop --> ParticipantsExpected
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_no_of_participants_expected(self):
-        current_app.logger.debug("get the no_of_participants_expected of the Workshop: %s" % no_of_participants_expected)
+        current_app.logger.debug("get the no_of_participants_expected of the Workshop: %s" % self.no_of_participants_expected)
         return self.no_of_participants_expected
 #+END_SRC
 ***** Test getNoOfParticipantsExpected: Workshop --> ParticipantsExpected
@@ -1809,7 +1809,7 @@ class TestWorkshop(TestCase):
 ***** getNoOfParticipantsAttended: Workshop --> NoOfParticipantsAttended
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_no_of_participants_attended(self):
-        current_app.logger.debug("get the participants_attended for the Workshop: %s" % participants_attended)
+        current_app.logger.debug("get the participants_attended for the Workshop: %s" % self.participants_attended)
         return self.participants_attended
 #+END_SRC
 ***** Test getNoOfParticipantsAttended: Workshop --> NoOfParticipantsAttended
@@ -1836,7 +1836,7 @@ class TestWorkshop(TestCase):
 ***** getOtherDetails: Workshop --> OtherDetails
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_other_details(self):
-        current_app.logger.debug("get the participants_attended for the Workshop: %s" % participants_attended)
+        current_app.logger.debug("get the participants_attended for the Workshop: %s" % self.participants_attended)
         return self.other_details
 #+END_SRC
 ***** Test getOtherDetails: Workshop --> OtherDetails
@@ -1863,7 +1863,7 @@ class TestWorkshop(TestCase):
 ***** getNoOfExptsConducted: Workshop --> NoOfExptsConducted
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_no_of_expts_conducted(self):
-        current_app.logger.debug("get the number of experiments conducted for the Workshop: %s" % experiments_conducted)
+        current_app.logger.debug("get the number of experiments conducted for the Workshop: %s" % self.experiments_conducted)
         return self.experiments_conducted
 #+END_SRC
 ***** Test getNoOfExptsConducted: Workshop --> NoOfExptsConducted
@@ -1890,7 +1890,7 @@ class TestWorkshop(TestCase):
 ***** getDurationOfSessions: Workshop --> DurationOfSessions
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_duration_of_sessions(self):
-        current_app.logger.debug("get the duration_of_sessions for the Workshop: %s" % duration_of_sessions)
+        current_app.logger.debug("get the duration_of_sessions for the Workshop: %s" % self.duration_of_sessions)
         return self.duration_of_sessions
 #+END_SRC
 ***** Test getDurationOfSessions: Workshop --> DurationOfSessions
@@ -1907,17 +1907,17 @@ class TestWorkshop(TestCase):
                               participating_institutes="HCU, IIIT-Hyd",
                               no_of_participants_expected=100,
                               no_of_sessions=3, labs_planned=4,
-                              status=status, duration_of_sessions=1,
+                              status=status, duration_of_sessions="10:30",
                               date="Mon Nov 23 2015 06:18:26 GMT-0500 (EST)")
 
 
         duration = workshop_1.get_duration_of_sessions()
-        self.assertEqual(duration, 1)
+        self.assertEqual(duration, "10:30")
 #+END_SRC
 ***** getDisciplines: Workshop --> Disciplines
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_disciplines(self):
-        current_app.logger.debug("get the disciplines for the Workshop: %s" % disciplines)
+        current_app.logger.debug("get the disciplines for the Workshop: %s" % self.disciplines)
         return self.disciplines
 #+END_SRC
 ***** Test getDisciplines: Workshop --> Disciplines
@@ -1944,7 +1944,7 @@ class TestWorkshop(TestCase):
 ***** getNoOfSessions: Workshop --> NoOfSessions
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_no_of_sessions(self):
-        current_app.logger.debug("get the no_of_sessions for the Workshop: %s" % no_of_sessions)
+        current_app.logger.debug("get the no_of_sessions for the Workshop: %s" % self.no_of_sessions)
         return self.no_of_sessions
 #+END_SRC
 ***** Test getNoOfSessions: Workshop --> NoOfSessions
@@ -1970,7 +1970,7 @@ class TestWorkshop(TestCase):
 ***** getPlannedLabs: Workshop --> PlannedLabs
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_planned_labs(self):
-        current_app.logger.debug("get the labs_planned for the Workshop: %s" % labs_planned)
+        current_app.logger.debug("get the labs_planned for the Workshop: %s" % self.labs_planned)
         return self.labs_planned
 #+END_SRC
 ***** Test getPlannedLabs: Workshop --> PlannedLabs
@@ -1997,7 +1997,7 @@ class TestWorkshop(TestCase):
 ***** getStatus: Workshop --> Status
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_status(self):
-        current_app.logger.debug("get the status of the Workshop: %s" % status)
+        current_app.logger.debug("get the status of the Workshop: %s" % self.status)
         return self.status
 #+END_SRC
 ***** Test getStatus: Workshop --> Status
@@ -2024,7 +2024,7 @@ class TestWorkshop(TestCase):
 ***** getCancellationReason: Workshop --> Reason
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_cancellation_reason(self):
-        current_app.logger.debug("get the cancellation_reason for the Workshop: %s" % cancellation_reason)
+        current_app.logger.debug("get the cancellation_reason for the Workshop: %s" % self.cancellation_reason)
         return self.cancellation_reason
 #+END_SRC
 ***** Test getCancellationReason: Workshop --> Reason
@@ -2051,7 +2051,7 @@ class TestWorkshop(TestCase):
 ***** getNotApprovalReason: Workshop --> Reason
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_not_approval_reason(self):
-        current_app.logger.debug("get the not_approval_reason for the Workshop: %s" % not_approval_reason)
+        current_app.logger.debug("get the not_approval_reason for the Workshop: %s" % self.not_approval_reason)
         return self.not_approval_reason
 #+END_SRC
 ***** Test getNotApprovalReason: Workshop --> Reason
@@ -2833,7 +2833,7 @@ class TestNodalCentre(TestCase):
 ***** getCreatedBy: NodalCentre --> User
 #+BEGIN_SRC python :tangle src/db.py :eval no 
     def get_created_by(self):
-        current_app.logger.debug("get of the user who created the NodalCentre: %s"  % created_by.name)
+        current_app.logger.debug("get of the user who created the NodalCentre: %s"  % self.created_by)
         return self.created_by
 
 #+END_SRC
@@ -2876,7 +2876,7 @@ class TestNodalCentre(TestCase):
 ***** getName: NodalCentre --> Name
 #+BEGIN_SRC python :tangle src/db.py :eval no 
     def get_name(self):
-        current_app.logger.debug("get name of the NodalCentre: %s"  % name)
+        current_app.logger.debug("get name of the NodalCentre: %s"  % self.name)
         return self.name
 #+END_SRC
 
@@ -2917,7 +2917,7 @@ class TestNodalCentre(TestCase):
 ***** getLocation: NodalCentre --> Location
 #+BEGIN_SRC python :tangle src/db.py :eval no 
     def get_location(self):
-        current_app.logger.debug("get location of the NodalCentre : %s"  % location)
+        current_app.logger.debug("get location of the NodalCentre : %s"  % self.location)
         return self.location
 #+END_SRC
       
@@ -3455,7 +3455,7 @@ class TestNodalCoordinatorDetail(TestCase):
 ***** getUser: NodalCoordinatorDetail --> User
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_user(self):
-        current_app.logger.debug("get user from NodalCoordinatorDetail Entity: %s"  % user.name)
+        current_app.logger.debug("get user from NodalCoordinatorDetail Entity: %s"  % self.user)
         return self.user
 
 #+END_SRC
@@ -3523,7 +3523,7 @@ class TestNodalCoordinatorDetail(TestCase):
 ***** getCreatedBy: NodalCoordinatorDetail --> User
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_created_by(self):
-        current_app.logger.debug("get created_by user from NodalCoordinatorDetail: %s"  % created_by)
+        current_app.logger.debug("get created_by user from NodalCoordinatorDetail: %s"  % self.created_by)
         return self.created_by
 
 #+END_SRC
@@ -3592,7 +3592,7 @@ class TestNodalCoordinatorDetail(TestCase):
 ***** getNodalCentre: NodalCoordinatorDetail --> NodalCentre
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_nodal_centre(self):
-        current_app.logger.debug("get nodal_centre from NodalCoordinatorDetail: %s"  % nodal_centre)
+        current_app.logger.debug("get nodal_centre from NodalCoordinatorDetail: %s"  % self.nodal_centre)
         return self.nodal_centre
 
 #+END_SRC
@@ -3660,7 +3660,7 @@ class TestNodalCoordinatorDetail(TestCase):
 ***** timeOfCreation: NodalCoordinatorDetail --> Datetime
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_created(self):
-        current_app.logger.debug("get time of creation from NodalCoordinatorDetail: %s"  % created)
+        current_app.logger.debug("get time of creation from NodalCoordinatorDetail: %s"  % self.created)
         return self.created
 #+END_SRC
 
@@ -3739,7 +3739,7 @@ class TestNodalCoordinatorDetail(TestCase):
 ***** getLastUpdated: NodalCoordinatorDetail --> String
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_last_updated(self):
-        current_app.logger.debug("get created_by user from NodalCoordinatorDetail: %s"  % created_by)
+        current_app.logger.debug("get created_by user from NodalCoordinatorDetail: %s"  % self.last_updated)
         return self.last_updated
 #+END_SRC
       
@@ -3804,7 +3804,7 @@ class TestNodalCoordinatorDetail(TestCase):
 ***** getTargetWorkshops: NodalCoordinatorDetail --> TargetWorkshops
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_target_workshops(self):
-        current_app.logger.debug("get target_workshops from NodalCoordinatorDetail: %s"  % target_workshops)
+        current_app.logger.debug("get target_workshops from NodalCoordinatorDetail: %s"  % self.target_workshops)
         return self.target_workshops
 #+END_SRC
 
@@ -3870,7 +3870,7 @@ class TestNodalCoordinatorDetail(TestCase):
 ***** getTargetParticipants: NodalCoordinatorDetail --> TargetParticipants
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_target_participants(self):
-        current_app.logger.debug("get target_participants from NodalCoordinatorDetail: %s"  % target_participants)
+        current_app.logger.debug("get target_participants from NodalCoordinatorDetail: %s"  % self.target_participants)
         return self.target_participants
 #+END_SRC
 
@@ -3935,7 +3935,7 @@ class TestNodalCoordinatorDetail(TestCase):
 ***** getTargetExperiments: NodalCoordinatorDetail --> TargetExperiments
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_target_experiments(self):
-        current_app.logger.debug("get target_experiments from NodalCoordinatorDetail: %s"  % target_experiments)
+        current_app.logger.debug("get target_experiments from NodalCoordinatorDetail: %s"  % self.target_experiments)
         return self.target_experiments
 #+END_SRC
 
@@ -4782,7 +4782,7 @@ class TestWorkshopReport(TestCase):
 ***** getPath: WorkshopReport --> String
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_path(self):
-        current_app.logger.debug("get path of the WorkshopReport: %s"  % path)
+        current_app.logger.debug("get path of the WorkshopReport: %s"  % self.path)
         return self.path
 #+END_SRC
 
@@ -4820,7 +4820,7 @@ class TestWorkshopReport(TestCase):
 ***** getName: WorkshopReport --> String
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def get_name(self):
-        current_app.logger.debug("get name of the WorkshopReport: %s"  % name)
+        current_app.logger.debug("get name of the WorkshopReport: %s"  % self.name)
         return self.name
 #+END_SRC
 
@@ -4858,7 +4858,7 @@ class TestWorkshopReport(TestCase):
 ***** getWorkshop: WorkshopReport --> Workshop
 #+BEGIN_SRC python :tangle src/db.py :eval no 
     def get_workshop(self):
-        current_app.logger.debug("get workshop of the WorkshopReport: %s"  % workshop.name)
+        current_app.logger.debug("get workshop of the WorkshopReport: %s"  % self.workshop)
         return self.workshop
 #+END_SRC
 ***** TestWorkshop: WorkshopReport --> Workshop
@@ -5917,7 +5917,7 @@ def upload_file(file, url):
         try:
             response = requests.put(url, data=path)
             if response.status_code == 200:
-                current_app.logger.debug("db path is set successfully")
+                current_app.logger.error("db path is set successfully")
             else:
                 current_app.logger.debug("Unable to save file path in database")
                 response = requests.delete(url) # Delete the record in database
@@ -6381,7 +6381,7 @@ class TestRole(TestCase):
     TESTING = True
 
     def create_app(self):
-        app = create_app(confg)
+        app = create_app(config)
         return app
 
     def setUp(self):
@@ -7499,56 +7499,6 @@ class TestWorkshopReport(TestCase):
         result = json.loads(r.data)
         self.assertEqual(result['name'], "College Report")
 
-    def test_delete_workshop_report(self):
-        print "test_delete_workshop_report"
-        role = Role(name=Name("OC"))
-        role.save()
-        user1 = User(name=Name("Joe Smith"),
-                     email=Email("joe@smith.com"),
-                     role=role)
-        user1.save()
-
-        user2 = User(name=Name("Will Smith"),
-                     email=Email("will@smith.com"),
-                     role=role)
-        user2.save()
-
-        status = Status(name=Name("Upcoming"))
-        status.save()        
-
-        workshop_1 = Workshop(name="Coordinators Training",
-                              location="IIIT-Hyd", user=user1,
-                              participating_institutes="HCU, IIIT-Hyd",
-                              no_of_participants_expected=100,
-                              no_of_sessions=3, labs_planned=4,
-                              status=status, date="Mon Nov 23 2015 06:18:26\
-                              GMT-0500 (EST)")
-
-        workshop_1.save()
-
-        workshop_2 = Workshop(name="HCU workshop", location="HCU",
-                              user=user2, participating_institutes="HCU,\
-                              IIIT-Hyd", no_of_participants_expected=50,
-                              no_of_sessions=2, labs_planned=2,
-                              status=status, date="Mon Nov 23 2015 06:18:26\
-                              GMT-0500 (EST)")
-
-        workshop_2.save()
-
-        workshop_report1 = WorkshopReport(name="College Report",
-                                          path="/static/uploads/college-reports/file.pdf",
-                                          workshop=workshop_1)
-        workshop_report1.save()
-
-        workshop_report2 = WorkshopReport(name="Workshop Photos",
-                                          path="/static/uploads/workshop-photos/photo.png",
-                                          workshop=workshop_2)
-        workshop_report2.save()
-        
-        r = self.client.delete('/workshop_reports/1')
-        r = self.client.get('/workshop_reports')
-        result = json.loads(r.data)
-        self.assertEqual(len(result), 1)
 
 #+END_SRC
     
