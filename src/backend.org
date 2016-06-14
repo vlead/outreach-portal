@@ -5815,6 +5815,8 @@ def login():
 
 @api.route('/auth/logout', methods=['POST'])
 def logout_handler():
+    current_user = session._get_current_object().get('email')
+    session_list.pop(current_user)
     session.pop('email', None)
     session.pop('name', None)
     session.pop('role', None)
@@ -5905,18 +5907,18 @@ def upload_file(file, url):
             file.save(file_path)                   
             current_app.logger.debug("file saved successfully")      
         except Exception, e:
-            response = requests.delete(url)
+            response = requests.delete(url, headers= {'email' : session['email'], 'key' : session['key']})
             current_app.logger.error("Error unable to save file: " + str(e))
             abort(500, 'error is %s' % (str(e)))
 
         path = {'path': db_path}
         try:
-            response = requests.put(url, data=path)
+            response = requests.put(url, data=path, headers= {'email' : session['email'], 'key' : session['key']})
             if response.status_code == 200:
                 current_app.logger.debug("db path is set successfully")
             else:
                 current_app.logger.debug("Unable to save file path in database")
-                response = requests.delete(url) # Delete the record in database
+                response = requests.delete(url, headers= {'email' : session['email'], 'key' : session['key']}) # Delete the record in database
 
                 if response.status_code == 200:
                     current_app.logger.error("Sucessfully deleted record from database")
