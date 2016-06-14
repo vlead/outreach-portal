@@ -41,10 +41,12 @@
             global: false,
             async:false,
             contentType: 'application/json',
-            data: JSON.stringify(data),
+                            data: JSON.stringify(data),
+                            headers: {'email' : window.email, 'key' :
+       window.key },
             success: function (data){
                 return data ;
-            },
+            },error : function (data){alert("Error in making request to /refrence_documents");}
         }).responseText;
 
         var documentId = JSON.parse(jqxhr).id;

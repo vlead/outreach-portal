@@ -116,6 +116,8 @@
       });
       {% if session.email %}
       var number  = '{{ session.id }}';
+      var email  = '{{ session.email }}';
+      var key  = '{{ session.key }}';
       {% else %}
       var number = 0
       {% endif %}
