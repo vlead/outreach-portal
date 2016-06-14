@@ -701,10 +701,10 @@ app.controller("edit-centre", function($scope, dataFactory, $http, $routeParams,
         });
     $scope.submit = function(isvalid) {
         if(isvalid){
-            $http.put('/nodal_centres/'+$routeParams.id,
+            dataFactory.put('/nodal_centres/'+$routeParams.id,
                       { "name" : $scope.centres.name,
                         "location" : $scope.centres.location,
-                        'created_by' : { 'id' : $window.number } }).success(function(data, status, headers, config){
+                        "created_by" : { 'id' : $window.number } }).success(function(data, status, headers, config){
                             $scope.status = "Success";
                             window.location.href = "#/manage-centres";
                         }).
