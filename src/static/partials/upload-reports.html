@@ -60,6 +60,12 @@
    <input type="file" name="file" id="reports-file" required multiple/><br>
    <button type="button" id="upload-reports" class="btn btn-primary">Upload</button>
   </form>
+  <br>
+  <div id="upload-status"></div>
+  <b id="total-files"></b>
+  <div id="not-upload-status"></div>
+  <b id="not-upload-file"></b>
+
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
   <script>
     var validFile = function(fileList){
@@ -95,7 +101,7 @@
    
         for (var key in fileups){
         data = {name: key, workshop: {id : workshop_id }};
-        for (var i = 0; i < fileups[key].files.length; i++){
+        for (var i = 0; i < fileups[key].files.length; i++){console.log(fileups[key].files[i].name);
         var jqxhr = $.ajax({
             url: '/workshop_reports',
             type: 'POST',
@@ -114,7 +120,7 @@
        
         form_data.append('file', fileups[key].files[i], fileups[key].files[i].name);
         var url = '/upload_workshop_reports/' + documentId ;
-   
+        var count = 0;
         $.ajax({
             type: 'POST',
             url: url,
@@ -123,28 +129,32 @@
             cache: false,
             processData: false,
             async: false,
-            success: function(data) {
-                console.log('Success');
-            },
-            error: function(){alert("Failed to upload file(s)");}
+            success: function(data) {$('#upload-status').html("<b> Uploading File  </b>");
+                            $('#total-files').html("<b>" + fileups[key].files[i].name + "</b>");
+                            var url = '/workshops/'+workshop_id;                        
+                            $.ajax({
+                            url: url,
+                            type: 'PUT',
+                            async:false,
+                            contentType: 'application/json',
+                            data: JSON.stringify({status: {id: 2}}),headers: {'email' : window.email, 'key' : window.key },
+                            success: function (data){count = i; i = i+count;console.log(i+1);
+                            console.log('Status: Pending for Approval');
+                            }
+                            });                    
+	                    
+                            console.log('Success');
+                            },
+                            error: function(){$('#not-upload-status').html("<b> Files Not Uploaded  </b>");
+                            $('#not-upload-file').append("<font color='red'>(" + (i+1) + ") </font>" + fileups[key].files[i].name + "<br>");}
+                            });
+                            }
+                            }
 
-       });
-     }
-    }
-    var url = '/workshops/'+workshop_id;                        
-    $.ajax({
-        url: url,
-        type: 'PUT',
-        async:false,
-        contentType: 'application/json',
-        data: JSON.stringify({status: {id: 2}}),headers: {'email' : window.email, 'key' : window.key },
-        success: function (data){
-          console.log('Status: Pending for Approval');
-        }
-        });                    
-	window.history.back();
+                            
+    
       }
-     		    
+     $('#total-files').html("<b> Successfully uploaded all the files : </b>");
     });                        
 });
  </script>
