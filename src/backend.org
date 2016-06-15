@@ -126,6 +126,7 @@ api = Blueprint('APIs', __name__)
 *** Imports and Initialization of testcases for Python API
 
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
+
 # -*- coding: utf-8 -*-
 
 import unittest
@@ -152,6 +153,7 @@ from flask.ext.testing import TestCase
 # import json
 
 from src.db import *
+from src.api import *
 from src.app import create_app
 from src.op_exceptions import AttributeRequired
 
@@ -322,9 +324,21 @@ class TestRole(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_role_get_all(self):
         print "test_role_get_all"
-        role = Role(name=Name("Admin"))
-        role.save()
-        self.assertEqual("Admin", role.name)
+        role1 = Role(name=Name("Admin"))
+        role1.save()
+
+        role2 = Role(name=Name("OC"))
+        role2.save()
+
+        role3 = Role(name=Name("NC"))
+        role3.save()
+
+        roles_list = Role.get_all()
+
+        self.assertEqual("Admin", roles_list[0].name)
+        self.assertEqual("OC", roles_list[1].name)
+        self.assertEqual("NC", roles_list[2].name)
+
 #+END_SRC
 ***** getName: Role --> Name
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -827,7 +841,7 @@ class ReferenceDocument(Entity):
 
 **** Constructor
 #+BEGIN_EXAMPLE 
-    reference_document = ReferenceDocument(name=<instance of class Name>,
+    reference_document = ReferenceDocument(name=str,
                                          path=str,
                                          user=<instance of class User>)
                                             
@@ -883,7 +897,7 @@ class TestReferenceDocument(TestCase):
         user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
         user.save()
 
-        name = Name("Attandance Sheet")
+        name = "Attandance Sheet"
         reference_document = ReferenceDocument(name=name, user=user)
         self.assertEqual(isinstance(reference_document, ReferenceDocument), True)
 
@@ -894,8 +908,8 @@ class TestReferenceDocument(TestCase):
         # Calling the reference_document constructor with necessary arguments
         # (name,path) but with wrong type should raise TypeError
         self.assertRaises(TypeError, ReferenceDocument,
-                          ,**{'name': "College Report",
-                             'user': user
+                          ,**{'name': 'joe',
+                             'user': 'smith'
                             })
 
 #+END_SRC
@@ -922,9 +936,16 @@ class TestReferenceDocument(TestCase):
         user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
         user.save()
 
-        doc = ReferenceDocument(name=Name("Attendance Sheet"), user=user)
-        doc.save()
-        self.assertEqual("Attendance Sheet", doc.name)
+        doc1 = ReferenceDocument(name="Attendance Sheet", user=user)
+        doc1.save()
+
+        doc2 = ReferenceDocument(name="College Report", user=user)
+        doc2.save()
+
+        doc_list = ReferenceDocument.get_all()
+        self.assertEqual("Attendance Sheet", doc_list[0].name)
+        self.assertEqual("College Report", doc_list[1].name)
+
 #+END_SRC
 
 ***** getReferenceDocument: Id --> ReferenceDocument
@@ -948,7 +969,7 @@ class TestReferenceDocument(TestCase):
         user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
         user.save()
 
-        reference_document = ReferenceDocument(name=Name("Attendance Sheet"), user=user)
+        reference_document = ReferenceDocument(name="Attendance Sheet", user=user)
         reference_document.save()
         self.assertEqual(reference_document.get_by_id(1).name, "Attendance Sheet")
 
@@ -973,7 +994,7 @@ class TestReferenceDocument(TestCase):
         user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
         user.save()
 
-        reference_document = ReferenceDocument(name=Name("Attendance Sheet"), user=user)
+        reference_document = ReferenceDocument(name="Attendance Sheet", user=user)
         reference_document_name = reference_document.get_name()
         self.assertEqual(reference_document_name, "Attendance Sheet")
 #+END_SRC
@@ -997,7 +1018,7 @@ class TestReferenceDocument(TestCase):
         user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
         user.save()
 
-        reference_document = ReferenceDocument(name=Name("Attendance Sheet"), user=user,\
+        reference_document = ReferenceDocument(name="Attendance Sheet", user=user,\
                                              path="/reference-documents/admin")
         reference_document_path = reference_document.get_path()
         self.assertEqual(reference_document_path, "/reference-documents/admin")
@@ -1012,9 +1033,8 @@ class TestReferenceDocument(TestCase):
 ***** TestUser: ReferenceDocument --> User
 ***** setName: ReferenceDocument, Name --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(name=Name)
     def set_name(self, name):
-        self.name = name.value
+        self.name = name
 #+END_SRC
 
 ***** Test setName: ReferenceDocument, Name --> Void
@@ -1029,14 +1049,13 @@ class TestReferenceDocument(TestCase):
         user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
         user.save()
 
-        reference_document = ReferenceDocument(name=Name("Attandance Sheet"), user=user)
-        reference_document.set_name(Name("College Report"))
+        reference_document = ReferenceDocument(name="Attandance Sheet", user=user)
+        reference_document.set_name("College Report")
         self.assertEqual(reference_document.name, "College Report")
 #+END_SRC
 
 ***** setPath: ReferenceDocument, String --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no 
-    @typecheck(path=str)
     def set_path(self, path):
         self.path = path
 #+END_SRC
@@ -1053,7 +1072,7 @@ class TestReferenceDocument(TestCase):
         user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
         user.save()
 
-        reference_document = ReferenceDocument(name=Name("Attandance Sheet"), user=user,\
+        reference_document = ReferenceDocument(name="Attandance Sheet", user=user,\
                                              path="/reference-documents/OC")
         reference_document.set_path("/reference-documents/OC")
         reference_document.save()
@@ -1091,7 +1110,7 @@ class TestReferenceDocument(TestCase):
         user = User(name=Name("Ambika"), email=Email("ambika@vlabs.ac.in"), role = role)
         user.save()
 
-        doc = ReferenceDocument(name=Name("Feedback"), user=user)
+        doc = ReferenceDocument(name="Feedback", user=user)
         doc.save()
         doc = ReferenceDocument.get_by_id(1)
         doc_dict = doc.to_client()
@@ -1196,9 +1215,16 @@ class TestStatus(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_status_get_all(self):
         print "test_status_get_all"
-        status = Status(name=Name("Upcoming"))
-        status.save()
-        self.assertEqual("Upcoming", status.name)
+        status1 = Status(name=Name("Upcoming"))
+        status1.save()
+
+        status2 = Status(name=Name("Pending"))
+        status2.save()
+
+        status_list = Status.get_all()
+        self.assertEqual("Upcoming", status_list[0].name)
+        self.assertEqual("Pending", status_list[1].name)
+
 #+END_SRC
 ***** getName: Status --> Name
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -3332,60 +3358,63 @@ class TestNodalCoordinatorDetail(TestCase):
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_get_all_nc_details(self):
         print "test_get_all_nc_details"
-        role1 = Role(name=Name("admin"))
+
+
+        role1 = Role(name=Name("OC"))
         role1.save()
 
-        role2 = Role(name=Name("OC"))
+        role2 = Role(name=Name("NC"))
         role2.save()
 
-        role3 = Role(name=Name("NC"))
-        role3.save()
+        user_1 = User(name=Name("Ambika"),
+                      email=Email("ambika@vlabs.ac.in"), role=role1)
+        user_2 = User(name=Name("Madhavi"),
+                      email=Email("madhavi@vlabs.ac.in"), role=role2)
+        user_3 = User(name=Name("Will Smith"),
+                      email=Email("smith@vlabs.ac.in"), role=role2)
 
-        user1 = User(name=Name("Joe Smith"),
-                     email=Email("joe@smith.com"),
-                     role=role1)
-        user1.save()
-
-        user2 = User(name=Name("Will Smith"),
-                     email=Email("will@smith.com"),
-                     role=role2)
-        user2.save()
-
-        user3 = User(name=Name("john Smith"),
-                     email=Email("john@smith.com"),
-                     role=role3)
-        user3.save()
-
+        user_1.save()
+        user_2.save()
+        user_3.save()
 
         nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
-                                   created_by=user2)
+                                   created_by=user_1)
 
         nodal_centre1.save()
 
         nodal_centre2 = NodalCentre(name="NIT", location="Warangal",\
-                                   created_by=user2)
+                                   created_by=user_2)
 
         nodal_centre2.save()
 
-        nc_details1 = NodalCoordinatorDetail(user=user3, target_workshops=100,
-                                             created_by=user2,
+        nc_details1 = NodalCoordinatorDetail(user=user_2, target_workshops=100,
+                                             created_by=user_1,
                                              nodal_centre=nodal_centre1,
-                                             last_updated="Mon Nov 23 2015",
-                                             target_experiments=800,
                                              target_participants=1000)
         nc_details1.save()
 
-        nc_details2 = NodalCoordinatorDetail(user=user2, target_workshops=200,
-                                             created_by=user2,
-                                             nodal_centre=nodal_centre2,
-                                             last_updated="Tue Nov 24 2015",
-                                             target_experiments=800,
+        nc_details2 = NodalCoordinatorDetail(user=user_3, target_workshops=200,
+                                             created_by=user_1,
+                                             nodal_centre=nodal_centre1,
                                              target_participants=2000)
         nc_details2.save()
-        r = self.client.get('/nodal_coordinator_details')
-        result = json.loads(r.data)
 
-        self.assertEquals(len(result), 2)
+        nc_details_list = NodalCoordinatorDetail.get_all()
+
+        self.assertEqual("madhavi@vlabs.ac.in", nc_details_list[0].user.email)
+        self.assertEqual("Madhavi", nc_details_list[0].user.name)
+        self.assertEqual("Ambika", nc_details_list[0].created_by.name)
+        self.assertEqual("IIIT-Hyd", nc_details_list[0].nodal_centre.name)
+
+        self.assertEqual("smith@vlabs.ac.in", nc_details_list[1].user.email)
+        self.assertEqual("Will Smith", nc_details_list[1].user.name)
+        self.assertEqual("Ambika", nc_details_list[1].created_by.name)
+        self.assertEqual("IIIT-Hyd", nc_details_list[1].nodal_centre.name)
+
+        
+        self.assertEqual(100, nc_details_list[0].target_workshops)
+        self.assertEqual(1000, nc_details_list[0].target_participants)                        
+
 #+END_SRC
 ***** getNodalCoordinatorDetail: Id --> NodalCoordinatorDetail
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -5819,7 +5848,7 @@ def login():
 @api.route('/auth/logout', methods=['POST'])
 def logout_handler():
     current_user = session._get_current_object().get('email')
-    session_list.pop(current_user)
+ #   session_list.pop(current_user)
     session.pop('email', None)
     session.pop('name', None)
     session.pop('role', None)
@@ -6043,7 +6072,7 @@ entity_map_types = {
     'reference_documents': {
         'entity': ReferenceDocument,
         'types': {
-            'name': Name,
+            'name': str,
             'path': str,
             'user': User
         }
@@ -6123,8 +6152,8 @@ delete or update an existing record.
 #+BEGIN_SRC python
 @api.route('/<entity>/<id>', methods=['PUT', 'DELETE'])
 def modify_entity(entity, id):
-    email = str(request.headers.get('email'))
-    key = str(request.headers.get('key'))
+    email = request.headers.get('email')
+    key = request.headers.get('key')
     if email is None or key is None:
         abort(500, "Invalid arguments")
 
@@ -6403,7 +6432,11 @@ class TestRole(TestCase):
 
     def setUp(self):
         db.create_all()
-
+        global session_list
+        email = 'dummyuser@gmail.com'
+        key = 'vlead123'
+        session_list[email] = key
+        
     def tearDown(self):
         db.session.remove()
         db.drop_all()
@@ -6420,6 +6453,7 @@ class TestRole(TestCase):
 
     def test_get_one_role(self):
         print "test_get_one_role"
+
         role1 = Role(name=Name("Admin"))
         role1.save()
         role2 = Role(name=Name("OC"))
@@ -6432,19 +6466,26 @@ class TestRole(TestCase):
         print "test_update_existing_role"
         role1 = Role(name=Name("Admin"))
         role1.save()
+
         role2 = Role(name=Name("OC"))
         role2.save()
-        r = self.client.put('/roles/1',
-                            data=json.dumps({'name': 'NC'}))
-        result = json.loads(r.data)
-        print "result"
-        print result
+
+        headers = {'email':'dummyuser@gmail.com', 'key':'vlead123'}
+
+        response = self.client.put('/roles/1',
+                                   data=json.dumps({'name': 'NC'}),
+                                   headers=headers)
+  
+        result = json.loads(response.data)
         self.assertEqual(result['name'], "NC")
 
     def test_create_new_role(self):
         print "test_create_new_role"
+
+        headers = {'email':'dummyuser@gmail.com', 'key':'vlead123'}
         r = self.client.post('/roles',
-                             data=json.dumps({'name': 'Outreach Coordinator'}))
+                             data=json.dumps({'name': 'Outreach Coordinator'}),
+                             headers=headers)
         result = json.loads(r.data)
         self.assertEqual(result['name'], "Outreach Coordinator")
 
@@ -6454,7 +6495,8 @@ class TestRole(TestCase):
         role1.save()
         role2 = Role(name=Name("NC"))
         role2.save()
-        r = self.client.delete('/roles/1')
+        headers = {'email':'dummyuser@gmail.com', 'key':'vlead123'}
+        r = self.client.delete('/roles/1', headers=headers)
         r = self.client.get('/roles')
         result = json.loads(r.data)
         self.assertEqual(len(result), 1)
@@ -6473,6 +6515,10 @@ class TestUser(TestCase):
 
     def setUp(self):
         db.create_all()
+        global session_list
+        email = 'dummyuser@gmail.com'
+        key = 'vlead123'
+        session_list[email] = key
 
     def tearDown(self):
         db.session.remove()
@@ -6492,7 +6538,7 @@ class TestUser(TestCase):
         user2.save()
         r = self.client.get('/users')
         result = json.loads(r.data)
-        print result
+
         self.assertEquals(len(result), 2)
 
     def test_get_one_user(self):
@@ -6509,7 +6555,7 @@ class TestUser(TestCase):
         user2.save()
         r = self.client.get('/users/1')
         result = json.loads(r.data)
-        print result
+
         self.assertEqual(result['name'], "Joe Smith")
 
     def test_update_existing_user(self):
@@ -6520,8 +6566,10 @@ class TestUser(TestCase):
                      email=Email("joe@smith.com"),
                      role=role)
         user1.save()
+        headers = {'email':'dummyuser@gmail.com', 'key':'vlead123'}
         r = self.client.put('/users/1',
-                            data=json.dumps({'email': 'joe@mit.edu'}))
+                            data=json.dumps({'email': 'joe@mit.edu'}),
+                            headers=headers)
         result = json.loads(r.data)
         self.assertEqual(result['email'], "joe@mit.edu")
 
@@ -6529,10 +6577,11 @@ class TestUser(TestCase):
         print "test_create_new_user"
         role = Role(name=Name("OC"))
         role.save()
+        headers = {'email':'dummyuser@gmail.com', 'key':'vlead123'}
         r = self.client.post('/users',
                              data=json.dumps({'name': 'Joe Smith',
                                               'email': 'joe@mit.edu',
-                                              'role': role.to_client()}))
+                                              'role': role.to_client()}), headers=headers)
         result = json.loads(r.data)
         self.assertEqual(result['name'], "Joe Smith")
 
@@ -6549,7 +6598,8 @@ class TestUser(TestCase):
                      email=Email("will@smith.com"),
                      role=role)
         user2.save()
-        r = self.client.delete('/users/1')
+        headers = {'email':'dummyuser@gmail.com', 'key':'vlead123'}
+        r = self.client.delete('/users/1', headers=headers)
         r = self.client.get('/users')
         result = json.loads(r.data)
         self.assertEqual(len(result), 1)
@@ -6568,6 +6618,10 @@ class TestReferenceDocument(TestCase):
 
     def setUp(self):
         db.create_all()
+        global session_list
+        email = 'dummyuser@gmail.com'
+        key = 'vlead123'
+        session_list[email] = key
 
     def tearDown(self):
         db.session.remove()
@@ -6583,13 +6637,14 @@ class TestReferenceDocument(TestCase):
                      role=role)
         user1.save()
 
-        document1 = ReferenceDocument(name=Name("Attendance Sheet"), user=user1)
+        document1 = ReferenceDocument(name="Attendance Sheet", user=user1)
         document1.save()
-        document2 = ReferenceDocument(name=Name("College Report"), user=user1)
+        document2 = ReferenceDocument(name="College Report", user=user1)
         document2.save()
+        
         r = self.client.get('/reference_documents')
         result = json.loads(r.data)
-        print result
+
         self.assertEquals(len(result), 2)
 
     def test_get_one_reference_document(self):
@@ -6602,13 +6657,13 @@ class TestReferenceDocument(TestCase):
                      role=role)
         user1.save()
 
-        doc1 = ReferenceDocument(name=Name("College Report"), user=user1)
+        doc1 = ReferenceDocument(name="College Report", user=user1)
         doc1.save()
-        doc2 = ReferenceDocument(name=Name("Attendance Sheet"), user=user1)
+        doc2 = ReferenceDocument(name="Attendance Sheet", user=user1)
         doc2.save()
         r = self.client.get('/reference_documents/1')
         result = json.loads(r.data)
-        print result
+
         self.assertEqual(result['name'], "College Report")
 
     def test_update_existing_reference_document(self):
@@ -6621,10 +6676,14 @@ class TestReferenceDocument(TestCase):
                      role=role)
         user1.save()
 
-        doc1 = ReferenceDocument(name=Name("College Report"), user=user1)
+        doc1 = ReferenceDocument(name="College Report", user=user1)
         doc1.save()
+
+        headers = {'email':'dummyuser@gmail.com', 'key':'vlead123'}
+        
         r = self.client.put('/reference_documents/1',
-                            data=json.dumps({'name': 'Feedback'}))
+                            data=json.dumps({'name': 'Feedback'}),
+                            headers=headers)
         result = json.loads(r.data)
         self.assertEqual(result['name'], "Feedback")
 
@@ -6637,10 +6696,12 @@ class TestReferenceDocument(TestCase):
                      email=Email("joe@smith.com"),
                      role=role)
         user1.save()
-
+        
+        headers = {'email':'dummyuser@gmail.com', 'key':'vlead123'}
         r = self.client.post('/reference_documents',
                              data=json.dumps({'name': 'Feedback',
-                                              'user': user1.to_client()}))
+                                              'user': user1.to_client()}),
+                             headers=headers)
         result = json.loads(r.data)
         self.assertEqual(result['name'], "Feedback")
 
@@ -6654,11 +6715,12 @@ class TestReferenceDocument(TestCase):
                      role=role)
         user1.save()
 
-        doc1 = ReferenceDocument(name=Name("Feedback"), user=user1)
+        doc1 = ReferenceDocument(name="Feedback", user=user1)
         doc1.save()
-        doc2 = ReferenceDocument(name=Name("College Report"), user=user1)
+        doc2 = ReferenceDocument(name="College Report", user=user1)
         doc2.save()
-        r = self.client.delete('/reference_documents/1')
+        headers = {'email':'dummyuser@gmail.com', 'key':'vlead123'}
+        r = self.client.delete('/reference_documents/1', headers=headers)
         r = self.client.get('/reference_documents')
         result = json.loads(r.data)
         self.assertEqual(len(result), 1)
@@ -6677,6 +6739,10 @@ class TestStatus(TestCase):
 
     def setUp(self):
         db.create_all()
+        global session_list
+        email = 'dummyuser@gmail.com'
+        key = 'vlead123'
+        session_list[email] = key
 
     def tearDown(self):
         db.session.remove()
@@ -6708,17 +6774,20 @@ class TestStatus(TestCase):
         status1.save()
         status2 = Status(name=Name("Rejected"))
         status2.save()
+        headers = {'email':'dummyuser@gmail.com', 'key':'vlead123'}
         r = self.client.put('/status/1',
-                            data=json.dumps({'name': 'Rejected'}))
+                            data=json.dumps({'name': 'Rejected'}),
+                            headers=headers)
         result = json.loads(r.data)
-        print "result"
-        print result
+
         self.assertEqual(result['name'], "Rejected")
 
     def test_create_new_status(self):
         print "test_create_new_status"
+        headers = {'email':'dummyuser@gmail.com', 'key':'vlead123'}
         r = self.client.post('/status',
-                             data=json.dumps({'name': 'Pending for Approval'}))
+                             data=json.dumps({'name': 'Pending for Approval'}),
+                             headers=headers)
         result = json.loads(r.data)
         self.assertEqual(result['name'], "Pending for Approval")
 
@@ -6728,7 +6797,8 @@ class TestStatus(TestCase):
         status1.save()
         status2 = Status(name=Name("Approved"))
         status2.save()
-        r = self.client.delete('/status/1')
+        headers = {'email':'dummyuser@gmail.com', 'key':'vlead123'}
+        r = self.client.delete('/status/1', headers=headers)
         r = self.client.get('/status')
         result = json.loads(r.data)
         self.assertEqual(len(result), 1)
@@ -6747,6 +6817,10 @@ class TestWorkshop(TestCase):
 
     def setUp(self):
         db.create_all()
+        global session_list
+        email = 'dummyuser@gmail.com'
+        key = 'vlead123'
+        session_list[email] = key
 
     def tearDown(self):
         db.session.remove()
@@ -6820,7 +6894,7 @@ class TestWorkshop(TestCase):
 
         r = self.client.get('/workshops/1')
         result = json.loads(r.data)
-        print result
+   
         self.assertEqual(result['name'], "Coordinators Training")
 
     def test_update_existing_workshop(self):
@@ -6844,9 +6918,10 @@ class TestWorkshop(TestCase):
                               GMT-0500 (EST)")
 
         workshop_1.save()
-
+        headers = {'email':'dummyuser@gmail.com', 'key':'vlead123'}
         r = self.client.put('/workshops/1',
-                            data=json.dumps({'location': 'HCU'}))
+                            data=json.dumps({'location': 'HCU'}),
+                            headers=headers)
         result = json.loads(r.data)
         self.assertEqual(result['location'], "HCU")
 
@@ -6862,7 +6937,7 @@ class TestWorkshop(TestCase):
 
         status = Status(name=Name("Upcoming"))
         status.save()
-
+        headers = {'email':'dummyuser@gmail.com', 'key':'vlead123'}
         r = self.client.post('/workshops',
                              data=json.dumps({'name': 'HCU workshop',
                                               'location': 'HCU',
@@ -6872,7 +6947,8 @@ class TestWorkshop(TestCase):
                                               'no_of_sessions' : 2,
                                               'labs_planned' : 2,
                                               'status': status.to_client(),
-                                              'date' : 'Mon Nov 23 2015 06:18:26 GMT-0500 (EST)'}))
+                                              'date' : 'Mon Nov 23 2015 06:18:26 GMT-0500 (EST)'}),
+                             headers=headers)
         result = json.loads(r.data)
         self.assertEqual(result['name'], "HCU workshop")
 
@@ -6913,7 +6989,8 @@ class TestWorkshop(TestCase):
 
         workshop_2.save()
 
-        r = self.client.delete('/workshops/1')
+        headers = {'email':'dummyuser@gmail.com', 'key':'vlead123'}
+        r = self.client.delete('/workshops/1', headers=headers)
         r = self.client.get('/workshops')
         result = json.loads(r.data)
         self.assertEqual(len(result), 1)
@@ -6932,6 +7009,10 @@ class TestNodalCentre(TestCase):
 
     def setUp(self):
         db.create_all()
+        global session_list
+        email = 'dummyuser@gmail.com'
+        key = 'vlead123'
+        session_list[email] = key
 
     def tearDown(self):
         db.session.remove()
@@ -6992,6 +7073,30 @@ class TestNodalCentre(TestCase):
 
         self.assertEqual(result['name'], "IIIT-Hyd")
 
+    def test_create_new_nodal_centre(self):
+        print "test_create_new_nodal_centre"
+
+        role = Role(name=Name("OC"))
+        role.save()
+        user1 = User(name=Name("Joe Smith"),
+                     email=Email("joe@smith.com"),
+                     role=role)
+        user1.save()
+
+        user2 = User(name=Name("Will Smith"),
+                     email=Email("will@smith.com"),
+                     role=Role(name=Name("NC")))
+        user2.save()
+        headers = {'email':'dummyuser@gmail.com', 'key':'vlead123'}
+        r = self.client.post('/nodal_centres',
+                             data=json.dumps({'created_by': user1.to_client(),
+                                              'name': 'IIIT-Hyd',
+                                              'location': 'Gachibowli'}),
+                             headers=headers)
+        result = json.loads(r.data)
+        self.assertEqual(result['name'], "IIIT-Hyd")
+
+
     def test_update_existing_nodal_centre(self):
         print "test_update_existing_nodal_centre"
 
@@ -7010,36 +7115,15 @@ class TestNodalCentre(TestCase):
         nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli", \
                                     created_by=user1)
 
-        nodal_centre1.save()   
-
+        nodal_centre1.save()
+        
+        headers = {'email':'dummyuser@gmail.com', 'key':'vlead123'}
         r = self.client.put('/nodal_centres/1',
-                            data=json.dumps({'name': 'HCU'}))
+                            data=json.dumps({'name': 'HCU'}),
+                            headers=headers)
 
         result = json.loads(r.data)
         self.assertEqual(result['name'], "HCU")
-
-    def test_create_new_nodal_centre(self):
-        print "test_create_new_nodal_centre"
-
-        role = Role(name=Name("OC"))
-        role.save()
-        user1 = User(name=Name("Joe Smith"),
-                     email=Email("joe@smith.com"),
-                     role=role)
-        user1.save()
-
-        user2 = User(name=Name("Will Smith"),
-                     email=Email("will@smith.com"),
-                     role=Role(name=Name("NC")))
-        user2.save()
-
-        r = self.client.post('/nodal_centres',
-                             data=json.dumps({ 'created_by': user1.to_client(),
-                                               'name': 'IIIT-Hyd',
-                                               'location': 'Gachibowli'
-                                           }))
-        result = json.loads(r.data)
-        self.assertEqual(result['name'], "IIIT-Hyd")
 
     def test_delete_nodal_centre(self):
         print "test_delete_nodal_centre"
@@ -7060,8 +7144,8 @@ class TestNodalCentre(TestCase):
                                     created_by=user1)
 
         nodal_centre1.save()   
-
-        r1 = self.client.delete('/nodal_centres/1')
+        headers = {'email':'dummyuser@gmail.com', 'key':'vlead123'}
+        r1 = self.client.delete('/nodal_centres/1', headers=headers)
 
         r2 = self.client.get('/nodal_centres')
         result = json.loads(r2.data)
@@ -7081,6 +7165,10 @@ class TestNodalCoordinatorDetail(TestCase):
 
     def setUp(self):
         db.create_all()
+        global session_list
+        email = 'dummyuser@gmail.com'
+        key = 'vlead123'
+        session_list[email] = key
 
     def tearDown(self):
         db.session.remove()
@@ -7254,12 +7342,13 @@ class TestNodalCoordinatorDetail(TestCase):
                                              target_experiments=800,
                                              target_participants=2000)
         nc_details2.save()
-
+        headers = {'email':'dummyuser@gmail.com', 'key':'vlead123'}
         r = self.client.put('/nodal_coordinator_details/1',
-                            data=json.dumps({'target_workshops': 200}))
-        print r.data
+                            data=json.dumps({'target_workshops': 200}),
+                            headers=headers)
+
         result = json.loads(r.data)
-        print result
+
         self.assertEqual(result['target_workshops'], 200)
 
     def test_create_new_nc_details(self):
@@ -7280,13 +7369,15 @@ class TestNodalCoordinatorDetail(TestCase):
                                     created_by=user1)
 
         nodal_centre1.save()
+        headers = {'email':'dummyuser@gmail.com', 'key':'vlead123'}        
         r = self.client.post('/nodal_coordinator_details',
                              data=json.dumps({'user': user2.to_client(),
                                               'target_workshops':100,
                                               'created_by':user1.to_client(),
                                               'nodal_centre':nodal_centre1.to_client(),
                                               'target_participants':1000
-                                          }))
+                             }),
+                             headers=headers)
         result = json.loads(r.data)
         self.assertEqual(result['target_workshops'], 100)
 
@@ -7342,11 +7433,12 @@ class TestNodalCoordinatorDetail(TestCase):
                                              target_experiments=800,
                                              target_participants=2000)
         nc_details2.save()
-
-        r = self.client.delete('/nodal_coordinator_details/1')
+        headers = {'email':'dummyuser@gmail.com', 'key':'vlead123'}
+        r = self.client.delete('/nodal_coordinator_details/1', headers=headers)
         r = self.client.get('/nodal_coordinator_details')
         result = json.loads(r.data)
         self.assertEqual(len(result), 1)
+
 #+END_SRC
 *** Tests for Workshop Report
 #+BEGIN_SRC python :tangle tests/test_api.py :eval no 
@@ -7360,6 +7452,10 @@ class TestWorkshopReport(TestCase):
 
     def setUp(self):
         db.create_all()
+        global session_list
+        email = 'dummyuser@gmail.com'
+        key = 'vlead123'
+        session_list[email] = key
 
     def tearDown(self):
         db.session.remove()
@@ -7448,7 +7544,6 @@ class TestWorkshopReport(TestCase):
 
         r = self.client.get('/workshop_reports/1')
         result = json.loads(r.data)
-        print result
         self.assertEqual(result['name'], "College Report")
 
     def test_update_existing_workshop_report(self):
@@ -7477,9 +7572,10 @@ class TestWorkshopReport(TestCase):
                                           path="/static/uploads/college-reports/file.pdf",
                                           workshop=workshop_1)
         workshop_report1.save()
-
+        headers = {'email':'dummyuser@gmail.com', 'key':'vlead123'}
         r = self.client.put('/workshop_reports/1',
-                            data=json.dumps({'name': 'Workshop Photos'}))
+                            data=json.dumps({'name': 'Workshop Photos'}),
+                            headers=headers)
 
         result = json.loads(r.data)
 
@@ -7507,15 +7603,67 @@ class TestWorkshopReport(TestCase):
                               GMT-0500 (EST)")
 
         workshop_1.save()
-        
+        headers = {'email':'dummyuser@gmail.com', 'key':'vlead123'}
         r = self.client.post('/workshop_reports',
                              data=json.dumps({ 'name' : 'College Report',
                                                'path' : '/static/uploads/college-reports/file.pdf', 
                                                'workshop': workshop_1.to_client()
-                                           }))
+                                           }),
+                             headers=headers)
         result = json.loads(r.data)
         self.assertEqual(result['name'], "College Report")
 
+    def test_delete_workshop_report(self):
+        print "test_delete_workshop_report"
+        role = Role(name=Name("OC"))
+        role.save()
+        user1 = User(name=Name("Joe Smith"),
+                     email=Email("joe@smith.com"),
+                     role=role)
+        user1.save()
+        
+        user2 = User(name=Name("Will Smith"),
+                     email=Email("will@smith.com"),
+                     role=role)
+        user2.save()
+        
+        status = Status(name=Name("Upcoming"))
+        status.save()        
+
+        workshop_1 = Workshop(name="Coordinators Training",
+                              location="IIIT-Hyd", user=user1,
+                              participating_institutes="HCU, IIIT-Hyd",
+                              no_of_participants_expected=100,
+                              no_of_sessions=3, labs_planned=4,
+                              status=status, date="Mon Nov 23 2015 06:18:26\
+                              GMT-0500 (EST)")
+    
+        workshop_1.save()
+        
+        workshop_2 = Workshop(name="HCU workshop", location="HCU",
+                              user=user2, participating_institutes="HCU,\
+                              IIIT-Hyd", no_of_participants_expected=50,
+                              no_of_sessions=2, labs_planned=2,
+                              status=status, date="Mon Nov 23 2015 06:18:26\
+                              GMT-0500 (EST)")
+        
+        workshop_2.save()
+        
+        workshop_report1 = WorkshopReport(name="College Report",
+                                          path="/static/uploads/college-reports/file.pdf",
+                                          workshop=workshop_1)
+        workshop_report1.save()
+
+        workshop_report2 = WorkshopReport(name="Workshop Photos",
+                                          path="/static/uploads/workshop-photos/photo.png",
+                                          workshop=workshop_2)
+        workshop_report2.save()
+        headers = {'email':'dummyuser@gmail.com', 'key':'vlead123'}
+        r = self.client.delete('/workshop_reports/1', headers=headers)
+        r.status_code
+        r = self.client.get('/workshop_reports')
+        result = json.loads(r.data)
+        self.assertEqual(r.status_code, 200)
 
 #+END_SRC
     
