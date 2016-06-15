@@ -128,7 +128,7 @@
             cache: false,
             processData: false,
             async: false,
-            success: function(data) {$('#upload-status').html("<b> Uploaded File  </b>");
+            success: function(data) {$('#upload-status').html("<b> Uploading File  </b>");
                             $('#total-files').html("<b>" + fileups[key].files[i].name + "</b>");
                             var url = '/workshops/'+workshop_id;                        
                             $.ajax({

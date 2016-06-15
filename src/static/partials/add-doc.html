@@ -59,7 +59,7 @@
         var form_data = new FormData();
        
         form_data.append('file', fileups.files[i], fileups.files[i].name);
-        var url = '/uploa_reference_documents/' + documentId ;
+        var url = '/upload_reference_documents/' + documentId ;
         var percentage = Math.round(i*(100/Number(fileups.files.length)));
         $.ajax({
             type: 'POST',
