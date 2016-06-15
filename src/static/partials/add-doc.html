@@ -1,4 +1,4 @@
-<div class="col-md-4">
+<div class="col-md-6">
   <form method="post" id="upload-file" name="myForm" action="" style="margin-top:30px"  enctype="multipart/form-data">
     <span class="error"></span>
     <input class="form-control" type="text" name="name" id="name"
@@ -7,7 +7,13 @@
     <input type="file" name="file" id="file" ng-model="file" required multiple/><br>
     <button type="button" id="upload-file-btn" class="btn btn-primary">Upload</button>
   </form>
-  <br><br>
+    <br><br>
+    <div id="upload-status"></div>
+    <b id="total-files"></b>
+    <div id="not-upload-status"></div>
+    <b id="not-upload-file"></b>
+
+</div>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
   <script>
     var validFile = function(fileList){
@@ -34,14 +40,14 @@
             $('.error').html("Allowed file formats are: <br> [txt, pdf, png, jpg, jpeg, gif, csv, doc, docx]<br>") ;
         }else{
         data = {name: name, user: {id : number}};
-        for (var i = 0; i < fileups.files.length; i++){
+        for (var i = 0; i < fileups.files.length; i++){console.log(fileups.files[i].name);
         var jqxhr = $.ajax({
             url: '/reference_documents',
             type: 'POST',
             global: false,
             async:false,
             contentType: 'application/json',
-                            data: JSON.stringify(data),
+                            data: JSON.stringify({name: name+"_"+fileups.files[i].name, user: {id : number}}),
                             headers: {'email' : window.email, 'key' : window.key },
             success: function (data){
                 return data ;
@@ -53,8 +59,8 @@
         var form_data = new FormData();
        
         form_data.append('file', fileups.files[i], fileups.files[i].name);
-        var url = '/upload_reference_documents/' + documentId ;
-   
+        var url = '/uploa_reference_documents/' + documentId ;
+        var percentage = Math.round(i*(100/Number(fileups.files.length)));
         $.ajax({
             type: 'POST',
             url: url,
@@ -63,16 +69,19 @@
             cache: false,
             processData: false,
             async: false,
-            success: function(data) {
-                console.log('Success');
+            success: function(data) {$('#upload-status').html("<b> Uploaded : </b>");
+                            $('#total-files').html((i+1) + "<b>)</b>" + fileups.files[i].name);
+                            if(i == (fileups.files.length-1)){window.history.back();}
             },
-            error: function(){alert("Failed to upload file(s)");}
+            error: function(){$('#not-upload-status').html("<b> Files Not Uploaded : </b>");
+                            $('#not-upload-file').append("<font color='red'>(" + (i+1) + ") </font>" + fileups.files[i].name + "<br>");
+                            }
                 
        });
      }
-      window.history.back();                                  
+ 
       }
      });
 });
  </script>
-</div>
+
