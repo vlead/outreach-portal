@@ -65,7 +65,7 @@
   <b id="total-files"></b>
   <div id="not-upload-status"></div>
   <b id="not-upload-file"></b>
-
+  <br><br>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
   <script>
     var validFile = function(fileList){
@@ -129,7 +129,7 @@
             cache: false,
             processData: false,
             async: false,
-            success: function(data) {$('#upload-status').html("<b> Uploading File  </b>");
+            success: function(data) {$('#upload-status').html("<b> Uploading" + key + "File  </b>");
                             $('#total-files').html("<b>" + fileups[key].files[i].name + "</b>");
                             var url = '/workshops/'+workshop_id;                        
                             $.ajax({
@@ -154,7 +154,7 @@
                             
     
       }
-     $('#total-files').html("<b> Successfully uploaded all the files : </b>");
+     $('#total-files').html("<b> Successfully uploaded all the files  </b>");
     });                        
 });
  </script>
