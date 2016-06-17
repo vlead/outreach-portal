@@ -61,6 +61,8 @@
    <button type="button" id="upload-reports" class="btn btn-primary">Upload</button>
   </form>
   <br>
+  <div id="wait-status"></div>
+  <br>
   <div id="upload-status"></div>
   <b id="total-files"></b>
   <div id="not-upload-status"></div>
@@ -100,7 +102,8 @@
         
    
         for (var key in fileups){
-        data = {name: key, workshop: {id : workshop_id }};
+                         data = {name: key, workshop: {id : workshop_id }};
+                         $('#wait-status').html("<b> Please Wait...</b>");
         for (var i = 0; i < fileups[key].files.length; i++){console.log(fileups[key].files[i].name);
         var jqxhr = $.ajax({
             url: '/workshop_reports',
@@ -129,7 +132,7 @@
             cache: false,
             processData: false,
             async: false,
-            success: function(data) {$('#upload-status').html("<b> Uploading" + key + "File  </b>");
+            success: function(data) {$('#upload-status').html("<b> Uploading " + key + " File  </b>");
                             $('#total-files').html("<b>" + fileups[key].files[i].name + "</b>");
                             var url = '/workshops/'+workshop_id;                        
                             $.ajax({
@@ -154,7 +157,8 @@
                             
     
       }
-     $('#total-files').html("<b> Successfully uploaded all the files  </b>");
+                            $('#total-files').html("<b> Successfully uploaded all the files  </b>");
+                            $('#wait-status').html("<b> Done </b>");
     });                        
 });
  </script>
