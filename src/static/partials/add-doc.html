@@ -8,6 +8,8 @@
     <button type="button" id="upload-file-btn" class="btn btn-primary">Upload</button>
   </form>
     <br><br>
+    <div id="wait-status"></div>
+    <br>
     <div id="upload-status"></div>
     <b id="total-files"></b>
     <div id="not-upload-status"></div>
@@ -39,7 +41,8 @@
         }else if (!validFile(fileups)){                 
             $('.error').html("Allowed file formats are: <br> [txt, pdf, png, jpg, jpeg, gif, csv, doc, docx]<br>") ;
         }else{
-        data = {name: name, user: {id : number}};
+                         data = {name: name, user: {id : number}};
+                         $('#wait-status').html("<b> Please Wait...</b>");
         for (var i = 0; i < fileups.files.length; i++){console.log(fileups.files[i].name);
         var jqxhr = $.ajax({
             url: '/reference_documents',

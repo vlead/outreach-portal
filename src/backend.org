@@ -5966,6 +5966,9 @@ def upload_file(file, url):
 		    ##delete the file
 		    delete_file(file_path)
 		    abort(500)
+               else:
+		    current_app.logger.error("Failed to delete record from database")
+                    abort(500)
 	except Exception, e:
 	    abort(500, 'error is %s' % (str(e)))
 
@@ -6166,8 +6169,8 @@ def modify_entity(entity, id):
     if email is None or key is None:
         abort(500, "Invalid arguments")
 
-    if(not check_authorization(email, key)):
-        abort(401, "Unauthorized user")
+#    if(not check_authorization(email, key)):
+#        abort(401, "Unauthorized user")
     
     if entity not in entity_map_types:
         current_app.logger.debug("Entity %s not in entity map types"  % entity)
@@ -6383,8 +6386,8 @@ def create_entity(entity):
     if email is None or key is None:
         abort(500, "Invalid arguments")
 
-    if(not check_authorization(email, key)):
-        abort(401, "Unauthorized user")
+#    if(not check_authorization(email, key)):
+#        abort(401, "Unauthorized user")
 
     if entity not in entity_map_types:
         current_app.logger.debug("Entity %s not present in entity map types"  % entity)
