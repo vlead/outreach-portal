@@ -73,7 +73,7 @@
             processData: false,
             async: false,
             success: function(data) {$('#upload-status').html("<b> Uploading Files</b>");
-                            $('#total-files').html((i+1) + "<b>)</b>" + fileups.files[i].name);
+                            $('#total-files').html((i+1) + "<b>) </b>" + fileups.files[i].name);
                             if(i == (fileups.files.length-1)){window.history.back();}
             },
             error: function(){$('#not-upload-status').html("<b> Files Not Uploaded : </b>");
