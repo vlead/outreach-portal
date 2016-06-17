@@ -5966,7 +5966,7 @@ def upload_file(file, url):
 		    ##delete the file
 		    delete_file(file_path)
 		    abort(500)
-               else:
+                else:
 		    current_app.logger.error("Failed to delete record from database")
                     abort(500)
 	except Exception, e:
@@ -6167,7 +6167,7 @@ def modify_entity(entity, id):
     email = request.headers.get('email')
     key = request.headers.get('key')
     if email is None or key is None:
-        abort(500, "Invalid arguments")
+        abort(401, "Unauthorized Credentials")
 
 #    if(not check_authorization(email, key)):
 #        abort(401, "Unauthorized user")
@@ -6384,7 +6384,7 @@ def create_entity(entity):
     email = str(request.headers.get('email'))
     key = str(request.headers.get('key'))
     if email is None or key is None:
-        abort(500, "Invalid arguments")
+        abort(401, "Unauthorized Credentials")
 
 #    if(not check_authorization(email, key)):
 #        abort(401, "Unauthorized user")
