@@ -1,53 +1,56 @@
 var app = angular.module('outreachApp.controllers',[]);
-
 app.controller('map-ctrl', function ($scope, $http, dataFactory){
-    dataFactory.fetch("/workshops?status_id=1").success(function(workshops){
-      var workshop_list = [];
-      var today = new Date();
+    dataFactory.fetch("/nodal_centres").success(function(workshops){
         for(i=0;i<workshops.length;i++){
-            workshop_date = new Date(workshops[i].date);
-            var workshop_id = workshops[i].id ;
-            if (((today > workshop_date) & !(today.toDateString() == workshop_date.toDateString())) &
-		(workshops[i].status.name == "Upcoming")){
-                dataFactory.put('/workshops/'+workshop_id.toString(),
-				{'status': {'id': 2}}).success(function(data, status){
-				    console.log('Status success'); });
-            }else{
-              workshop_list.push(workshops[i]);
-              get_geocode(workshops[i].location, (i+1));
-            }
-	   
+            get_geocode(workshops[i].location, workshops[i].name);
         }
-      $scope.workshops = workshop_list;
     });
-   
-   
 
-    var mapOptions = { zoom: 3, center: new google.maps.LatLng(20,80) };
+    var mapOptions = { zoom: 5, center: new google.maps.LatLng(23,81) };
     $scope.map = new google.maps.Map(document.getElementById('map'), mapOptions);
     var geocoder = new google.maps.Geocoder();
     var get_geocode = function (workshop_location, label){
         geocoder.geocode(
             { "address": workshop_location }, function(results, status) {
                 if (status == google.maps.GeocoderStatus.OK && results.length > 0){
-		    var geo_code = results[0].geometry.location;
+                    var geo_code = results[0].geometry.location;
                     $scope.createMarker(geo_code,workshop_location,label);
-        	}
-	    }
+                }
+            }
         );
     }
     $scope.createMarker = function (geo_code,workshop_location,label){
+        var infowindow = new google.maps.InfoWindow({
+            content: label
+        });
+
         var marker = new google.maps.Marker({
             map: $scope.map,
             animation: google.maps.Animation.DROP,
             draggable: false,
-            label : String(label),
+            //label : String(label),                                                                                                                                     
             position: new google.maps.LatLng(geo_code.lat(), geo_code.lng()),
             title: workshop.location
         });
-    }  
-    
+        marker.addListener('click', function() {
+            infowindow.open(map, marker);
+        });
+
+    }
+
 });
+
+app.controller("upcoming-workshops", function($scope, $routeParams, dataFactory, $route, $window){
+    dataFactory.fetch("/workshops?status_id=1").success(function(response){
+        $scope.upcoming_workshops = response;
+
+    }).error(function(response){
+        alert("Failed to fetch data");
+    });
+
+});
+
+
 app.controller("oc-ctrl", function($scope, $routeParams, dataFactory, $route, $window){
     dataFactory.fetch("/users/"+$routeParams.id).success(function(response){
 	$scope.oc_user = response;

@@ -28,7 +28,10 @@
     <div ng-controller="map-ctrl">
       <div class="section-one">
         <div class="row">
-          <div class="col-md-12" id="map"></div> 
+	  <div class="col-md-12">
+            <div style="height: 700px;" id="map">
+            </div>
+          </div>
         </div>
       </div>
       <h3>Upcoming Workshops</h3>
@@ -42,8 +45,8 @@
             <th>Participating Institutes</th>
           </tr>
 	</thead>
-	<tbody>
-	  <tr ng-repeat="workshop in workshops">
+	<tbody ng-controller="upcoming-workshops">
+	  <tr ng-repeat="workshop in upcoming_workshops">
 	    <td>{{ $index+1 }}</td>
 	    <td>{{ workshop.name }}</td>
             <td>{{ workshop.date }}</td>
