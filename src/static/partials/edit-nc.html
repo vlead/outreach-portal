@@ -13,10 +13,15 @@
           <span ng-show="myForm.user.$error.pattern">Enter valid name</span>
 	</span>
       </p>
-      <p>Nodal Centre Name:<br>
-         <select class="form-control" ng-model="ncentre_id" ng-options="centre as (centre.name + ',&nbsp; ' + centre.location) for centre in ncentres ">
-         </select>
+       <p ng-show="flag1">Nodal Centre Name:<br>
+        <input type="text" name="centre" ng-model="ncentre" class="form-control" id="centre" readonly> <font color="blue" ng-click="change()">change</font>
       </p>
+
+      <p ng-show="flag2">Nodal Centre Name:<br>
+         <select class="form-control" ng-model="ncentre_id" ng-options="centre as (centre.name + ',&nbsp; ' + centre.location) for centre in ncentres ">
+         </select><font color="blue" ng-click="donotchange()">don't change</font>
+      </p>
+
       <p>Email:<br>
 	<input type="text" name="email" ng-model="email"
                ng-pattern="/^[A-Za-z]+[A-Za-z0-9._-]+@[A-Za-z]+\.[A-Za-z.]{2,20}$/"
