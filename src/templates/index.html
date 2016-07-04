@@ -5,11 +5,11 @@
   <div class="analytics-band">
     <div class="container">
       <div class="row" ng-controller="admin-ctrl">
-        <div class="col-md-3 analytics nodal-centers">
+        <div class="col-md-2 analytics nodal-centers">
           NODAL CENTRES<br>
           <span class="number">{{ nodal_centres }}</span>
         </div>
-        <div class="col-md-3 analytics workshops-run">
+        <div class="col-md-2 analytics workshops-run">
           WORKSHOPS RUN<br>
           <span class="number">{{ total_workshops }}</span>
         </div>
@@ -17,10 +17,15 @@
           PARTICIPANTS ATTENDED<br>
           <span class="number">{{ total_participants }}</span>
         </div>
-        <div class="col-md-3 analytics usage">
+        <div class="col-md-2 analytics usage">
           USAGE<br>
           <span class="number">{{ total_usage }}</span>
         </div>
+	 <div class="col-md-3 analytics upcoming" onclick="scrollWin()">
+          Upcoming Workshop<br>
+          <span class="number">{{ upcoming_workshops }}</span>
+        </div>
+	 
       </div>
     </div>
   </div>
@@ -58,7 +63,12 @@
     </div>
   </div>
 </div>
-  {% endraw %}
-  {% endblock %}
+{% endraw %}
+<script type="text/javascript">
+  function scrollWin() {
+  window.scrollBy(0, 900);
+  }
+</script> 
+{% endblock %}
   
   
