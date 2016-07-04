@@ -1,8 +1,8 @@
 var app = angular.module('outreachApp.controllers',[]);
 app.controller('map-ctrl', function ($scope, $http, dataFactory){
-    dataFactory.fetch("/nodal_centres").success(function(workshops){
-        for(i=0;i<workshops.length;i++){
-            get_geocode(workshops[i].location, workshops[i].name);
+    dataFactory.fetch("/workshops?status_id=1").success(function(upcoming){
+        for(i=0;i<upcoming.length;i++){
+            get_geocode(upcoming[i].location, upcoming[i]);
         }
     });
 
@@ -21,17 +21,16 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
     }
     $scope.createMarker = function (geo_code,workshop_location,label){
         var infowindow = new google.maps.InfoWindow({
-            content: label
+            content: '<b>Workshop Location : </b>'+label.location+'<br><b>Date : </b>'+label.date+'<br><b>Participating Colleges : </b>' + label.participating_institutes
         });
-
         var marker = new google.maps.Marker({
             map: $scope.map,
             animation: google.maps.Animation.DROP,
             draggable: false,
-            //label : String(label),                                                                                                                                     
             position: new google.maps.LatLng(geo_code.lat(), geo_code.lng()),
-            title: workshop.location
+            title: 'Click here to view the workshop details'
         });
+
         marker.addListener('click', function() {
             infowindow.open(map, marker);
         });
@@ -39,17 +38,6 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
     }
 
 });
-
-app.controller("upcoming-workshops", function($scope, $routeParams, dataFactory, $route, $window){
-    dataFactory.fetch("/workshops?status_id=1").success(function(response){
-        $scope.upcoming_workshops = response;
-
-    }).error(function(response){
-        alert("Failed to fetch data");
-    });
-
-});
-
 
 app.controller("oc-ctrl", function($scope, $routeParams, dataFactory, $route, $window){
     dataFactory.fetch("/users/"+$routeParams.id).success(function(response){
@@ -147,6 +135,9 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
     });
     dataFactory.fetch("/nodal_centres").success(function(response){
         $scope.nodal_centres = response.length;
+    });
+    dataFactory.fetch("/workshops?status_id=1").success(function(response){
+        $scope.upcoming_workshops = response.length;
     });
     dataFactory.fetch("/users?role_id=3").success(function(response){
         $scope.totalnc = response.length;
@@ -542,7 +533,19 @@ app.controller("manage-nc", function($scope, $http, $routeParams, dataFactory, $
     
 });
 app.controller("edit-nc", function($scope, dataFactory, $http, $routeParams, $window, $route) {
-   
+    $scope.flag1=true;
+    $scope.change = function()
+    {
+        $scope.flag2 = true;
+        $scope.flag1 = false;
+    }
+    $scope.donotchange = function()
+    {
+
+        $scope.flag2 = false;
+        $scope.flag1 = true;
+    }
+
     dataFactory.fetch("/nodal_centres?created_by_id="+$window.number).success(function(data, status, headers, config){
         $scope.ncentres = data;
         $scope.ncentre_id = data[0];
