@@ -1,7 +1,8 @@
 var app = angular.module('outreachApp.controllers',[]);
 app.controller('map-ctrl', function ($scope, $http, dataFactory){
     dataFactory.fetch("/workshops?status_id=1").success(function(upcoming){
-        for(i=0;i<upcoming.length;i++){
+	$scope.upcoming_workshops = upcoming;
+	for(i=0;i<upcoming.length;i++){
             get_geocode(upcoming[i].location, upcoming[i]);
         }
     });
@@ -139,6 +140,10 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
     dataFactory.fetch("/workshops?status_id=1").success(function(response){
         $scope.upcoming_workshops = response.length;
     });
+    dataFactory.fetch("/nodal_coordinator_details").success(function(response){
+        $scope.nodal_centres_list = response;
+    });
+    
     dataFactory.fetch("/users?role_id=3").success(function(response){
         $scope.totalnc = response.length;
         $scope.nc_users = response;
