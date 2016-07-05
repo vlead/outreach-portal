@@ -5789,6 +5789,10 @@ def check_authorization(email, key):
 def index():
     return render_template("index.html")
 
+@api.route("/ncentres")
+def ncentres():
+    return render_template("ncentres.html")
+
 @api.route("/admin", methods=['GET','POST'])
 def admin():
     if request.method == 'GET':
