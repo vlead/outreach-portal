@@ -72,6 +72,12 @@ app.controller("oc-ctrl", function($scope, $routeParams, dataFactory, $route, $w
 });
 
 app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, $route,$window) {
+
+     $scope.showNcentres = function()
+    {
+        window.open("/ncentres");
+    }
+    
    if ($window.number != 0 || $window.number == undefined) {
      
      dataFactory.fetch("/users/"+$window.number).success(function(response){
@@ -479,6 +485,7 @@ app.controller("oc-dashboard", function($scope, $http, dataFactory, $routeParams
         console.log(data);
     });
     dataFactory.fetch('/nodal_centres?created_by_id='+$window.number). success(function(data, status, headers, config) {
+	$scope.ncentres = data;
 	$scope.ncentres = data.length ;
     }).error(function(data, status, headers, config){
         console.log(data);
@@ -567,6 +574,7 @@ app.controller("edit-nc", function($scope, dataFactory, $http, $routeParams, $wi
         console.log("Failed")
     });
     dataFactory.fetch("/nodal_coordinator_details?user_id="+$routeParams.id).success(function(data, status, headers, config){
+	$scope.ncentre = data[0].nodal_centre.location;
         $scope.workshops = data[0].target_workshops;
         $scope.nc_id=data[0].id;
         $scope.expts = data[0].target_experiments;
