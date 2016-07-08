@@ -71,7 +71,7 @@ app.controller("oc-ctrl", function($scope, $routeParams, dataFactory, $route, $w
 
 });
 
-app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, $route,$window) {
+app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, $route, $q, $window) {
 
      $scope.showNcentres = function()
     {
@@ -173,6 +173,62 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
         $scope.labs = labs;
         $scope.workshops = workshop_list;
     });
+   
+    /*Institute wise usage*/
+    var usage=0;
+    var nc_usage=[];
+    dataFactory.fetch('/users'). success(function(data, status, headers, config) {
+	$scope.users = data;
+    });    
+    dataFactory.fetch('/nodal_coordinator_details'). success(function(data, status, headers, config) {
+	
+	for(i=0;i<data.length;i++){
+	    usage=0;
+	    for(j=0;j<$scope.workshops.length;j++){
+		if(($scope.workshops[j].user.id == data[i].user.id)){
+		    usage=Number(usage) + Number($scope.workshops[j].experiments_conducted);
+		}
+	    }
+	    nc_usage.push({"nc_user_id" : data[i].user.name , "oc_id" : data[i].created_by.id, "nc_usage" : usage});
+	}
+	$scope.nc_usage = nc_usage;
+	
+	var usage1=0;
+	var nc_usage1=[];
+	for(i=0;i<$scope.users.length;i++){
+	    usage1=0;
+	    for(j=0;j<$scope.workshops.length;j++){
+
+		if(($scope.workshops[j].user.id == $scope.users[i].id && $scope.users[i].role.id == 2)){
+		    
+		    usage1=Number(usage1) + Number($scope.workshops[j].experiments_conducted);
+
+		}
+	    }
+	    if($scope.users[i].role.id == 2){
+		nc_usage1.push({"oc_user_name" : $scope.users[i].name ,"oc_usage" : usage1});}
+	}
+	$scope.ocs_usage = nc_usage1;
+	var oc_usage = 0;
+	var usage_count = [];
+	dataFactory.fetch('/users?role_id=2'). success(function(data, status, headers, config) {
+	    for(i=0;i<data.length;i++){
+		oc_usage = 0;
+		for(j=0;j<$scope.nc_usage.length;j++){
+		    if(data[i].id == $scope.nc_usage[j].oc_id){
+			//oc_usage=Number(oc_usage) + Number($scope.nc_usage[j].nc_usage)+nc_usage1[i].oc_usage;
+			oc_usage=Number(oc_usage) + Number($scope.nc_usage[j].nc_usage);
+		    }
+		}
+		usage_count.push({"oc_centre" : data[i].institute_name , "usage" : oc_usage+nc_usage1[i].oc_usage});
+	    }
+	    $scope.oc_usage = usage_count;
+	});
+	
+    }).error(function(data, status, headers, config){
+	console.log(data);
+    });
+   
     
 });
 
@@ -493,6 +549,7 @@ app.controller("oc-dashboard", function($scope, $http, dataFactory, $routeParams
   
   
 });
+
 app.controller("manage-nc", function($scope, $http, $routeParams, dataFactory, $window, $route) {
     dataFactory.fetch('/nodal_coordinator_details?created_by_id='+ $window.number).success(function(data, status, headers, config){
         var coordinators = [];                                                                             
@@ -834,7 +891,8 @@ app.controller("nc-workshops", function($scope, $http, $routeParams, dataFactory
         for (i = 0 ; i < data.length; i++ ){
             dataFactory.fetch('/workshops?user_id='+data[i].user.id).success(function(data,status,headers,config){
                 for (i=0; i<data.length; i++){
-                    if (data[i].status.id == 2 || data[i].status.id == 4){
+                    //if (data[i].status.id == 2 || data[i].status.id == 4){
+		    if (data[i].status.id == 2 || data[i].status.id == 4){
                         nc_workshops.push(data[i]);
                     }else{
                         console.log(data[i].name);
