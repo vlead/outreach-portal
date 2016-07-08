@@ -220,7 +220,7 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
 			oc_usage=Number(oc_usage) + Number($scope.nc_usage[j].nc_usage);
 		    }
 		}
-		usage_count.push({"oc_centre" : data[i].institute_name , "usage" : oc_usage+nc_usage1[i].oc_usage});
+		usage_count.push({"oc_centre" : data[i].institute_name , "oc_name" : data[i].name, "oc_email" : data[i].email, "usage" : oc_usage+nc_usage1[i].oc_usage});
 	    }
 	    $scope.oc_usage = usage_count;
 	});
