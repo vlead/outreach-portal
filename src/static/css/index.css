@@ -41,10 +41,18 @@ h1,h2,h3{
 }                                                                                                           
 .analytics-band .nodal-centers{                                                                             
         background: #99A819;                                                                                
-}                                                                                                           
+}
+.nodal-centers:hover {
+    cursor: pointer;
+}
+
 .analytics-band .upcoming{                                                                                  
         background: #C76135;                                                                                
-}  
+}
+.upcoming:hover {
+    cursor: pointer;
+}
+
 .analytics-band .usage{
 	background: #FFCC00;
 }
