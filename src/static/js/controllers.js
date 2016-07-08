@@ -1,53 +1,45 @@
 var app = angular.module('outreachApp.controllers',[]);
-
 app.controller('map-ctrl', function ($scope, $http, dataFactory){
-    dataFactory.fetch("/workshops?status_id=1").success(function(workshops){
-      var workshop_list = [];
-      var today = new Date();
-        for(i=0;i<workshops.length;i++){
-            workshop_date = new Date(workshops[i].date);
-            var workshop_id = workshops[i].id ;
-            if (((today > workshop_date) & !(today.toDateString() == workshop_date.toDateString())) &
-		(workshops[i].status.name == "Upcoming")){
-                dataFactory.put('/workshops/'+workshop_id.toString(),
-				{'status': {'id': 2}}).success(function(data, status){
-				    console.log('Status success'); });
-            }else{
-              workshop_list.push(workshops[i]);
-              get_geocode(workshops[i].location, (i+1));
-            }
-	   
+    dataFactory.fetch("/workshops?status_id=1").success(function(upcoming){
+	$scope.upcoming_workshops = upcoming;
+	for(i=0;i<upcoming.length;i++){
+            get_geocode(upcoming[i].location, upcoming[i]);
         }
-      $scope.workshops = workshop_list;
     });
-   
-   
 
-    var mapOptions = { zoom: 3, center: new google.maps.LatLng(20,80) };
+    var mapOptions = { zoom: 5, center: new google.maps.LatLng(23,81) };
     $scope.map = new google.maps.Map(document.getElementById('map'), mapOptions);
     var geocoder = new google.maps.Geocoder();
     var get_geocode = function (workshop_location, label){
         geocoder.geocode(
             { "address": workshop_location }, function(results, status) {
                 if (status == google.maps.GeocoderStatus.OK && results.length > 0){
-		    var geo_code = results[0].geometry.location;
+                    var geo_code = results[0].geometry.location;
                     $scope.createMarker(geo_code,workshop_location,label);
-        	}
-	    }
+                }
+            }
         );
     }
     $scope.createMarker = function (geo_code,workshop_location,label){
+        var infowindow = new google.maps.InfoWindow({
+            content: '<b>Workshop Location : </b>'+label.location+'<br><b>Date : </b>'+label.date+'<br><b>Participating Colleges : </b>' + label.participating_institutes
+        });
         var marker = new google.maps.Marker({
             map: $scope.map,
             animation: google.maps.Animation.DROP,
             draggable: false,
-            label : String(label),
             position: new google.maps.LatLng(geo_code.lat(), geo_code.lng()),
-            title: workshop.location
+            title: 'Click here to view the workshop details'
         });
-    }  
-    
+
+        marker.addListener('click', function() {
+            infowindow.open(map, marker);
+        });
+
+    }
+
 });
+
 app.controller("oc-ctrl", function($scope, $routeParams, dataFactory, $route, $window){
     dataFactory.fetch("/users/"+$routeParams.id).success(function(response){
 	$scope.oc_user = response;
@@ -79,7 +71,13 @@ app.controller("oc-ctrl", function($scope, $routeParams, dataFactory, $route, $w
 
 });
 
-app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, $route,$window) {
+app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, $route, $q, $window) {
+
+     $scope.showNcentres = function()
+    {
+        window.open("/ncentres");
+    }
+    
    if ($window.number != 0 || $window.number == undefined) {
      
      dataFactory.fetch("/users/"+$window.number).success(function(response){
@@ -145,6 +143,13 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
     dataFactory.fetch("/nodal_centres").success(function(response){
         $scope.nodal_centres = response.length;
     });
+    dataFactory.fetch("/workshops?status_id=1").success(function(response){
+        $scope.upcoming_workshops = response.length;
+    });
+    dataFactory.fetch("/nodal_coordinator_details").success(function(response){
+        $scope.nodal_centres_list = response;
+    });
+    
     dataFactory.fetch("/users?role_id=3").success(function(response){
         $scope.totalnc = response.length;
         $scope.nc_users = response;
@@ -168,6 +173,62 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
         $scope.labs = labs;
         $scope.workshops = workshop_list;
     });
+   
+    /*Institute wise usage*/
+    var usage=0;
+    var nc_usage=[];
+    dataFactory.fetch('/users'). success(function(data, status, headers, config) {
+	$scope.users = data;
+    });    
+    dataFactory.fetch('/nodal_coordinator_details'). success(function(data, status, headers, config) {
+	
+	for(i=0;i<data.length;i++){
+	    usage=0;
+	    for(j=0;j<$scope.workshops.length;j++){
+		if(($scope.workshops[j].user.id == data[i].user.id)){
+		    usage=Number(usage) + Number($scope.workshops[j].experiments_conducted);
+		}
+	    }
+	    nc_usage.push({"nc_user_id" : data[i].user.name , "oc_id" : data[i].created_by.id, "nc_usage" : usage});
+	}
+	$scope.nc_usage = nc_usage;
+	
+	var usage1=0;
+	var nc_usage1=[];
+	for(i=0;i<$scope.users.length;i++){
+	    usage1=0;
+	    for(j=0;j<$scope.workshops.length;j++){
+
+		if(($scope.workshops[j].user.id == $scope.users[i].id && $scope.users[i].role.id == 2)){
+		    
+		    usage1=Number(usage1) + Number($scope.workshops[j].experiments_conducted);
+
+		}
+	    }
+	    if($scope.users[i].role.id == 2){
+		nc_usage1.push({"oc_user_name" : $scope.users[i].name ,"oc_usage" : usage1});}
+	}
+	$scope.ocs_usage = nc_usage1;
+	var oc_usage = 0;
+	var usage_count = [];
+	dataFactory.fetch('/users?role_id=2'). success(function(data, status, headers, config) {
+	    for(i=0;i<data.length;i++){
+		oc_usage = 0;
+		for(j=0;j<$scope.nc_usage.length;j++){
+		    if(data[i].id == $scope.nc_usage[j].oc_id){
+			//oc_usage=Number(oc_usage) + Number($scope.nc_usage[j].nc_usage)+nc_usage1[i].oc_usage;
+			oc_usage=Number(oc_usage) + Number($scope.nc_usage[j].nc_usage);
+		    }
+		}
+		usage_count.push({"oc_centre" : data[i].institute_name , "oc_name" : data[i].name, "oc_email" : data[i].email, "usage" : oc_usage+nc_usage1[i].oc_usage});
+	    }
+	    $scope.oc_usage = usage_count;
+	});
+	
+    }).error(function(data, status, headers, config){
+	console.log(data);
+    });
+   
     
 });
 
@@ -480,6 +541,7 @@ app.controller("oc-dashboard", function($scope, $http, dataFactory, $routeParams
         console.log(data);
     });
     dataFactory.fetch('/nodal_centres?created_by_id='+$window.number). success(function(data, status, headers, config) {
+	$scope.ncentres = data;
 	$scope.ncentres = data.length ;
     }).error(function(data, status, headers, config){
         console.log(data);
@@ -487,6 +549,7 @@ app.controller("oc-dashboard", function($scope, $http, dataFactory, $routeParams
   
   
 });
+
 app.controller("manage-nc", function($scope, $http, $routeParams, dataFactory, $window, $route) {
     dataFactory.fetch('/nodal_coordinator_details?created_by_id='+ $window.number).success(function(data, status, headers, config){
         var coordinators = [];                                                                             
@@ -539,7 +602,19 @@ app.controller("manage-nc", function($scope, $http, $routeParams, dataFactory, $
     
 });
 app.controller("edit-nc", function($scope, dataFactory, $http, $routeParams, $window, $route) {
-   
+    $scope.flag1=true;
+    $scope.change = function()
+    {
+        $scope.flag2 = true;
+        $scope.flag1 = false;
+    }
+    $scope.donotchange = function()
+    {
+
+        $scope.flag2 = false;
+        $scope.flag1 = true;
+    }
+
     dataFactory.fetch("/nodal_centres?created_by_id="+$window.number).success(function(data, status, headers, config){
         $scope.ncentres = data;
         $scope.ncentre_id = data[0];
@@ -556,6 +631,7 @@ app.controller("edit-nc", function($scope, dataFactory, $http, $routeParams, $wi
         console.log("Failed")
     });
     dataFactory.fetch("/nodal_coordinator_details?user_id="+$routeParams.id).success(function(data, status, headers, config){
+	$scope.ncentre = data[0].nodal_centre.location;
         $scope.workshops = data[0].target_workshops;
         $scope.nc_id=data[0].id;
         $scope.expts = data[0].target_experiments;
@@ -815,7 +891,8 @@ app.controller("nc-workshops", function($scope, $http, $routeParams, dataFactory
         for (i = 0 ; i < data.length; i++ ){
             dataFactory.fetch('/workshops?user_id='+data[i].user.id).success(function(data,status,headers,config){
                 for (i=0; i<data.length; i++){
-                    if (data[i].status.id == 2 || data[i].status.id == 4){
+                    //if (data[i].status.id == 2 || data[i].status.id == 4){
+		    if (data[i].status.id == 2 || data[i].status.id == 4){
                         nc_workshops.push(data[i]);
                     }else{
                         console.log(data[i].name);

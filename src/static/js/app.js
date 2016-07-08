@@ -13,6 +13,10 @@ app.config(function($routeProvider){
 	    templateUrl : '/static/partials/nc-users-list.html',
 	    controller  : 'admin-ctrl'
 	})
+	.when('/usage', {
+	    templateUrl : '/static/partials/usage-list.html',
+	    controller  : 'admin-ctrl'
+	})
         .when('/oc-users-list', {
 	    templateUrl : '/static/partials/oc-users-list.html',
 	    controller  : 'admin-ctrl'

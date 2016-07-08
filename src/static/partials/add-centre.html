@@ -14,7 +14,7 @@
 	</span>
       </p>
       <p>Centre Location :<br>
-	<input type="text" name="centre" ng-pattern="/^[a-zA-Z\s]*$/" ng-model="centre"
+	<input type="text" name="centre" ng-pattern="/^[a-zA-Z\s,]*$/" ng-model="centre"
                class="form-control"  placeholder="Location name" required>
 	<span style="color:red" ng-show="myForm.centre.$dirty && myForm.centre.$invalid">
 	  <span ng-show="myForm.centre.$error.required">Location name is

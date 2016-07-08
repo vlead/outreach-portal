@@ -33,15 +33,26 @@ h1,h2,h3{
 	font-size:16px;
 	font-weight: 600;
 }
-.analytics-band .workshops-run{
-	background: #C76135;
+.analytics-band .workshops-run{                                                                             
+        background: #2F3F3A;                                                                                
+}                                                                                                           
+.analytics-band .labs-taken{                                                                                
+        background: #808080;                                                                                
+}                                                                                                           
+.analytics-band .nodal-centers{                                                                             
+        background: #99A819;                                                                                
 }
-.analytics-band .labs-taken{
-	background: #99A819;
+.nodal-centers:hover {
+    cursor: pointer;
 }
-.analytics-band .nodal-centers{
-	background: #2F3F3A;
+
+.analytics-band .upcoming{                                                                                  
+        background: #C76135;                                                                                
 }
+.upcoming:hover {
+    cursor: pointer;
+}
+
 .analytics-band .usage{
 	background: #FFCC00;
 }
