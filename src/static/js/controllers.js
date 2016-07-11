@@ -44,7 +44,7 @@ app.controller("oc-ctrl", function($scope, $routeParams, dataFactory, $route, $w
     dataFactory.fetch("/users/"+$routeParams.id).success(function(response){
 	$scope.oc_user = response;
 	
-    }).error(function(response){alert("Failed to fetch data");});
+    }).error(function(response){console.log("Failed to fetch data");});
     
     $scope.edit_oc = function(isvalid){
         if(isvalid){
@@ -82,12 +82,12 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
      
      dataFactory.fetch("/users/"+$window.number).success(function(response){
        $scope.user = response;
-     }).error(function(response){alert("Failed to fetch data");});
+     }).error(function(response){console.log("Failed to fetch data");});
 
    }
     dataFactory.fetch("/reference_documents?user_id=1").success(function(response){
         $scope.documents = response;
-    }).error(function(response){alert("Failed to fetch data");});
+    }).error(function(response){console.log("Failed to fetch data");});
 
     $scope.deldoc =  function(id)
     {
