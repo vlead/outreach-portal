@@ -142,12 +142,10 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
     });
     dataFactory.fetch("/nodal_centres").success(function(response){
         $scope.nodal_centres = response.length;
+	$scope.nodal_centres_list = response;
     });
     dataFactory.fetch("/workshops?status_id=1").success(function(response){
         $scope.upcoming_workshops = response.length;
-    });
-    dataFactory.fetch("/nodal_coordinator_details").success(function(response){
-        $scope.nodal_centres_list = response;
     });
     
     dataFactory.fetch("/users?role_id=3").success(function(response){
@@ -632,6 +630,7 @@ app.controller("edit-nc", function($scope, dataFactory, $http, $routeParams, $wi
     });
     dataFactory.fetch("/nodal_coordinator_details?user_id="+$routeParams.id).success(function(data, status, headers, config){
 	$scope.ncentre = data[0].nodal_centre.location;
+	$scope.ncentre_name = data[0].nodal_centre.name;
         $scope.workshops = data[0].target_workshops;
         $scope.nc_id=data[0].id;
         $scope.expts = data[0].target_experiments;

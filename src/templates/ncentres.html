@@ -9,19 +9,16 @@
         <thead>
           <tr>
             <th>S.No</th>
-            <th>Nodal Coordinator Name</th>
-            <th>Nodal Centre</th>
-            <th>Outreach Centre </th>
+            <th>Nodal Centre Name</th>
+            <th>Nodal Centre Location</th>
             <th></th>
           </tr>
         </thead>
         <tbody ng-repeat="centre in nodal_centres_list">
           <tr>
             <td>{{ $index+1 }}</td>
-            <td>{{ centre.user.name }}</td>
-            <td>{{ centre.nodal_centre.name }}, {{ centre.nodal_centre.location }}</td>
-            <td>{{ centre.created_by.institute_name }}</td>
-
+            <td>{{ centre.name }}</td>
+            <td>{{ centre.location }}</td>
           </tr>
         </tbody>
       </table>
