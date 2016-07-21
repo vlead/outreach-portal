@@ -21,9 +21,9 @@
           USAGE<br>
           <span class="number">{{ total_usage }}</span>
         </div>
-	 <div class="col-md-3 analytics upcoming" onclick="scrollWin()">
-          Upcoming Workshop<br>
-          <span class="number">{{ upcoming_workshops }}</span>
+	 <div class="col-md-3 analytics upcoming" ng-controller="map-ctrl" onclick="scrollWin()">
+          UPCOMING WORKSHOPS<br>
+          <span class="number">{{ upcoming_workshops.length }}</span>
         </div>
 	 
       </div>
@@ -39,6 +39,7 @@
           </div>
         </div>
       </div>
+      <div ng-if="upcoming_workshops.length !=0">
       <h3>Upcoming Workshops</h3>
       <table class="table table-hover">
         <thead>
@@ -60,6 +61,7 @@
 	  </tr>
 	</tbody>
       </table>
+      </div>
     </div>
   </div>
 </div>
