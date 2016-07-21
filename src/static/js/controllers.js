@@ -3,13 +3,16 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
     dataFactory.fetch("/workshops?status_id=1").success(function(upcoming){
 	$scope.upcoming_workshops = upcoming;
 	for(i=0;i<upcoming.length;i++){
-            get_geocode(upcoming[i].location, upcoming[i]);
+	    if(upcoming[i].location != "null" && upcoming[i].longitude != null){
+		$scope.createMarker(upcoming[i], upcoming[i], "workshops");
+            //get_geocode(upcoming[i].location, upcoming[i]);
+            }
         }
     });
   dataFactory.fetch("/nodal_centres").success(function(nodal_centre){
     //update longitude and lattitude
     /*
-    var i = 0;                     //  set your counter to 1                                                                   
+      var i = 0;                     //  set your counter to 1                                                                   
     function myLoop () {           //  create a loop function                                                                                      
       setTimeout(function () {    //  call a 3s setTimeout when the loop is called                                                               
         get_geocode1(nodal_centre[i]);
@@ -17,7 +20,7 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
         if (i < nodal_centre.length) {  
           myLoop();             
         }                       
-      }, 2000)
+      }, 1000);
     }
     
     myLoop();
@@ -26,13 +29,35 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
     //working code
   
     for(i=0;i<nodal_centre.length;i++){
-      if(nodal_centre[i].location != "null" && nodal_centre[i].longitude != null){
-      $scope.createMarker(nodal_centre[i], nodal_centre[i], "nodal_centres");
-      // get_geocode1(nodal_centre[i]);
-      }
+	if(nodal_centre[i].location != "null" && nodal_centre[i].longitude != null){
+	  $scope.createMarker(nodal_centre[i], nodal_centre[i], "nodal_centres");
+          // get_geocode1(nodal_centre[i]);
+	}
     }
   });
-
+    var geocoder1 = new google.maps.Geocoder();
+    var get_geocode1 = function (nodal_centre){
+	var id = nodal_centre.id;
+	var location = nodal_centre.location;
+	geocoder1.geocode(
+            { "address": nodal_centre.location+",india, Asia" }, function(results, status) {
+                if (status == google.maps.GeocoderStatus.OK && results.length > 0){
+                  var geo_code = results[0].geometry.location;
+                  var lat = geo_code.lat();
+                  var lng = geo_code.lng();
+                  console.log(pincode);
+                  var data = {"longitude" : lng, "lattitude" : lat };
+                    dataFactory.put("/nodal_centres/"+id, data).success(function(response){
+			console.log("success for id "+id);
+                    });
+                }
+		else{
+                    console.log("failed for id "+id+"error: "+status);
+		}
+            }
+        );
+    }
+  /* to update the nodal centres geo locations  
   var geocoder1 = new google.maps.Geocoder();
   var get_geocode1 = function (nodal_centre){
     var id = nodal_centre.id;
@@ -53,7 +78,8 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
               }
             }
         );
-    }
+  }
+    */
 
     var mapOptions = { zoom: 5, center: new google.maps.LatLng(23,81) };
     $scope.map = new google.maps.Map(document.getElementById('map'), mapOptions);
@@ -82,7 +108,7 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
           animation: google.maps.Animation.DROP,
           draggable: false,
           icon: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
-          position: new google.maps.LatLng(geo_code.lat(), geo_code.lng()),
+          position: new google.maps.LatLng(geo_code.lattitude, geo_code.longitude),
           title: 'Click here to view the workshop details'
         });
         marker.addListener('click', function() {
@@ -793,7 +819,7 @@ app.controller("manage-centres", function($scope, $http, dataFactory, $routePara
         console.log(data);
     });
     $scope.add_centre = function(isvalid){
-      if(isvalid){
+	if(isvalid){
         var add = function(lat, lng){
           dataFactory.post('/nodal_centres',
                              {'name' : $scope.name,
@@ -816,7 +842,7 @@ app.controller("manage-centres", function($scope, $http, dataFactory, $routePara
                       $scope.status = "Failed";
                     }
                 });
-        }
+        };
         var geocoder = new google.maps.Geocoder();
         var get_geocode = function (){
           geocoder.geocode(
@@ -828,15 +854,13 @@ app.controller("manage-centres", function($scope, $http, dataFactory, $routePara
                 add(lat, lng);
               }
               else{
+                add("0","0");
                 console.log("failed for id error: "+status);
               }
             }
           );
-        }
+        };
         get_geocode();
-        
-        
-  
         }
         else{
           $scope.status = "Fill Details";
@@ -867,29 +891,51 @@ app.controller("edit-centre", function($scope, dataFactory, $http, $routeParams,
         });
     $scope.submit = function(isvalid) {
         if(isvalid){
+          var add = function(lat,lng){
             dataFactory.put('/nodal_centres/'+$routeParams.id,
-                      { "name" : $scope.centres.name,
-                        "location" : $scope.centres.location,
-                        "created_by" : { 'id' : $window.number } }).success(function(data, status, headers, config){
-                            $scope.status = "Success";
-                            window.location.href = "#/manage-centres";
-                        }).
-                error(function(data, status, headers, config){
-                    if(status == 500){
-                        $scope.status = "Duplicate Email";
-                    }
-                    else if(status == 400){
-                      $scope.status = "Invalid username";
-                    }
-                    else {
-                      $scope.status = "Failed";
-                    }
-                    
-                });
+                            { "name" : $scope.centres.name,
+                              "longitude" : lng,
+                              "lattitude" : lat,
+                              "location" : $scope.centres.location,
+                              "created_by" : { 'id' : $window.number } }).success(function(data, status, headers, config){
+                                $scope.status = "Success";
+                                window.location.href = "#/manage-centres";
+                              }).
+              error(function(data, status, headers, config){
+                if(status == 500){
+                  $scope.status = "Duplicate Email";
+                }
+                else if(status == 400){
+                  $scope.status = "Invalid username";
+                }
+                else {
+                  $scope.status = "Failed";
+                }
+              
+              });
+          };
+          var geocoder = new google.maps.Geocoder();
+          var get_geocode = function (){
+            geocoder.geocode(
+              { "address": $scope.centres.location+",india, Asia" }, function(results, status) {
+                if (status == google.maps.GeocoderStatus.OK && results.length > 0){
+                  var geo_code = results[0].geometry.location;
+                  var lat = geo_code.lat();
+                  var lng = geo_code.lng();
+                  add(lat, lng);
+                }
+                else{
+                  add("0","0");
+                  console.log("failed for id error: "+status);
+                }
+              }
+            );
+          };
+          get_geocode();
         }
-        else{
-          $scope.status = "Not empty";
-        }
+      else{
+        $scope.status = "Not empty";
+      }
     }
 });
 app.controller("oc-manage-workshops", function($scope, $http, $routeParams, dataFactory,$route, $window) {
