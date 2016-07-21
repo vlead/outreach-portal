@@ -2671,6 +2671,8 @@ class NodalCentre(Entity):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), nullable=False)
     location = db.Column(db.String(128))
+    longitude = db.Column(db.String(128))
+    lattitude = db.Column(db.String(128))
     created_by_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     created_by = relationship('User', foreign_keys=[created_by_id])
@@ -2696,6 +2698,12 @@ class NodalCentre(Entity):
         if 'created_by' not in kwargs:
             raise AttributeRequired("mandatory attribute `created_by` is missing")
         self.set_created_by(kwargs['created_by'])
+        
+        if 'longitude' in kwargs:
+            self.set_longitude(kwargs['longitude'])
+            
+        if 'lattitude' in kwargs:
+            self.set_lattitude(kwargs['lattitude'])
 
         
     def __str__(self):
@@ -3076,6 +3084,13 @@ class TestNodalCentre(TestCase):
         self.location = location
 #+END_SRC
 
+***** setLongitude: NodalCentre, Longitude --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no 
+    @typecheck(longitude=str)
+    def set_longitude(self, longitude):
+        self.longitude = longitude
+#+END_SRC
+
 ***** Test setLocation: NodalCentre, Location --> Void
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_set_nodal_centre_location(self):
@@ -3154,6 +3169,95 @@ class TestNodalCentre(TestCase):
         self.assertEqual("Gachibowli", saved_centre_dict['location'])
 
 #+END_SRC
+
+***** setLattitude: NodalCentre, Lattitude --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no 
+    @typecheck(lattitude=str)
+    def set_lattitude(self, lattitude):
+        self.lattitude = lattitude
+#+END_SRC
+
+***** Test setLocation: NodalCentre, Location --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no
+    def test_set_nodal_centre_location(self):
+        print "test_set_nodal_centre_location"
+        role1 = Role(name=Name("OC"))
+        role1.save()
+
+        role2 = Role(name=Name("NC"))
+        role2.save()
+
+        user_1 = User(name=Name("Ambika"),
+                      email=Email("ambika@vlabs.ac.in"), role=role1)
+        user_2 = User(name=Name("Madhavi"),
+                      email=Email("madhavi@vlabs.ac.in"), role=role2)
+        user_3 = User(name=Name("Will Smith"),
+                      email=Email("smith@vlabs.ac.in"), role=role2)
+
+        user_1.save()
+        user_2.save()
+        user_3.save()
+
+        nodal_centre1 = NodalCentre(name="HCU", location="Lingampalli", \
+                                    created_by=user_2)               
+        nodal_centre1.save()
+
+        nodal_centre1.set_location("Hyderabad")
+        nodal_centre1.save()
+        centre = NodalCentre.get_by_id(1)
+        self.assertEqual("Hyderabad", centre.location)
+#+END_SRC
+
+***** to_client
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def to_client(self):
+        return {
+            'id': self.id,
+            'created_by': self.created_by.to_client(),
+            'name': self.name,
+            'location': self.location,
+            'longitude': self.longitude,
+            'lattitude': self.lattitude
+        }
+#+END_SRC
+      
+***** Test Nodal Centre to_client
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no 
+    def test_nodal_centre_to_client(self):
+        print "test_nodal_centre_to_client"
+        role1 = Role(name=Name("OC"))
+        role1.save()
+
+        role2 = Role(name=Name("NC"))
+        role2.save()
+
+        user_1 = User(name=Name("Ambika"),
+                      email=Email("ambika@vlabs.ac.in"), role=role1)
+        user_2 = User(name=Name("Madhavi"),
+                      email=Email("madhavi@vlabs.ac.in"), role=role2)
+        user_3 = User(name=Name("Will Smith"),
+                      email=Email("smith@vlabs.ac.in"), role=role2)
+
+        user_1.save()
+        user_2.save()
+        user_3.save()
+
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
+                                   created_by=user_1)
+
+        nodal_centre1.save()
+
+        nodal_centre2 = NodalCentre(name="HCU", location="Lingampalli", \
+                                    created_by=user_2)               
+        nodal_centre2.save()
+
+        saved_centre = NodalCentre.get_by_id(1)
+        saved_centre_dict = saved_centre.to_client()
+        self.assertEqual("IIIT-Hyd", saved_centre_dict['name'])
+        self.assertEqual("Gachibowli", saved_centre_dict['location'])
+
+#+END_SRC
+
 
 *** Nodal Coordinator Details
 **** Immutable data
@@ -5729,6 +5833,12 @@ nodal_centre = {'entity_class': NodalCentre,
                      'relationship': 'one'},
                     {'name': 'location',
                      'class': None,
+                     'relationship': 'one'},
+                     {'name': 'longitude',
+                     'class': None,
+                     'relationship': 'one'},
+                     {'name': 'lattitude',
+                     'class': None,
                      'relationship': 'one'}
             ]}
 
@@ -6127,7 +6237,9 @@ entity_map_types = {
         'types': {
             'created_by': User,
             'name': str,
-            'location': str
+            'location': str,
+            'longitude': str,
+            'lattitude': str
         }
     },
  
