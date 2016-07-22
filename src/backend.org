@@ -2671,6 +2671,7 @@ class NodalCentre(Entity):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), nullable=False)
     location = db.Column(db.String(128))
+    pincode = db.Column(db.String(128))
     longitude = db.Column(db.String(128))
     lattitude = db.Column(db.String(128))
     created_by_id = db.Column(db.Integer, db.ForeignKey('users.id'))
@@ -3090,6 +3091,12 @@ class TestNodalCentre(TestCase):
     def set_longitude(self, longitude):
         self.longitude = longitude
 #+END_SRC
+***** setPincode: NodalCentre, Pincode --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no 
+    @typecheck(pincode=str)
+    def set_pincode(self, pincode):
+        self.pincode = pincode
+#+END_SRC
 
 ***** Test setLocation: NodalCentre, Location --> Void
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
@@ -3122,17 +3129,6 @@ class TestNodalCentre(TestCase):
         self.assertEqual("Hyderabad", centre.location)
 #+END_SRC
 
-***** to_client
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def to_client(self):
-        return {
-            'id': self.id,
-            'created_by': self.created_by.to_client(),
-            'name': self.name,
-            'location': self.location
-        }
-#+END_SRC
-      
 ***** Test Nodal Centre to_client
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no 
     def test_nodal_centre_to_client(self):
@@ -3216,6 +3212,7 @@ class TestNodalCentre(TestCase):
             'created_by': self.created_by.to_client(),
             'name': self.name,
             'location': self.location,
+            'pincode': self.pincode,
             'longitude': self.longitude,
             'lattitude': self.lattitude
         }
@@ -5834,6 +5831,9 @@ nodal_centre = {'entity_class': NodalCentre,
                     {'name': 'location',
                      'class': None,
                      'relationship': 'one'},
+                     {'name': 'pincode',
+                     'class': None,
+                     'relationship': 'one'},
                      {'name': 'longitude',
                      'class': None,
                      'relationship': 'one'},
@@ -6238,6 +6238,7 @@ entity_map_types = {
             'created_by': User,
             'name': str,
             'location': str,
+            'pincode': str,
             'longitude': str,
             'lattitude': str
         }
