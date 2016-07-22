@@ -822,36 +822,56 @@ app.controller("manage-centres", function($scope, $http, dataFactory, $routePara
 	if(isvalid){
         var add = function(lat, lng){
           dataFactory.post('/nodal_centres',
-                             {'name' : $scope.name,
-                              'location' : $scope.centre,
-                              'lattitude' : lat,
-                              'longitude' : lng,
-                              'created_by' : { 'id' : $window.number } } ).
-                success(function(data, status, headers, config){
-                    $scope.status = "Success";
-                    window.location.href = "#/manage-centres";
-                }).
-                error(function(data, status, headers, config){
-                    if(status == 500){
-                        $scope.status = "Duplicate Entry";
-                    }
-                    else if(status == 400){
-                      $scope.status = "Invalid username";
-                    }
-                    else{
-                      $scope.status = "Failed";
-                    }
-                });
+                           {'name' : $scope.name,
+                            'pincode' : $scope.pincode,
+                            'location' : $scope.centre,
+                            'lattitude' : lat,
+                            'longitude' : lng,
+                            'created_by' : { 'id' : $window.number } } ).
+            success(function(data, status, headers, config){
+              $scope.status = "Success";
+              window.location.href = "#/manage-centres";
+            }).
+            error(function(data, status, headers, config){
+              if(status == 500){
+                $scope.status = "Duplicate Entry";
+              }
+              else if(status == 400){
+                $scope.status = "Invalid username";
+              }
+              else{
+                $scope.status = "Failed";
+              }
+            });
         };
-        var geocoder = new google.maps.Geocoder();
-        var get_geocode = function (){
+          var geocoder = new google.maps.Geocoder();
+	  /*var get_geocode = function (){
+          
+	    var google_maps_api = "https://maps.googleapis.com/maps/api/geocode/json";
+	    var address = $scope.centre+","+$scope.pincode+",India,Asia";
+	    var key = "AIzaSyCQn4kTT5n9vKDPoRoaqVzzyD43xAGe2l8";
+	    var api_url = google_maps_api +"?"+"address="+address+"&key="+key;
+            console.log(api_url);
+	    dataFactory.fetch(api_url).success(function(data, status, headers, config){
+	      var lat = data.results[0].geometry.location.lat;
+              var lng = data.results[0].geometry.location.lng;
+              console.log("Success=: "+status);
+              add(lat, lng);
+              
+	    }).error(function(data, status, headers, config){
+              add("0","0");
+              console.log("failed for id error: "+status);
+	    });
+	    */
+            var get_geocode = function (){
           geocoder.geocode(
-            { "address": $scope.centre+",india, Asia" }, function(results, status) {
+            { "address": $scope.centre+","+$scope.pincode+",India,Asia" }, function(results, status) {
               if (status == google.maps.GeocoderStatus.OK && results.length > 0){
-                var geo_code = results[0].geometry.location;
-                var lat = geo_code.lat();
-                var lng = geo_code.lng();
-                add(lat, lng);
+                  var geo_code = results[0].geometry.location;
+                  var lat = geo_code.lat();
+                  var lng = geo_code.lng();
+		  console.log("lat="+lat+"lng="+lng);
+                  add(lat, lng);
               }
               else{
                 add("0","0");
@@ -859,13 +879,14 @@ app.controller("manage-centres", function($scope, $http, dataFactory, $routePara
               }
             }
           );
-        };
-        get_geocode();
+                                         };
+	
+      get_geocode();
         }
         else{
           $scope.status = "Fill Details";
         }
-    }
+    };
     $scope.del_centre =  function(id){
         if(confirm("Are you sure!") == true){
             dataFactory.del('/nodal_centres/'+id).
@@ -877,14 +898,14 @@ app.controller("manage-centres", function($scope, $http, dataFactory, $routePara
                     console.log(data);
                 });
         }
-    }
+    };
     
 });
 
 app.controller("edit-centre", function($scope, dataFactory, $http, $routeParams, $route, $window) {
     dataFactory.fetch('/nodal_centres/'+$routeParams.id).
         success(function(data, status, headers, config) {
-            $scope.centres= data;
+          $scope.centres= data;
         }).
         error(function(data, status, headers, config){
             console.log(data);
@@ -896,6 +917,7 @@ app.controller("edit-centre", function($scope, dataFactory, $http, $routeParams,
                             { "name" : $scope.centres.name,
                               "longitude" : lng,
                               "lattitude" : lat,
+                              "pincode" : $scope.centres.pincode,
                               "location" : $scope.centres.location,
                               "created_by" : { 'id' : $window.number } }).success(function(data, status, headers, config){
                                 $scope.status = "Success";
@@ -917,7 +939,7 @@ app.controller("edit-centre", function($scope, dataFactory, $http, $routeParams,
           var geocoder = new google.maps.Geocoder();
           var get_geocode = function (){
             geocoder.geocode(
-              { "address": $scope.centres.location+",india, Asia" }, function(results, status) {
+              { "address": $scope.centres.location+","+$scope.centres.pincode+",India,Asia" }, function(results, status) {
                 if (status == google.maps.GeocoderStatus.OK && results.length > 0){
                   var geo_code = results[0].geometry.location;
                   var lat = geo_code.lat();
