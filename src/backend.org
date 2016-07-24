@@ -2706,6 +2706,9 @@ class NodalCentre(Entity):
         if 'lattitude' in kwargs:
             self.set_lattitude(kwargs['lattitude'])
 
+        if 'pincode' in kwargs:
+            self.set_pincode(kwargs['pincode'])
+
         
     def __str__(self):
         return "Name = %s, location = %s, created_by = %s" % \
