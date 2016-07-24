@@ -37,9 +37,10 @@
       <div class="form-group">
 	<label class="control-label col-sm-4">Pincode:</label>
 	<div class="col-sm-6">
-          <input type="number" name="pincode" ng-model="centres.pincode"  min="0"  ng-minlength="6" ng-maxlength="6" class="form-control" required>
-          <span class="error" ng-show="myForm.pincode.$error.number">Pincode should be number!</span>
-	  <span class="error" ng-show="myForm.pincode.$error.maxlength">Not valid pincode!</span>
+          <input type="text" name="pincode" ng-pattern="/^[0-9]*$/"
+		 ng-minlength="6" ng-maxlength="6" ng-model="centres.pincode"
+		 class="form-control"  placeholder="503114" required><br>
+          <span class="error" ng-show="myForm.pincode.$error.maxlength">Not valid pincode!</span>
 	  <span class="error" ng-show="myForm.pincode.$error.minlength">Not valid pincode!</span>
 	  <span style="color:red" ng-show="myForm.pincode.$dirty && myForm.pincode.$invalid">
 	    <span ng-show="myForm.pincode.$error.required">Pincode is required.</span>
