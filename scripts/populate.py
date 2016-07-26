@@ -1,7 +1,9 @@
 import requests
 import json
+import sys
 
-url = "http://localhost:5000/nodal_centres"
+url = sys.argv[1]
+key = sys.argv[2]
 ncentres = requests.get(url)
 total_ncentres =  len(ncentres.json())
 nodal_centre_ids = []
@@ -17,7 +19,6 @@ for i in range(total_ncentres):
 
 total = len(nodal_centre_ids)
 google_maps_api = "https://maps.googleapis.com/maps/api/geocode/json"
-key = "AIzaSyDWc-KEZdSmdZPUUAbB5utNG_3orG7rXkQ"
 
 for i in nodal_centre_ids:
     address = i['location']+",India,Asia"

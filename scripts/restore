@@ -3,6 +3,8 @@
 DB_NAME="outreach"
 DB_PASS="vlead123"
 VERSION="v2.0.9"
+APP_URL="http://localhost/nodalcentres"
+GOOGLE_API_KEY="paste-geocode-api-key-here"
 
 BACKUP_FILE=$1
 
@@ -56,8 +58,14 @@ if [ $? -ne 0 ]; then
   exit 1;
 fi
 
-python populate.py
-echo "################"
-echo "Restore successful."
-echo "###############"
+python populate.py $APP_URL $GOOGLE_API_KEY
+if [ $? -ne 0 ]; then
+  echo "Error: Couldn't add attributes longitude, lattitude and pincode to nodal_centres"
+  echo "Aborting."
+  exit 1;
+else
+    echo "################"
+    echo "Restore successful."
+    echo "###############"
+fi
 exit 0;
