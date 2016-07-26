@@ -5,6 +5,7 @@
       Nodal Centre</a>
   </div>
 </div>
+<br>
 <div class="row">
   <div class="col-md-12">
     <table class="table table-hover">
@@ -12,12 +13,14 @@
 	<tr>
 	  <th>Name</th>
 	  <th>Location</th>
+          <th>Pincode</th>
 	</tr>
       </thead>
       <tbody>
 	<tr ng-repeat="centre in centres">
           <td>{{ centre.name }}</td>
           <td>{{ centre.location }}</td>
+          <td>{{ centre.pincode }}</td>
           <td><a href="#/edit-centre/{{centre.id}}" class="btn btn-primary">Edit</a></td>
           <td><a class="btn btn-primary" ng-click="del_centre(centre.id)">Delete</a></td>
 	</tr>

@@ -1,8 +1,8 @@
 #!/bin/bash
 
 DB_NAME="outreach"
-DB_PASS="root"
-VERSION="v0.2.1"
+DB_PASS="vlead123"
+VERSION="v2.0.9"
 
 BACKUP_FILE=$1
 
@@ -27,6 +27,20 @@ if [ $? -ne 0 ]; then
 fi
 
 # restore from the dump folder
+mysql -u root -p$DB_PASS -e "drop database $DB_NAME"
+if [ $? -ne 0 ]; then
+  echo "Error: in droping database name $DB_NAME"
+  echo "Aborting"
+
+fi
+
+mysql -u root -p$DB_PASS -e "create database $DB_NAME"
+if [ $? -ne 0 ]; then
+  echo "Error: in droping database name $DB_NAME"
+  echo "Aborting"
+  exit 1;
+fi
+
 mysql -u root -p$DB_PASS $DB_NAME < $DB_NAME.sql
 if [ $? -ne 0 ]; then
   echo "Error: Something went wrong while restoring db dump."
@@ -34,5 +48,16 @@ if [ $? -ne 0 ]; then
   exit 1;
 fi
 
+mysql -u root -p$DB_PASS $DB_NAME -e "use $DB_NAME; ALTER TABLE nodal_centres add column longitude varchar(20) after location, add column lattitude varchar(20) after longitude, add column pincode varchar(6) after longitude "
+
+if [ $? -ne 0 ]; then
+  echo "Error: Couldn't add attributes longitude, lattitude and pincode to nodal_centres"
+  echo "Aborting."
+  exit 1;
+fi
+
+python populate.py
+echo "################"
 echo "Restore successful."
+echo "###############"
 exit 0;
