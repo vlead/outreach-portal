@@ -5244,7 +5244,10 @@ def parse_request(request):
         # FIXME: is this a good idea? Fix this to do it in a better way?
         for k in data:
             if is_number(data[k]):
-                data[k] = int(data[k])
+                try:
+                    data[k] = int(data[k])
+                except Exception, e :
+                    data[k] =  str(data[k])
             if is_bool_in_str(data[k]):
                 data[k] = str_to_bool(data[k])
 
