@@ -55,18 +55,19 @@
           <span ng-show="myForm.phone.$error.number">Phone number is required.</span>
 	</span>
       </p>
-      -->
+          -->
       <p>Target Workshops<br>
-	<input type="number" name="workshops" min="0" ng-model="workshops"  class="form-control"
+	<input type="number" ng-mouseover="targetWorkshops('over')"
+               ng-mouseleave="targetWorkshops('unover')" name="workshops" min="0" ng-model="workshops"  class="form-control"
                placeholder="No of workshops" required>
 	<span style="color:red" ng-show="myForm.workshops.$dirty && myForm.workshops.$invalid">
 	  <span ng-show="myForm.workshops.$error.required">Target Workshops
 	    Required</span>
           <span ng-show="myForm.workshops.$error.number">Please enter the valid workshops number</span>
 	</span>
-      </p>
+      </p>{{ info }}
       <p>Target Experiments<br>
-	<input type="number" name="expts" min="0" ng-model="expts"  class="form-control"
+	<input type="number" ng-mouseover="targetExperiments('over')" ng-mouseleave="targetExperiments('unover')" name="expts" min="0" ng-model="expts"  class="form-control"
                placeholder="No of Experiments" required>
         <span style="color:red" ng-show="myForm.expts.$dirty && myForm.expts.$invalid">
           <span style="color:red" ng-show="myForm.expts.$error.required">Target
@@ -74,8 +75,9 @@
 	  <span ng-show="myForm.expts.$error.number">Please enter the valid experiments number</span>
 	</span>
       </p>
+       {{ info1 }}
       <p>Target Participants<br>
-	<input type="number" name="parti" min="0" ng-model="parti"  class="form-control"
+	<input type="number" ng-mouseover="targetParticipants('over')" ng-mouseleave="targetParticipants('unover')" name="parti" min="0" ng-model="parti"  class="form-control"
                placeholder="No of participants" required>
         <span style="color:red" ng-show="myForm.parti.$dirty && myForm.parti.$invalid">
         <span ng-show="myForm.parti.$error.required">Target
@@ -83,6 +85,7 @@
 	<span ng-show="myForm.parti.$error.number">Please enter the valid participants number</span>
 	</span>
       </p>
+      {{ info2 }}
       <p>
 	<input type="submit" value="submit" class="btn btn-primary"  ng-disabled="myForm.$invalid">
 	<a href="#/manage-nc">Cancel</a>
