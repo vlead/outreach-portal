@@ -5,7 +5,15 @@
   <div class="analytics-band">
     <div class="container">
       <div class="row" ng-controller="admin-ctrl">
-        <div class="col-md-2 analytics nodal-centers" ng-click="showNcentres()">
+	<div class="col-md-3 analytics upcoming" ng-controller="map-ctrl" onclick="scrollWin()">
+          UPCOMING WORKSHOPS<br>
+          <span class="number">{{ upcoming_workshops.length }}</span>
+        </div>
+	<div class="col-md-3 analytics labs-taken">
+          PARTICIPANTS ATTENDED<br>
+          <span class="number">{{ total_participants }}</span>
+        </div>
+	<div class="col-md-2 analytics nodal-centers" ng-click="showNcentres()">
           NODAL CENTRES<br>
           <span class="number">{{ nodal_centres }}</span>
         </div>
@@ -13,18 +21,12 @@
           WORKSHOPS RUN<br>
           <span class="number">{{ total_workshops }}</span>
         </div>
-        <div class="col-md-3 analytics labs-taken">
-          PARTICIPANTS ATTENDED<br>
-          <span class="number">{{ total_participants }}</span>
-        </div>
+        
         <div class="col-md-2 analytics usage">
           USAGE<br>
           <span class="number">{{ total_usage }}</span>
         </div>
-	 <div class="col-md-3 analytics upcoming" ng-controller="map-ctrl" onclick="scrollWin()">
-          UPCOMING WORKSHOPS<br>
-          <span class="number">{{ upcoming_workshops.length }}</span>
-        </div>
+	 
 	 
       </div>
     </div>
