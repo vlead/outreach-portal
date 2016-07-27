@@ -644,7 +644,7 @@ app.controller("oc-dashboard", function($scope, $http, dataFactory, $routeParams
 
 app.controller("manage-nc", function($scope, $http, $routeParams, dataFactory, $window, $route) {
     dataFactory.fetch('/nodal_coordinator_details?created_by_id='+ $window.number).success(function(data, status, headers, config){
-        var coordinators = [];                                                                             
+      var coordinators = [];
         for( i=0;i<data.length;i++){
             var nc_id = data[i].id;
             dataFactory.fetch('/users/'+ data[i].user.id).success(function(data, status, headers, config){
@@ -777,6 +777,31 @@ app.controller("add-nc", function($scope, $http, dataFactory, $routeParams, $win
     }).error(function(data,status,headers,config){
       console.log("Failed");
     });
+  $scope.targetWorkshops = function(status)
+  {
+    if(status == "over")
+    {
+      $scope.info = "A workshop that is intended to be conducted whose objectives,date ,subject matter such as name of the labs and experiments,  location, participants and other relevant parameters are defined well in advance enabling it to be organized.";
+    }
+    else{$scope.info="";}
+  };
+  $scope.targetExperiments = function(status)
+  {
+    if(status == "over")
+    {
+      $scope.info1 = "An experiment that is intended to be conducted or done whose objectives, date ,subject matter such as name of the  experiment,  location, participants and other relevant parameters are defined well in advance enabling  it to be organized.";
+    }
+    else{$scope.info1="";}
+  };
+  $scope.targetParticipants = function(status)
+  {
+    if(status == "over")
+    {
+      $scope.info2 = "Set of people participating in a workshop or an experiment who meet the technical and other requirements that  enable them to fulfill the objectives of the workshop or experiment.";
+    }
+    else{$scope.info2="";}
+  };
+
     $scope.id = 0;
     $scope.submit = function(isvalid){
         if(isvalid){
