@@ -29,7 +29,8 @@
             <span class="icon-bar"></span>
           </button>
           <a class="navbar-brand" href="#" onclick="dashboard()"><img src="/static/img/logo.png" class="logo-img"></a>
-        </div>
+        </div><br>
+	
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-form navbar-right">
 	    {% if session.email %}
@@ -39,6 +40,7 @@
 	    {% else %}
 	    <li>
 	      <span class= "error">  </span>&emsp; <button class="btn btn-primary btn-signin" id="btn-signin">Log In</button>
+	      &emsp;<img width="18%" onclick="location.href='https://www.facebook.com/outreachvirtuallabs/?skip_nax_wizard=true#'" src="/static/img/fb.png">&emsp;<img width="18%" onclick="location.href='https://twitter.com/TheVirtualLabs'"src="/static/img/twtr.png"></img>
 	    </li>	      {% endif %}
 	  </ul>
         </div>
@@ -54,13 +56,20 @@
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="/static/js/bootstrap.min.js"></script>
     <script src="/static/js/angular.min.js"></script>
-    <script src="http://maps.googleapis.com/maps/api/js?language=en async defer"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCQn4kTT5n9vKDPoRoaqVzzyD43xAGe2l8&language=en async defer"></script>
+    
+    <!--<script src="http://maps.googleapis.com/maps/api/js?language=en async defer"></script>-->
     <script type="text/javascript" src="/static/js/factories.js"></script>
     <script type="text/javascript" src="/static/js/controllers.js"></script>
     <script src="/static/js/angular-route.js"></script>
     <script type="text/javascript" src="/static/js/app.js"></script>
     <script src="https://login.persona.org/include.js"></script>
     <script type="text/javascript">
+      function fb()
+      {
+      alert("dfd");
+      window.href="https://www.facebook.com/outreachvirtuallabs/?skip_nax_wizard=true#";
+      }
       // global Object container
       var signinLink = document.getElementById('btn-signin');
       if (signinLink) {

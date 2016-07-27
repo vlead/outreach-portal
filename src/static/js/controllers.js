@@ -3,9 +3,83 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
     dataFactory.fetch("/workshops?status_id=1").success(function(upcoming){
 	$scope.upcoming_workshops = upcoming;
 	for(i=0;i<upcoming.length;i++){
-            get_geocode(upcoming[i].location, upcoming[i]);
+	    if(upcoming[i].location != "null" && upcoming[i].longitude != null){
+		$scope.createMarker(upcoming[i], upcoming[i], "workshops");
+            //get_geocode(upcoming[i].location, upcoming[i]);
+            }
         }
     });
+  dataFactory.fetch("/nodal_centres").success(function(nodal_centre){
+    //update longitude and lattitude
+    /*
+      var i = 0;                     //  set your counter to 1                                                                   
+    function myLoop () {           //  create a loop function                                                                                      
+      setTimeout(function () {    //  call a 3s setTimeout when the loop is called                                                               
+        get_geocode1(nodal_centre[i]);
+        i++;   
+        if (i < nodal_centre.length) {  
+          myLoop();             
+        }                       
+      }, 1000);
+    }
+    
+    myLoop();
+  });
+*/
+    //working code
+  
+    for(i=0;i<nodal_centre.length;i++){
+	if(nodal_centre[i].location != "null" && nodal_centre[i].longitude != null){
+	  $scope.createMarker(nodal_centre[i], nodal_centre[i], "nodal_centres");
+          // get_geocode1(nodal_centre[i]);
+	}
+    }
+  });
+    var geocoder1 = new google.maps.Geocoder();
+    var get_geocode1 = function (nodal_centre){
+	var id = nodal_centre.id;
+	var location = nodal_centre.location;
+	geocoder1.geocode(
+            { "address": nodal_centre.location+",india, Asia" }, function(results, status) {
+                if (status == google.maps.GeocoderStatus.OK && results.length > 0){
+                  var geo_code = results[0].geometry.location;
+                  var lat = geo_code.lat();
+                  var lng = geo_code.lng();
+                  console.log(pincode);
+                  var data = {"longitude" : lng, "lattitude" : lat };
+                    dataFactory.put("/nodal_centres/"+id, data).success(function(response){
+			console.log("success for id "+id);
+                    });
+                }
+		else{
+                    console.log("failed for id "+id+"error: "+status);
+		}
+            }
+        );
+    }
+  /* to update the nodal centres geo locations  
+  var geocoder1 = new google.maps.Geocoder();
+  var get_geocode1 = function (nodal_centre){
+    var id = nodal_centre.id;
+    var location = nodal_centre.location;
+    geocoder1.geocode(
+            { "address": nodal_centre.location+",india, Asia" }, function(results, status) {
+                if (status == google.maps.GeocoderStatus.OK && results.length > 0){
+                    var geo_code = results[0].geometry.location;
+                  var lat = geo_code.lat();
+                  var lng = geo_code.lng();
+                  var data = {"longitude" : lng, "lattitude" : lat};
+                  dataFactory.put("/nodal_centres/"+id, data).success(function(response){
+                    console.log("success for id "+id);
+                  });
+                }
+              else{
+                console.log("failed for id "+id+"error: "+status);
+              }
+            }
+        );
+  }
+    */
 
     var mapOptions = { zoom: 5, center: new google.maps.LatLng(23,81) };
     $scope.map = new google.maps.Map(document.getElementById('map'), mapOptions);
@@ -15,26 +89,46 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
             { "address": workshop_location }, function(results, status) {
                 if (status == google.maps.GeocoderStatus.OK && results.length > 0){
                     var geo_code = results[0].geometry.location;
-                    $scope.createMarker(geo_code,workshop_location,label);
+                  $scope.createMarker(label, geo_code,"workshops");
                 }
             }
         );
     }
-    $scope.createMarker = function (geo_code,workshop_location,label){
-        var infowindow = new google.maps.InfoWindow({
-            content: '<b>Workshop Location : </b>'+label.location+'<br><b>Date : </b>'+label.date+'<br><b>Participating Colleges : </b>' + label.participating_institutes
-        });
+  $scope.createMarker = function (label, geo_code,type){
+    var nodal_centre_infowindow = new google.maps.InfoWindow({
+      content: '<b>Nodal Centre Location : </b>'+label.location+'<br><b>Nodal Centre Name : </b>'+label.name
+    });
+    var workshop_infowindow = new google.maps.InfoWindow({
+      content: '<b>Workshop Location : </b>'+label.location+'<br><b>Date : </b>'+label.date+'<br><b>Participating Colleges : </b>' + label.participating_institutes 
+    });
+      if(type == "workshops")
+      {
         var marker = new google.maps.Marker({
-            map: $scope.map,
-            animation: google.maps.Animation.DROP,
-            draggable: false,
-            position: new google.maps.LatLng(geo_code.lat(), geo_code.lng()),
-            title: 'Click here to view the workshop details'
+          map: $scope.map,
+          animation: google.maps.Animation.DROP,
+          draggable: false,
+          icon: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
+          position: new google.maps.LatLng(geo_code.lattitude, geo_code.longitude),
+          title: 'Click here to view the workshop details'
         });
-
         marker.addListener('click', function() {
-            infowindow.open(map, marker);
+            workshop_infowindow.open(map, marker);
         });
+      }
+      else{
+        var marker = new google.maps.Marker({
+          map: $scope.map,
+          animation: google.maps.Animation.DROP,
+          draggable: false,
+          icon : "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
+          position: new google.maps.LatLng(geo_code.lattitude, geo_code.longitude),
+          title: 'Click here to view the Nodal Centre details'
+        });
+        marker.addListener('click', function() {
+            nodal_centre_infowindow.open(map, marker);
+        });
+      }
+        
 
     }
 
@@ -550,7 +644,7 @@ app.controller("oc-dashboard", function($scope, $http, dataFactory, $routeParams
 
 app.controller("manage-nc", function($scope, $http, $routeParams, dataFactory, $window, $route) {
     dataFactory.fetch('/nodal_coordinator_details?created_by_id='+ $window.number).success(function(data, status, headers, config){
-        var coordinators = [];                                                                             
+      var coordinators = [];
         for( i=0;i<data.length;i++){
             var nc_id = data[i].id;
             dataFactory.fetch('/users/'+ data[i].user.id).success(function(data, status, headers, config){
@@ -618,7 +712,7 @@ app.controller("edit-nc", function($scope, dataFactory, $http, $routeParams, $wi
         $scope.ncentre_id = data[0];
         //$scope.email = data.email;
     }).error(function(data,status,headers,config){
-        console.log("Failed")
+      console.log("Failed");
     });
     dataFactory.fetch("/users/"+$routeParams.id).success(function(data, status, headers, config){
         $scope.user = data.name;
@@ -626,7 +720,7 @@ app.controller("edit-nc", function($scope, dataFactory, $http, $routeParams, $wi
         $scope.email = data.email;
         $scope.inst_name = data.institute_name;
     }).error(function(data,status,headers,config){
-        console.log("Failed")
+      console.log("Failed");
     });
     dataFactory.fetch("/nodal_coordinator_details?user_id="+$routeParams.id).success(function(data, status, headers, config){
 	$scope.ncentre = data[0].nodal_centre.location;
@@ -637,7 +731,7 @@ app.controller("edit-nc", function($scope, dataFactory, $http, $routeParams, $wi
         $scope.parti = data[0].target_participants;
         console.log($scope.workshops);
     }).error(function(data,status,headers,config){
-        console.log("Failed")
+      console.log("Failed");
     });
     $scope.id = 0;
     $scope.submit = function(user_id, nc_id){
@@ -662,15 +756,15 @@ app.controller("edit-nc", function($scope, dataFactory, $http, $routeParams, $wi
                         $scope.status = "Duplicate Entry";
                     }
                     else if(status == 400){
-                        $scope.status = "Invalid username"
+                      $scope.status = "Invalid username";
                     }
                     else{
-                        $scope.status = "Failed"
+                      $scope.status = "Failed";
                     }
                 });
         }
         else {
-            $scope.status = "Fill Details"
+          $scope.status = "Fill Details";
         }
     }
     
@@ -681,8 +775,33 @@ app.controller("add-nc", function($scope, $http, dataFactory, $routeParams, $win
         $scope.ncentres = data;
         $scope.ncentre_id = data[0];
     }).error(function(data,status,headers,config){
-        console.log("Failed")
+      console.log("Failed");
     });
+  $scope.targetWorkshops = function(status)
+  {
+    if(status == "over")
+    {
+      $scope.info = "A workshop that is intended to be conducted whose objectives,date ,subject matter such as name of the labs and experiments,  location, participants and other relevant parameters are defined well in advance enabling it to be organized.";
+    }
+    else{$scope.info="";}
+  };
+  $scope.targetExperiments = function(status)
+  {
+    if(status == "over")
+    {
+      $scope.info1 = "An experiment that is intended to be conducted or done whose objectives, date ,subject matter such as name of the  experiment,  location, participants and other relevant parameters are defined well in advance enabling  it to be organized.";
+    }
+    else{$scope.info1="";}
+  };
+  $scope.targetParticipants = function(status)
+  {
+    if(status == "over")
+    {
+      $scope.info2 = "Set of people participating in a workshop or an experiment who meet the technical and other requirements that  enable them to fulfill the objectives of the workshop or experiment.";
+    }
+    else{$scope.info2="";}
+  };
+
     $scope.id = 0;
     $scope.submit = function(isvalid){
         if(isvalid){
@@ -705,15 +824,15 @@ app.controller("add-nc", function($scope, $http, dataFactory, $routeParams, $win
                         $scope.status = "Duplicate Entry";
                     }
                     else if(status == 400){
-                        $scope.status = "Invalid username"
+                      $scope.status = "Invalid username";
                     }
-                    else {
-                        $scope.status = "Failed"
+                  else {
+                      $scope.status = "Failed";
                     }
                 });
         }
         else {
-            $scope.status = "Fill Details"
+          $scope.status = "Fill Details";
         }
     }
     
@@ -725,32 +844,74 @@ app.controller("manage-centres", function($scope, $http, dataFactory, $routePara
         console.log(data);
     });
     $scope.add_centre = function(isvalid){
-        if(isvalid){
-            dataFactory.post('/nodal_centres',
-                             {'name' : $scope.name,
-                              'location' : $scope.centre,
-                              'created_by' : { 'id' : $window.number } } ).
-                success(function(data, status, headers, config){
-                    $scope.status = "Success";
-                    window.location.href = "#/manage-centres";
-                }).
-                error(function(data, status, headers, config){
-                    if(status == 500){
-                        $scope.status = "Duplicate Entry";
-                    }
-                    else if(status == 400){
-                        $scope.status = "Invalid username"
-                    }
-                    else{
-                        $scope.status = "Failed"
-                    }
-                });
-  
+	if(isvalid){
+        var add = function(lat, lng){
+          dataFactory.post('/nodal_centres',
+                           {'name' : $scope.name,
+                            'pincode' : $scope.pincode,
+                            'location' : $scope.centre,
+                            'lattitude' : lat,
+                            'longitude' : lng,
+                            'created_by' : { 'id' : $window.number } } ).
+            success(function(data, status, headers, config){
+              $scope.status = "Success";
+              window.location.href = "#/manage-centres";
+            }).
+            error(function(data, status, headers, config){
+              if(status == 500){
+                $scope.status = "Duplicate Entry";
+              }
+              else if(status == 400){
+                $scope.status = "Invalid username";
+              }
+              else{
+                $scope.status = "Failed";
+              }
+            });
+        };
+          var geocoder = new google.maps.Geocoder();
+	  /*var get_geocode = function (){
+          
+	    var google_maps_api = "https://maps.googleapis.com/maps/api/geocode/json";
+	    var address = $scope.centre+","+$scope.pincode+",India,Asia";
+	    var key = "AIzaSyCQn4kTT5n9vKDPoRoaqVzzyD43xAGe2l8";
+	    var api_url = google_maps_api +"?"+"address="+address+"&key="+key;
+            console.log(api_url);
+	    dataFactory.fetch(api_url).success(function(data, status, headers, config){
+	      var lat = data.results[0].geometry.location.lat;
+              var lng = data.results[0].geometry.location.lng;
+              console.log("Success=: "+status);
+              add(lat, lng);
+              
+	    }).error(function(data, status, headers, config){
+              add("0","0");
+              console.log("failed for id error: "+status);
+	    });
+	    */
+            var get_geocode = function (){
+          geocoder.geocode(
+            { "address": $scope.centre+","+$scope.pincode+",India,Asia" }, function(results, status) {
+              if (status == google.maps.GeocoderStatus.OK && results.length > 0){
+                  var geo_code = results[0].geometry.location;
+                  var lat = geo_code.lat();
+                  var lng = geo_code.lng();
+		  console.log("lat="+lat+"lng="+lng);
+                  add(lat, lng);
+              }
+              else{
+                add("0","0");
+                console.log("failed for id error: "+status);
+              }
+            }
+          );
+                                         };
+	
+      get_geocode();
         }
         else{
-            $scope.status = "Fill Details"
+          $scope.status = "Fill Details";
         }
-    }
+    };
     $scope.del_centre =  function(id){
         if(confirm("Are you sure!") == true){
             dataFactory.del('/nodal_centres/'+id).
@@ -762,43 +923,66 @@ app.controller("manage-centres", function($scope, $http, dataFactory, $routePara
                     console.log(data);
                 });
         }
-    }
+    };
     
 });
 
 app.controller("edit-centre", function($scope, dataFactory, $http, $routeParams, $route, $window) {
     dataFactory.fetch('/nodal_centres/'+$routeParams.id).
         success(function(data, status, headers, config) {
-            $scope.centres= data;
+          $scope.centres= data;
         }).
         error(function(data, status, headers, config){
             console.log(data);
         });
     $scope.submit = function(isvalid) {
         if(isvalid){
+          var add = function(lat,lng){
             dataFactory.put('/nodal_centres/'+$routeParams.id,
-                      { "name" : $scope.centres.name,
-                        "location" : $scope.centres.location,
-                        "created_by" : { 'id' : $window.number } }).success(function(data, status, headers, config){
-                            $scope.status = "Success";
-                            window.location.href = "#/manage-centres";
-                        }).
-                error(function(data, status, headers, config){
-                    if(status == 500){
-                        $scope.status = "Duplicate Email";
-                    }
-                    else if(status == 400){
-                        $scope.status = "Invalid username"
-                    }
-                    else {
-                        $scope.status = "Failed"
-                    }
-                    
-                });
+                            { "name" : $scope.centres.name,
+                              "longitude" : lng,
+                              "lattitude" : lat,
+                              "pincode" : $scope.centres.pincode,
+                              "location" : $scope.centres.location,
+                              "created_by" : { 'id' : $window.number } }).success(function(data, status, headers, config){
+                                $scope.status = "Success";
+                                window.location.href = "#/manage-centres";
+                              }).
+              error(function(data, status, headers, config){
+                if(status == 500){
+                  $scope.status = "Duplicate Email";
+                }
+                else if(status == 400){
+                  $scope.status = "Invalid username";
+                }
+                else {
+                  $scope.status = "Failed";
+                }
+              
+              });
+          };
+          var geocoder = new google.maps.Geocoder();
+          var get_geocode = function (){
+            geocoder.geocode(
+              { "address": $scope.centres.location+","+$scope.centres.pincode+",India,Asia" }, function(results, status) {
+                if (status == google.maps.GeocoderStatus.OK && results.length > 0){
+                  var geo_code = results[0].geometry.location;
+                  var lat = geo_code.lat();
+                  var lng = geo_code.lng();
+                  add(lat, lng);
+                }
+                else{
+                  add("0","0");
+                  console.log("failed for id error: "+status);
+                }
+              }
+            );
+          };
+          get_geocode();
         }
-        else{
-            $scope.status = "Not empty"
-        }
+      else{
+        $scope.status = "Not empty";
+      }
     }
 });
 app.controller("oc-manage-workshops", function($scope, $http, $routeParams, dataFactory,$route, $window) {
