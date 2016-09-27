@@ -19,6 +19,7 @@
 	  <span ng-show="myForm.location.$error.pattern">Enter valid location</span>
 	</span>
       </p>
+     
       <p>Participating Institues:<br>
 	<input type="text" name="insts" ng-model="insts"  ng-pattern="/^[a-zA-Z._-\s,]*$/" class="form-control"
                placeholder="Institute names" required>
@@ -56,6 +57,10 @@
         <span style="color:red" ng-show="myForm.labs.$dirty && myForm.labs.$invalid">
 	  <span ng-show="myForm.labs.$error.required">Lab names required.</span>
 	</span>
+      </p>
+       <p>Gateway IP of College:<br>
+	<input type="text" name="gateway_ip" ng-model="gateway_ip" ng-pattern=""  class="form-control"
+	       placeholder="Gateway IP of college" required>
       </p>
       <p>Date:<br>
 	<input type="text" name="date" ng-model="date" id="datepicker"

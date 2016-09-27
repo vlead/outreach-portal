@@ -491,6 +491,7 @@ app.controller("add-workshop", function($scope, $location, $http, dataFactory,$r
             dataFactory.post('/workshops', { "name" : $scope.name,
 					     "duration_of_sessions" : $scope.session,
 					     "location" : $scope.location,  "user" : {"id" : $window.number },
+					     "gateway_ip" : $scope.gateway_ip,
 					     "participating_institutes" : $scope.insts,
 					     "no_of_participants_expected" : $scope.parti,
 					     "no_of_sessions" : Number($scope.sessions),
@@ -520,6 +521,37 @@ app.controller("add-workshop", function($scope, $location, $http, dataFactory,$r
 });
 
 app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParams, $route, $window){
+
+   
+    $scope.get_usage = function()
+    {
+
+	//10.4.20.103
+	if($scope.message.gateway_ip!=""){
+
+	    $scope.enable = true;
+	    }
+	date = new Date($scope.message.date);
+	day = date.getDate()+1;
+	month = date.getMonth() + 1;
+	year = date.getFullYear();
+	new_date = day+"-"+month+"-"+year;
+	
+	url = "http://fp-edx-demo.vlabs.ac.in/usage_from_feedback?gateway_ip="+$scope.message.gateway_ip+"&date="+new_date+"&key=defaultkey"
+	console.log(url);
+	$http.get(url).
+        success(function(data, status, headers, config){
+	    console.log(data.usage);
+	    if($scope.usage == null){
+		$scope.usage = 0;
+		}
+	    else{$scope.usage = data.usage;}
+        }).
+        error(function(data, status, headers, config){
+            console.log(data);
+	    
+        });
+    }
     dataFactory.fetch('/workshops/'+$routeParams.id).
         success(function(data, status, headers, config){
             $scope.message= data;
@@ -546,6 +578,7 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
 			      "location" : $scope.message.location,
 			      "user" : {"id" : $window.number },
 			      "participating_institutes" : $scope.message.participating_institutes,
+			      "gateway_ip" : $scope.gateway_ip,
 			      "participants_attended" : $scope.message.participants_attended,
 			      "no_of_sessions" : Number($scope.message.no_of_sessions),
 			      "duration_of_sessions": $scope.message.duration_of_sessions,
