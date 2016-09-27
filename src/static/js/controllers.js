@@ -521,16 +521,12 @@ app.controller("add-workshop", function($scope, $location, $http, dataFactory,$r
 });
 
 app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParams, $route, $window){
-
-   
+    
     $scope.get_usage = function()
     {
 
 	//10.4.20.103
-	if($scope.message.gateway_ip!=""){
 
-	    $scope.enable = true;
-	    }
 	date = new Date($scope.message.date);
 	day = date.getDate()+1;
 	month = date.getMonth() + 1;
@@ -542,13 +538,11 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
 	$http.get(url).
         success(function(data, status, headers, config){
 	    console.log(data.usage);
-	    if($scope.usage == null){
-		$scope.usage = 0;
-		}
-	    else{$scope.usage = data.usage;}
+	    
         }).
-        error(function(data, status, headers, config){
-            console.log(data);
+            error(function(data, status, headers, config){
+		console.log(data);
+
 	    
         });
     }
@@ -584,7 +578,7 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
 			      "duration_of_sessions": $scope.message.duration_of_sessions,
 			      "labs_planned" : Number($scope.message.labs_planned),
 			      "status" : {"id": status_id},  "date" : $scope.message.date,
-			      "experiments_conducted": $scope.message.experiments_conducted}).
+			      "experiments_conducted": $scope.message.usage}).
 		success(function(data, status, headers, config){
                     $scope.status = "Success";
                     history.back();

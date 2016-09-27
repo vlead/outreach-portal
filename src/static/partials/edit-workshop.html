@@ -61,12 +61,14 @@
 	</span>
      </p>
      <p>Gateway IP of College:<br>
-	<input type="text" name="gateway_ip" ng-model="message.gateway_ip" ng-pattern=""  class="form-control"
-	       placeholder="Gateway IP of college" required> <font color="blue" ng-click="get_usage()">Get Usage</font>
+	<input type="text" name="gateway_ip" ng-model="message.gateway_ip" ng-pattern="/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/"  class="form-control"
+	       placeholder="Gateway IP of college"> <font color="blue" ng-click="get_usage()" class="upcoming">Calculate Usage</font>
+
+	<span style="color:red" ng-show="myForm.gateway_ip.$dirty && myForm.gateway_ip.$invalid">invalid IP Address</span>
       </p> 
       <p>Usage from feedback<br>
 	<input type="number" name="exps" ng-model="usage"  class="form-control"
-               placeholder="Cummulative Experiments Conducted" min="0" ng-readonly="true" required>
+               placeholder="Cummulative Experiments Conducted" min="0" ng-readonly="message.gateway_ip" required>
         <span class="error" ng-show="myForm.exps.$error.number">Not valid number!</span>
 	<span style="color:red" ng-show="myForm.exps.$dirty && myForm.exps.$invalid">
 	  <span ng-show="myForm.exps.$error.required">Experiments conducted required.</span>
