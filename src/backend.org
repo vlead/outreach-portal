@@ -1328,7 +1328,7 @@ class Workshop(Entity):
     other_details = db.Column(db.String(128))
     cancellation_reason = db.Column(db.String(128))
     not_approval_reason = db.Column(db.String(128))
-
+    gateway_ip = db.Column(db.String(128))
     workshop_reports = db.relationship('WorkshopReport', backref='workshop')
 #+END_SRC
 
@@ -1414,6 +1414,9 @@ class Workshop(Entity):
 
         if 'not_approval_reason' in kwargs:
             self.set_not_approval_reason(kwargs['not_approval_reason'])
+
+        if 'gateway_ip' in kwargs:
+            self.set_gateway_ip(kwargs['gateway_ip'])
 
         if 'last_updated' in kwargs:
             self.set_last_updated(kwargs['last_updated'])
@@ -2080,6 +2083,12 @@ class TestWorkshop(TestCase):
         current_app.logger.debug("get the not_approval_reason for the Workshop: %s" % self.not_approval_reason)
         return self.not_approval_reason
 #+END_SRC
+***** getGatwayIP: Workshop --> Reason
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_gateway_ip(self):
+        current_app.logger.debug("get the gateway_ip: %s" % self.gateway_ip)
+        return self.gateway_ip
+#+END_SRC
 ***** Test getNotApprovalReason: Workshop --> Reason
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_get_workshop_not_approval_reason(self):
@@ -2578,6 +2587,10 @@ class TestWorkshop(TestCase):
     @typecheck(not_approval_reason=str)
     def set_not_approval_reason(self, not_approval_reason):
         self.not_approval_reason = not_approval_reason
+
+    @typecheck(gateway_ip=str)
+    def set_gateway_ip(self, gateway_ip):
+        self.gateway_ip = gateway_ip
 #+END_SRC
 ***** Test setNotApprovalReason: Workshop, Reason --> Void
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
@@ -2623,7 +2636,8 @@ class TestWorkshop(TestCase):
             'other_details': self.other_details,
             'status': self.status.to_client(),
             'cancellation_reason': self.cancellation_reason,
-            'not_approval_reason': self.not_approval_reason
+            'not_approval_reason': self.not_approval_reason,
+            'gateway_ip': self.gateway_ip
         }
 #+END_SRC
       
@@ -5774,6 +5788,9 @@ workshop = {'entity_class': Workshop,
                 {'name': 'not_approval_reason',
                  'class': None,
                  'relationship': 'one'},
+                {'name': 'gateway_ip',
+                 'class': None,
+                 'relationship': 'one'},
                 {'name': 'created',
                  'class': None,
                  'relationship': 'one'},
@@ -6231,6 +6248,7 @@ entity_map_types = {
             'experiments_conducted': int,
             'other_details': str,
             'cancellation_reason': str,
+            'gateway_ip': str,
             'not_approval_reason': str,
             'created': datetime,
             'last_updated': str,
