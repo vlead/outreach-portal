@@ -59,8 +59,9 @@
 	</span>
       </p>
        <p>Gateway IP of College:<br>
-	<input type="text" name="gateway_ip" ng-model="gateway_ip" ng-pattern=""  class="form-control"
-	       placeholder="Gateway IP of college" required>
+	<input type="text" name="gateway_ip" ng-model="gateway_ip" ng-pattern="/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/"  class="form-control"
+	       placeholder="Gateway IP of college">
+	<span style="color:red" ng-show="myForm.gateway_ip.$dirty && myForm.gateway_ip.$invalid">invalid IP Address</span>
       </p>
       <p>Date:<br>
 	<input type="text" name="date" ng-model="date" id="datepicker"
