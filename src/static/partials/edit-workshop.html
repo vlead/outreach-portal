@@ -52,39 +52,44 @@
 	  <span ng-show="myForm.session.$error.pattern">Enter valid time</span>
        </span>
      </p>
-     <p>Labs Planned:<br>
+     <p>Number of Labs conducted in the Workshop:<br>
        <input type="number" name="labs" ng-model="message.labs_planned"  class="form-control"
               placeholder="Labs planned" min="0" required>
-        <span class="error" ng-show="myForm.labs.$error.number">Not valid number!</span>
+        <span class="error" ng-show="myForm.labs.$error.number">Not a valid number!</span>
 	<span style="color:red" ng-show="myForm.labs.$dirty && myForm.labs.$invalid">
-	  <span ng-show="myForm.labs.$error.required">Lab names required.</span>
+	  <span ng-show="myForm.labs.$error.required">Number of labs count is required.</span>
 	</span>
      </p>
+     <p>Date:<br>
+       <input type="text" name="date" ng-model="message.date" id="datepicker"
+              class="form-control"  placeholder="YYYY-MM-DD" required>
+       <span class="error" ng-show="myForm.date.$error.date">
+	 <span style="color:red" ng-show="myForm.date.$dirty && myForm.date.$invalid">
+	   <span ng-show="myForm.date.$error.required">Date is required.</span>
+	 </span>
+     </p>
+     
      <p>Gateway IP of College:<br>
 	<input type="text" name="gateway_ip" ng-model="message.gateway_ip" ng-pattern="/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/"  class="form-control"
 	       placeholder="Gateway IP of college"> <font color="blue" ng-click="get_usage()" class="upcoming">Calculate Usage</font>
 
 	<span style="color:red" ng-show="myForm.gateway_ip.$dirty && myForm.gateway_ip.$invalid">invalid IP Address</span>
       </p> 
-      <p>Usage from feedback<br>
+      <p>Usage from online feedback<br>
+	<input type="number" name="fb" ng-model="online_usage"  class="form-control"
+               placeholder="0" min="0" ng-readonly="true">
+      </p>
+      <p>Usage from paper feedback<br>
 	<input type="number" name="exps" ng-model="usage"  class="form-control"
-               placeholder="Cummulative Experiments Conducted" min="0" ng-readonly="message.gateway_ip" required>
+               placeholder="Cummulative Experiments Conducted" min="0" required>
         <span class="error" ng-show="myForm.exps.$error.number">Not valid number!</span>
 	<span style="color:red" ng-show="myForm.exps.$dirty && myForm.exps.$invalid">
-	  <span ng-show="myForm.exps.$error.required">Experiments conducted required.</span>
+	  <span ng-show="myForm.exps.$error.required">Usage from paper feedback is required.</span>
 	</span>
       </p>
-     <p>Date:<br>
-	<input type="text" name="date" ng-model="message.date" id="datepicker"
-               class="form-control"  placeholder="YYYY-MM-DD" required>
-        <span class="error" ng-show="myForm.date.$error.date">
-	<span style="color:red" ng-show="myForm.date.$dirty && myForm.date.$invalid">
-	  <span ng-show="myForm.date.$error.required">Username is required.</span>
-	</span>
-     </p>
      <p>
-	<input type="submit" value="submit" class="btn btn-primary"  ng-disabled="myForm.$invalid">
-	<a href="#/manage-workshops">Cancel</a>
+       <input type="submit" value="submit" class="btn btn-primary"  ng-disabled="myForm.$invalid">
+       <a href="#/manage-workshops">Cancel</a>
      </p>
    </form>
   </div>

@@ -539,6 +539,7 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
 	$http.get(url).
         success(function(data, status, headers, config){
 	    $scope.usage = data.usage;
+	    $scope.online_usage = data.usage;
 	    if($scope.usage == null)
 		{
 		    $scope.usage = data.usage;

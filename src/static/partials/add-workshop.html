@@ -45,7 +45,7 @@
       </p>
       <p>Duration of Session:<br>
 	<input type="text" name="session" ng-model="session" ng-pattern="/^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$/"  min="0"  class="form-control"  placeholder="HH:MM" required>
-       
+	
 	<span style="color:red" ng-show="myForm.session.$dirty && myForm.session.$invalid">
 	  <span ng-show="myForm.session.$error.required">Sessions duration required.</span>
 	  <span ng-show="myForm.session.$error.pattern">Enter valid time</span>
@@ -55,13 +55,13 @@
 	<input type="number" name="labs" ng-model="labs"  min="0"  class="form-control" placeholder="Labs planned" required>
         <span class="error" ng-show="myForm.labs.$error.number">Not valid number!</span>
         <span style="color:red" ng-show="myForm.labs.$dirty && myForm.labs.$invalid">
-	  <span ng-show="myForm.labs.$error.required">Lab names required.</span>
+	  <span ng-show="myForm.labs.$error.required">Lab numbers required.</span>
 	</span>
       </p>
        <p>Gateway IP of College:<br>
 	<input type="text" name="gateway_ip" ng-model="gateway_ip" ng-pattern="/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/"  class="form-control"
 	       placeholder="Gateway IP of college">
-	<span style="color:red" ng-show="myForm.gateway_ip.$dirty && myForm.gateway_ip.$invalid">invalid IP Address</span>
+	<span style="color:red" ng-show="myForm.gateway_ip.$dirty && myForm.gateway_ip.$invalid">Invalid IP Address</span>
       </p>
       <p>Date:<br>
 	<input type="text" name="date" ng-model="date" id="datepicker"
