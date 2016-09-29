@@ -521,7 +521,14 @@ app.controller("add-workshop", function($scope, $location, $http, dataFactory,$r
 });
 
 app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParams, $route, $window){
-    
+    $scope.PaperUsage = function(status)
+    {
+	if(status == "over")
+	{
+	    $scope.info = "If the usage from online feedbacks submitted does not match with the number of paper feedback forms, please edit this field and enter the number of paper feedback forms submitted.  This number will determine the actual usage of Virtual Labs from a workshop."
+	}
+	else{$scope.info="";}
+    };
     $scope.get_usage = function()
     {
 
@@ -538,16 +545,15 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
 	console.log(url);
 	$http.get(url).
         success(function(data, status, headers, config){
-	    $scope.usage = data.usage;
+	    //$scope.usage = data.usage;
 	    $scope.online_usage = data.usage;
-	    if($scope.usage == null)
-		{
-		    $scope.usage = data.usage;
-		}
+	    $scope.message.experiments_conducted = data.usage;
 	    console.log(data.usage);
 	    
         }).
             error(function(data, status, headers, config){
+		//$scope.online_usage = 10;
+		//$scope.message.experiments_conducted = 10;
 		console.log(data);
 
 	    
@@ -556,6 +562,7 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
     dataFactory.fetch('/workshops/'+$routeParams.id).
         success(function(data, status, headers, config){
             $scope.message= data;
+	   
         }).
         error(function(data, status, headers, config){
             console.log(data);
@@ -574,18 +581,20 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
             }else{
               status_id = 1;
             }
-            dataFactory.put('/workshops/'+$routeParams.id,
+
+	  console.log($scope.usage);
+	  dataFactory.put('/workshops/'+$routeParams.id,
 			    { "name" : $scope.message.name,
 			      "location" : $scope.message.location,
 			      "user" : {"id" : $window.number },
 			      "participating_institutes" : $scope.message.participating_institutes,
-			      "gateway_ip" : $scope.gateway_ip,
+			      "gateway_ip" : $scope.message.gateway_ip,
 			      "participants_attended" : $scope.message.participants_attended,
 			      "no_of_sessions" : Number($scope.message.no_of_sessions),
 			      "duration_of_sessions": $scope.message.duration_of_sessions,
 			      "labs_planned" : Number($scope.message.labs_planned),
 			      "status" : {"id": status_id},  "date" : $scope.message.date,
-			      "experiments_conducted": $scope.message.usage}).
+			      "experiments_conducted": $scope.message.experiments_conducted}).
 		success(function(data, status, headers, config){
                     $scope.status = "Success";
                     history.back();
