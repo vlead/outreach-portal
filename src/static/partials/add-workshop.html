@@ -2,7 +2,7 @@
   <fieldset>
     
     <!-- Form Name -->
-    <legend>Create Workshop </legend>
+    <legend>New Workshop </legend>
     <span class="error"> {{ status }}</span>
     
     <!-- Text input-->
@@ -33,8 +33,32 @@
 	</div>
       </div>
     </div>
-
-
+    
+    <div class="form-group">
+      <label class="col-md-4 control-label">Date of Workshop *</label>  
+      <div class="col-md-4 inputGroupContainer">
+	<div class="input-group">
+	  <input type="text" name="date" ng-model="date" id="datepicker"
+		 class="form-control"  placeholder="YYYY-MM-DD" required>
+	  <span class="error" ng-show="myForm.date.$error.date">
+	    <span style="color:red" ng-show="myForm.date.$dirty && myForm.date.$invalid">
+	      <span ng-show="myForm.date.$error.required">Date is required.</span>
+	    </span>
+	</div>
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label class="col-md-4 control-label">Gateway IP of College</label>  
+      <div class="col-md-3 inputGroupContainer">
+	<div class="input-group">
+	  <input type="text" name="gateway_ip" ng-model="gateway_ip" ng-pattern="/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/"  class="form-control"
+		 placeholder="Where workshop is conducted">
+	  <span style="color:red" ng-show="myForm.gateway_ip.$dirty && myForm.gateway_ip.$invalid">Invalid IP Address</span>
+	</div>
+      </div>      
+    </div>
+    
     <div class="form-group">
       <label class="col-md-4 control-label">Participating Institutes *</label>  
       <div class="col-md-4 inputGroupContainer">
@@ -67,8 +91,7 @@
       <label class="col-md-4 control-label">No of Sessions *</label>  
       <div class="col-md-4 inputGroupContainer">
 	<div class="input-group">
-	  <input type="number" name="sessions" ng-model="sessions"  min="0"  class="form-control"  placeholder="Sessions" required>
-          <span class="error" ng-show="myForm.sessions.$error.number">Not valid number!</span>
+	  <input type="number" name="sessions" ng-model="sessions"  max="4" ng-min="0" class="form-control"  placeholder="Sessions" required>
 	  <span style="color:red" ng-show="myForm.sessions.$dirty && myForm.session.$invalid">
 	    <span ng-show="myForm.sessions.$error.required">Sessions required.</span>
 	  </span>
@@ -77,12 +100,11 @@
       </div>
     </div>
 
-
     <div class="form-group">
       <label class="col-md-4 control-label">Duration of Each Session *</label>  
       <div class="col-md-4 inputGroupContainer">
 	<div class="input-group">
-	  <input type="text" name="session" ng-model="session" ng-pattern="/^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$/"  min="0"  class="form-control"  placeholder="HH:MM" required>	
+	  <input type="text" name="session" ng-model="session" ng-pattern="/^(1[0-3]|[01]?[0-9]):([0-5]?[0-9])$/"  min="0"  class="form-control"  placeholder="HH:MM" required>	
 	  <span style="color:red" ng-show="myForm.session.$dirty && myForm.session.$invalid">
 	    <span ng-show="myForm.session.$error.required">Sessions duration required.</span>
 	    <span ng-show="myForm.session.$error.pattern">Enter valid time</span>
@@ -93,58 +115,18 @@
     
     
     <div class="form-group">
-      <label class="col-md-4 control-label">No of Labs Planned to Conducted in Workshop *</label>  
+      <label class="col-md-4 control-label">No of Labs Planned *</label>  
       <div class="col-md-4 inputGroupContainer">
 	<div class="input-group">
 	  <input type="number" name="labs" ng-model="labs"  min="0"  class="form-control" placeholder="Labs planned" required>
           <span class="error" ng-show="myForm.labs.$error.number">Not valid number!</span>
           <span style="color:red" ng-show="myForm.labs.$dirty && myForm.labs.$invalid">
-	    <span ng-show="myForm.labs.$error.required">Lab numbers required.</span>
+	    <span ng-show="myForm.labs.$error.required">Lab number required.</span>
 	  </span>
 	</div>
       </div>
     </div>
-
-
-    <div class="form-group">
-      <label class="col-md-4 control-label">Date of Workshop *</label>  
-      <div class="col-md-4 inputGroupContainer">
-	<div class="input-group">
-	  <input type="text" name="date" ng-model="message.date" id="datepicker"
-		 class="form-control"  placeholder="YYYY-MM-DD" required>
-	  <span class="error" ng-show="myForm.date.$error.date">
-	    <span style="color:red" ng-show="myForm.date.$dirty && myForm.date.$invalid">
-	      <span ng-show="myForm.date.$error.required">Date is required.</span>
-	    </span>
-	</div>
-      </div>
-    </div>
     
-    <div class="form-group">
-      <label class="col-md-4 control-label">Gateway IP of College</label>  
-      <div class="col-md-3 inputGroupContainer">
-	<div class="input-group">
-	  <input type="text" name="gateway_ip" ng-model="gateway_ip" ng-pattern="/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/"  class="form-control"
-		 placeholder="Gateway IP of college">
-	  <span style="color:red" ng-show="myForm.gateway_ip.$dirty && myForm.gateway_ip.$invalid">Invalid IP Address</span>
-	</div>
-      </div>      
-    </div>
-    
-    <div class="form-group">
-      <label class="col-md-4 control-label">Date *</label>  
-      <div class="col-md-4 inputGroupContainer">
-	<div class="input-group">
-	  <input type="text" name="date" ng-model="date" id="datepicker"
-		 class="form-control"  placeholder="YYYY-MM-DD" required>
-          <span class="error" ng-show="myForm.date.$error.date">
-            Not a valid date!</span>
-          <span style="color:red" ng-show="myForm.date.$dirty && myForm.date.$invalid">
-	    <span ng-show="myForm.date.$error.required">Date is required.</span>
-	  </span>
-	</div>
-      </div>
-    </div>
     <br><br>
     <div class="col-md-4"></div>
     <div class="col-md-4">
@@ -154,7 +136,7 @@
 </form>
 <script>
   $(function() {
-  $("#datepicker").datepicker({ dateFormat: 'yy-mm-dd'});
+  $("#datepicker").datepicker({dateFormat: 'yy-mm-dd'});
   });
 </script>
 <!--
