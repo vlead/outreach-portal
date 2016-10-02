@@ -4,6 +4,21 @@
     <h2>Add Outreach Coordinator</h2>
     <span class="error"> {{ status }}</span>
     <form name="myForm" novalidate ng-submit="add_oc(myForm.$valid)">
+      
+
+      <div class="form-group">
+      <label class="col-md-4 control-label">Name *</label>  
+      <div class="col-md-4 inputGroupContainer">
+	<div class="input-group">
+	  <input type="text" name="user" ng-pattern="/^[a-zA-Z\s]*$/" ng-model="name"  class="form-control"  placeholder="User Name" required>
+	<span style="color:red" ng-show="myForm.user.$dirty && myForm.user.$invalid">
+	  <span ng-show="myForm.user.$error.required">Name is
+	    required.</span>
+          <span ng-show="myForm.user.$error.pattern">Enter valid name</span>
+	</span>
+	</div>
+      </div>
+    </div>
       <p>Name:<br>
 	<input type="text" name="user" ng-pattern="/^[a-zA-Z\s]*$/" ng-model="name"  class="form-control"  placeholder="User Name" required>
 	<span style="color:red" ng-show="myForm.user.$dirty && myForm.user.$invalid">

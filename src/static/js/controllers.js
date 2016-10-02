@@ -81,7 +81,7 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
   }
     */
 
-    var mapOptions = { zoom: 5, center: new google.maps.LatLng(23,81) };
+    var mapOptions = { zoom: 5, center: new google.maps.LatLng(24,80) };
     $scope.map = new google.maps.Map(document.getElementById('map'), mapOptions);
     var geocoder = new google.maps.Geocoder();
     var get_geocode = function (workshop_location, label){
@@ -529,13 +529,21 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
 	}
 	else{$scope.info="";}
     };
+    $scope.Gateway = function(status)
+    {
+	if(status == "over")
+	{
+	    $scope.info1 = "Please edit this field and enter the gateway IP address of your college where the workshop was conducted. Incase if you don't the IP please contact system administrator.";
+	}
+	else{$scope.info1="";}
+    };
     $scope.get_usage = function()
     {
 
 	//10.4.20.103
 
 	date = new Date($scope.message.date);
-	day = date.getDate()+1;
+	day = date.getDate();
 	month = date.getMonth() + 1;
 	year = date.getFullYear();
 	new_date = day+"-"+month+"-"+year;
@@ -552,8 +560,8 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
 	    
         }).
             error(function(data, status, headers, config){
-		//$scope.online_usage = 10;
-		//$scope.message.experiments_conducted = 10;
+		$scope.online_usage = 10;
+		$scope.message.experiments_conducted = 10;
 		console.log(data);
 
 	    
@@ -1150,6 +1158,31 @@ app.controller("review-reports", function($scope, $http, $routeParams, dataFacto
     }
     dataFactory.fetch('/workshops/'+$routeParams.id).success(function(data,status,headers,config){
 	$scope.data = data;
+	date = new Date($scope.data.date);
+	day = date.getDate();
+	month = date.getMonth() + 1;
+	year = date.getFullYear();
+	new_date = day+"-"+month+"-"+year;
+	url = "http://fp-edx-demo.vlabs.ac.in/usage_from_feedback?gateway_ip="+$scope.data.gateway_ip+"&date="+new_date+"&key=defaultkey"
+	//url = "http://fp-edx-demo.vlabs.ac.in/usage_from_feedback?gateway_ip=10.4.20.103&date=28-09-2016&key=defaultkey"
+	//url = "http://fp-edx-demo.vlabs.ac.in/usage_from_feedback?gateway_ip="+$scope.message.gateway_ip+"&date=28-09-2016&key=defaultkey"
+	
+	console.log(url);
+	$http.get(url).
+        success(function(data, status, headers, config){
+	    //$scope.usage = data.usage;
+	    $scope.usage_from_online = data.usage;
+	    console.log(data.usage);
+	    
+        }).
+            error(function(data, status, headers, config){
+		$scope.usage_from_online = 10;
+		console.log(data);
+
+	    
+        });
+	
+	
     });
     dataFactory.fetch('/workshop_reports?workshop_id='+$routeParams.id).success(function(data,status,headers,config){
         var photos = [];
