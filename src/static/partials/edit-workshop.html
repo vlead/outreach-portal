@@ -34,7 +34,36 @@
       </div>
     </div>
 
-
+    <div class="form-group">
+      <label class="col-md-4 control-label">Date of Workshop *</label>  
+      <div class="col-md-4 inputGroupContainer">
+	<div class="input-group">
+	   
+	  <input type="text" name="date" ng-model="message.date" id="datepicker"
+		 class="form-control"  placeholder="YYYY-MM-DD" required>
+	  <span class="error" ng-show="myForm.date.$error.date">
+	    <span style="color:red" ng-show="myForm.date.$dirty && myForm.date.$invalid">
+	      <span ng-show="myForm.date.$error.required">Date is required.</span>
+	    </span>
+	</div>
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label class="col-md-4 control-label">Gateway IP Address</label>  
+      <div class="col-md-3 inputGroupContainer">
+	<div class="input-group">
+	  <input type="text" name="gateway_ip" ng-change="get_usage()" ng-model="message.gateway_ip" ng-pattern="/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/"  class="form-control"
+		 placeholder="Gateway IP of college">
+	  
+	  <span style="color:red" ng-show="myForm.gateway_ip.$dirty && myForm.gateway_ip.$invalid">Invalid IP Address</span>
+	</div>
+      </div>     
+      <div class="col-md-1">
+	<font color="blue" ng-mouseover="Gateway('over')" ng-mouseleave="Gateway('unover')" class="upcoming">?</font>
+      </div>
+    </div>
+    
     <div class="form-group">
       <label class="col-md-4 control-label">Participating Institutes *</label>  
       <div class="col-md-4 inputGroupContainer">
@@ -112,38 +141,7 @@
     </div>
 
 
-    <div class="form-group">
-      <label class="col-md-4 control-label">Date of Workshop *</label>  
-      <div class="col-md-4 inputGroupContainer">
-	<div class="input-group">
-	   
-	  <input type="text" name="date" ng-model="message.date" id="datepicker"
-		 class="form-control"  placeholder="YYYY-MM-DD" required>
-	  <span class="error" ng-show="myForm.date.$error.date">
-	    <span style="color:red" ng-show="myForm.date.$dirty && myForm.date.$invalid">
-	      <span ng-show="myForm.date.$error.required">Date is required.</span>
-	    </span>
-	</div>
-      </div>
-    </div>
     
-
-
-    <div class="form-group">
-      <label class="col-md-4 control-label">Gateway IP Address</label>  
-      <div class="col-md-3 inputGroupContainer">
-	<div class="input-group">
-	  <input type="text" name="gateway_ip" ng-change="get_usage()" ng-model="message.gateway_ip" ng-pattern="/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/"  class="form-control"
-		 placeholder="Gateway IP of college">
-	  
-	  <span style="color:red" ng-show="myForm.gateway_ip.$dirty && myForm.gateway_ip.$invalid">Invalid IP Address</span>
-	</div>
-      </div>     
-      <div class="col-md-1">
-	<font color="blue" ng-mouseover="Gateway('over')" ng-mouseleave="Gateway('unover')" class="upcoming">?</font>
-      </div>
-     
-    </div>
     {{ info1 }}
     
     <div class="form-group">
@@ -153,13 +151,10 @@
 	<div class="input-group">
 	  <input type="number" name="fb" ng-model="online_usage"  class="form-control"
 		 placeholder="0" min="0" ng-readonly="true">
-	  
 	</div>
       </div>
-      
     </div>
-
-	
+    
     <div class="form-group">
       <label class="col-md-4 control-label">Usage from Paper Feedback *</label>  
       <div class="col-md-3 inputGroupContainer">
@@ -178,9 +173,7 @@
 	      <span ng-show="myForm.exps.$error.required">Usage from paper feedback is required.</span>
 	    </span>
 	  </div>
-	 
 	</div>
-	
       </div>
       <div class="col-md-1">
 	<font color="blue" ng-mouseover="PaperUsage('over')" ng-mouseleave="PaperUsage('unover')" class="upcoming">?</font>
