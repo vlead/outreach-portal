@@ -49,20 +49,6 @@
       </div>
     </div>
     
-    <div class="form-group">
-      <label class="col-md-4 control-label">Gateway IP Address</label>  
-      <div class="col-md-3 inputGroupContainer">
-	<div class="input-group">
-	  <input type="text" name="gateway_ip" ng-change="get_usage()" ng-model="message.gateway_ip" ng-pattern="/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/"  class="form-control"
-		 placeholder="Gateway IP of college">
-	  
-	  <span style="color:red" ng-show="myForm.gateway_ip.$dirty && myForm.gateway_ip.$invalid">Invalid IP Address</span>
-	</div>
-      </div>     
-      <div class="col-md-1">
-	<font color="blue" ng-mouseover="Gateway('over')" ng-mouseleave="Gateway('unover')" class="upcoming">?</font>
-      </div>
-    </div>
     
     <div class="form-group">
       <label class="col-md-4 control-label">Participating Institutes *</label>  
@@ -139,11 +125,29 @@
 	</div>
       </div>
     </div>
-
-
     
+    <div class="form-group">
+      <label class="col-md-4 control-label">Gateway IP Address</label>  
+      <div class="col-md-3 inputGroupContainer">
+	<div class="input-group">
+	  <input type="text" name="gateway_ip" ng-model="message.gateway_ip" ng-pattern="/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/"  class="form-control"
+		 placeholder="Gateway IP of college">
+	  
+	  <span style="color:red" ng-show="myForm.gateway_ip.$dirty && myForm.gateway_ip.$invalid">Invalid IP Address</span>
+	   
+	</div><br>
+	{{ gateway_ip }}
+      </div>
+      <div class="col-md-2">
+	<input type="button" ng-click="get_gateway_ip()" value="Get Gateway IP" class="btn btn-primary">
+      </div>
+      <div class="col-md-1">
+	<input type="button" ng-mouseover="Gateway('over')" ng-mouseleave="Gateway('unover')" ng-click="get_usage()" value="Compute Usage" class="btn btn-primary">&emsp;&emsp;
+      </div>
+    </div>
+  
     {{ info1 }}
-    
+
     <div class="form-group">
       <br>
       <label class="col-md-4 control-label">Usage from Online Feedback</label>  
@@ -160,7 +164,7 @@
       <div class="col-md-3 inputGroupContainer">
 	<div class="input-group">
           <div ng-if="message.experiments_conducted == null">
-	    <input type="number" name="exps" ng-model="usage" ng-mouseover="PaperUsage('over')" ng-mouseleave="PaperUsage('unover')" class="form-control" placeholder="0" min="0" required>
+	    <input type="number" name="exps" ng-model="usage" class="form-control" placeholder="0" min="0" required>
 	    <span class="error" ng-show="myForm.exps.$error.number">Not valid number!</span>
 	    <span style="color:red" ng-show="myForm.exps.$dirty && myForm.exps.$invalid">
 	      <span ng-show="myForm.exps.$error.required">Usage from paper feedback is required.</span>

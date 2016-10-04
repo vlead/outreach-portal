@@ -537,6 +537,19 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
 	}
 	else{$scope.info1="";}
     };
+    $scope.get_gateway_ip = function(){
+	url = "http://feedback-stage.vlabs.ac.in/get_gateway_ip";
+	$http.get(url).
+        success(function(data, status, headers, config){
+	    $scope.gateway_ip = data.gateway_ip;
+	    console.log(data.usage);
+	    
+        }).
+            error(function(data, status, headers, config){
+		console.log(data);
+        });
+	
+    }
     $scope.get_usage = function()
     {
 
@@ -547,7 +560,7 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
 	month = date.getMonth() + 1;
 	year = date.getFullYear();
 	new_date = day+"-"+month+"-"+year;
-	url = "http://fp-edx-demo.vlabs.ac.in/usage_from_feedback?gateway_ip="+$scope.message.gateway_ip+"&date="+new_date+"&key=defaultkey"
+	url = "http://feedback-stage.vlabs.ac.in/usage_from_feedback?gateway_ip="+$scope.message.gateway_ip+"&date="+new_date+"&key=defaultkey"
 	//url = "http://fp-edx-demo.vlabs.ac.in/usage_from_feedback?gateway_ip=10.4.20.103&date=28-09-2016&key=defaultkey"
 	//url = "http://fp-edx-demo.vlabs.ac.in/usage_from_feedback?gateway_ip="+$scope.message.gateway_ip+"&date=28-09-2016&key=defaultkey"
 	console.log(url);
