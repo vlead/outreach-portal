@@ -1,11 +1,31 @@
 var app = angular.module('outreachApp.controllers',[]);
 app.controller('map-ctrl', function ($scope, $http, dataFactory){
+    var workshop_list = [];
+    dataFactory.fetch("/workshops?status_id=1").success(function(workshops){
+
+        var today = new Date();
+        for(i=0;i<workshops.length;i++){
+            workshop_date = new Date(workshops[i].date);
+            var workshop_id = workshops[i].id ;
+            if (((today > workshop_date) & !(today.toDateString() == workshop_date.toDateString())) &
+                (workshops[i].status.name == "Upcoming")){
+                dataFactory.put('/workshops/'+workshop_id.toString(),
+                                {'status': {'id': 2}}).success(function(data, status){
+                                    console.log('Status success'); });
+            }else{
+                workshop_list.push(workshops[i]);
+
+            }
+        }
+        $scope.upcoming_workshops = workshop_list;
+
+    });
     dataFactory.fetch("/workshops?status_id=1").success(function(upcoming){
-	$scope.upcoming_workshops = upcoming;
-	for(i=0;i<upcoming.length;i++){
-	    if(upcoming[i].location != "null" && upcoming[i].longitude != null){
-		$scope.createMarker(upcoming[i], upcoming[i], "workshops");
-            //get_geocode(upcoming[i].location, upcoming[i]);
+//      $scope.upcoming_workshops = upcoming;                                                                                                                            
+        for(i=0;i<upcoming.length;i++){
+            if(upcoming[i].location != "null"){
+                $scope.createMarker(upcoming[i], upcoming[i], "workshops");
+            //get_geocode(upcoming[i].location, upcoming[i]);                                                                                                            
             }
         }
     });
