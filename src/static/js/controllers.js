@@ -561,7 +561,7 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
 	url = "http://feedback-stage.vlabs.ac.in/get_gateway_ip";
 	$http.get(url).
         success(function(data, status, headers, config){
-	    $scope.gateway_ip = data.gateway_ip;
+	    $scope.gate_way_ip = data.gateway_ip;
 	    console.log(data.usage);
 	    
         }).
