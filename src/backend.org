@@ -5538,7 +5538,7 @@ LOG_LEVEL = 10
 UPLOAD_DIR_PATH = '/static/uploads/'
 
 # allowed file extensions that can be uploaded
-ALLOWED_FILE_EXTENSIONS = ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'csv' , 'doc' , 'docx']
+ALLOWED_FILE_EXTENSIONS = ['txt', 'TXT', 'pdf', 'PDF', 'png', 'PNG', 'jpg', 'JPG', 'jpeg', 'JPEG', 'gif', 'GIF', 'csv' , 'CSV', 'doc' , 'DOC', 'docx', 'DOCX']
 
 # APP_URL
 APP_URL = "http://localhost:5000"
