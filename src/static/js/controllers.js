@@ -262,7 +262,7 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
         $scope.upcoming_workshops = response.length;
     });
     
-    dataFactory.fetch("/nodal_coordinator_details").success(function(response){
+    dataFactory.fetch("/users?role_id=3").success(function(response){
         $scope.totalnc = response.length;
         $scope.nc_users = response;
         
