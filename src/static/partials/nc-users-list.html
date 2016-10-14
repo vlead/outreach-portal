@@ -18,9 +18,9 @@
 	</tr>
       </thead>
       <tbody>
-	<tr ng-repeat="nc in nc_users">
+	<tr ng-repeat="nc in nc_users | orderBy : 'institute_name'">
           <td>{{ $index+1 }}</td>
-          <td>{{ nc.name }}</td>
+          <td>{{ nc.user.id }}</td>
           <td>{{ nc.email }}</td>
           <td>{{ nc.last_active }}</td>
           <td>{{ nc.institute_name }}</td>

@@ -23,7 +23,7 @@
 	  </tr>
 	</thead>
 	<tbody>
-	  <tr ng-repeat="workshop in workshops">
+	  <tr ng-repeat="workshop in workshops | orderBy : 'participating_institutes'">
             <td>{{ $index+1 }}</td>
             <td>{{ workshop.name }}</td>
             <td>{{ workshop.location }}</td>

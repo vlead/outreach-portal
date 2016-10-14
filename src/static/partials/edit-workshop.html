@@ -147,44 +147,53 @@
     </div>
   
     {{ info1 }}
-
-    <div class="form-group">
-      <br>
-      <label class="col-md-4 control-label">Usage from Online Feedback</label>  
-      <div class="col-md-4 inputGroupContainer">
-	<div class="input-group">
-	  <input type="number" name="fb" ng-model="online_usage"  class="form-control"
-		 placeholder="0" min="0" ng-readonly="true">
-	</div>
+    <div ng-show="flag">
+      <div class="form-group">
+        <br>
+        <label class="col-md-4 control-label">Usage from Online Feedback</label>
+        <div class="col-md-4 inputGroupContainer">
+          <div class="input-group">
+            <input type="number" name="fb" ng-model="online_usage"  class="form-control"
+                   placeholder="0" min="0" ng-readonly="true">
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label class="col-md-4 control-label">Usage from Paper Feedback *</label>
+        <div class="col-md-3 inputGroupContainer">
+          <div class="input-group">
+            <div>
+              <input type="number" name="exps" ng-model="message.experiments_conducted" class="form-control"  placeholder="0" min="0" required>
+              <span class="error" ng-show="myForm.exps.$error.number">Not valid number!</span>
+              <span style="color:red" ng-show="myForm.exps.$dirty && myForm.exps.$invalid">
+                <span ng-show="myForm.exps.$error.required">Usage from paper feedback is required.</span>
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-1">
+          <font color="blue" ng-mouseover="PaperUsage('over')" ng-mouseleave="PaperUsage('unover')" class="upcoming">?</font>
+        </div>
+      </div>
+      {{ info }}
+    </div>
+    <div ng-show="!flag">
+      <div class="form-group">
+        <label class="col-md-4 control-label">Usage from Paper Feedback *</label>
+        <div class="col-md-3 inputGroupContainer">
+          <div class="input-group">
+	    <div>
+	      <input type="number" name="exps" ng-model="message.experiments_conducted" class="form-control"  placeholder="0" min="0" required>
+	      <span class="error" ng-show="myForm.exps.$error.number">Not valid number!</span>
+	      <span style="color:red" ng-show="myForm.exps.$dirty && myForm.exps.$invalid">
+                <span ng-show="myForm.exps.$error.required">Usage from paper feedback is required.</span>
+	      </span>
+	    </div>
+          </div>
+        </div>
       </div>
     </div>
-    
-    <div class="form-group">
-      <label class="col-md-4 control-label">Usage from Paper Feedback *</label>  
-      <div class="col-md-3 inputGroupContainer">
-	<div class="input-group">
-          <div ng-if="message.experiments_conducted == null">
-	    <input type="number" name="exps" ng-model="usage" class="form-control" placeholder="0" min="0" required>
-	    <span class="error" ng-show="myForm.exps.$error.number">Not valid number!</span>
-	    <span style="color:red" ng-show="myForm.exps.$dirty && myForm.exps.$invalid">
-	      <span ng-show="myForm.exps.$error.required">Usage from paper feedback is required.</span>
-	    </span>
-	  </div>
-	  <div ng-if="message.experiments_conducted != null">
-	    <input type="number" name="exps" ng-model="message.experiments_conducted" class="form-control"  placeholder="0" min="0" required>
-	    <span class="error" ng-show="myForm.exps.$error.number">Not valid number!</span>
-	    <span style="color:red" ng-show="myForm.exps.$dirty && myForm.exps.$invalid">
-	      <span ng-show="myForm.exps.$error.required">Usage from paper feedback is required.</span>
-	    </span>
-	  </div>
-	</div>
-      </div>
-      <div class="col-md-1">
-	<font color="blue" ng-mouseover="PaperUsage('over')" ng-mouseleave="PaperUsage('unover')" class="upcoming">?</font>
-      </div>
-    </div>
-    
-    {{ info }}
     <p><br><br>
        <div class="col-md-4"></div>
       <div class="col-md-4">
