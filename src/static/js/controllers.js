@@ -116,7 +116,7 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
     }
   $scope.createMarker = function (label, geo_code,type){
     var nodal_centre_infowindow = new google.maps.InfoWindow({
-      content: '<b>Nodal Centre Location : </b>'+label.location+'<br><b>Nodal Centre Name : </b>'+label.name
+      content: '<b>Nodal Centre Location : </b>'+label.location+'<br><b>Nodal Centre Name : </b>'+label.name+'<br><b>Outreach Centre Name : </b>'+label.created_by.institute_name
     });
     var workshop_infowindow = new google.maps.InfoWindow({
       content: '<b>Workshop Location : </b>'+label.location+'<br><b>Date : </b>'+label.date+'<br><b>Participating Colleges : </b>' + label.participating_institutes 
@@ -262,7 +262,7 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
         $scope.upcoming_workshops = response.length;
     });
     
-    dataFactory.fetch("/users?role_id=3").success(function(response){
+    dataFactory.fetch("/nodal_coordinator_details").success(function(response){
         $scope.totalnc = response.length;
         $scope.nc_users = response;
         
@@ -570,6 +570,7 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
         });
 	
     }
+    $scope.flag = false;
     $scope.get_usage = function()
     {
 
@@ -586,15 +587,16 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
 	console.log(url);
 	$http.get(url).
         success(function(data, status, headers, config){
-	    //$scope.usage = data.usage;
 	    $scope.online_usage = data.usage;
+            $scope.flag = true;
+            //$scope.usage = data.usage; 
 	    $scope.message.experiments_conducted = data.usage;
-	    console.log(data.usage);
+            console.log(data.usage);
 	    
         }).
             error(function(data, status, headers, config){
-		$scope.online_usage = 10;
-		$scope.message.experiments_conducted = 10;
+		//$scope.online_usage = 10;
+		//$scope.message.experiments_conducted = 10;
 		console.log(data);
 
 	    
