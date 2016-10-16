@@ -262,7 +262,7 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
         $scope.upcoming_workshops = response.length;
     });
     
-    dataFactory.fetch("/users?role_id=3").success(function(response){
+    dataFactory.fetch("/nodal_coordinator_details").success(function(response){
         $scope.totalnc = response.length;
         $scope.nc_users = response;
         
@@ -612,6 +612,7 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
         });
     $scope.submit = function(isvalid){
       if(isvalid){
+	  
             var today = new Date();
             var workshop_date = new Date($scope.message.date);
             var status_id = $scope.message.status.id;
@@ -619,7 +620,12 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
               if(status_id == 3){
                 status_id = 3;
               }else{
-                status_id = 2;
+		  if($scope.message.user.role.id == 2){
+		      status_id = 3;
+		      }
+		  else{
+                      status_id = 2;
+		  }
               }
             }else{
               status_id = 1;
