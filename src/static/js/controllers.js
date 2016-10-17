@@ -545,7 +545,7 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
     {
 	if(status == "over")
 	{
-	    $scope.info = "If the usage from online feedbacks submitted does not match with the number of paper feedback forms, please edit this field and enter the number of paper feedback forms submitted.  This number will determine the actual usage of Virtual Labs from a workshop."
+	    $scope.info = "This number will determine the actual usage of Virtual Labs from a workshop.";
 	}
 	else{$scope.info="";}
     };
@@ -553,7 +553,15 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
     {
 	if(status == "over")
 	{
-	    $scope.info1 = "Please edit this field and enter the gateway IP address of your college where the workshop was conducted. Incase if you don't the IP please contact system administrator.";
+	    $scope.info1 = "Gets the usage from the feedback forms submitted during a workshop. Gateway IP is mandatory to calculate the usage from online feedback forms. It determines 'where' the workshop is conducted.";
+	}
+	else{$scope.info1="";}
+    };
+    $scope.Compute = function(status)
+    {
+	if(status == "over")
+	{
+	    $scope.info1 = "By clicking this button, ip address of the workshop location is obtained.  A nodal co-ordinator should save this key while the workshop is conducted.  This is dome by copying the ip address obtained into the field 'Gateway IP Address'.  This copied IP address will be the key of the workshop and all the online feedback forms submitted during a workshop are attached to this key.";
 	}
 	else{$scope.info1="";}
     };
