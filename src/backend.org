@@ -6017,6 +6017,7 @@ def get_outreach_portal_usage():
 
                 op_usage_data = {"usage": usage}
                 return jsonify(op_usage_data)
+
         except Exception as err:
             current_app.logger.error("Exception = %s" % str(err))
             raise err
@@ -6026,7 +6027,7 @@ def get_outreach_portal_analytics():
     if request.method == 'GET':
         nc_url = APP_URL + "/nodal_centres"
         ws_url = APP_URL + "/workshops"
-        usage_url = APP_URL + "/workshops?status_id=3"
+        usage_url = APP_URL + "/get_outreach_usage"
         nc_response = requests.get(nc_url)
         ws_response = requests.get(ws_url)
         ws_usage_response = requests.get(usage_url)
@@ -6038,14 +6039,9 @@ def get_outreach_portal_analytics():
                 workshop_dict = json.loads(workshops)
                 ws_usages = ws_usage_response.text
                 ws_usage_dict = json.loads(ws_usages)
-                usage=0
-                for i in range(0, len(ws_usage_dict)):
-                    if ws_usage_dict[i]['experiments_conducted'] != None :
-                        usage += ws_usage_dict[i]['experiments_conducted']
-
                 op_anaytics_data = {"nodal_centres": len(nodal_centre_dict),
                                  "workshops": len(workshop_dict),
-                                 "usage": usage}
+                                 "usage": ws_usage_dict['usage']}
                 return jsonify(op_anaytics_data)
         except Exception as err:
             current_app.logger.error("Exception = %s" % str(err))
