@@ -16,7 +16,8 @@
 	<tr>
 	  <th>Name</th>
 	  <th>Location</th>
-          <th>Participants</th>
+          <th>Exp.Participants</th>
+	  <th>Actual.Participants</th>
 	  <th>Date</th>
           <th>Status</th>
 
@@ -27,6 +28,7 @@
           <td>{{ workshop.name }}</td>
           <td>{{ workshop.location }}</td>
           <td>{{ workshop.no_of_participants_expected }}</td>
+	  <td>{{ workshop.participants_attended }}</td>
           <td>{{ workshop.date }}</td>
           <td>{{ workshop.status.name }}</td>
           <td><button class="btn btn-primary" ng-click="cancel(workshop.id)">Cancel</button></td>

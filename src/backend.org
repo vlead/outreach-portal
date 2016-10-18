@@ -1328,7 +1328,7 @@ class Workshop(Entity):
     other_details = db.Column(db.String(128))
     cancellation_reason = db.Column(db.String(128))
     not_approval_reason = db.Column(db.String(128))
-
+    gateway_ip = db.Column(db.String(128))
     workshop_reports = db.relationship('WorkshopReport', backref='workshop')
 #+END_SRC
 
@@ -1414,6 +1414,9 @@ class Workshop(Entity):
 
         if 'not_approval_reason' in kwargs:
             self.set_not_approval_reason(kwargs['not_approval_reason'])
+
+        if 'gateway_ip' in kwargs:
+            self.set_gateway_ip(kwargs['gateway_ip'])
 
         if 'last_updated' in kwargs:
             self.set_last_updated(kwargs['last_updated'])
@@ -2080,6 +2083,12 @@ class TestWorkshop(TestCase):
         current_app.logger.debug("get the not_approval_reason for the Workshop: %s" % self.not_approval_reason)
         return self.not_approval_reason
 #+END_SRC
+***** getGatwayIP: Workshop --> Reason
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_gateway_ip(self):
+        current_app.logger.debug("get the gateway_ip: %s" % self.gateway_ip)
+        return self.gateway_ip
+#+END_SRC
 ***** Test getNotApprovalReason: Workshop --> Reason
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_get_workshop_not_approval_reason(self):
@@ -2578,6 +2587,10 @@ class TestWorkshop(TestCase):
     @typecheck(not_approval_reason=str)
     def set_not_approval_reason(self, not_approval_reason):
         self.not_approval_reason = not_approval_reason
+
+    @typecheck(gateway_ip=str)
+    def set_gateway_ip(self, gateway_ip):
+        self.gateway_ip = gateway_ip
 #+END_SRC
 ***** Test setNotApprovalReason: Workshop, Reason --> Void
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
@@ -2623,7 +2636,8 @@ class TestWorkshop(TestCase):
             'other_details': self.other_details,
             'status': self.status.to_client(),
             'cancellation_reason': self.cancellation_reason,
-            'not_approval_reason': self.not_approval_reason
+            'not_approval_reason': self.not_approval_reason,
+            'gateway_ip': self.gateway_ip
         }
 #+END_SRC
       
@@ -5524,7 +5538,7 @@ LOG_LEVEL = 10
 UPLOAD_DIR_PATH = '/static/uploads/'
 
 # allowed file extensions that can be uploaded
-ALLOWED_FILE_EXTENSIONS = ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'csv' , 'doc' , 'docx']
+ALLOWED_FILE_EXTENSIONS = ['txt', 'TXT', 'pdf', 'PDF', 'png', 'PNG', 'jpg', 'JPG', 'jpeg', 'JPEG', 'gif', 'GIF', 'csv' , 'CSV', 'doc' , 'DOC', 'docx', 'DOCX']
 
 # APP_URL
 APP_URL = "http://localhost:5000"
@@ -5774,6 +5788,9 @@ workshop = {'entity_class': Workshop,
                 {'name': 'not_approval_reason',
                  'class': None,
                  'relationship': 'one'},
+                {'name': 'gateway_ip',
+                 'class': None,
+                 'relationship': 'one'},
                 {'name': 'created',
                  'class': None,
                  'relationship': 'one'},
@@ -5983,6 +6000,63 @@ def logout_handler():
     session.pop('role', None)
     session.pop('key', None)
     return "Ok"
+
+
+@api.route('/get_outreach_usage', methods=['GET'])
+def get_outreach_portal_usage():
+    if request.method == 'GET':
+        usage_url = APP_URL + "/workshops?status_id=3"
+        ws_usage_response = requests.get(usage_url)
+        try:
+            if ws_usage_response.ok:
+                ws_usages = ws_usage_response.text
+                ws_usage_dict = json.loads(ws_usages)
+                usage=0
+                participants_attended=0
+                for i in range(0, len(ws_usage_dict)):
+                    if ws_usage_dict[i]['experiments_conducted'] != None and \
+                        ws_usage_dict[i]['participants_attended'] != None:
+                        usage += ws_usage_dict[i]['experiments_conducted']
+                        participants_attended += ws_usage_dict[i]['participants_attended']
+                op_usage_data = {"usage": usage, 'participants_attended': participants_attended}
+                return jsonify(op_usage_data)
+
+        except Exception as err:
+            current_app.logger.error("Exception = %s" % str(err))
+            raise err
+
+@api.route('/get_outreach_analytics', methods=['GET'])
+def get_outreach_portal_analytics():
+    if request.method == 'GET':
+        nc_url = APP_URL + "/nodal_centres"
+        ws_url = APP_URL + "/workshops"
+        upcoming_ws_url = APP_URL + "/workshops?status_id=1"
+        usage_url = APP_URL + "/get_outreach_usage"
+        nc_response = requests.get(nc_url)
+        ws_response = requests.get(ws_url)
+        upcoming_ws_response = requests.get(upcoming_ws_url)
+        ws_usage_response = requests.get(usage_url)
+        try:
+            if nc_response.ok and ws_response.ok and ws_usage_response.ok and \
+                upcoming_ws_response.ok:
+                nodal_centres = nc_response.text
+                nodal_centre_dict = json.loads(nodal_centres)
+                workshops = ws_response.text
+                workshop_dict = json.loads(workshops)
+                upcoming_workshops = upcoming_ws_response.text
+                upcoming_workshop_dict = json.loads(upcoming_workshops)
+
+                ws_usages = ws_usage_response.text
+                ws_usage_dict = json.loads(ws_usages)
+                op_anaytics_data = {"nodal_centres": len(nodal_centre_dict),
+                                 "workshops": len(workshop_dict),
+                                 "upcoming_workshops": len(upcoming_workshop_dict),                                               "usage": ws_usage_dict['usage'],
+                                 "participants_attended": ws_usage_dict['participants_attended'],
+                                    }
+                return jsonify(op_anaytics_data)
+        except Exception as err:
+            current_app.logger.error("Exception = %s" % str(err))
+            raise err
 
 @api.route('/upload_reference_documents/<id>', methods=['GET', 'POST'])
 def save_reference_documents(id):
@@ -6231,6 +6305,7 @@ entity_map_types = {
             'experiments_conducted': int,
             'other_details': str,
             'cancellation_reason': str,
+            'gateway_ip': str,
             'not_approval_reason': str,
             'created': datetime,
             'last_updated': str,

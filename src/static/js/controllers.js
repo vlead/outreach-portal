@@ -1,11 +1,31 @@
 var app = angular.module('outreachApp.controllers',[]);
 app.controller('map-ctrl', function ($scope, $http, dataFactory){
+    var workshop_list = [];
+    dataFactory.fetch("/workshops?status_id=1").success(function(workshops){
+
+        var today = new Date();
+        for(i=0;i<workshops.length;i++){
+            workshop_date = new Date(workshops[i].date);
+            var workshop_id = workshops[i].id ;
+            if (((today > workshop_date) & !(today.toDateString() == workshop_date.toDateString())) &
+                (workshops[i].status.name == "Upcoming")){
+                dataFactory.put('/workshops/'+workshop_id.toString(),
+                                {'status': {'id': 2}}).success(function(data, status){
+                                    console.log('Status success'); });
+            }else{
+                workshop_list.push(workshops[i]);
+
+            }
+        }
+        $scope.upcoming_workshops = workshop_list;
+
+    });
     dataFactory.fetch("/workshops?status_id=1").success(function(upcoming){
-	$scope.upcoming_workshops = upcoming;
-	for(i=0;i<upcoming.length;i++){
-	    if(upcoming[i].location != "null" && upcoming[i].longitude != null){
-		$scope.createMarker(upcoming[i], upcoming[i], "workshops");
-            //get_geocode(upcoming[i].location, upcoming[i]);
+//      $scope.upcoming_workshops = upcoming;                                                                                                                            
+        for(i=0;i<upcoming.length;i++){
+            if(upcoming[i].location != "null"){
+                $scope.createMarker(upcoming[i], upcoming[i], "workshops");
+            //get_geocode(upcoming[i].location, upcoming[i]);                                                                                                            
             }
         }
     });
@@ -81,7 +101,7 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
   }
     */
 
-    var mapOptions = { zoom: 5, center: new google.maps.LatLng(23,81) };
+    var mapOptions = { zoom: 5, center: new google.maps.LatLng(24,80) };
     $scope.map = new google.maps.Map(document.getElementById('map'), mapOptions);
     var geocoder = new google.maps.Geocoder();
     var get_geocode = function (workshop_location, label){
@@ -96,7 +116,7 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
     }
   $scope.createMarker = function (label, geo_code,type){
     var nodal_centre_infowindow = new google.maps.InfoWindow({
-      content: '<b>Nodal Centre Location : </b>'+label.location+'<br><b>Nodal Centre Name : </b>'+label.name
+      content: '<b>Nodal Centre Location : </b>'+label.location+'<br><b>Nodal Centre Name : </b>'+label.name+'<br><b>Outreach Centre Name : </b>'+label.created_by.institute_name
     });
     var workshop_infowindow = new google.maps.InfoWindow({
       content: '<b>Workshop Location : </b>'+label.location+'<br><b>Date : </b>'+label.date+'<br><b>Participating Colleges : </b>' + label.participating_institutes 
@@ -242,7 +262,7 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
         $scope.upcoming_workshops = response.length;
     });
     
-    dataFactory.fetch("/users?role_id=3").success(function(response){
+    dataFactory.fetch("/nodal_coordinator_details").success(function(response){
         $scope.totalnc = response.length;
         $scope.nc_users = response;
         
@@ -491,6 +511,7 @@ app.controller("add-workshop", function($scope, $location, $http, dataFactory,$r
             dataFactory.post('/workshops', { "name" : $scope.name,
 					     "duration_of_sessions" : $scope.session,
 					     "location" : $scope.location,  "user" : {"id" : $window.number },
+					     "gateway_ip" : $scope.gateway_ip,
 					     "participating_institutes" : $scope.insts,
 					     "no_of_participants_expected" : $scope.parti,
 					     "no_of_sessions" : Number($scope.sessions),
@@ -520,15 +541,86 @@ app.controller("add-workshop", function($scope, $location, $http, dataFactory,$r
 });
 
 app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParams, $route, $window){
+    $scope.PaperUsage = function(status)
+    {
+	if(status == "over")
+	{
+	    $scope.info = "This number will determine the actual usage of Virtual Labs from a workshop.";
+	}
+	else{$scope.info="";}
+    };
+    $scope.Gateway = function(status)
+    {
+	if(status == "over")
+	{
+	    $scope.info1 = "Gets the usage from the feedback forms submitted during a workshop. Gateway IP is mandatory to calculate the usage from online feedback forms. It determines 'where' the workshop is conducted.";
+	}
+	else{$scope.info1="";}
+    };
+    $scope.Compute = function(status)
+    {
+	if(status == "over")
+	{
+	    $scope.info1 = "By clicking this button, ip address of the workshop location is obtained.  A nodal co-ordinator should save this key while the workshop is conducted.  This is dome by copying the ip address obtained into the field 'Gateway IP Address'.  This copied IP address will be the key of the workshop and all the online feedback forms submitted during a workshop are attached to this key.";
+	}
+	else{$scope.info1="";}
+    };
+    $scope.get_gateway_ip = function(){
+	url = "http://feedback-stage.vlabs.ac.in/get_gateway_ip";
+	$http.get(url).
+        success(function(data, status, headers, config){
+	    $scope.gate_way_ip = data.gateway_ip;
+	    console.log(data.usage);
+	    
+        }).
+            error(function(data, status, headers, config){
+		console.log(data);
+        });
+	
+    }
+    $scope.flag = false;
+    $scope.get_usage = function()
+    {
+
+	//10.4.20.103
+
+	date = new Date($scope.message.date);
+	day = date.getDate();
+	month = date.getMonth() + 1;
+	year = date.getFullYear();
+	new_date = day+"-"+month+"-"+year;
+	url = "http://feedback-stage.vlabs.ac.in/usage_from_feedback?gateway_ip="+$scope.message.gateway_ip+"&date="+new_date+"&key=defaultkey"
+	//url = "http://fp-edx-demo.vlabs.ac.in/usage_from_feedback?gateway_ip=10.4.20.103&date=28-09-2016&key=defaultkey"
+	//url = "http://fp-edx-demo.vlabs.ac.in/usage_from_feedback?gateway_ip="+$scope.message.gateway_ip+"&date=28-09-2016&key=defaultkey"
+	console.log(url);
+	$http.get(url).
+        success(function(data, status, headers, config){
+	    $scope.online_usage = data.usage;
+            $scope.flag = true;
+            //$scope.usage = data.usage; 
+	    $scope.message.experiments_conducted = data.usage;
+            console.log(data.usage);
+	    
+        }).
+            error(function(data, status, headers, config){
+		//$scope.online_usage = 10;
+		//$scope.message.experiments_conducted = 10;
+		console.log(data);
+
+	    
+        });
+    }
     dataFactory.fetch('/workshops/'+$routeParams.id).
         success(function(data, status, headers, config){
             $scope.message= data;
+	   
         }).
         error(function(data, status, headers, config){
             console.log(data);
         });
     $scope.submit = function(isvalid){
       if(isvalid){
+	  
             var today = new Date();
             var workshop_date = new Date($scope.message.date);
             var status_id = $scope.message.status.id;
@@ -536,16 +628,24 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
               if(status_id == 3){
                 status_id = 3;
               }else{
-                status_id = 2;
+		  if($scope.message.user.role.id == 2){
+		      status_id = 3;
+		      }
+		  else{
+                      status_id = 2;
+		  }
               }
             }else{
               status_id = 1;
             }
-            dataFactory.put('/workshops/'+$routeParams.id,
+
+	  console.log($scope.usage);
+	  dataFactory.put('/workshops/'+$routeParams.id,
 			    { "name" : $scope.message.name,
 			      "location" : $scope.message.location,
 			      "user" : {"id" : $window.number },
 			      "participating_institutes" : $scope.message.participating_institutes,
+			      "gateway_ip" : $scope.message.gateway_ip,
 			      "participants_attended" : $scope.message.participants_attended,
 			      "no_of_sessions" : Number($scope.message.no_of_sessions),
 			      "duration_of_sessions": $scope.message.duration_of_sessions,
@@ -1107,6 +1207,31 @@ app.controller("review-reports", function($scope, $http, $routeParams, dataFacto
     }
     dataFactory.fetch('/workshops/'+$routeParams.id).success(function(data,status,headers,config){
 	$scope.data = data;
+	date = new Date($scope.data.date);
+	day = date.getDate();
+	month = date.getMonth() + 1;
+	year = date.getFullYear();
+	new_date = day+"-"+month+"-"+year;
+	url = "http://fp-edx-demo.vlabs.ac.in/usage_from_feedback?gateway_ip="+$scope.data.gateway_ip+"&date="+new_date+"&key=defaultkey"
+	//url = "http://fp-edx-demo.vlabs.ac.in/usage_from_feedback?gateway_ip=10.4.20.103&date=28-09-2016&key=defaultkey"
+	//url = "http://fp-edx-demo.vlabs.ac.in/usage_from_feedback?gateway_ip="+$scope.message.gateway_ip+"&date=28-09-2016&key=defaultkey"
+	
+	console.log(url);
+	$http.get(url).
+        success(function(data, status, headers, config){
+	    //$scope.usage = data.usage;
+	    $scope.usage_from_online = data.usage;
+	    console.log(data.usage);
+	    
+        }).
+            error(function(data, status, headers, config){
+		$scope.usage_from_online = 10;
+		console.log(data);
+
+	    
+        });
+	
+	
     });
     dataFactory.fetch('/workshop_reports?workshop_id='+$routeParams.id).success(function(data,status,headers,config){
         var photos = [];

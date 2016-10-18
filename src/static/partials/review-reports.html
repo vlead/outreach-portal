@@ -52,55 +52,63 @@
     <h2>Workshop Details</h2>
     <table class="table table-hover">
       <tr>
-	<td>Name</td>
+	<td>Workshop Name</td>
 	<td>{{ data.name }}</td>
       </tr>
       <tr>
-	<td>Created</td>
+	<td>Workshop Created On</td>
 	<td>{{ data.created }}</td>
       </tr>
       <tr>
-	<td>Date</td>
+	<td>Date of Workshop</td>
 	<td>{{ data.date }}</td>
       </tr>
       <tr>
-	<td>Duration of sessions</td>
-	<td>{{ data.duration_of_sessions }}</td>
-      </tr>
-      <tr>
-	<td>Experiments Conducted</td>
-	<td>{{ data.experiments_conducted }}</td>
-      </tr>
-      <tr>
-	<td>Labs Planned</td>
-	<td>{{ data.labs_planned }}</td>
-      </tr>
-      <tr>
-	<td>Location</td>
-	<td>{{ data.location }}</td>
-      </tr>
-      <tr>
-	<td>Participants Expected</td>
-	<td>{{ data.no_of_participants_expected }}</td>
-      </tr>
-      <tr>
-	<td>Sessions</td>
+	<td>Total No of Sessions</td>
 	<td>{{ data.no_of_sessions }}</td>
       </tr>
       <tr>
-	<td>Participants Attended</td>
+	<td>Duration of each Sessions</td>
+	<td>{{ data.duration_of_sessions }}</td>
+      </tr>
+      <tr>
+	<td>Gateway IP of Workshop Location</td>
+	<td>{{ data.gateway_ip }}</td>
+      </tr>
+      <tr>
+	<td>Usage From Online Feedback</td>
+	<td>{{ usage_from_online }}</td>
+      </tr>
+      <tr>
+	<td>Usage From Paper Feedback</td>
+	<td>{{ data.experiments_conducted }}</td>
+      </tr>
+      <tr>
+	<td>No of Labs Planned on Workshop</td>
+	<td>{{ data.labs_planned }}</td>
+      </tr>
+      <tr>
+	<td>Location of Workshop</td>
+	<td>{{ data.location }}</td>
+      </tr>
+      <tr>
+	<td>No of Participants Expected</td>
+	<td>{{ data.no_of_participants_expected }}</td>
+      </tr>
+      <tr>
+	<td>No of Participants Attended</td>
 	<td>{{ data.participants_attended }}</td>
       </tr>
       <tr>
-	<td>Participating Institutes</td>
+	<td>Participated Institutes</td>
 	<td>{{ data.participating_institutes }}</td>
       </tr>
       <tr>
-	<td>Reasons for disapproval (if any)</td>
+	<td>Reasons for Disapproval</td>
 	<td>{{ data.not_approval_reason }}</td>
       </tr>
        <tr>
-	<td>Status</td>
+	<td>Status of Workshop</td>
 	<td>{{ data.status.name }}</td>
       </tr>
     </table><br><br>

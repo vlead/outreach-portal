@@ -1,7 +1,7 @@
-#!/bin/bash
-
+#!/bin/bash                                                                                                                                    
+                                                                                                                                               
 DB_NAME="outreach"
-DB_PASS="vlead123"
+DB_PASS="root"
 VERSION="v2.0.9"
 APP_URL="http://localhost/nodalcentres"
 GOOGLE_API_KEY="paste-geocode-api-key-here"
@@ -20,7 +20,7 @@ if [ -z $BACKUP_FILE ]; then
   exit 1;
 fi
 
-# untar the $BACKUP_FILE file
+# untar the $BACKUP_FILE file                                                                                                                  
 tar -xvf $BACKUP_FILE
 if [ $? -ne 0 ]; then
   echo "Error: Something went wrong while untaring."
@@ -28,7 +28,7 @@ if [ $? -ne 0 ]; then
   exit 1;
 fi
 
-# restore from the dump folder
+# restore from the dump folder                                                                                                                 
 mysql -u root -p$DB_PASS -e "drop database $DB_NAME"
 if [ $? -ne 0 ]; then
   echo "Error: in droping database name $DB_NAME"
@@ -50,17 +50,12 @@ if [ $? -ne 0 ]; then
   exit 1;
 fi
 
-mysql -u root -p$DB_PASS $DB_NAME -e "use $DB_NAME; ALTER TABLE nodal_centres add column longitude varchar(20) after location, add column lattitude varchar(20) after longitude, add column pincode varchar(6) after longitude "
+mysql -u root -p$DB_PASS $DB_NAME -e "use $DB_NAME; ALTER TABLE workshops add column gateway_ip varchar(20) after date"
+
+
 
 if [ $? -ne 0 ]; then
-  echo "Error: Couldn't add attributes longitude, lattitude and pincode to nodal_centres"
-  echo "Aborting."
-  exit 1;
-fi
-
-python populate.py $APP_URL $GOOGLE_API_KEY
-if [ $? -ne 0 ]; then
-  echo "Error: Couldn't add attributes longitude, lattitude and pincode to nodal_centres"
+  echo "Error: Couldn't add attribute gateway_ip to workshops"
   echo "Aborting."
   exit 1;
 else
@@ -69,3 +64,5 @@ else
     echo "###############"
 fi
 exit 0;
+    
+    
