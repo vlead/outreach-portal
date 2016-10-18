@@ -1,4 +1,19 @@
 var app = angular.module('outreachApp.controllers',[]);
+app.controller("analytics", function($scope, $http, $routeParams, dataFactory, $route, $window){
+    dataFactory.fetch('/get_outreach_analytics').success(function(data,status,headers,config){
+	$scope.nodal_centres = data.nodal_centres;
+	$scope.total_workshops = data.workshops;
+        $scope.total_usage = data.usage;
+	$scope.upcoming_workshops = data.upcoming_workshops;
+	$scope.total_participants = data.participants_attended;
+    }).
+	error(function(data, status, headers, config){
+            console.log("Failed");
+	});
+    
+});
+
+
 app.controller('map-ctrl', function ($scope, $http, dataFactory){
     var workshop_list = [];
     dataFactory.fetch("/workshops?status_id=1").success(function(workshops){

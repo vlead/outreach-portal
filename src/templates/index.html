@@ -4,10 +4,10 @@
 <div ng-app="outreachApp">
   <div class="analytics-band">
     <div class="container">
-      <div class="row" ng-controller="admin-ctrl">
-	<div class="col-md-3 analytics upcoming" ng-controller="map-ctrl" onclick="scrollWin()">
+      <div class="row" ng-controller="analytics">
+	<div class="col-md-3 analytics upcoming" onclick="scrollWin()">
           UPCOMING WORKSHOPS<br>
-          <span class="number">{{ upcoming_workshops.length }}</span>
+          <span class="number">{{ upcoming_workshops }}</span>
         </div>
 	<div class="col-md-3 analytics labs-taken">
           PARTICIPANTS ATTENDED<br>
