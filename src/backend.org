@@ -6001,6 +6001,94 @@ def logout_handler():
     session.pop('key', None)
     return "Ok"
 
+@api.route('/get_nc_wise_usage', methods=['GET'])
+def get_nc_wise_usage():
+    return_dict = {}
+    if request.method == 'GET':
+        usage_url = APP_URL + "/workshops?status_id=3"
+        ws_usage_response = requests.get(usage_url)
+        try:
+            if ws_usage_response.ok:
+                ws = ws_usage_response.text
+                ws_dict = json.loads(ws)
+                print len(ws_dict)
+                inst_ws_usage_dict= []
+                for workshop in ws_dict:
+                    print"here"
+                    user_id = workshop['user']['id']
+                    user_url = APP_URL + "/users?id=" + str(user_id)
+                    user_response = requests.get(user_url)
+                    try:
+                        if user_response.ok:
+                            users = user_response.text
+                            users_dict = json.loads(users)
+                            if users_dict[0]['role']['id'] == 2 and \
+                              users_dict[0]['institute_name'] is not None:
+                                print "users_dict = %s" % users_dict[0]
+                                institute_name = users_dict[0]['institute_name']
+                                print "institute_name = %s" % institute_name
+                                if workshop['experiments_conducted'] is None:
+                                    usage = 0
+                                else:
+                                    usage = workshop['experiments_conducted']
+                                if institute_name in return_dict:
+                                    return_dict[institute_name]['usage'] += \
+                                      usage
+                                    return_dict[institute_name]['workshops'] += 1
+                                else:
+                                    temp_dict = {}
+                                    temp_dict['usage'] = usage
+                                    temp_dict['workshops'] = 1
+                                    nc_count = get_nodal_center_count_for_OC(user_id)
+                                    temp_dict['nc_count'] = nc_count
+                                    return_dict[institute_name] = temp_dict
+
+                            elif users_dict[0]['role']['id'] == 3 and \
+                              users_dict[0]['institute_name'] is not None:
+                                print"NC user dict = %s" % user_dict[0]
+                                ncd_url = APP_URL + "/nodal_coordinator_details/" + str(user_id)
+
+                                ncd_response = requests.get(ncd_url)
+                                try:
+                                    if ncd_response.ok:
+                                        nc_users = ncd_response.text
+                                        nc_users_dict = json.loads(nc_users)
+                                        institute_name = nc_users_dict['created_by']['institute_name']
+                                        print "NC institute_name = %s" % institute_name
+                                        if workshop['experiments_conducted'] is None:
+                                            usage = 0
+                                        else:
+                                            usage = workshop['experiments_conducted']
+                                        if institute_name in return_dict:
+                                            return_dict[institute_name]['usage'] += \
+                                              usage
+                                            return_dict[institute_name]['workshops'] += 1
+                                        else:
+                                            temp_dict = {}
+                                            temp_dict['usage'] = usage
+                                            temp_dict['workshops'] = 1
+                                            return_dict[institute_name]  = temp_dict
+                                except Exception as err:
+                                    raise err
+                    except Exception as err:
+                        raise err
+        except Exception as err:
+            raise err
+
+    return jsonify(return_dict)
+
+def get_nodal_center_count_for_OC(user_id):
+    nc_count_url = APP_URL + "/nodal_centres?created_by_id=" + str(user_id)
+    try:
+        nc_count_response = requests.get(nc_count_url)
+        if nc_count_response.ok:
+            return len(json.loads(nc_count_response.text))
+        else:
+            raise Exception("Cannot get nodal center count")
+
+    except Exception as err:
+        raise err
+
 
 @api.route('/get_outreach_usage', methods=['GET'])
 def get_outreach_portal_usage():
