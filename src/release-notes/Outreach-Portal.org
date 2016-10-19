@@ -2,7 +2,7 @@
 #+AUTHOR: VLEAD
 #+DATE: [2016-10-19 Wed]
 
-* Introductionhh
+* Introduction
   This document will describes the release notes of =Outreach Portal=
   version =v2.1.1=.
 * Landing Page :
@@ -21,13 +21,15 @@
     + On =Usage= tab all institute wise workshop usage is displayed in descending order.
 * Outreach & Nodal Coordinator Account:
   - Manage Workshops Section :
-   + Add Workshop :
-     - UI of the form is improved better.
-     - New attribute =Gateway IP of College= is added to the form.
-   + Edit Workshop :
-     - Added =Gateway IP=, =Compute Usage= buttons and added tooltips
+     + Add Workshop :
+       - UI of the form is improved better.
+       - New attribute =Gateway IP of College= is added to the form.
+     + Edit Workshop :
+       - Added =Gateway IP=, =Compute Usage= buttons and added tooltips
        to help the users.
-     - Added =Usage from Online Feedback= field to get the
-       workshop usage from online submitted feedback.
-     - Added tooltip to =Usage from Paper Feedback= field.
-       
+       - Added =Usage from Online Feedback= field to get the
+         workshop usage from online submitted feedback.
+       - Added tooltip to =Usage from Paper Feedback= field.
+  - Feedback portal integration is incorporated on =Edit Workshop= form.     
+* Github issues
+  Ressolved hIssues : [[https://github.com/vlead/outreach-portal/issues/204][204]], [[https://github.com/vlead/outreach-portal/issues/203][203]], [[https://github.com/vlead/outreach-portal/issues/201][201]], [[https://github.com/vlead/outreach-portal/issues/200][200]], [[https://github.com/vlead/outreach-portal/issues/199][199]], [[https://github.com/vlead/outreach-portal/issues/198][198]], 
