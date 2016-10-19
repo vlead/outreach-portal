@@ -5373,7 +5373,7 @@ def typecheck(**typemap):
 import os
 
 from flask import Flask, jsonify, make_response
-# from flask.ext.cors import CORS
+from flask.ext.cors import CORS
 
 from db import db
 from api import api
@@ -5398,6 +5398,8 @@ def create_app(config):
     app.register_blueprint(api)
     configure_logging(app)
     configure_errorhandlers(app)
+    cors = CORS(app, resources={r"/*": {"origins": "*"}})
+
     #  configure_cors(app)
     # all set; return app object
     return app
