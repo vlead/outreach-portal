@@ -17,7 +17,7 @@
 	  <th>Usage (in terms of total experiments performed)</th>
 	</tr>
       </thead>
-      <tbody ng-repeat="name in oc_usage">
+      <tbody ng-repeat="name in oc_usage | orderBy : 'usage'">
 	<tr>
 	  <td>{{ $index+1 }}</td>
 	  <td>{{ name.oc_name }}</td>
