@@ -1,0 +1,35 @@
+#+TITLE: Outreach Portal Version V2.1.1
+#+AUTHOR: VLEAD
+#+DATE: [2016-10-19 Wed]
+
+* Introduction
+  This document will describes the release notes of =Outreach Portal=
+  version =v2.1.1=.
+* Landing Page :
+  - Added footer page, moved social media icons (facebook, twitter)
+    from header to footer page.(This will be common to Admin,
+    Outreach and Nodal Coordinator accounts.
+  - Added =Outreach Portal Manual= link to the footer page.
+  - Modified India's map to show Jammu & kashmir region with thick lines.
+  - Added Outreach Centre Name to all Nodal Centre pins on google map. 
+* Admin Account :
+   - Dashboard Section :
+    + By clicking on =Workshop Run= tab user can see all completed
+      workshops list in sorted order by =Participating Institutes=.
+    + On =Nodal Coordinators= tab list all user are listed with respect to
+      assiciated =Nodal Centres=.
+    + On =Usage= tab all institute wise workshop usage is displayed in descending order.
+* Outreach & Nodal Coordinator Account:
+  - Manage Workshops Section :
+     + Add Workshop :
+       - UI of the form is improved better.
+       - New attribute =Gateway IP of College= is added to the form.
+     + Edit Workshop :
+       - Added =Gateway IP=, =Compute Usage= buttons and added tooltips
+       to help the users.
+       - Added =Usage from Online Feedback= field to get the
+         workshop usage from online submitted feedback.
+       - Added tooltip to =Usage from Paper Feedback= field.
+  - Feedback portal integration is incorporated on =Edit Workshop= form.     
+* Github issues
+  Ressolved hIssues : [[https://github.com/vlead/outreach-portal/issues/204][204]], [[https://github.com/vlead/outreach-portal/issues/203][203]], [[https://github.com/vlead/outreach-portal/issues/201][201]], [[https://github.com/vlead/outreach-portal/issues/200][200]], [[https://github.com/vlead/outreach-portal/issues/199][199]], [[https://github.com/vlead/outreach-portal/issues/198][198]], 
