@@ -6013,10 +6013,10 @@ def get_nc_wise_usage():
             if ws_usage_response.ok:
                 ws = ws_usage_response.text
                 ws_dict = json.loads(ws)
-                print len(ws_dict)
+                #print len(ws_dict)
                 inst_ws_usage_dict= []
                 for workshop in ws_dict:
-                    print"here"
+                   # print"here"
                     user_id = workshop['user']['id']
                     user_url = APP_URL + "/users?id=" + str(user_id)
                     user_response = requests.get(user_url)
@@ -6026,9 +6026,9 @@ def get_nc_wise_usage():
                             users_dict = json.loads(users)
                             if users_dict[0]['role']['id'] == 2 and \
                               users_dict[0]['institute_name'] is not None:
-                                print "users_dict = %s" % users_dict[0]
+                               # print "users_dict = %s" % users_dict[0]
                                 institute_name = users_dict[0]['institute_name']
-                                print "institute_name = %s" % institute_name
+                               # print "institute_name = %s" % institute_name
                                 if workshop['experiments_conducted'] is None:
                                     usage = 0
                                 else:
@@ -6047,7 +6047,7 @@ def get_nc_wise_usage():
 
                             elif users_dict[0]['role']['id'] == 3 and \
                               users_dict[0]['institute_name'] is not None:
-                                print"NC user dict = %s" % users_dict[0]
+                              #  print"NC user dict = %s" % users_dict[0]
                                 ncd_url = APP_URL + "/nodal_coordinator_details/" + str(user_id)
 
                                 ncd_response = requests.get(ncd_url)
@@ -6056,7 +6056,7 @@ def get_nc_wise_usage():
                                         nc_users = ncd_response.text
                                         nc_users_dict = json.loads(nc_users)
                                         institute_name = nc_users_dict['created_by']['institute_name']
-                                        print "NC institute_name = %s" % institute_name
+                               #         print "NC institute_name = %s" % institute_name
                                         if workshop['experiments_conducted'] is None:
                                             usage = 0
                                         else:
