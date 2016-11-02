@@ -31,7 +31,7 @@
 
 ** Resources
 Following is the list of current REST APIs provided by outreach portal:
-#+BEGIN_SRC 
+#+BEGIN_SRC spec
 - /roles [GET, POST]
 - /roles/<int:id> [GET, PUT, DELETE]
 - /roles/<int:id>?fields=field1,field2 [GET]
@@ -77,18 +77,18 @@ Following is the list of current REST APIs provided by outreach portal:
 
 - *GET* 
  + Example Request
-  #+BEGIN_SRC
+  #+BEGIN_SRC spec
   /roles
   #+END_SRC
 
  + Example Result
-  #+BEGIN_SRC
+  #+BEGIN_SRC spec
  [{"id": 1, "name": "admin"}, {"id": 2, "name": "OC"}, {"id": 3, "name": "NC"}]
   #+END_SRC
 
 - *POST* 
  + Example Request
-  #+BEGIN_SRC
+  #+BEGIN_SRC spec
  json =  {
     "name" : "Admin"
 }
@@ -96,7 +96,7 @@ Following is the list of current REST APIs provided by outreach portal:
 
  + Example Result
 
-  #+BEGIN_SRC
+  #+BEGIN_SRC spec
 {
   "id": 1, 
   "name": "Admin"
@@ -121,7 +121,7 @@ Following is the list of current REST APIs provided by outreach portal:
    #+END_EXAMPLE
 
  + Example Result
-  #+BEGIN_SRC
+  #+BEGIN_SRC spec
  {
   "id": 1, 
   "name": "Admin"
@@ -130,12 +130,12 @@ Following is the list of current REST APIs provided by outreach portal:
 
 - *PUT*
  + Example Request
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
      name = {"name":"Outreach Coordinator"}
    #+END_SRC
 
  + Example Result
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
  {
   "id": 1, 
   "name": "Outreach Coordinator"
@@ -143,7 +143,7 @@ Following is the list of current REST APIs provided by outreach portal:
     #+END_SRC
 - *DELETE*
  + Example Result
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
 {
   "id": "4", 
   "status": "success"
@@ -163,12 +163,12 @@ Following is the list of current REST APIs provided by outreach portal:
 
 - *GET* -
  + Example Request
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
    /roles/2?fields=name,id
    #+END_SRC
  
  + Example Result
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
 {
   "id": 2, 
   "name": "OC"
@@ -187,12 +187,12 @@ Following is the list of current REST APIs provided by outreach portal:
 
 - *GET* -
  + Example Request
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
    /roles?name=OC
    #+END_SRC
  
  + Example Result
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
 [{"id": 2, "name": "OC"}]
    #+END_SRC
 
@@ -215,12 +215,12 @@ Following is the list of current REST APIs provided by outreach portal:
 |-----------------+--------------------------------------------------------------------------------------------------|
 - *GET* 
  + Example Request
-  #+BEGIN_SRC
+  #+BEGIN_SRC spec
   /users
   #+END_SRC
 
  + Example Result
-  #+BEGIN_SRC
+  #+BEGIN_SRC spec
  [{"name": "John", "last_active": "2015-11-17T09:31:29", "created":
  "2015-11-17T09:31:29", "email": "john@gmil.com", "role": {"id": 1, "name":
  "Admin"}, "id": 1}]
@@ -228,7 +228,7 @@ Following is the list of current REST APIs provided by outreach portal:
 
 - *POST* 
  + Example Request
-  #+BEGIN_SRC
+  #+BEGIN_SRC spec
  json =  {
  "name" : "John",
  "email" : "john@gmail.com",
@@ -237,7 +237,7 @@ Following is the list of current REST APIs provided by outreach portal:
   }
   #+END_SRC
  + Example Result
-  #+BEGIN_SRC
+  #+BEGIN_SRC spec
 {
   "created": "2015-11-17T09:31:29", 
   "email": "john@gmil.com", 
@@ -274,7 +274,7 @@ Following is the list of current REST APIs provided by outreach portal:
    #+END_EXAMPLE
 
  + Example Result
-  #+BEGIN_SRC
+  #+BEGIN_SRC spec
 {
   "created": "2015-11-17T09:31:29", 
   "email": "john@gmil.com", 
@@ -290,12 +290,12 @@ Following is the list of current REST APIs provided by outreach portal:
 
 - *PUT*
  + Example Request
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
      name = {"name":"jane"}
    #+END_SRC
 
  + Example Result
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
 
   "created": "2015-11-17T09:31:29", 
   "email": "john@gmil.com", 
@@ -310,7 +310,7 @@ Following is the list of current REST APIs provided by outreach portal:
     #+END_SRC
 - *DELETE*
  + Example Result
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
 {
   "id": "1", 
   "status": "success"
@@ -336,12 +336,12 @@ Following is the list of current REST APIs provided by outreach portal:
 
 - *GET* -
  + Example Request
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
    /users/4?fields=name,email
    #+END_SRC
  
  + Example Result
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
 {
   "created": "2015-11-17T09:41:20", 
   "email": "john@gmail.com", 
@@ -375,12 +375,12 @@ Following is the list of current REST APIs provided by outreach portal:
 
 - *GET* -
  + Example Request
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
    /roles?name=John&email=john@gmail.com
    #+END_SRC
  
  + Example Result
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
 [{"name": "John", "last_active": "2015-11-17T09:41:20", "created":
 "2015-11-17T09:41:20", "email": "john@gmail.com", "role": {"id": 1, "name":
 "Admin"}, "id": 1}]
@@ -400,12 +400,12 @@ Following is the list of current REST APIs provided by outreach portal:
 |--------+------------------------------------------------------------------------------------------------------------|
 - *GET* 
  + Example Request
-  #+BEGIN_SRC
+  #+BEGIN_SRC spec
   /reference_documents
   #+END_SRC
 
  + Example Result
-  #+BEGIN_SRC
+  #+BEGIN_SRC spec
 [{"path": "/home/vlead/Desktop/outreach-docs/sign1.jpg", "user": {"name":
 "John", "last_active": null, "created": "2015-11-23T06:02:24", "email":
 "john@gmail.com", "role": {"id": 1, "name": "Admin"}, "id": 1}, "id": 7,
@@ -420,7 +420,7 @@ null, "created": "2015-11-23T06:02:24", "email": "john@gmail.com", "role":
 
 - *POST* 
  + Example Request
-  #+BEGIN_SRC
+  #+BEGIN_SRC spec
  json =  {
   "name" : "Attendance Sheet",
   "user" : { "id" : 1 }
@@ -429,7 +429,7 @@ null, "created": "2015-11-23T06:02:24", "email": "john@gmail.com", "role":
 
  + Example Result
 
-  #+BEGIN_SRC
+  #+BEGIN_SRC spec
 {
   "id": 10, 
   "name": "Attendance Sheet", 
@@ -469,7 +469,7 @@ null, "created": "2015-11-23T06:02:24", "email": "john@gmail.com", "role":
    #+END_EXAMPLE
 
  + Example Result
-  #+BEGIN_SRC
+  #+BEGIN_SRC spec
  {
   "id": 10, 
   "name": "Attendance Sheet", 
@@ -492,12 +492,12 @@ null, "created": "2015-11-23T06:02:24", "email": "john@gmail.com", "role":
   This *PUT* is valid for fields =name= and =user=. For updating the path or the
   file, see here. 
  + Example Request
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
     {"name":"Feedback Form"}
    #+END_SRC
 
  + Example Result
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
 {
   "id": 10, 
   "name": "Feedback Form", 
@@ -517,12 +517,12 @@ null, "created": "2015-11-23T06:02:24", "email": "john@gmail.com", "role":
    #+END_SRC
 
 + Example Request
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
     {"user": {"id" : 2} }
    #+END_SRC
 
  + Example Result
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
 {
   "id": 10, 
   "name": "Feedback Form", 
@@ -543,7 +543,7 @@ null, "created": "2015-11-23T06:02:24", "email": "john@gmail.com", "role":
 
 - *DELETE*
  + Example Result
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
 {
   "id": "1", 
   "status": "success"
@@ -567,12 +567,12 @@ null, "created": "2015-11-23T06:02:24", "email": "john@gmail.com", "role":
 
 - *GET* -
  + Example Request
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
    /reference_documents/10?fields=name,path
    #+END_SRC
  
  + Example Result
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
 {
   "id": 10, 
   "name": "Feedback Form", 
@@ -607,12 +607,12 @@ null, "created": "2015-11-23T06:02:24", "email": "john@gmail.com", "role":
 
 - *GET* -
  + Example Request
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
    /reference_documents?name=Feedback Form
    #+END_SRC
  
  + Example Result
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
 [{"path": "/home/vlead/Desktop/outreach-docs/sign1.jpg", "user": {"name":
 "John", "last_active": null, "created": "2015-11-23T06:02:24", "email":
 "john@gmail.com", "role": {"id": 1, "name": "Admin"}, "id": 1}, "id": 7,
@@ -626,12 +626,12 @@ null, "created": "2015-11-23T06:02:24", "email": "john@gmail.com", "role":
 
 - *POST* -
  + Example Request
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
    /upload_reference_documents/10
    #+END_SRC
  
  + Example Result
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
    /home/vlead/Desktop/outreach-docs/attendance-sheet.doc  
    #+END_SRC
 
@@ -647,19 +647,19 @@ null, "created": "2015-11-23T06:02:24", "email": "john@gmail.com", "role":
 
 - *GET* 
  + Example Request
-  #+BEGIN_SRC
+  #+BEGIN_SRC spec
   /status
   #+END_SRC
 
  + Example Result
-  #+BEGIN_SRC
+  #+BEGIN_SRC spec
 [{"id": 1, "name": "Upcoming"}, {"id": 2, "name": "Pending for Approval"},
  {"id": 3, "name": "Approved"}, {"id": 4, "name": "Rejected"}] 
   #+END_SRC
 
 - *POST* 
  + Example Request
-  #+BEGIN_SRC
+  #+BEGIN_SRC spec
  json =  {
     "name" : "Upcoming"
 }
@@ -667,7 +667,7 @@ null, "created": "2015-11-23T06:02:24", "email": "john@gmail.com", "role":
 
  + Example Result
 
-  #+BEGIN_SRC
+  #+BEGIN_SRC spec
 {
   "id": 1, 
   "name": "Upcoming"
@@ -692,7 +692,7 @@ null, "created": "2015-11-23T06:02:24", "email": "john@gmail.com", "role":
    #+END_EXAMPLE
 
  + Example Result
-  #+BEGIN_SRC
+  #+BEGIN_SRC spec
  {
   "id": 1, 
   "name": "Upcoming"
@@ -701,12 +701,12 @@ null, "created": "2015-11-23T06:02:24", "email": "john@gmail.com", "role":
 
 - *PUT*
  + Example Request
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
      name = {"name":"Pending for Approval"}
    #+END_SRC
 
  + Example Result
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
  {
   "id": 1, 
   "name": "Pending for Approval"
@@ -714,7 +714,7 @@ null, "created": "2015-11-23T06:02:24", "email": "john@gmail.com", "role":
     #+END_SRC
 - *DELETE*
  + Example Result
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
 {
   "id": "4", 
   "status": "success"
@@ -734,12 +734,12 @@ null, "created": "2015-11-23T06:02:24", "email": "john@gmail.com", "role":
 
 - *GET* -
  + Example Request
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
    /status/1?fields=name,id
    #+END_SRC
  
  + Example Result
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
 {
   "id": 1, 
   "name": "Upcoming"
@@ -758,12 +758,12 @@ null, "created": "2015-11-23T06:02:24", "email": "john@gmail.com", "role":
 
 - *GET* -
  + Example Request
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
    /status?name=Upcoming
    #+END_SRC
  
  + Example Result
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
 [{"id": 1, "name": "Upcoming"}]
    #+END_SRC
 
@@ -816,12 +816,12 @@ null, "created": "2015-11-23T06:02:24", "email": "john@gmail.com", "role":
 
 - *GET* 
  + Example Request
-  #+BEGIN_SRC
+  #+BEGIN_SRC spec
   /workshops
   #+END_SRC
 
  + Example Result
-  #+BEGIN_SRC
+  #+BEGIN_SRC spec
 [{"status": {"id": 1, "name": "Upcoming"}, "not_approval_reason": null,
 "no_of_sessions": 3, "last_updated": null, "name": "Coordinators Training",
 "disciplines": null, "created": "2015-12-16T05:19:21", "duration_of_sessions":
@@ -836,7 +836,7 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
 
 - *POST* 
  + Example Request
-  #+BEGIN_SRC
+  #+BEGIN_SRC spec
  json =  {
 "name":"Coordinators Training",
 "location":"IIIT-Hyd", 
@@ -852,7 +852,7 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
 
  + Example Result
 
-  #+BEGIN_SRC
+  #+BEGIN_SRC spec
 {
   "cancellation_reason": null,
   "created": "2015-12-16T05:19:21",
@@ -943,7 +943,7 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
    #+END_EXAMPLE
 
  + Example Result
-  #+BEGIN_SRC
+  #+BEGIN_SRC spec
 {
   "cancellation_reason": null,
   "created": "2015-12-16T05:19:21",
@@ -982,14 +982,14 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
 
 - *PUT*
  + Example Request
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
  {
   "labs_planned" : 10 
  }
    #+END_SRC
 
  + Example Result
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
 {
   "cancellation_reason": null,
   "created": "2015-12-16T05:19:21",
@@ -1027,7 +1027,7 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
     #+END_SRC
 - *DELETE*
  + Example Result
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
 {
   "id": "1", 
   "status": "success"
@@ -1085,12 +1085,12 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
 
 - *GET* -
  + Example Request
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
    /workshops/1?fields=status,labs_planned
    #+END_SRC
  
  + Example Result
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
 {
   "cancellation_reason": null,
   "created": "2015-12-16T05:19:21",
@@ -1177,12 +1177,12 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
 
 - *GET* -
  + Example Request
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
    /workshops?name=Coordinators Training
    #+END_SRC
  
  + Example Result
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
 [{"status": {"id": 1, "name": "Upcoming"}, "not_approval_reason": null,
 "no_of_sessions": 3, "last_updated": null, "name": "Coordinators Training",
 "disciplines": null, "created": "2015-12-16T05:19:21", "duration_of_sessions":
@@ -1210,12 +1210,12 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
 |---------------+------------------------------------------------------------------------------------------------------------|
 - *GET* 
  + Example Request
-  #+BEGIN_SRC
+  #+BEGIN_SRC spec
   /workshop_reports
   #+END_SRC
 
  + Example Result
-  #+BEGIN_SRC
+  #+BEGIN_SRC spec
 [{"path": null, "workshop": {"status": {"id": 1, "name": "Upcoming"},
 "not_approval_reason": null, "no_of_sessions": 3, "last_updated": null, "name":
 "Coordinators Training", "disciplines": null, "created": "2015-12-16T05:19:21",
@@ -1240,7 +1240,7 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
 
 - *POST* 
  + Example Request
-  #+BEGIN_SRC
+  #+BEGIN_SRC spec
  json =  {
 "name":"College Photos",
 "workshop":{"id":1} 
@@ -1249,7 +1249,7 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
 
  + Example Result
 
-  #+BEGIN_SRC
+  #+BEGIN_SRC spec
 {
   "id": 1,
   "name": "College Photos",
@@ -1314,7 +1314,7 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
    #+END_EXAMPLE
 
  + Example Result
-  #+BEGIN_SRC
+  #+BEGIN_SRC spec
 {
   "id": 1,
   "name": "College Photos",
@@ -1360,12 +1360,12 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
   This *PUT* is valid for fields =name= and =user=. For updating the path or the
   file, see here. 
  + Example Request
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
     {"name":"Feedback Form"}
    #+END_SRC
 
  + Example Result
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
 {
   "id": 1,
   "name": "Feedback Form",
@@ -1410,7 +1410,7 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
 
 - *DELETE*
  + Example Result
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
 {
   "id": "1", 
   "status": "success"
@@ -1435,12 +1435,12 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
 
 - *GET* -
  + Example Request
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
    /workshop_reports/1?fields=name,path
    #+END_SRC
  
  + Example Result
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
 {
   "id": 1,
   "name": "Feedback Form",
@@ -1500,12 +1500,12 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
 
 - *GET* -
  + Example Request
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
    /workshop_reports?name=College Photos
    #+END_SRC
  
  + Example Result
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
 [{"path": null, "workshop": {"status": {"id": 1, "name": "Upcoming"},
 "not_approval_reason": null, "no_of_sessions": 3, "last_updated": null, "name":
 "Coordinators Training", "disciplines": null, "created": "2015-12-16T05:19:21",
@@ -1522,12 +1522,12 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
 
 - *POST* -
  + Example Request
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
    /upload_workshop_reports/10
    #+END_SRC
  
  + Example Result
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
    /home/vlead/Desktop/outreach-docs/feedback-form.pdf  
    #+END_SRC
 *** /nodal_centres
@@ -1548,12 +1548,12 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
 
 - *GET* 
  + Example Request
-  #+BEGIN_SRC
+  #+BEGIN_SRC spec
   /nodal_centres
   #+END_SRC
 
  + Example Result
-  #+BEGIN_SRC
+  #+BEGIN_SRC spec
 [{"location": "Nampally", "id": 1, "created_by": {"name": "admin",
 "last_active": null, "created": "2015-12-07T09:48:22", "email":
 "outreach-admin@vlabs.ac.in", "role": {"id": 1, "name": "admin"}, "id": 1},
@@ -1565,7 +1565,7 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
 
 - *POST* 
  + Example Request
-  #+BEGIN_SRC
+  #+BEGIN_SRC spec
  json =  {
 "name":"IIIT-H",
 "location":"Gachibowli",
@@ -1575,7 +1575,7 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
 
  + Example Result
 
-  #+BEGIN_SRC
+  #+BEGIN_SRC spec
 {
   "created_by": {
     "created": "2015-12-07T09:48:22",
@@ -1617,7 +1617,7 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
    #+END_EXAMPLE
 
  + Example Result
-  #+BEGIN_SRC
+  #+BEGIN_SRC spec
 {
   "created_by": {
     "created": "2015-12-07T09:48:22",
@@ -1638,12 +1638,12 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
 
 - *PUT*
  + Example Request
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
 {"location": "Nampally"}
    #+END_SRC
 
  + Example Result
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
 {
   "created_by": {
     "created": "2015-12-07T09:48:22",
@@ -1663,7 +1663,7 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
     #+END_SRC
 - *DELETE*
  + Example Result
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
 {
   "id": "1", 
   "status": "success"
@@ -1688,12 +1688,12 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
 
 - *GET* -
  + Example Request
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
    /nodal_centres/1?fields=name,location
    #+END_SRC
  
  + Example Result
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
 {
   "created_by": {
     "created": "2015-12-07T09:48:22",
@@ -1730,12 +1730,12 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
 
 - *GET* -
  + Example Request
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
    /nodal_centres?name=HCU
    #+END_SRC
  
  + Example Result
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
 [{"location": "Nampally", "id": 1, "created_by": {"name": "admin",
 "last_active": null, "created": "2015-12-07T09:48:22", "email":
 "outreach-admin@vlabs.ac.in", "role": {"id": 1, "name": "admin"}, "id": 1},
@@ -1769,12 +1769,12 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
 
 - *GET* 
  + Example Request
-  #+BEGIN_SRC
+  #+BEGIN_SRC spec
   /nodal_coordinator_details
   #+END_SRC
 
  + Example Result
-  #+BEGIN_SRC
+  #+BEGIN_SRC spec
 [{"last_updated": null, "user": {"name": "admin", "last_active": null,
 "created": "2015-12-07T09:48:22", "email": "outreach-admin@vlabs.ac.in",
 "role": {"id": 1, "name": "admin"}, "id": 1}, "created": "2015-12-07T09:57:42",
@@ -1789,7 +1789,7 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
 
 - *POST* 
  + Example Request
-  #+BEGIN_SRC
+  #+BEGIN_SRC spec
  json = {
 "user":{"id":1}, 
 "target_workshops":200,
@@ -1801,7 +1801,7 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
 
  + Example Result
 
-  #+BEGIN_SRC
+  #+BEGIN_SRC spec
 {
   "created": "2015-12-07T09:57:42",
   "created_by": {
@@ -1882,7 +1882,7 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
    #+END_EXAMPLE
 
  + Example Result
-  #+BEGIN_SRC
+  #+BEGIN_SRC spec
 {
   "created": "2015-12-07T09:57:42",
   "created_by": {
@@ -1933,14 +1933,14 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
 
 - *PUT*
  + Example Request
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
 { 
 "target_participants" : 500
  }
    #+END_SRC
 
  + Example Result
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
 {
   "created": "2015-12-07T09:57:42",
   "created_by": {
@@ -1990,7 +1990,7 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
     #+END_SRC
 - *DELETE*
  + Example Result
-  #+BEGIN_SRC
+  #+BEGIN_SRC spec
 {
   "id": "1", 
   "status": "success"
@@ -2026,12 +2026,12 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
 
 - *GET* -
  + Example Request
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
    nodal_coordinator_details/1?fields=target_workshops,target_experiments
    #+END_SRC
  
  + Example Result
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
 {
   "created": "2015-12-07T09:57:42",
   "created_by": {
@@ -2107,12 +2107,12 @@ null, "id": 1, "user": {"name": "admin", "last_active": null, "created":
 
 - *GET* -
  + Example Request
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
    /nodal_coordinator_details?user_id=1
    #+END_SRC
  
  + Example Result
-   #+BEGIN_SRC
+   #+BEGIN_SRC spec
 [{"last_updated": null, "user": {"name": "admin", "last_active": null,
 "created": "2015-12-07T09:48:22", "email": "outreach-admin@vlabs.ac.in",
 "role": {"id": 1, "name": "admin"}, "id": 1}, "created": "2015-12-07T09:57:42",
