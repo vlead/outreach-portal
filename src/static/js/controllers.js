@@ -566,7 +566,7 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
 	else{$scope.info1="";}
     };
     $scope.get_gateway_ip = function(){
-	url = "http://feedback-stage.vlabs.ac.in/get_gateway_ip";
+	url = "http://feedback.vlabs.ac.in/get_gateway_ip";
 	$http.get(url).
         success(function(data, status, headers, config){
 	    $scope.gate_way_ip = data.gateway_ip;
@@ -589,7 +589,7 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
 	month = date.getMonth() + 1;
 	year = date.getFullYear();
 	new_date = day+"-"+month+"-"+year;
-	url = "http://feedback-stage.vlabs.ac.in/usage_from_feedback?gateway_ip="+$scope.message.gateway_ip+"&date="+new_date+"&key=defaultkey"
+	url = "http://feedback.vlabs.ac.in/usage_from_feedback?gateway_ip="+$scope.message.gateway_ip+"&date="+new_date+"&key=defaultkey"
 	//url = "http://fp-edx-demo.vlabs.ac.in/usage_from_feedback?gateway_ip=10.4.20.103&date=28-09-2016&key=defaultkey"
 	//url = "http://fp-edx-demo.vlabs.ac.in/usage_from_feedback?gateway_ip="+$scope.message.gateway_ip+"&date=28-09-2016&key=defaultkey"
 	console.log(url);
