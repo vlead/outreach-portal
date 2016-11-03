@@ -61,7 +61,7 @@ write-version:
 	echo `git log --pretty=format:'%s' -n 1` >> ${CODE_DIR}/${VER_FILE}
 
 lint:
-	pep8 --ignore=E302 ${PWD}/${CODE_DIR} > ${LINT_FILE};
+	(pep8 --ignore=E302 ${PWD}/${CODE_DIR} > ${LINT_FILE}; ([ $$? -eq 0 ] && echo "no lint errors!") || echo "lint errors exist!")
 
 build-with-lint: build lint
 
