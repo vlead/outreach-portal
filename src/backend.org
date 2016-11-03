@@ -5928,6 +5928,10 @@ def index():
 def ncentres():
     return render_template("ncentres.html")
 
+@api.route("/usage")
+def usage():
+    return render_template("usage.html")
+
 @api.route("/admin", methods=['GET','POST'])
 def admin():
     if request.method == 'GET':
@@ -6068,6 +6072,8 @@ def get_nc_wise_usage():
                                             temp_dict = {}
                                             temp_dict['usage'] = usage
                                             temp_dict['workshops'] = 1
+                                            nc_count = get_nodal_center_count_for_OC(nc_users_dict[0]['created_by']['id'])
+                                            temp_dict['nc_count'] = nc_count
                                             return_dict[institute_name]  = temp_dict
                                 except Exception as err:
                                     raise err

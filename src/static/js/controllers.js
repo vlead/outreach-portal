@@ -184,12 +184,19 @@ app.controller("oc-ctrl", function($scope, $routeParams, dataFactory, $route, $w
     }
 
 });
-
+app.controller("usage-ctrl", function($scope, dataFactory, $http, $routeParams, $route, $q, $window) {
+    $scope.loading = true;
+    dataFactory.fetch("/get_nc_wise_usage").success(function(response){
+	$scope.usages = response;
+	$scope.loading = false;
+    }).error(function(response){console.log("Failed to fetch data");});
+});
 app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, $route, $q, $window) {
-
-     $scope.showNcentres = function()
-    {
-        window.open("/ncentres");
+     $scope.showNcentres = function(){
+         window.open("/ncentres");
+     }
+    $scope.showUsage = function(){
+        window.open("/usage");
     }
     
    if ($window.number != 0 || $window.number == undefined) {
@@ -254,7 +261,9 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
         $scope.oc_users = response;
         
     });
+    $scope.nloading = true;
     dataFactory.fetch("/nodal_centres").success(function(response){
+	$scope.nloading=false;
         $scope.nodal_centres = response.length;
 	$scope.nodal_centres_list = response;
     });
@@ -289,6 +298,7 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
     /*Institute wise usage*/
     var usage=0;
     var nc_usage=[];
+    $scope.usageloading = true;
     dataFactory.fetch('/users'). success(function(data, status, headers, config) {
 	$scope.users = data;
     });    
@@ -321,6 +331,7 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
 		nc_usage1.push({"oc_user_name" : $scope.users[i].name ,"oc_usage" : usage1});}
 	}
 	$scope.ocs_usage = nc_usage1;
+	
 	var oc_usage = 0;
 	var usage_count = [];
 	dataFactory.fetch('/users?role_id=2'). success(function(data, status, headers, config) {
@@ -335,6 +346,7 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
 		usage_count.push({"oc_centre" : data[i].institute_name , "oc_name" : data[i].name, "oc_email" : data[i].email, "usage" : oc_usage+nc_usage1[i].oc_usage});
 	    }
 	    $scope.oc_usage = usage_count;
+	    $scope.usageloading = false;
 	});
 	
     }).error(function(data, status, headers, config){
@@ -566,7 +578,7 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
 	else{$scope.info1="";}
     };
     $scope.get_gateway_ip = function(){
-	url = "http://feedback.vlabs.ac.in/get_gateway_ip";
+	url = "http://feedback-stage.vlabs.ac.in/get_gateway_ip";
 	$http.get(url).
         success(function(data, status, headers, config){
 	    $scope.gate_way_ip = data.gateway_ip;
@@ -589,7 +601,7 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
 	month = date.getMonth() + 1;
 	year = date.getFullYear();
 	new_date = day+"-"+month+"-"+year;
-	url = "http://feedback.vlabs.ac.in/usage_from_feedback?gateway_ip="+$scope.message.gateway_ip+"&date="+new_date+"&key=defaultkey"
+	url = "http://feedback-stage.vlabs.ac.in/usage_from_feedback?gateway_ip="+$scope.message.gateway_ip+"&date="+new_date+"&key=defaultkey"
 	//url = "http://fp-edx-demo.vlabs.ac.in/usage_from_feedback?gateway_ip=10.4.20.103&date=28-09-2016&key=defaultkey"
 	//url = "http://fp-edx-demo.vlabs.ac.in/usage_from_feedback?gateway_ip="+$scope.message.gateway_ip+"&date=28-09-2016&key=defaultkey"
 	console.log(url);
