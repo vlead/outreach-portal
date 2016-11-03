@@ -7,27 +7,28 @@
       <div class="row" ng-controller="admin-ctrl">
 	<div class="col-md-3 analytics upcoming" ng-controller="map-ctrl" onclick="scrollWin()">
           UPCOMING WORKSHOPS<br>
-          <span class="number">{{ upcoming_workshops.length }}</span>
+          <span class="number" ng-show="upcoming_workshops.length">{{ upcoming_workshops.length }}</span>
+	  <span class="number" ng-hide="upcoming_workshops.length"><img id="mySpinner" src="/static/img/default1.gif"></span>
         </div>
 	<div class="col-md-3 analytics labs-taken">
           PARTICIPANTS ATTENDED<br>
-          <span class="number">{{ total_participants }}</span>
+          <span class="number" ng-show="total_participants">{{ total_participants }}</span>
+	  <span class="number" ng-hide="total_participants"><img id="mySpinner" src="/static/img/default1.gif"></span>
         </div>
 	<div class="col-md-2 analytics nodal-centers" ng-click="showNcentres()">
           NODAL CENTRES<br>
-          <span class="number">{{ nodal_centres-1 }}</span>
+          <span class="number" ng-show="nodal_centres">{{ nodal_centres-1 }}</span><span class="number" ng-hide="nodal_centres"><img id="mySpinner" src="/static/img/default1.gif"></span>
         </div>
         <div class="col-md-2 analytics workshops-run">
           WORKSHOPS RUN<br>
-          <span class="number">{{ total_workshops }}</span>
-        </div>
-        
-        <div class="col-md-2 analytics usage">
+	  <span class="number" ng-hide="total_workshops"><img id="mySpinner" src="/static/img/default1.gif"></span>
+          <span class="number" ng-show="total_workshops">{{ total_workshops }}</span>
+	</div>
+        <div class="col-md-2 analytics usage" ng-click="showUsage()">
           USAGE<br>
-          <span class="number">{{ total_usage }}</span>
-        </div>
-	 
-	 
+	  <span class="number" ng-hide="total_usage"><img id="mySpinner" src="/static/img/default1.gif"></span>
+          <span class="number" ng-show="total_usage">{{ total_usage }}</span>
+	</div>
       </div>
     </div>
   </div>
