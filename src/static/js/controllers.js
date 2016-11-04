@@ -20,34 +20,9 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
         $scope.upcoming_workshops = workshop_list;
 
     });
-    dataFactory.fetch("/workshops?status_id=1").success(function(upcoming){
-//      $scope.upcoming_workshops = upcoming;                                                                                                                            
-        for(i=0;i<upcoming.length;i++){
-            if(upcoming[i].location != "null"){
-                $scope.createMarker(upcoming[i], upcoming[i], "workshops");
-            //get_geocode(upcoming[i].location, upcoming[i]);                                                                                                            
-            }
-        }
-    });
-  dataFactory.fetch("/nodal_centres").success(function(nodal_centre){
-    //update longitude and lattitude
-    /*
-      var i = 0;                     //  set your counter to 1                                                                   
-    function myLoop () {           //  create a loop function                                                                                      
-      setTimeout(function () {    //  call a 3s setTimeout when the loop is called                                                               
-        get_geocode1(nodal_centre[i]);
-        i++;   
-        if (i < nodal_centre.length) {  
-          myLoop();             
-        }                       
-      }, 1000);
-    }
     
-    myLoop();
-  });
-*/
-    //working code
-  
+  dataFactory.fetch("/nodal_centres").success(function(nodal_centre){
+      
     for(i=0;i<nodal_centre.length;i++){
 	if(nodal_centre[i].location != "null" && nodal_centre[i].longitude != null){
 	  $scope.createMarker(nodal_centre[i], nodal_centre[i], "nodal_centres");
@@ -77,49 +52,14 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
             }
         );
     }
-  /* to update the nodal centres geo locations  
-  var geocoder1 = new google.maps.Geocoder();
-  var get_geocode1 = function (nodal_centre){
-    var id = nodal_centre.id;
-    var location = nodal_centre.location;
-    geocoder1.geocode(
-            { "address": nodal_centre.location+",india, Asia" }, function(results, status) {
-                if (status == google.maps.GeocoderStatus.OK && results.length > 0){
-                    var geo_code = results[0].geometry.location;
-                  var lat = geo_code.lat();
-                  var lng = geo_code.lng();
-                  var data = {"longitude" : lng, "lattitude" : lat};
-                  dataFactory.put("/nodal_centres/"+id, data).success(function(response){
-                    console.log("success for id "+id);
-                  });
-                }
-              else{
-                console.log("failed for id "+id+"error: "+status);
-              }
-            }
-        );
-  }
-    */
-
+  
     var mapOptions = { zoom: 5, center: new google.maps.LatLng(24,80) };
     $scope.map = new google.maps.Map(document.getElementById('map'), mapOptions);
     var geocoder = new google.maps.Geocoder();
-    var get_geocode = function (workshop_location, label){
-        geocoder.geocode(
-            { "address": workshop_location }, function(results, status) {
-                if (status == google.maps.GeocoderStatus.OK && results.length > 0){
-                    var geo_code = results[0].geometry.location;
-                  $scope.createMarker(label, geo_code,"workshops");
-                }
-            }
-        );
-    }
+    
   $scope.createMarker = function (label, geo_code,type){
     var nodal_centre_infowindow = new google.maps.InfoWindow({
       content: '<b>Nodal Centre Location : </b>'+label.location+'<br><b>Nodal Centre Name : </b>'+label.name+'<br><b>Outreach Centre Name : </b>'+label.created_by.institute_name
-    });
-    var workshop_infowindow = new google.maps.InfoWindow({
-      content: '<b>Workshop Location : </b>'+label.location+'<br><b>Date : </b>'+label.date+'<br><b>Participating Colleges : </b>' + label.participating_institutes 
     });
       if(type == "workshops")
       {
