@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="shortcut icon" href="http://vlabs.ac.in/images/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <title>Outreach Portal</title>
@@ -35,11 +36,11 @@
           <ul class="nav navbar-form navbar-right">
 	    {% if session.email %}
 	    <li>
-	      <span> Welcome {{ session.name }}</span> &emsp;<button class="btn btn-primary btn-signin" id="btn-signout">Log out</button>
+	      <span> Welcome {{ session.name }}</span> &emsp;<button class="btn btn-primary btn-signin" onclick="window.location.href='/logout'">Log out</button>
 	    </li>
 	    {% else %}
 	    <li>
-	      <span class= "error">  </span>&emsp; <button class="btn btn-primary btn-signin" id="btn-signin">Log In</button>
+	      <span class= "error">{{ session.error }}  </span>&emsp; <button class="btn btn-primary btn-signin" onclick="window.location.href='/login'">Log In</button>
 	     <!-- &emsp;<img width="18%" onclick="location.href='https://www.facebook.com/outreachvirtuallabs/?skip_nax_wizard=true#'" src="/static/img/fb.png">&emsp;<img width="18%" onclick="location.href='https://twitter.com/TheVirtualLabs'"src="/static/img/twtr.png"></img>-->
 	    </li>	      {% endif %}
 	  </ul>
@@ -62,7 +63,7 @@
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="/static/js/bootstrap.min.js"></script>
     <script src="/static/js/angular.min.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCQn4kTT5n9vKDPoRoaqVzzyD43xAGe2l8&region=IN"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDOT6Nfuj7iNuRcAyrwga7E5gk1HizuiBY&region=IN"></script>
     
     <!--<script src="http://maps.googleapis.com/maps/api/js?language=en async defer"></script>-->
     <script type="text/javascript" src="/static/js/factories.js"></script>
@@ -71,64 +72,6 @@
     <script type="text/javascript" src="/static/js/app.js"></script>
     <script src="https://login.persona.org/include.js"></script>
     <script type="text/javascript">
-      function fb()
-      {
-      alert("dfd");
-      window.href="https://www.facebook.com/outreachvirtuallabs/?skip_nax_wizard=true#";
-      }
-      // global Object container
-      var signinLink = document.getElementById('btn-signin');
-      if (signinLink) {
-      signinLink.onclick = function() { navigator.id.request(); };
-      }
-      var signoutLink = document.getElementById('btn-signout');
-      if (signoutLink) {
-      signoutLink.onclick = function() { navigator.id.logout(); };
-      }
-      navigator.id.watch({
-      {% if session.email %}
-      loggedInUser: '{{ session.email }}',
-      {% else %}
-      loggedInUser: null,
-      {% endif %}
-      onlogin: function(assertion) {
-      $.ajax({
-      type: 'POST',
-      url: '/auth/login', // This is a URL on your website.
-      data: {assertion: assertion},
-      success: function(res, status, xhr) { 
-      if (res == 'admin')
-      {
-      window.location.href = '/admin'; //Will take you to Google.
-      }
-      else if (res == 'OC')
-      {
-      window.location.href = '/oc'; //Will take you to Google.
-      }
-      else if (res == 'NC')
-      {
-      window.location.href = '/nc'; //Will take you to Google.
-      }
-      else
-      {
-      $('.error').append("Unauthorized Email!");
-      }                    
-      },
-      error: function(xhr, status, err) {
-      navigator.id.logout();
-      alert("Login failure: " + err);
-      }
-      });
-      },
-      onlogout: function() {
-      $.ajax({
-      type: 'POST',
-      url: '/auth/logout', // This is a URL on your website.
-      success: function(res, status, xhr) { window.location.href = '/';  },
-      error: function(xhr, status, err) { alert("Logout failure: " + err); }
-      });
-      }
-      });
       {% if session.email %}
       var number  = '{{ session.id }}';
       var email  = '{{ session.email }}';

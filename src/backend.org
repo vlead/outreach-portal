@@ -117,7 +117,7 @@ from flask import current_app
 
 from flask import Flask, redirect, url_for
 from werkzeug import secure_filename
-
+from flask_oauthlib.client import OAuth
 from db import *
 from utils import parse_request, jsonify_list
 from maps import *
@@ -5905,20 +5905,69 @@ entity_pairs = {
 **** GET APIS
 #+BEGIN_SRC python :tangle src/api.py :eval 
 session_list = {}
-def check_authorization(email, key):
-    try:
-	if session_list[email] == key:
-	    current_app.logger.debug("Authorized user with email = %s key = %s" %
-				     (email, key))
-	    current_app.logger.debug("session_list = %s" %
-				     (session_list))
-	    return True
-    except Exception, e:
-	current_app.logger.error("session_list  %s" %
-				 (session_list))
-	current_app.logger.error("User not found in session_list  %s" %
-				 (str(e)))
-	return False
+oauth = OAuth()
+
+google = oauth.remote_app(
+    'google',
+    consumer_key="420719460133-g13g6abnnised3v4nq4d430jo8mpb9m8.apps.googleusercontent.com",
+    consumer_secret="DQxOnwOectvfFFe05jqKTIQT",
+    request_token_params={
+        'scope': 'email', 'prompt' : 'select_account'
+    },
+    #base_url = 'https://www.google.com/accounts/',
+    base_url='https://www.googleapis.com/oauth2/v1/',
+    request_token_url=None,
+    access_token_method='POST',
+    #REDIRECT_URI = '/authorized'  # one of the Redirect URIs from Google APIs console
+
+    access_token_url='https://accounts.google.com/o/oauth2/token',
+    authorize_url='https://accounts.google.com/o/oauth2/auth',
+)
+
+@api.route('/login')
+def login():
+    return google.authorize(callback=url_for('APIs.authorized', _external=True))
+
+@api.route('/authorized')
+def authorized():
+
+    resp = google.authorized_response()
+    if resp is None:
+        return redirect("/")
+    session['google_token'] = (resp['access_token'], '')
+    me = google.get('userinfo')
+    email = str(me.data['email'])
+    APP_URL = "http://localhost:5000"
+    url_for_getting_the_user = "%s/users?email=%s" % \
+				       (APP_URL, email)
+    backend_resp = requests.get(url_for_getting_the_user)
+    
+    if (len(backend_resp.text.encode('ascii')) != 2):
+        if 'error' in session:
+            session.pop('error', None)
+        
+        session['email'] = email
+        role = backend_resp.json()[0]['role']['name'].encode('ascii')
+        name = backend_resp.json()[0]['name'].encode('ascii')
+        session['role'] = role
+        session['name'] = name
+        session['id'] = backend_resp.json()[0]['id']
+        if role == "OC":
+            return redirect("/oc")
+        elif role == "NC":
+            return redirect("/nc")
+        elif role == "admin":
+            return redirect("/admin")
+            
+    else:        
+        session.pop('google_token', None)
+        session['error'] = "Unauthorized Email : "+email            
+        return redirect("/")
+        #return redirect("https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=http://localhost:5000")
+
+@google.tokengetter
+def get_google_oauth_token():
+    return session.get('google_token')
 
 @api.route("/")
 def index():
@@ -5957,55 +6006,13 @@ def nodal_coordinator():
 	return render_template("nc.html")
     else:
 	return redirect("/")
-
-@api.route("/auth/login", methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-	if 'assertion' not in request.form:
-	    abort(400)
-	data = {'assertion': request.form['assertion'],
-		'audience': APP_URL}
-	resp = requests.post(PERSONA_VERIFIER_URL,
-			     data=data, verify=True)
-	current_app.logger.debug("response from Persona = %s" %
-				 resp.json())
-	if resp.ok:
-	    verification_data = resp.json()
-	if verification_data['status'] == 'okay':
-	    email = str(verification_data['email'])
-	    key = str(request.form['assertion'])
-	    session_list[email] = key
-	    current_app.logger.debug("session_list= %s" % session_list)
-	    url_for_getting_the_user = "%s/users?email=%s" % \
-				       (APP_URL, verification_data['email'])
-	    current_app.logger.debug("url_for_getting_the_user = %s" %
-				     url_for_getting_the_user)
-	    backend_resp = requests.get(url_for_getting_the_user)
-	    current_app.logger.debug("backend response = %s" %
-				     backend_resp.text)
-	    if (len(backend_resp.text.encode('ascii')) != 2):
-		session['email'] = verification_data['email']
-		role = backend_resp.json()[0]['role']['name'].encode('ascii')
-		name = backend_resp.json()[0]['name'].encode('ascii')
-		session['role'] = role
-		session['name'] = name
-		session['id'] = backend_resp.json()[0]['id']
-		session['key'] = key
-		if backend_resp.json()[0]['email'].encode('ascii') == \
-		   str(session['email']):
-		    return role
-	    else:
-		return 'Invalid'
-
-@api.route('/auth/logout', methods=['POST'])
-def logout_handler():
-    current_user = session._get_current_object().get('email')
- #   session_list.pop(current_user)
-    session.pop('email', None)
-    session.pop('name', None)
-    session.pop('role', None)
-    session.pop('key', None)
-    return "Ok"
+@api.route('/logout')
+def logout():
+    if 'google_token' in session:
+        session.pop('google_token', None)
+        session.pop('role', None)
+        session.pop('email', None)
+    return redirect("/")
 
 @api.route('/get_nc_wise_usage', methods=['GET'])
 def get_nc_wise_usage():
