@@ -5909,8 +5909,8 @@ oauth = OAuth()
 
 google = oauth.remote_app(
     'google',
-    consumer_key="420719460133-g13g6abnnised3v4nq4d430jo8mpb9m8.apps.googleusercontent.com",
-    consumer_secret="DQxOnwOectvfFFe05jqKTIQT",
+    consumer_key="",
+    consumer_secret="",
     request_token_params={
         'scope': 'email', 'prompt' : 'select_account'
     },
@@ -5937,7 +5937,7 @@ def authorized():
     session['google_token'] = (resp['access_token'], '')
     me = google.get('userinfo')
     email = str(me.data['email'])
-    APP_URL = "http://localhost:5000"
+    APP_URL = "http://localhost"
     url_for_getting_the_user = "%s/users?email=%s" % \
 				       (APP_URL, email)
     backend_resp = requests.get(url_for_getting_the_user)
