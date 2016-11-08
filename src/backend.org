@@ -5930,40 +5930,46 @@ def login():
 
 @api.route('/authorized')
 def authorized():
+    try:
+        resp = google.authorized_response()
+        if resp is None:
+            return redirect("/")
+        session['google_token'] = (resp['access_token'], '')
+        me = google.get('userinfo')
+        email = str(me.data['email'])
+        url_for_getting_the_user = "%s/users?email=%s" % \
+                                   (APP_URL, email)
+    except Exception as e:
+        session['error'] = "Error in login : "+str(e)            
+        return redirect("/")
+    try:
+        backend_resp = requests.get(url_for_getting_the_user)
 
-    resp = google.authorized_response()
-    if resp is None:
+        if (len(backend_resp.text.encode('ascii')) != 2):
+            if 'error' in session:
+                session.pop('error', None)
+
+            session['email'] = email
+            role = backend_resp.json()[0]['role']['name'].encode('ascii')
+            name = backend_resp.json()[0]['name'].encode('ascii')
+            session['role'] = role
+            session['name'] = name
+            session['id'] = backend_resp.json()[0]['id']
+            if role == "OC":
+                return redirect("/oc")
+            elif role == "NC":
+                return redirect("/nc")
+            elif role == "admin":
+                return redirect("/admin")
+
+        else:        
+            session.pop('google_token', None)
+            session['error'] = "Unauthorized Email : "+email            
+            return redirect("/")
+            #return redirect("https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=http://localhost:5000")
+    except Exception as e:
+        session['error'] = "Error in Login : "+str(e)            
         return redirect("/")
-    session['google_token'] = (resp['access_token'], '')
-    me = google.get('userinfo')
-    email = str(me.data['email'])
-    APP_URL = "http://localhost"
-    url_for_getting_the_user = "%s/users?email=%s" % \
-				       (APP_URL, email)
-    backend_resp = requests.get(url_for_getting_the_user)
-    
-    if (len(backend_resp.text.encode('ascii')) != 2):
-        if 'error' in session:
-            session.pop('error', None)
-        
-        session['email'] = email
-        role = backend_resp.json()[0]['role']['name'].encode('ascii')
-        name = backend_resp.json()[0]['name'].encode('ascii')
-        session['role'] = role
-        session['name'] = name
-        session['id'] = backend_resp.json()[0]['id']
-        if role == "OC":
-            return redirect("/oc")
-        elif role == "NC":
-            return redirect("/nc")
-        elif role == "admin":
-            return redirect("/admin")
-            
-    else:        
-        session.pop('google_token', None)
-        session['error'] = "Unauthorized Email : "+email            
-        return redirect("/")
-        #return redirect("https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=http://localhost:5000")
 
 @google.tokengetter
 def get_google_oauth_token():
