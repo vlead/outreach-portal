@@ -19,4 +19,25 @@
   business logic.
 
 ** Map Locators
-   
+:PROPERTIES:
+:CUSTOM_ID: map_locaters
+:END:
+
+  [[https://developers.google.com/maps/][Google Map API]] is used to mark nodal centers on the Indian map in this
+  application.  A =key= is part of the request parameters of the google map
+  api. 
+
+  #+BEGIN_EXAMPLE
+  <script type="text/javascript" 
+    src="https://maps.googleapis.com/maps/api/js?key=API_KEY">
+  </script>
+  #+END_EXAMPLE
+
+  This =key= is given by Google following a request identified by an email is
+  made using a [[https://developers.google.com/maps/documentation/javascript/get-api-key][dash board]].  This key can be used across applications that make
+  up the platform of =Virtual Labs= to access google map api.
+
+  This key is exposed in the browser.  Is there a way to secure this key?
+  Exposing the key is the [[https://github.com/drewjw81/meteor-googlemaps/issues/6][practice]].  The key is [[http://stackoverflow.com/questions/8729976/does-google-maps-javascript-api-key-v3-need-to-be-kept-secret-in-html-checked][secured]] by setting =allowed
+  referrers= when generating it so that the key can't be used by services
+  outside the =allowed referrers=. 
