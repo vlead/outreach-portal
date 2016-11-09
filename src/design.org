@@ -15,8 +15,8 @@
 
 * Design of the Outreach Portal
   Outreach Portal is both a web application and a service.  The software that
-  is bundled and deployed performs these twin tasks - user interface and
-  business logic.
+  is bundled and deployed performs the twin tasks of providing user interface
+  and performing business logic.
 
 ** Map Locators
 :PROPERTIES:
@@ -35,7 +35,8 @@
 
   This =key= is given by Google following a request identified by an email is
   made using a [[https://developers.google.com/maps/documentation/javascript/get-api-key][dash board]].  This key can be used across applications that make
-  up the platform of =Virtual Labs= to access google map api.
+  up the platform of =Virtual Labs= to access google map api.  This is done by
+  setting the =allowed referrers= to urls originating from /vlabs.ac.in/.
 
   This key is exposed in the browser.  Is there a way to secure this key?
   Exposing the key is the [[https://github.com/drewjw81/meteor-googlemaps/issues/6][practice]].  The key is [[http://stackoverflow.com/questions/8729976/does-google-maps-javascript-api-key-v3-need-to-be-kept-secret-in-html-checked][secured]] by setting =allowed
