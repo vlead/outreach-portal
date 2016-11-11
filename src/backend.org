@@ -5548,6 +5548,10 @@ APP_URL = "http://localhost:5000"
 # Persona Verifier URL
 PERSONA_VERIFIER_URL = "https://verifier.login.persona.org/verify"
 
+#Google Authentication Credentials
+CONSUMER_KEY = "420719460133-g13g6abnnised3v4nq4d430jo8mpb9m8.apps.googleusercontent.com"
+CONSUMER_SECRET = "DQxOnwOectvfFFe05jqKTIQT"
+
 #+END_SRC
 
 ** Deploying the application
@@ -5909,8 +5913,8 @@ oauth = OAuth()
 
 google = oauth.remote_app(
     'google',
-    consumer_key="",
-    consumer_secret="",
+    consumer_key=CONSUMER_KEY,
+    consumer_secret=CONSUMER_SECRET,
     request_token_params={
         'scope': 'email', 'prompt' : 'select_account'
     },
