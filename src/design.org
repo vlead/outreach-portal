@@ -1,0 +1,44 @@
+#+TITLE: Design of Outreach Portal
+#+AUTHOR: VLEAD
+#+DATE: [2016-11-08 Tue]
+#+SETUPFILE: ./org-templates/level-0.org
+#+TAGS: boilerplate(b)
+#+EXCLUDE_TAGS: boilerplate
+#+OPTIONS: ^:nil
+
+* Introduction
+  This document elaborates the design incorporated while building or
+  implementing the [[https://outreach.vlabs.ac.in][=outreach portal=]].  This document is incrementally dilating
+  due to the tight cycle between design and implementation.  This cycle is
+  established to satisfy the requirement of making short releases of working
+  and demonstrable software.
+
+* Design of the Outreach Portal
+  Outreach Portal is both a web application and a service.  The software that
+  is bundled and deployed performs the twin tasks of providing user interface
+  and performing business logic.
+
+** Map Locators
+:PROPERTIES:
+:CUSTOM_ID: map_locaters
+:END:
+
+  [[https://developers.google.com/maps/][Google Map API]] is used to mark nodal centers on the Indian map in this
+  application.  A =key= is part of the request parameters of the google map
+  api. 
+
+  #+BEGIN_EXAMPLE
+  <script type="text/javascript" 
+    src="https://maps.googleapis.com/maps/api/js?key=API_KEY">
+  </script>
+  #+END_EXAMPLE
+
+  This =key= is given by Google following a request identified by an email is
+  made using a [[https://console.developers.google.com/apis/dashboard?project=outreach-portal&authuser=1&duration=PT1H][dash board]].  This key can be used across applications that make
+  up the platform of =Virtual Labs= to access google map api.  This is done by
+  setting the =allowed referrers= to urls originating from /vlabs.ac.in/.
+
+  This key is exposed in the browser.  Is there a way to secure this key?
+  Exposing the key is the [[https://github.com/drewjw81/meteor-googlemaps/issues/6][practice]].  The key is [[http://stackoverflow.com/questions/8729976/does-google-maps-javascript-api-key-v3-need-to-be-kept-secret-in-html-checked][secured]] by setting =allowed
+  referrers= when generating it so that the key can't be used by services
+  outside the =allowed referrers=. 
