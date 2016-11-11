@@ -5909,8 +5909,8 @@ oauth = OAuth()
 
 google = oauth.remote_app(
     'google',
-    consumer_key="",
-    consumer_secret="",
+    consumer_key="420719460133-g13g6abnnised3v4nq4d430jo8mpb9m8.apps.googleusercontent.com",
+    consumer_secret="DQxOnwOectvfFFe05jqKTIQT",
     request_token_params={
         'scope': 'email', 'prompt' : 'select_account'
     },
