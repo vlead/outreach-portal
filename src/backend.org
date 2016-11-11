@@ -6474,13 +6474,9 @@ delete or update an existing record.
 #+BEGIN_SRC python
 @api.route('/<entity>/<id>', methods=['PUT', 'DELETE'])
 def modify_entity(entity, id):
-    email = request.headers.get('email')
-    key = request.headers.get('key')
-    if email is None or key is None:
-        abort(401, "Unauthorized Credentials")
 
-#    if(not check_authorization(email, key)):
-#        abort(401, "Unauthorized user")
+    if 'google_token' is not in session:
+        abort(401, "Unauthorized Credentials")
     
     if entity not in entity_map_types:
         current_app.logger.debug("Entity %s not in entity map types"  % entity)
@@ -6691,13 +6687,9 @@ interpreter expects them to be.
 #+BEGIN_SRC python
 @api.route('/<entity>', methods=['POST'])
 def create_entity(entity):
-    email = str(request.headers.get('email'))
-    key = str(request.headers.get('key'))
-    if email is None or key is None:
-        abort(401, "Unauthorized Credentials")
 
-#    if(not check_authorization(email, key)):
-#        abort(401, "Unauthorized user")
+    if 'google_token' is not in session:
+        abort(401, "Unauthorized Credentials")
 
     if entity not in entity_map_types:
         current_app.logger.debug("Entity %s not present in entity map types"  % entity)
