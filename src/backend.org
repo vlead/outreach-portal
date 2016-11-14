@@ -5944,7 +5944,7 @@ def authorized():
         url_for_getting_the_user = "%s/users?email=%s" % \
                                    (APP_URL, email)
     except Exception as e:
-        session['error'] = "Error in login : "+str(e)            
+        session['error'] = "Error in Google Authorization : "+str(e)            
         return redirect("/")
     try:
         backend_resp = requests.get(url_for_getting_the_user)
@@ -5972,7 +5972,7 @@ def authorized():
             return redirect("/")
             #return redirect("https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=http://localhost:5000")
     except Exception as e:
-        session['error'] = "Error in Login : "+str(e)            
+        session['error'] = "Error in Outreach Authentication : "+str(e)            
         return redirect("/")
 
 @google.tokengetter
