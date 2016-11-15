@@ -43,7 +43,7 @@ print "test package"
 
 from collections import OrderedDict
 
-from flask.ext.sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
 from flask import current_app, request
 from sqlalchemy.orm import relationship
 import sqlalchemy.types as types
@@ -5373,7 +5373,7 @@ def typecheck(**typemap):
 import os
 
 from flask import Flask, jsonify, make_response
-from flask.ext.cors import CORS
+from flask_cors import CORS
 
 from db import db
 from api import api

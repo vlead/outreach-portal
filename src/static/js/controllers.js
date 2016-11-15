@@ -1,6 +1,7 @@
 var app = angular.module('outreachApp.controllers',[]);
 app.controller('map-ctrl', function ($scope, $http, dataFactory){
     var workshop_list = [];
+    $scope.upcoming_loading = true;
     dataFactory.fetch("/workshops?status_id=1").success(function(workshops){
 
         var today = new Date();
@@ -17,6 +18,7 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
 
             }
         }
+	$scope.upcoming_loading = false;
         $scope.upcoming_workshops = workshop_list;
 
     });
@@ -216,6 +218,7 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
         $scope.nc_users = response;
         
     });
+    $scope.load_analytics = true;
     dataFactory.fetch("/workshops?status_id=3").success(function(workshops){
         var participants_count = 0;
         var workshop_list = [];
@@ -233,6 +236,7 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
         $scope.total_usage = expts_count;
         $scope.labs = labs;
         $scope.workshops = workshop_list;
+	$scope.load_analytics = false;
     });
    
     /*Institute wise usage*/
