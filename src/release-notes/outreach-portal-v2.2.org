@@ -1,0 +1,17 @@
+#+TITLE: Outreach Portal Version V2.2
+#+AUTHOR: VLEAD
+#+DATE: [2016-11-11 Fri]
+
+* Introduction
+  This document describes the release notes of =Outreach Portal=
+  version =v2.2=.
+
+* Landing Page :
+  - By Clicking on =Usage= tab, all institute wise workshop usage is displayed
+    without =login=.
+  - Added animation image for all the numbers showing on =Analytics= band. 
+  - Replaced Persona authentication with Google OAuth authentication. currently
+    =login= will work only for =gmail= and =vlabs= email account.
+
+* Github issues
+  Ressolved Issues : [[https://github.com/vlead/outreach-portal/issues/208][208]], [[https://github.com/vlead/outreach-portal/issues/210][210]]
