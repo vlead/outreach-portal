@@ -7,11 +7,15 @@
   version =v2.2=.
 
 * Landing Page :
+
+  - Replaced Persona authentication with Google OAuth authentication. Currently
+    =login= will work for all =gmail=, =vlabs= and any other email servers hosted by Google service.
   - By Clicking on =Usage= tab, all institute wise workshop usage is displayed
     without =login=.
-  - Added animation image for all the numbers showing on =Analytics= band. 
-  - Replaced Persona authentication with Google OAuth authentication. currently
-    =login= will work only for =gmail= and =vlabs= email account.
+  - Added processing image (.gif) for all the numbers showing on =Analytics= band before actual numbers displayed. 
+  
+* Admin Account :
+  - Added processing image (.gif) for all dashboard analytics before actual numbers displayed.
 
 * Github issues
   Ressolved Issues : [[https://github.com/vlead/outreach-portal/issues/208][208]], [[https://github.com/vlead/outreach-portal/issues/210][210]]
