@@ -5929,13 +5929,35 @@ google = oauth.remote_app(
 )
 #+END_SRC
 ***** =Login= API
-      - As soon as user clicks on =login= button from f/e it will invoke
+      - When clicks on =login= button from f/e it will invoke
         =/login= api and thereby it will forward request to =google=
 #+BEGIN_SRC python :tangle src/api.py :eval 
 @api.route('/login')
 def login():
     return google.authorize(callback=url_for('APIs.authorized', _external=True))
+
 #+END_SRC
+***** =Logout= API
+      - When clicks on =logout= button from f/e it will invoke
+  =/logout= api and thereby it will destroy all session variables.
+#+BEGIN_SRC python :tangle src/api.py :eval 
+
+@api.route('/logout')
+def logout():
+    if 'google_token' in session:
+        session.pop('google_token', None)
+        session.pop('role', None)
+        session.pop('email', None)
+        session.pop('id', None)
+        session.pop('name', None)
+    if 'error' in session:
+        session.pop('error', None)
+
+    return redirect("/")
+
+
+#+END_SRC
+
 ***** Google Callback response =API=
       - Once the Google verfied the user credentials it will send
         callback response to =/authorized= api which should be
@@ -6047,13 +6069,6 @@ def nodal_coordinator():
 	return render_template("nc.html")
     else:
 	return redirect("/")
-@api.route('/logout')
-def logout():
-    if 'google_token' in session:
-        session.pop('google_token', None)
-        session.pop('role', None)
-        session.pop('email', None)
-    return redirect("/")
 
 @api.route('/get_nc_wise_usage', methods=['GET'])
 def get_nc_wise_usage():
