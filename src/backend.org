@@ -5929,7 +5929,7 @@ google = oauth.remote_app(
 )
 #+END_SRC
 ***** =Login= API
-      - When clicks on =login= button from f/e it will invoke
+      - When user clicks on =login= button from f/e it will invoke
         =/login= api and thereby it will forward request to =google=
 #+BEGIN_SRC python :tangle src/api.py :eval 
 @api.route('/login')
@@ -5938,7 +5938,7 @@ def login():
 
 #+END_SRC
 ***** =Logout= API
-      - When clicks on =logout= button from f/e it will invoke
+      - When user clicks on =logout= button from f/e it will invoke
   =/logout= api and thereby it will destroy all session variables.
 #+BEGIN_SRC python :tangle src/api.py :eval 
 
