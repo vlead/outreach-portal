@@ -5908,6 +5908,8 @@ entity_pairs = {
 #+END_SRC
      
 **** GET APIS
+***** Google OAuth Settings
+      - All Google OAuth service required URLs should be specified
 #+BEGIN_SRC python :tangle src/api.py :eval 
 session_list = {}
 oauth = OAuth()
@@ -5919,20 +5921,25 @@ google = oauth.remote_app(
     request_token_params={
         'scope': 'email', 'prompt' : 'select_account'
     },
-    #base_url = 'https://www.google.com/accounts/',
     base_url='https://www.googleapis.com/oauth2/v1/',
     request_token_url=None,
     access_token_method='POST',
-    #REDIRECT_URI = '/authorized'  # one of the Redirect URIs from Google APIs console
-
     access_token_url='https://accounts.google.com/o/oauth2/token',
     authorize_url='https://accounts.google.com/o/oauth2/auth',
 )
-
+#+END_SRC
+***** =Login= API
+      - As soon as user invokes =login= button from f/e it will invokes
+        =/login= api and thereby it will forward request to =google=
+#+BEGIN_SRC python :tangle src/api.py :eval 
 @api.route('/login')
 def login():
     return google.authorize(callback=url_for('APIs.authorized', _external=True))
-
+#+END_SRC
+***** Google Callback response =API=
+      - Once the Google verfied the user credentials it will send
+        callback response to =/authorized= api which is registered at google's dashboard 
+#+BEGIN_SRC python :tangle src/api.py :eval 
 @api.route('/authorized')
 def authorized():
     try:
@@ -5940,8 +5947,8 @@ def authorized():
         if resp is None:
             return redirect("/")
         session['google_token'] = (resp['access_token'], '')
-        me = google.get('userinfo')
-        email = str(me.data['email'])
+        user_info = google.get('userinfo')
+        email = str(user_info.data['email'])
         url_for_getting_the_user = "%s/users?email=%s" % \
                                    (APP_URL, email)
     except Exception as e:
@@ -5971,15 +5978,23 @@ def authorized():
             session.pop('google_token', None)
             session['error'] = "Unauthorized Email : "+email            
             return redirect("/")
-            #return redirect("https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=http://localhost:5000")
+          
     except Exception as e:
         session['error'] = "Error in Outreach Authentication : "+str(e)            
         return redirect("/")
-
+#+END_SRC
+***** Google token getter
+      - Once the google verfies the credentials token will be shared.
+#+BEGIN_SRC python :tangle src/api.py :eval 
 @google.tokengetter
 def get_google_oauth_token():
     return session.get('google_token')
-
+#+END_SRC
+***** =root= API
+      - This is the API which invoked as soon as user enters domain
+        name =http://outreach.vlabs.ac.in= and due to domain issue with Google Oauth service
+        this api will always make sures that user will redirect to =http://outreach.virtual-labs.ac.in=
+#+BEGIN_SRC python :tangle src/api.py :eval 
 @api.route("/")
 def index():
     remote_url = request.url
@@ -5987,7 +6002,9 @@ def index():
         return redirect(APP_URL)
     else:
         return render_template("index.html")
-
+#+END_SRC
+***** Other GET APIs
+#+BEGIN_SRC python :tangle src/api.py :eval 
 @api.route("/ncentres")
 def ncentres():
     return render_template("ncentres.html")
