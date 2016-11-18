@@ -5999,9 +5999,9 @@ def authorized():
 def get_google_oauth_token():
     return session.get('google_token')
 #+END_SRC
-***** =root= API
-      - API which invoked as soon as user enters domain
-        name =http://outreach.vlabs.ac.in= and due to domain issue with Google Oauth service
+***** =Root= API
+      - This API is invoked as soon as user enters domain
+        name =http://outreach.vlabs.ac.in= or =http://outreach.virtual-labs.ac.in= and due to domain issue with Google Oauth service
         this api will always make sures that user will redirect to =http://outreach.virtual-labs.ac.in=
 #+BEGIN_SRC python :tangle src/api.py :eval 
 @api.route("/")
