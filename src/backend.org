@@ -5964,7 +5964,7 @@ def logout():
         registered at google's dashboard as one of callback response
         api
       - Once the google verifies the =Authorization= then only
-        =Outreach-Portal= will checks for =Authentication= and on successful it will be redirected to belonging user role api
+        =Outreach-Portal= will checks for =Authentication= and on successful it will be redirected to respective user dashboard.
 
 #+BEGIN_SRC python :tangle src/api.py :eval 
 @api.route('/authorized')
