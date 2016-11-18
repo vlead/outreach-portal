@@ -6031,6 +6031,8 @@ def index():
     remote_url = request.url
     if remote_url.find("vlabs.ac.in") != -1:
         return redirect(APP_URL)
+    elif remote_url.find("localhost") != -1:
+        return render_template("index.html")
     else:
         return render_template("index.html")
 #+END_SRC
