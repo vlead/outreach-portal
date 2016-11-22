@@ -1,6 +1,6 @@
 #+TITLE: Outreach Portal Version V2.2
 #+AUTHOR: VLEAD
-#+DATE: [2016-11-11 Fri]
+#+DATE: [2016-11-22 Tue]
 
 * Introduction
   This document describes the release notes of =Outreach Portal=
@@ -18,4 +18,4 @@
   - Added processing image (.gif) for all dashboard analytics before actual numbers displayed.
 
 * Github issues
-  Ressolved Issues : [[https://github.com/vlead/outreach-portal/issues/208][208]], [[https://github.com/vlead/outreach-portal/issues/210][210]], [[https://github.com/vlead/outreach-portal/issues/213][213]]
+  Ressolved Issues : [[https://github.com/vlead/outreach-portal/issues/208][208]], [[https://github.com/vlead/outreach-portal/issues/210][210]], [[https://github.com/vlead/outreach-portal/issues/213][213]], [[https://github.com/vlead/outreach-portal/issues/212][212]]
