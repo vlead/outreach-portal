@@ -124,7 +124,7 @@
           "min_required": "2gb"
         },
         "storage": {
-          "min_required": "10gb"
+          "min_required": "150gb"
         },
         "installer": [
           "bash /var/www/setup.sh",
