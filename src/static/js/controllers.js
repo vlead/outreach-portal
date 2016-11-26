@@ -10,9 +10,7 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
             var workshop_id = workshops[i].id ;
             if (((today > workshop_date) & !(today.toDateString() == workshop_date.toDateString())) &
                 (workshops[i].status.name == "Upcoming")){
-                dataFactory.put('/workshops/'+workshop_id.toString(),
-                                {'status': {'id': 2}}).success(function(data, status){
-                                    console.log('Status success'); });
+                console.log("");
             }else{
                 workshop_list.push(workshops[i]);
 
@@ -301,6 +299,21 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
 });
 
 app.controller("nc-dashboard", function($scope, $http, dataFactory, $routeParams, $route, $window) {
+
+    dataFactory.fetch("/workshops?status_id=1").success(function(workshops){
+        var today = new Date();
+        for(i=0;i<workshops.length;i++){
+            workshop_date = new Date(workshops[i].date);
+            var workshop_id = workshops[i].id ;
+            if (((today > workshop_date) & !(today.toDateString() == workshop_date.toDateString())) &
+                (workshops[i].status.name == "Upcoming")){
+                dataFactory.put('/workshops/'+workshop_id.toString(),
+                                {'status': {'id': 2}}).success(function(data, status){
+                                    console.log('Status success'); });
+            }
+        }
+    });
+    
     dataFactory.put('/users/'+$window.number, {'last_active': Date().toLocaleString()}).success(function(response){
     }).error(function(data, status, headers, config){
         if(status == 500){

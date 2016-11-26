@@ -6317,7 +6317,7 @@ def upload_file(file, url):
 
 	path = {'path': db_path}
 	try:
-	    response = requests.put(url, data=path, headers= {'email' : session['email'], 'key' : session['key']})
+	    response = requests.put(url, data=path)
 	    if response.status_code == 200:
 		current_app.logger.error("db path is set successfully")
 	    else:
@@ -6533,11 +6533,20 @@ delete or update an existing record.
 def modify_entity(entity, id):
     email = str(request.headers.get('email'))
     key = str(request.headers.get('key'))
+    if entity == "reference_documents" or entity == "workshop_reports":
+        if email is None or key is None:
+            abort(401, "Unauthorized Credentials")
+    else:
+        if 'email' not in session:
+            abort(401, "Unauthorized Credentials")
+
+    #email = str(request.headers.get('email'))
+    #key = str(request.headers.get('key'))
     #if email is None or key is None:
     #    abort(401, "Unauthorized Credentials")
   
-    if 'email' not in session:
-        abort(401, "Unauthorized Credentials")
+    #if 'email' not in session:
+    #    abort(401, "Unauthorized Credentials")
     
     if entity not in entity_map_types:
         current_app.logger.debug("Entity %s not in entity map types"  % entity)
@@ -6750,11 +6759,17 @@ interpreter expects them to be.
 def create_entity(entity):
     email = str(request.headers.get('email'))
     key = str(request.headers.get('key'))
+    if entity == "reference_documents" or entity == "workshop_reports":
+        if email is None or key is None:
+            abort(401, "Unauthorized Credentials")
+    else:
+        if 'email' not in session:
+            abort(401, "Unauthorized Credentials")
     #if email is None or key is None:
     #    abort(401, "Unauthorized Credentials")
     
-    if 'email' not in session:
-        abort(401, "Unauthorized Credentials")
+    #if 'email' not in session:
+    #    abort(401, "Unauthorized Credentials")
     
     if entity not in entity_map_types:
         current_app.logger.debug("Entity %s not present in entity map types"  % entity)
