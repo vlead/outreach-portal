@@ -1329,6 +1329,7 @@ class Workshop(Entity):
     cancellation_reason = db.Column(db.String(128))
     not_approval_reason = db.Column(db.String(128))
     gateway_ip = db.Column(db.String(128))
+    hosted_on = db.Column(db.String(60))
     workshop_reports = db.relationship('WorkshopReport', backref='workshop')
 #+END_SRC
 
@@ -1393,6 +1394,11 @@ class Workshop(Entity):
         if 'date' not in kwargs:
             raise AttributeRequired("mandatory attribute `date` is missing")
         self.set_date(kwargs['date'])
+
+        if 'conducted_on' not in kwargs:
+            raise AttributeRequired("mandatory attribute `conducted_on` is\
+            missing")
+        self.set_conducted_on(kwargs['conducted_on'])
 
         if 'participants_attended' in kwargs:
             self.set_participants_attended(kwargs['participants_attended'])
@@ -2089,6 +2095,13 @@ class TestWorkshop(TestCase):
         current_app.logger.debug("get the gateway_ip: %s" % self.gateway_ip)
         return self.gateway_ip
 #+END_SRC
+***** getConductedOn: Workshop --> Conducted_on
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_conducted_on(self):
+        current_app.logger.debug("get conducted_on: %s" % self.conducted_on)
+        return self.conducted_on
+#+END_SRC
+
 ***** Test getNotApprovalReason: Workshop --> Reason
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_get_workshop_not_approval_reason(self):
@@ -2592,6 +2605,14 @@ class TestWorkshop(TestCase):
     def set_gateway_ip(self, gateway_ip):
         self.gateway_ip = gateway_ip
 #+END_SRC
+***** setConductedOn: Workshop, Conducted_on --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(conducted_on=str)
+    def set_conducted_on(self, conducted_on):
+        self.conducted_on = conducted_on
+
+#+END_SRC
+
 ***** Test setNotApprovalReason: Workshop, Reason --> Void
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
     def test_set_not_approval_reason(self):
@@ -2637,7 +2658,8 @@ class TestWorkshop(TestCase):
             'status': self.status.to_client(),
             'cancellation_reason': self.cancellation_reason,
             'not_approval_reason': self.not_approval_reason,
-            'gateway_ip': self.gateway_ip
+            'gateway_ip': self.gateway_ip,
+            'conducted_on': self.conducted_on
         }
 #+END_SRC
       
@@ -5798,6 +5820,9 @@ workshop = {'entity_class': Workshop,
                 {'name': 'gateway_ip',
                  'class': None,
                  'relationship': 'one'},
+                {'name': 'conducted_on',
+                 'class': None,
+                 'relationship': 'one'},
                 {'name': 'created',
                  'class': None,
                  'relationship': 'one'},
@@ -6475,6 +6500,7 @@ entity_map_types = {
             'other_details': str,
             'cancellation_reason': str,
             'gateway_ip': str,
+            'conducted_on': str,
             'not_approval_reason': str,
             'created': datetime,
             'last_updated': str,
@@ -6812,7 +6838,7 @@ def create_record(entity_name, entity):
 <<create-record>>
 <<create-entity>>
 #+END_SRC
-
+      
 ** Testing the REST API
 *** Tests for Role
 #+BEGIN_SRC python :tangle tests/test_api.py :eval no 
