@@ -1291,3 +1291,28 @@ app.controller("upload-reports", function($scope, $http, $routeParams, dataFacto
     $scope.attendance = attendance;
     $scope.reports = reports;
 });
+app.controller("ws_details", function($scope, $http, $routeParams, dataFactory, $route, $window){
+    dataFactory.fetch('/workshops?status_id=3').success(function(data,status,headers,config){
+	$scope.workshops = data;
+    }).error(function(data, status, headers, config){
+        console.log("Failed1");
+    });
+    dataFactory.fetch('/workshop_reports').success(function(data,status,headers,config){
+	var reports = []
+	for(i=0;i<$scope.workshops.length;i++){
+	    reports = []
+	    for(j=0;j<data.length;j++){
+		if($scope.workshops[i].id == data[j].workshop.id){
+		    reports.push({"name" : data[j].name, "path" :  data[j].path})
+		    console.log("true");
+		}
+
+	    }
+	    $scope.workshops[i]['reports'] = reports;
+	    
+	}
+    }).error(function(data, status, headers, config){
+        console.log("Failed2");
+    });
+    
+});

@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+{% block content %}
+{% raw %}
+<div ng-app="outreachApp">
+  <div class="container">
+    <div ng-controller="ws_details">
+      <h3>Total Workshops : </h3><br>
+      <div align='center' ng-show="nloading"><img id="mySpinner" src="/static/img/default.gif"></div>
+      <div ng-hide="nloading">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>S.No</th>
+            <th>WS Name</th>
+	    <th>WS Location</th>
+	    <th>WS Date</th>
+	    <th>Online/College_Cloud WS</th>
+	    <th>Reports</th>
+          </tr>
+        </thead>
+        <tbody ng-repeat="workshop in workshops | orderBy : 'name'">
+          <tr>
+            <td>{{ $index+1 }}</td>
+	    <td>{{ workshop.name }}</td>
+            <td>{{ workshop.location }}</td>
+	    <td>{{ workshop.date }}</td>
+	    <td>{{ workshop.conducted_on }}</td>
+	    <td ng-repeat="report in workshop.reports">
+	      <a href="{{report.path}}"><button class="btn-primary">{{report.name}}</button></a>
+	    </td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endraw %}
+{% endblock %}

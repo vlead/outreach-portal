@@ -1329,7 +1329,7 @@ class Workshop(Entity):
     cancellation_reason = db.Column(db.String(128))
     not_approval_reason = db.Column(db.String(128))
     gateway_ip = db.Column(db.String(128))
-    hosted_on = db.Column(db.String(60))
+    conducted_on = db.Column(db.String(60))
     workshop_reports = db.relationship('WorkshopReport', backref='workshop')
 #+END_SRC
 
@@ -5603,7 +5603,7 @@ application = create_app(config)
 
 ** REST APIs to read and query data
    These are the set of REST APIs for read operations.
-   
+
 *** Design
    The REST APIs to get and query data are designed in a generic
    way. That is, APIs for each entity is not designed and implemented
@@ -6072,6 +6072,38 @@ def index():
 
 ***** Other GET APIs
 #+BEGIN_SRC python :tangle src/api.py :eval 
+@api.route("/ws_details")
+def ws_details():
+    return render_template("ws_details.html")
+
+@api.route("/workshop_details")
+def workshop_details():
+    return_dict = {}
+    if request.method == 'GET':
+	approved_workshops_url = APP_URL + "/workshops?status_id=3"
+	approved_workshops = requests.get(usage_url)
+	try:
+	    if approved_workshops.ok:
+		ws = approved_workshops.text
+		ws_dict = json.loads(ws)
+		ws_report_details = []
+		for workshop in ws_dict:
+		   # print"here"
+		    workshop_id = workshop['id']
+		    workshop_reports_url = APP_URL + "/workshop_reports?workshop_id=" + str(workshop_id)
+		    user_response = requests.get(workshop_reports_url)
+		    try:
+			if user_response.ok:
+			    users = user_response.text
+			    users_dict = json.loads(users)
+			    workshop["reports"] = users_dict
+		    except Exception as e:
+			print str(e)
+	except Exception as e:
+	    print str(e)
+    return jsonify(ws_dict)
+
+
 @api.route("/ncentres")
 def ncentres():
     return render_template("ncentres.html")
@@ -6110,147 +6142,147 @@ def nodal_coordinator():
 def get_nc_wise_usage():
     return_dict = {}
     if request.method == 'GET':
-        usage_url = APP_URL + "/workshops?status_id=3"
-        ws_usage_response = requests.get(usage_url)
-        try:
-            if ws_usage_response.ok:
-                ws = ws_usage_response.text
-                ws_dict = json.loads(ws)
-                #print len(ws_dict)
-                inst_ws_usage_dict= []
-                for workshop in ws_dict:
-                   # print"here"
-                    user_id = workshop['user']['id']
-                    user_url = APP_URL + "/users?id=" + str(user_id)
-                    user_response = requests.get(user_url)
-                    try:
-                        if user_response.ok:
-                            users = user_response.text
-                            users_dict = json.loads(users)
-                            if users_dict[0]['role']['id'] == 2 and \
-                              users_dict[0]['institute_name'] is not None:
-                               # print "users_dict = %s" % users_dict[0]
-                                institute_name = users_dict[0]['institute_name']
-                               # print "institute_name = %s" % institute_name
-                                if workshop['experiments_conducted'] is None:
-                                    usage = 0
-                                else:
-                                    usage = workshop['experiments_conducted']
-                                if institute_name in return_dict:
-                                    return_dict[institute_name]['usage'] += \
-                                      usage
-                                    return_dict[institute_name]['workshops'] += 1
-                                else:
-                                    temp_dict = {}
-                                    temp_dict['usage'] = usage
-                                    temp_dict['workshops'] = 1
-                                    nc_count = get_nodal_center_count_for_OC(user_id)
-                                    temp_dict['nc_count'] = nc_count
-                                    return_dict[institute_name] = temp_dict
+	usage_url = APP_URL + "/workshops?status_id=3"
+	ws_usage_response = requests.get(usage_url)
+	try:
+	    if ws_usage_response.ok:
+		ws = ws_usage_response.text
+		ws_dict = json.loads(ws)
+		#print len(ws_dict)
+		inst_ws_usage_dict= []
+		for workshop in ws_dict:
+		   # print"here"
+		    user_id = workshop['user']['id']
+		    user_url = APP_URL + "/users?id=" + str(user_id)
+		    user_response = requests.get(user_url)
+		    try:
+			if user_response.ok:
+			    users = user_response.text
+			    users_dict = json.loads(users)
+			    if users_dict[0]['role']['id'] == 2 and \
+			      users_dict[0]['institute_name'] is not None:
+			       # print "users_dict = %s" % users_dict[0]
+				institute_name = users_dict[0]['institute_name']
+			       # print "institute_name = %s" % institute_name
+				if workshop['experiments_conducted'] is None:
+				    usage = 0
+				else:
+				    usage = workshop['experiments_conducted']
+				if institute_name in return_dict:
+				    return_dict[institute_name]['usage'] += \
+				      usage
+				    return_dict[institute_name]['workshops'] += 1
+				else:
+				    temp_dict = {}
+				    temp_dict['usage'] = usage
+				    temp_dict['workshops'] = 1
+				    nc_count = get_nodal_center_count_for_OC(user_id)
+				    temp_dict['nc_count'] = nc_count
+				    return_dict[institute_name] = temp_dict
 
-                            elif users_dict[0]['role']['id'] == 3:
-                              #  print"NC user dict = %s" % users_dict[0]
-                                ncd_url = APP_URL + "/nodal_coordinator_details?user_id=" + str(user_id)
+			    elif users_dict[0]['role']['id'] == 3:
+			      #  print"NC user dict = %s" % users_dict[0]
+				ncd_url = APP_URL + "/nodal_coordinator_details?user_id=" + str(user_id)
 
-                                ncd_response = requests.get(ncd_url)
-                                try:
-                                    if ncd_response.ok:
-                                        nc_users = ncd_response.text
-                                        nc_users_dict = json.loads(nc_users)
-                                        institute_name = nc_users_dict[0]['created_by']['institute_name']
-                               #         print "NC institute_name = %s" % institute_name
-                                        if workshop['experiments_conducted'] is None:
-                                            usage = 0
-                                        else:
-                                            usage = workshop['experiments_conducted']
-                                        if institute_name in return_dict:
-                                            return_dict[institute_name]['usage'] += \
-                                              usage
-                                            return_dict[institute_name]['workshops'] += 1
-                                        else:
-                                            temp_dict = {}
-                                            temp_dict['usage'] = usage
-                                            temp_dict['workshops'] = 1
-                                            nc_count = get_nodal_center_count_for_OC(nc_users_dict[0]['created_by']['id'])
-                                            temp_dict['nc_count'] = nc_count
-                                            return_dict[institute_name]  = temp_dict
-                                except Exception as err:
-                                    raise err
-                    except Exception as err:
-                        raise err
-        except Exception as err:
-            raise err
+				ncd_response = requests.get(ncd_url)
+				try:
+				    if ncd_response.ok:
+					nc_users = ncd_response.text
+					nc_users_dict = json.loads(nc_users)
+					institute_name = nc_users_dict[0]['created_by']['institute_name']
+			       #         print "NC institute_name = %s" % institute_name
+					if workshop['experiments_conducted'] is None:
+					    usage = 0
+					else:
+					    usage = workshop['experiments_conducted']
+					if institute_name in return_dict:
+					    return_dict[institute_name]['usage'] += \
+					      usage
+					    return_dict[institute_name]['workshops'] += 1
+					else:
+					    temp_dict = {}
+					    temp_dict['usage'] = usage
+					    temp_dict['workshops'] = 1
+					    nc_count = get_nodal_center_count_for_OC(nc_users_dict[0]['created_by']['id'])
+					    temp_dict['nc_count'] = nc_count
+					    return_dict[institute_name]  = temp_dict
+				except Exception as err:
+				    raise err
+		    except Exception as err:
+			raise err
+	except Exception as err:
+	    raise err
 
     return jsonify(return_dict)
 
 def get_nodal_center_count_for_OC(user_id):
     nc_count_url = APP_URL + "/nodal_centres?created_by_id=" + str(user_id)
     try:
-        nc_count_response = requests.get(nc_count_url)
-        if nc_count_response.ok:
-            return len(json.loads(nc_count_response.text))
-        else:
-            raise Exception("Cannot get nodal center count")
+	nc_count_response = requests.get(nc_count_url)
+	if nc_count_response.ok:
+	    return len(json.loads(nc_count_response.text))
+	else:
+	    raise Exception("Cannot get nodal center count")
 
     except Exception as err:
-        raise err
+	raise err
 
 
 @api.route('/get_outreach_usage', methods=['GET'])
 def get_outreach_portal_usage():
     if request.method == 'GET':
-        usage_url = APP_URL + "/workshops?status_id=3"
-        ws_usage_response = requests.get(usage_url)
-        try:
-            if ws_usage_response.ok:
-                ws_usages = ws_usage_response.text
-                ws_usage_dict = json.loads(ws_usages)
-                usage=0
-                participants_attended=0
-                for i in range(0, len(ws_usage_dict)):
-                    if ws_usage_dict[i]['experiments_conducted'] != None and \
-                        ws_usage_dict[i]['participants_attended'] != None:
-                        usage += ws_usage_dict[i]['experiments_conducted']
-                        participants_attended += ws_usage_dict[i]['participants_attended']
-                op_usage_data = {"usage": usage, 'participants_attended': participants_attended}
-                return jsonify(op_usage_data)
+	usage_url = APP_URL + "/workshops?status_id=3"
+	ws_usage_response = requests.get(usage_url)
+	try:
+	    if ws_usage_response.ok:
+		ws_usages = ws_usage_response.text
+		ws_usage_dict = json.loads(ws_usages)
+		usage=0
+		participants_attended=0
+		for i in range(0, len(ws_usage_dict)):
+		    if ws_usage_dict[i]['experiments_conducted'] != None and \
+			ws_usage_dict[i]['participants_attended'] != None:
+			usage += ws_usage_dict[i]['experiments_conducted']
+			participants_attended += ws_usage_dict[i]['participants_attended']
+		op_usage_data = {"usage": usage, 'participants_attended': participants_attended}
+		return jsonify(op_usage_data)
 
-        except Exception as err:
-            current_app.logger.error("Exception = %s" % str(err))
-            raise err
+	except Exception as err:
+	    current_app.logger.error("Exception = %s" % str(err))
+	    raise err
 
 @api.route('/get_outreach_analytics', methods=['GET'])
 def get_outreach_portal_analytics():
     if request.method == 'GET':
-        nc_url = APP_URL + "/nodal_centres"
-        ws_url = APP_URL + "/workshops?status_id=3"
-        upcoming_ws_url = APP_URL + "/workshops?status_id=1"
-        usage_url = APP_URL + "/get_outreach_usage"
-        nc_response = requests.get(nc_url)
-        ws_response = requests.get(ws_url)
-        upcoming_ws_response = requests.get(upcoming_ws_url)
-        ws_usage_response = requests.get(usage_url)
-        try:
-            if nc_response.ok and ws_response.ok and ws_usage_response.ok and \
-                upcoming_ws_response.ok:
-                nodal_centres = nc_response.text
-                nodal_centre_dict = json.loads(nodal_centres)
-                workshops = ws_response.text
-                workshop_dict = json.loads(workshops)
-                upcoming_workshops = upcoming_ws_response.text
-                upcoming_workshop_dict = json.loads(upcoming_workshops)
+	nc_url = APP_URL + "/nodal_centres"
+	ws_url = APP_URL + "/workshops?status_id=3"
+	upcoming_ws_url = APP_URL + "/workshops?status_id=1"
+	usage_url = APP_URL + "/get_outreach_usage"
+	nc_response = requests.get(nc_url)
+	ws_response = requests.get(ws_url)
+	upcoming_ws_response = requests.get(upcoming_ws_url)
+	ws_usage_response = requests.get(usage_url)
+	try:
+	    if nc_response.ok and ws_response.ok and ws_usage_response.ok and \
+		upcoming_ws_response.ok:
+		nodal_centres = nc_response.text
+		nodal_centre_dict = json.loads(nodal_centres)
+		workshops = ws_response.text
+		workshop_dict = json.loads(workshops)
+		upcoming_workshops = upcoming_ws_response.text
+		upcoming_workshop_dict = json.loads(upcoming_workshops)
 
-                ws_usages = ws_usage_response.text
-                ws_usage_dict = json.loads(ws_usages)
-                op_anaytics_data = {"nodal_centres": len(nodal_centre_dict),
-                                 "workshops": len(workshop_dict),
-                                 "upcoming_workshops": len(upcoming_workshop_dict),                                               "usage": ws_usage_dict['usage'],
-                                 "participants_attended": ws_usage_dict['participants_attended'],
-                                    }
-                return jsonify(op_anaytics_data)
-        except Exception as err:
-            current_app.logger.error("Exception = %s" % str(err))
-            raise err
+		ws_usages = ws_usage_response.text
+		ws_usage_dict = json.loads(ws_usages)
+		op_anaytics_data = {"nodal_centres": len(nodal_centre_dict),
+				 "workshops": len(workshop_dict),
+				 "upcoming_workshops": len(upcoming_workshop_dict),                                               "usage": ws_usage_dict['usage'],
+				 "participants_attended": ws_usage_dict['participants_attended'],
+				    }
+		return jsonify(op_anaytics_data)
+	except Exception as err:
+	    current_app.logger.error("Exception = %s" % str(err))
+	    raise err
 
 @api.route('/upload_reference_documents/<id>', methods=['GET', 'POST'])
 def save_reference_documents(id):
@@ -6354,9 +6386,9 @@ def upload_file(file, url):
 		    ##delete the file
 		    delete_file(file_path)
 		    abort(500)
-                else:
+		else:
 		    current_app.logger.error("Failed to delete record from database")
-                    abort(500)
+		    abort(500)
 	except Exception, e:
 	    abort(500, 'error is %s' % (str(e)))
 
@@ -6443,7 +6475,7 @@ def get_specific_entity(entity, id):
 	abort(404, "No entry for %s with id: %s found." % (entity, id))
 
     return jsonify(record.to_client())
-
+    
 #+END_SRC
 
 ** REST API to create/update/delete data
