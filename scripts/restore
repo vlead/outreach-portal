@@ -3,8 +3,6 @@
 DB_NAME="outreach"
 DB_PASS="root"
 VERSION="v2.0.9"
-APP_URL="http://localhost/nodalcentres"
-GOOGLE_API_KEY="paste-geocode-api-key-here"
 
 BACKUP_FILE=$1
 
@@ -50,7 +48,7 @@ if [ $? -ne 0 ]; then
   exit 1;
 fi
 
-mysql -u root -p$DB_PASS $DB_NAME -e "use $DB_NAME; ALTER TABLE workshops add column gateway_ip varchar(20) after date"
+mysql -u root -p$DB_PASS $DB_NAME -e "use $DB_NAME; ALTER TABLE workshops add column conducted_on varchar(20) after location; update workshops set conducted_on='Online' where conducted_on is NULL;"
 
 
 
