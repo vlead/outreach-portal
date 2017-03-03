@@ -1329,7 +1329,7 @@ class Workshop(Entity):
     cancellation_reason = db.Column(db.String(128))
     not_approval_reason = db.Column(db.String(128))
     gateway_ip = db.Column(db.String(128))
-    conducted_on = db.Column(db.String(60))
+    version = db.Column(db.String(60))
     workshop_reports = db.relationship('WorkshopReport', backref='workshop')
 #+END_SRC
 
@@ -1395,10 +1395,10 @@ class Workshop(Entity):
             raise AttributeRequired("mandatory attribute `date` is missing")
         self.set_date(kwargs['date'])
 
-        if 'conducted_on' not in kwargs:
-            raise AttributeRequired("mandatory attribute `conducted_on` is\
+        if 'version' not in kwargs:
+            raise AttributeRequired("mandatory attribute `version` is\
             missing")
-        self.set_conducted_on(kwargs['conducted_on'])
+        self.set_version(kwargs['version'])
 
         if 'participants_attended' in kwargs:
             self.set_participants_attended(kwargs['participants_attended'])
@@ -2095,11 +2095,11 @@ class TestWorkshop(TestCase):
         current_app.logger.debug("get the gateway_ip: %s" % self.gateway_ip)
         return self.gateway_ip
 #+END_SRC
-***** getConductedOn: Workshop --> Conducted_on
+***** getConductedOn: Workshop --> version
 #+BEGIN_SRC python :tangle src/db.py :eval no
-    def get_conducted_on(self):
-        current_app.logger.debug("get conducted_on: %s" % self.conducted_on)
-        return self.conducted_on
+    def get_version(self):
+        current_app.logger.debug("get version: %s" % self.version)
+        return self.version
 #+END_SRC
 
 ***** Test getNotApprovalReason: Workshop --> Reason
@@ -2605,11 +2605,11 @@ class TestWorkshop(TestCase):
     def set_gateway_ip(self, gateway_ip):
         self.gateway_ip = gateway_ip
 #+END_SRC
-***** setConductedOn: Workshop, Conducted_on --> Void
+***** setConductedOn: Workshop, version --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no
-    @typecheck(conducted_on=str)
-    def set_conducted_on(self, conducted_on):
-        self.conducted_on = conducted_on
+    @typecheck(version=str)
+    def set_version(self, version):
+        self.version = version
 
 #+END_SRC
 
@@ -2659,7 +2659,7 @@ class TestWorkshop(TestCase):
             'cancellation_reason': self.cancellation_reason,
             'not_approval_reason': self.not_approval_reason,
             'gateway_ip': self.gateway_ip,
-            'conducted_on': self.conducted_on
+            'version': self.version
         }
 #+END_SRC
       
@@ -5820,7 +5820,7 @@ workshop = {'entity_class': Workshop,
                 {'name': 'gateway_ip',
                  'class': None,
                  'relationship': 'one'},
-                {'name': 'conducted_on',
+                {'name': 'version',
                  'class': None,
                  'relationship': 'one'},
                 {'name': 'created',
@@ -6532,7 +6532,7 @@ entity_map_types = {
             'other_details': str,
             'cancellation_reason': str,
             'gateway_ip': str,
-            'conducted_on': str,
+            'version': str,
             'not_approval_reason': str,
             'created': datetime,
             'last_updated': str,
