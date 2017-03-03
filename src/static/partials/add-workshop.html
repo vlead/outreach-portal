@@ -4,8 +4,15 @@
     <!-- Form Name -->
     <legend>Create Workshop </legend>
     <span class="error"> {{ status }}</span>
-    
-    <!-- Text input-->
+    <div class="form-group">
+      <label class="col-md-4 control-label">Workshop Version *</label>
+      <div class="col-md-4 inputGroupContainer">
+	<div class="input-group">
+	  <label><input type="radio" name="test" ng-model="version" value="online"/> online</label>
+	  <label><input type="radio" name="test" ng-model="version" value="offline"/> offline</label>
+	</div>
+      </div>
+    </div>
     
     <div class="form-group">
       <label class="col-md-4 control-label">Workshop Name *</label>  

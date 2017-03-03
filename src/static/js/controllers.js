@@ -484,6 +484,7 @@ app.controller("add-workshop", function($scope, $location, $http, dataFactory,$r
 					     "participating_institutes" : $scope.insts,
 					     "no_of_participants_expected" : $scope.parti,
 					     "no_of_sessions" : Number($scope.sessions),
+					     "version" : $scope.version,
 					     "labs_planned" : Number($scope.labs),
 					     "status" : {"id": status_id},  "date" : $scope.date }).
 		success(function(data, status, headers, config){
@@ -619,6 +620,7 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
 			      "no_of_sessions" : Number($scope.message.no_of_sessions),
 			      "duration_of_sessions": $scope.message.duration_of_sessions,
 			      "labs_planned" : Number($scope.message.labs_planned),
+			      "version" : $scope.message.version,
 			      "status" : {"id": status_id},  "date" : $scope.message.date,
 			      "experiments_conducted": $scope.message.experiments_conducted}).
 		success(function(data, status, headers, config){
