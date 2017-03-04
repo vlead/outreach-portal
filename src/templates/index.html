@@ -20,7 +20,7 @@
           <span class="number">{{ nodal_centres }}</span>
 	  <span class="number" ng-show="nloading"><img id="mySpinner" src="/static/img/default1.gif"></span>
         </div>
-        <div class="col-md-2 analytics workshops-run">
+        <div class="col-md-2 analytics workshops-run" ng-click="showWorkshops()">
           WORKSHOPS RUN<br>
 	  <span class="number" ng-show="load_analytics"><img id="mySpinner" src="/static/img/default1.gif"></span>
           <span class="number">{{ total_workshops }}</span>

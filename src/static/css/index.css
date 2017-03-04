@@ -77,6 +77,10 @@ img:hover{
 .nodal-centers:hover {
     cursor: pointer;
 }
+.workshops-run:hover {
+    cursor: pointer;
+}
+
 .usage:hover {
     cursor: pointer;
 }

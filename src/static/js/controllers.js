@@ -138,6 +138,9 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
     $scope.showUsage = function(){
         window.open("/usage");
     }
+    $scope.showWorkshops = function(){
+         window.open("/ws_details");
+     }
     
    if ($window.number != 0 || $window.number == undefined) {
      
@@ -1306,7 +1309,7 @@ app.controller("ws_details", function($scope, $http, $routeParams, dataFactory, 
 	    for(j=0;j<data.length;j++){
 		if($scope.workshops[i].id == data[j].workshop.id){
 		    reports.push({"name" : data[j].name, "path" :  data[j].path})
-		    console.log("true");
+		    //console.log("true");
 		}
 
 	    }
@@ -1316,5 +1319,38 @@ app.controller("ws_details", function($scope, $http, $routeParams, dataFactory, 
     }).error(function(data, status, headers, config){
         console.log("Failed2");
     });
+    var data = $window.data
+    console.log(data);
+    $scope.ViewReports = function(ws_id){
+	for(workshop=0;workshop<$scope.workshops.length;workshop++){
+	    if($scope.workshops[workshop].id == ws_id){
+		reports = $scope.workshops[workshop].reports;
+		var ws_reports = [];
+		ws_reports.Photos = [];
+		ws_reports.Reports = [];
+		ws_reports.Attendance = [];
+		for(report=0;report<reports.length;report++){
+		    if(reports[report].name == "Photos"){
+			ws_reports.Photos.push(reports[report].path)
+
+		    }
+		    else if(reports[report].name == "Reports"){
+			ws_reports.Reports.push(reports[report].path)
+			
+		    }
+		    else
+		    {
+			ws_reports.Attendance.push(reports[report].path)
+		    }
+		    		    
+		}
+		console.log(ws_reports);
+		$scope.name = "sripathi";
+		$scope.ws_reports = ws_reports;
+	    }
+
+	}
+	
+    }
     
 });

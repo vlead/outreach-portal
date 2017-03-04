@@ -6076,6 +6076,12 @@ def index():
 def ws_details():
     return render_template("ws_details.html")
 
+@api.route("/ws_details/<id>")
+def detailed_ws_details(id):
+    r = requests.get("%s/workshop_reports?workshop_id=%s" % (APP_URL, id))
+    ws_reports = r.json()
+    return render_template("detailed_ws_details.html", data=ws_reports)
+
 @api.route("/workshop_details")
 def workshop_details():
     return_dict = {}
