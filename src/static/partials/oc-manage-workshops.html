@@ -15,6 +15,7 @@
       <thead>
 	<tr>
 	  <th>Name</th>
+	  <th>Version</th>
 	  <th>Location</th>
           <th>Exp.Participants</th>
 	  <th>Actual.Participants</th>
@@ -26,6 +27,7 @@
       <tbody>
 	<tr ng-repeat="workshop in upcoming">
           <td>{{ workshop.name }}</td>
+	  <td>{{ workshop.version }}</td>
           <td>{{ workshop.location }}</td>
           <td>{{ workshop.no_of_participants_expected }}</td>
 	  <td>{{ workshop.participants_attended }}</td>

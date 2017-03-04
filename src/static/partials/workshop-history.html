@@ -9,6 +9,7 @@
       <thead>
 	<tr>
 	  <th>Name</th>
+	  <th>Version</th>
 	  <th>Location</th>
           <th>Participants</th>
 	  <th>Date</th>
@@ -19,6 +20,7 @@
       <tbody>
 	<tr ng-repeat="workshop in history">
           <td>{{ workshop.name }}</td>
+	  <td>{{ workshop.version }}</td>
           <td>{{ workshop.location }}</td>
           <td>{{ workshop.participants_attended }}</td>
           <td>{{ workshop.date }}</td>

@@ -12,9 +12,9 @@
           <tr>
             <th>S.No</th>
             <th>WS Name</th>
+	    <th>Version</th>
 	    <th>WS Location</th>
-	    <th>WS Date</th>
-	    <th>Online/College_Cloud WS</th>
+	    <th>WS Date</th>	  
 	    <th>Reports</th>
           </tr>
         </thead>
@@ -22,9 +22,9 @@
           <tr>
             <td>{{ $index+1 }}</td>
 	    <td>{{ workshop.name }}</td>
-            <td>{{ workshop.location }}</td>
-	    <td>{{ workshop.date }}</td>
 	    <td>{{ workshop.version }}</td>
+            <td>{{ workshop.location }}</td>
+	    <td>{{ workshop.date }}</td>	    
 	    <td ng-repeat="report in workshop.reports">
 	      <a href="{{report.path}}"><button class="btn-primary">{{report.name}}</button></a>
 	    </td>

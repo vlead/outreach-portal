@@ -8,8 +8,11 @@
       <label class="col-md-4 control-label">Workshop Version *</label>
       <div class="col-md-4 inputGroupContainer">
 	<div class="input-group">
-	  <label><input type="radio" name="test" ng-model="version" value="online"/> online</label>
-	  <label><input type="radio" name="test" ng-model="version" value="offline"/> offline</label>
+	  <label><input type="radio" name="version" ng-model="version" value="online"/ required> online</label>
+	  <label><input type="radio" name="version" ng-model="version" value="offline"/ required> offline</label>
+	  <span style="color:red" ng-show="myForm.version.$dirty && myForm.version.$invalid">
+	    <span ng-show="myForm.version.$error.required">Choose workshop version</span>
+	  </span>
 	</div>
       </div>
     </div>

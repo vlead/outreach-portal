@@ -12,6 +12,7 @@
 	  <tr>
             <th>S.NO</th>
 	    <th>Workshop Name</th>
+	    <th>Workshop Version</th>
 	    <th>Location</th>
 	    <th>Date</th>
             <th>Participating Institutes</th>
@@ -26,6 +27,7 @@
 	  <tr ng-repeat="workshop in workshops | orderBy : 'participating_institutes'">
             <td>{{ $index+1 }}</td>
             <td>{{ workshop.name }}</td>
+	    <td>{{ workshop.version }}</td>
             <td>{{ workshop.location }}</td>
             <td>{{ workshop.date }}</td>
             <td>{{ workshop.participating_institutes }}</td>
