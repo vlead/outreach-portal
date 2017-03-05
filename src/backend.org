@@ -6075,7 +6075,7 @@ def index():
 @api.route("/ws_details")
 def ws_details():
     return render_template("ws_details.html")
-
+"""
 @api.route("/ws_details/<id>")
 def detailed_ws_details(id):
     r = requests.get("%s/workshop_reports?workshop_id=%s" % (APP_URL, id))
@@ -6109,7 +6109,7 @@ def workshop_details():
 	    print str(e)
     return jsonify(ws_dict)
 
-
+"""
 @api.route("/ncentres")
 def ncentres():
     return render_template("ncentres.html")
