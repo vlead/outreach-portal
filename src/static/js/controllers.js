@@ -1316,15 +1316,21 @@ app.controller("ws_details", function($scope, $http, $routeParams, dataFactory, 
 	    $scope.workshops[i]['reports'] = reports;
 	    
 	}
+	
     }).error(function(data, status, headers, config){
         console.log("Failed2");
     });
-    var data = $window.data
-    console.log(data);
-    $scope.ViewReports = function(ws_id){
-	for(workshop=0;workshop<$scope.workshops.length;workshop++){
-	    if($scope.workshops[workshop].id == ws_id){
-		reports = $scope.workshops[workshop].reports;
+
+});
+app.controller("ws_reports", function($scope, $http, $routeParams, dataFactory, $route, $window){
+
+    dataFactory.fetch("/workshop_reports?workshop_id="+$routeParams.id).success(function(reports,status,headers,config){
+
+	$scope.reports = reports;
+	console.log(reports);
+	/*
+	for(workshop=0;workshop<workshops.length;workshop++){
+	    if(workshops[workshop].id == $routeParams.id){
 		var ws_reports = [];
 		ws_reports.Photos = [];
 		ws_reports.Reports = [];
@@ -1332,7 +1338,7 @@ app.controller("ws_details", function($scope, $http, $routeParams, dataFactory, 
 		for(report=0;report<reports.length;report++){
 		    if(reports[report].name == "Photos"){
 			ws_reports.Photos.push(reports[report].path)
-
+			
 		    }
 		    else if(reports[report].name == "Reports"){
 			ws_reports.Reports.push(reports[report].path)
@@ -1342,15 +1348,25 @@ app.controller("ws_details", function($scope, $http, $routeParams, dataFactory, 
 		    {
 			ws_reports.Attendance.push(reports[report].path)
 		    }
-		    		    
+		    
 		}
 		console.log(ws_reports);
 		$scope.name = "sripathi";
 		$scope.ws_reports = ws_reports;
 	    }
-
+	    
 	}
+	*/
 	
-    }
+    }).error(function(data, status, headers, config){
+        console.log("Failed2");
+    });
+
+
+
     
+	
+
+
+
 });

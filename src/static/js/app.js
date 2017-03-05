@@ -140,6 +140,14 @@ app.config(function($routeProvider){
         .when('/oc-manage-workshops/oc-workshop-history', {
 	    templateUrl : '/static/partials/oc-workshop-history.html',
 	    controller  : 'oc-workshop-history'
+	})
+	.when('/ws-list', {
+	    templateUrl : '/static/partials/ws_details.html',
+	    controller  : 'ws_details'
+	})
+	.when('/ws-list/:id', {
+	    templateUrl : '/static/partials/detailed_ws_details.html',
+	    controller  : 'ws_reports'
 	});
     
 }
