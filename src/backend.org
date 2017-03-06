@@ -5963,6 +5963,26 @@ google_oauth = oauth.remote_app(
 def login():
     return google_oauth.authorize(callback=url_for('APIs.authorized', _external=True))
 
+@api.route("/get_usage", methods=['GET','POST'])
+def get_usage():
+    if request.method == 'GET':
+        return "This method is not allowed"
+    if request.method == 'POST':
+        """
+        version = str(request.args.get('version'))
+        id = str(request.args.get('id'))
+        date = str(request.args.get('date'))
+        ELASTIC_IP = "http://10.100.0.15:9200"
+        ELASTIC_URL = "%s/%s/%s/_search" % (ELASTIC_IP, index_name, doc_name)
+        r = requests.get(ELASTIC_URL)
+        if r.status_code == 201:
+            return jsonify({"usage" : len(r.json())})
+        else:
+            abort(500)
+        """
+        version = request.get_json()
+        return jsonify({"data" : version})
+
 #+END_SRC
 ***** =Logout= API
       - When user clicks on =logout= button from f/e it will invoke
