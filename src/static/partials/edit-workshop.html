@@ -10,8 +10,8 @@
       <label class="col-md-4 control-label">Workshop Version *</label>
       <div class="col-md-4 inputGroupContainer">
 	<div class="input-group">
-	  <label><input type="radio" name="test" ng-model="message.version" value="online"/> online</label>
-	  <label><input type="radio" name="test" ng-model="message.version" value="offline"/> offline</label>
+	  <label><input type="radio" name="test" ng-model="message.version" ng-click="enable = true" value="online"/> online</label>
+	  <label><input type="radio" name="test" ng-model="message.version" ng-click="enable = false" value="offline"/> offline</label>
 	</div>
       </div>
     </div>
@@ -147,14 +147,15 @@
 	</div><br>
 	{{ gate_way_ip }}
       </div>
-      <div class="col-md-2">
-	<input type="button" ng-mouseover="Gateway('over')" ng-mouseleave="Gateway('unover')" ng-click="get_gateway_ip()" value="Get Gateway IP" class="btn btn-primary">
-      </div>
-      <div class="col-md-1">
-	<input type="button" ng-mouseover="Compute('over')" ng-mouseleave="Compute('unover')" ng-click="get_usage()" value="Compute Usage" class="btn btn-primary">
+      <div ng-if="enable">
+	<div class="col-md-2">
+	  <input type="button" ng-mouseover="Gateway('over')" ng-mouseleave="Gateway('unover')" ng-click="get_gateway_ip()" value="Get Gateway IP" class="btn btn-primary">
+	</div>
+	<div class="col-md-1">
+	  <input type="button" ng-mouseover="Compute('over')" ng-mouseleave="Compute('unover')" ng-click="get_usage()" value="Compute Usage" class="btn btn-primary">
+	</div>
       </div>
     </div>
-  
     {{ info1 }}
     <div class="form-group">
       <br>

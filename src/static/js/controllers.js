@@ -551,6 +551,17 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
         });
 	
     }
+    $scope.get_usage1 = function()
+    {
+	url = "http://outreach.base1.vlabs.ac.in/get_usage";
+	data = {"date": $scope.message.date, "version" : $scope.message.version }
+	$http.post(url, data, {headers: {'Content-Type': 'application/json'}}).
+            success(function(data, status, headers, config){
+		console.log(data.data);	    
+            }).
+            error(function(data, status, headers, config){
+            });
+    }
     $scope.flag = false;
     $scope.get_usage = function()
     {
@@ -591,6 +602,7 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
         error(function(data, status, headers, config){
             console.log(data);
         });
+
     $scope.submit = function(isvalid){
       if(isvalid){
 	  
