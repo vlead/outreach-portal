@@ -136,23 +136,34 @@
     </div>
     
     <div class="form-group">
-      <label class="col-md-4 control-label">Gateway IP Address</label>  
-      <div class="col-md-3 inputGroupContainer">
+      <label class="col-md-4 control-label" ng-if="message.version == 'online'">Gateway IP Address</label>
+      <label class="col-md-4 control-label" ng-if="message.version == 'offline'">College MAC Address</label>  
+      <div class="col-md-3 inputGroupContainer" ng-if="message.version == 'online'">
 	<div class="input-group">
 	  <input type="text" name="gateway_ip" ng-model="message.gateway_ip" ng-pattern="/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/"  class="form-control"
 		 placeholder="Gateway IP of college">
 	  
 	  <span style="color:red" ng-show="myForm.gateway_ip.$dirty && myForm.gateway_ip.$invalid">Invalid IP Address</span>
-	   
+	  
 	</div><br>
 	{{ gate_way_ip }}
       </div>
-      <div ng-if="enable">
+      <div class="col-md-3 inputGroupContainer" ng-if="message.version == 'offline'">
+	<div class="input-group" ng-controller="edit-workshop">
+	  <input type="text" ng-model="message.gateway_ip"  class="form-control" placeholder="MAC address">
+	</div><br>
+      </div>
+      <div ng-if="message.version == 'online'">
 	<div class="col-md-2">
 	  <input type="button" ng-mouseover="Gateway('over')" ng-mouseleave="Gateway('unover')" ng-click="get_gateway_ip()" value="Get Gateway IP" class="btn btn-primary">
 	</div>
 	<div class="col-md-1">
 	  <input type="button" ng-mouseover="Compute('over')" ng-mouseleave="Compute('unover')" ng-click="get_usage()" value="Compute Usage" class="btn btn-primary">
+	</div>
+      </div>
+      <div ng-if="message.version == 'offline'">
+	<div class="col-md-2">
+	  <input type="button" ng-click="get_usage1()" value="Compute Usage" class="btn btn-primary">
 	</div>
       </div>
     </div>

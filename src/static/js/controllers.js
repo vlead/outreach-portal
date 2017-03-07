@@ -553,11 +553,15 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
     }
     $scope.get_usage1 = function()
     {
+	console.log($scope.message.gateway_ip)
 	url = "http://outreach.base1.vlabs.ac.in/get_usage";
+	console.log($scope.message.date);
 	data = {"date": $scope.message.date, "version" : $scope.message.version }
 	$http.post(url, data, {headers: {'Content-Type': 'application/json'}}).
             success(function(data, status, headers, config){
-		console.log(data.data);	    
+		$scope.mac_id = "sdfsfsdfd";
+		$scope.usage = data;
+		console.log(data);	    
             }).
             error(function(data, status, headers, config){
             });
