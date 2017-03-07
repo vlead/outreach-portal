@@ -10,7 +10,7 @@
       <label class="col-md-4 control-label">Workshop Version *</label>
       <div class="col-md-4 inputGroupContainer">
 	<div class="input-group">
-	  <label><input type="radio" name="test" ng-model="message.version" ng-click="enable = true" value="online"/> online</label>
+	  <label><input type="radio" name="test" ng-model="message.version" ng-click="enable = true" value="online"/> online</label>&emsp;&emsp;
 	  <label><input type="radio" name="test" ng-model="message.version" ng-click="enable = false" value="offline"/> offline</label>
 	</div>
       </div>
@@ -149,8 +149,10 @@
 	{{ gate_way_ip }}
       </div>
       <div class="col-md-3 inputGroupContainer" ng-if="message.version == 'offline'">
-	<div class="input-group" ng-controller="edit-workshop">
-	  <input type="text" ng-model="message.gateway_ip"  class="form-control" placeholder="MAC address">
+	<div class="input-group">
+	  <input type="text" name="mac_addr" ng-model="message.mac_addr" class="form-control"
+		 placeholder="MAC Address">
+
 	</div><br>
       </div>
       <div ng-if="message.version == 'online'">
@@ -163,7 +165,7 @@
       </div>
       <div ng-if="message.version == 'offline'">
 	<div class="col-md-2">
-	  <input type="button" ng-click="get_usage1()" value="Compute Usage" class="btn btn-primary">
+	  <input type="button" ng-mouseover="ComputeOffline('over')" ng-mouseleave="ComputeOffline('unover')" ng-click="get_usage1()" value="Compute Usage" class="btn btn-primary">
 	</div>
       </div>
     </div>

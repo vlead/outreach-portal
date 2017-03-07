@@ -534,7 +534,15 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
     {
 	if(status == "over")
 	{
-	    $scope.info1 = "By clicking this button, ip address of the workshop location is obtained.  A nodal co-ordinator should save this key while the workshop is conducted.  This is dome by copying the ip address obtained into the field 'Gateway IP Address'.  This copied IP address will be the key of the workshop and all the online feedback forms submitted during a workshop are attached to this key.";
+	    $scope.info1 = "By clicking this button, ip address of the workshop location is obtained.  A nodal co-ordinator should save this key while the workshop is conducted.  This is done by copying the ip address obtained into the field 'Gateway IP Address'.  This copied IP address will be the key of the workshop and all the online feedback forms submitted during a workshop are attached to this key.";
+	}
+	else{$scope.info1="";}
+    };
+    $scope.ComputeOffline = function(status)
+    {
+	if(status == "over")
+	{
+	    $scope.info1 = "Gets the usage count from the vlead central database server submitted during a college cloud workshop. MAC Address  is mandatory to calculate the usage from college cloud feedback forms. It determines 'where' the workshop is conducted.";
 	}
 	else{$scope.info1="";}
     };
@@ -553,15 +561,16 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
     }
     $scope.get_usage1 = function()
     {
-	console.log($scope.message.gateway_ip)
+	console.log($scope.message.mac_addr)
 	url = "http://outreach.base1.vlabs.ac.in/get_usage";
 	console.log($scope.message.date);
-	data = {"date": $scope.message.date, "version" : $scope.message.version }
+	data = {"date": $scope.message.date, "version" : $scope.message.version, "mac_addr" : $scope.message.mac_addr }
 	$http.post(url, data, {headers: {'Content-Type': 'application/json'}}).
             success(function(data, status, headers, config){
-		$scope.mac_id = "sdfsfsdfd";
-		$scope.usage = data;
-		console.log(data);	    
+		$scope.online_usage = data.usage;
+		$scope.flag = true;
+		$scope.message.experiments_conducted = data.usage;
+		console.log(data.usage);
             }).
             error(function(data, status, headers, config){
             });
@@ -569,7 +578,6 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
     $scope.flag = false;
     $scope.get_usage = function()
     {
-
 	//10.4.20.103
 
 	date = new Date($scope.message.date);

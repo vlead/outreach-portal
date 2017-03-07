@@ -6135,41 +6135,6 @@ def index():
 @api.route("/ws_details")
 def ws_details():
     return render_template("ws_details.html")
-"""
-@api.route("/ws_details/<id>")
-def detailed_ws_details(id):
-    r = requests.get("%s/workshop_reports?workshop_id=%s" % (APP_URL, id))
-    ws_reports = r.json()
-    return render_template("detailed_ws_details.html", data=ws_reports)
-
-@api.route("/workshop_details")
-def workshop_details():
-    return_dict = {}
-    if request.method == 'GET':
-	approved_workshops_url = APP_URL + "/workshops?status_id=3"
-	approved_workshops = requests.get(usage_url)
-	try:
-	    if approved_workshops.ok:
-		ws = approved_workshops.text
-		ws_dict = json.loads(ws)
-		ws_report_details = []
-		for workshop in ws_dict:
-		   # print"here"
-		    workshop_id = workshop['id']
-		    workshop_reports_url = APP_URL + "/workshop_reports?workshop_id=" + str(workshop_id)
-		    user_response = requests.get(workshop_reports_url)
-		    try:
-			if user_response.ok:
-			    users = user_response.text
-			    users_dict = json.loads(users)
-			    workshop["reports"] = users_dict
-		    except Exception as e:
-			print str(e)
-	except Exception as e:
-	    print str(e)
-    return jsonify(ws_dict)
-
-"""
 @api.route("/ncentres")
 def ncentres():
     return render_template("ncentres.html")
