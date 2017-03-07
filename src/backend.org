@@ -5565,6 +5565,7 @@ UPLOAD_DIR_PATH = '/static/uploads/'
 ALLOWED_FILE_EXTENSIONS = ['txt', 'TXT', 'pdf', 'PDF', 'png', 'PNG', 'jpg', 'JPG', 'jpeg', 'JPEG', 'gif', 'GIF', 'csv' , 'CSV', 'doc' , 'DOC', 'docx', 'DOCX']
 
 # APP_URL
+ELASTIC_IP = "http://10.100.2.40:9200"
 #APP_URL = "http://localhost"
 APP_URL = "http://outreach.virtual-labs.ac.in"
 
@@ -5959,6 +5960,20 @@ google_oauth = oauth.remote_app(
       - When user clicks on =login= button from f/e it will invoke
         =/login= api and thereby it will forward request to =google=
 #+BEGIN_SRC python :tangle src/api.py :eval 
+def get_college_name(mac_addr):
+    index_name = "college_cloud"
+    doc_name = "details"
+    ELASTIC_URL = "%s/%s/%s/_search" % (ELASTIC_IP, index_name, doc_name)
+    current_app.logger.error("ELASTIC_URL %s" % (ELASTIC_URL))
+    colleges = requests.get(ELASTIC_URL)
+    if colleges.status_code == 200:
+        for college in colleges.json()['hits']['hits']:            
+            mac_addr_of_elastic_data = str(college['_source']['mac_addr'])
+            current_app.logger.error("college_details %s" % (mac_addr_of_elastic_data))
+            if mac_addr == mac_addr_of_elastic_data:
+                return str(college['_source']['college_details']['college_name'])
+        abort(int(college.status_code), "Error in getting college name from elastic db")
+
 @api.route('/login')
 def login():
     return google_oauth.authorize(callback=url_for('APIs.authorized', _external=True))
@@ -5967,21 +5982,46 @@ def login():
 def get_usage():
     if request.method == 'GET':
         return "This method is not allowed"
-    if request.method == 'POST':
-        """
-        version = str(request.args.get('version'))
-        id = str(request.args.get('id'))
-        date = str(request.args.get('date'))
-        ELASTIC_IP = "http://10.100.0.15:9200"
-        ELASTIC_URL = "%s/%s/%s/_search" % (ELASTIC_IP, index_name, doc_name)
-        r = requests.get(ELASTIC_URL)
-        if r.status_code == 201:
-            return jsonify({"usage" : len(r.json())})
+    
+    if request.method == 'POST':        
+        doc_name = "feedback"
+        data_dict = request.get_json()
+        date = str(data_dict['date'])
+        version = str(data_dict['version'])
+        current_app.logger.error("json = %s" % (data_dict))
+        if version == 'offline':
+            mac_addr = str(data_dict['mac_addr'])
+            index_name = "%s_%s" % (get_college_name(mac_addr), mac_addr)
         else:
-            abort(500)
-        """
-        version = request.get_json()
-        return jsonify({"data" : version})
+            gateway_ip = str(data_dict['gateway_ip'])
+            current_app.logger.error("gateway_ip %s" % (gateway_ip))
+            index_name = "vlabs"            
+        ELASTIC_URL = "%s/%s/%s/_search" % (ELASTIC_IP, index_name, doc_name)
+        current_app.logger.error("ELASTIC_URL %s" % (ELASTIC_URL))
+        count = 0
+        usages = requests.get(ELASTIC_URL)
+        
+        if usages.status_code == 200:
+            current_app.logger.error("usages %s" % (usages.json()))
+            for feedback in usages.json()['hits']['hits']:
+                date_of_elastic_data = feedback['_source']['date']
+                if version == "offline":
+                    current_app.logger.error("date %s" % (feedback['_source']['date']))
+                    if date == date_of_elastic_data:
+                        current_app.logger.error("true")
+                        count = count+1                        
+                    
+                else:
+                    gateway_ip_of_e_db = feedback['_source']['gateway_ip']
+                    current_app.logger.error("gateway_ip %s" % (feedback['_source']['gateway_ip']))
+                    if date == date_of_elastic_data and gateway_ip == gateway_ip_of_e_db:
+                        current_app.logger.error("true")
+                        count = count+1                        
+            return jsonify({"usage" : count})
+        elif usages.status_code == 404:
+            return jsonify({"usage" : count})
+        else:
+            abort(int(usages.status_code), "Error in getting usage from elastic db")
 
 #+END_SRC
 ***** =Logout= API
