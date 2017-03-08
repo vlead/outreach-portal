@@ -172,7 +172,8 @@
     {{ info1 }}
     <div class="form-group">
       <br>
-      <label class="col-md-4 control-label">Usage from Online Feedback</label>
+      <label class="col-md-4 control-label" ng-if="message.version == 'online'">Usage from Online Feedback</label>
+      <label class="col-md-4 control-label" ng-if="message.version == 'offline'">Usage from College Cloud Feedback</label>
       <div class="col-md-4 inputGroupContainer">
         <div class="input-group">
           <input type="number" name="fb" ng-model="online_usage"  class="form-control"
