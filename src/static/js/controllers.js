@@ -562,7 +562,7 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
     $scope.get_usage1 = function()
     {
 	console.log($scope.message.mac_addr)
-	url = "http://outreach.base1.vlabs.ac.in/get_usage";
+	url = "http://outreach.vlabs.ac.in/get_usage";
 	console.log($scope.message.date);
 	data = {"date": $scope.message.date, "version" : $scope.message.version, "mac_addr" : $scope.message.mac_addr }
 	$http.post(url, data, {headers: {'Content-Type': 'application/json'}}).
