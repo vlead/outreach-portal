@@ -1,7 +1,5 @@
 <form class="well form-horizontal" name="myForm" novalidate ng-submit="submit(myForm.$valid)">
   <fieldset>
-    
-    <!-- Form Name -->
     <legend>Edit Workshop Details</legend>
     <span class="error"> {{ status }}</span>
     
@@ -146,7 +144,9 @@
 	  <span style="color:red" ng-show="myForm.gateway_ip.$dirty && myForm.gateway_ip.$invalid">Invalid IP Address</span>
 	  
 	</div><br>
-	{{ gate_way_ip }}
+	<span ng-if="gate_way_ip">
+	 Obtained Gateway IP : <b>{{ gate_way_ip }}</b>
+	</span>
       </div>
       <div class="col-md-3 inputGroupContainer" ng-if="message.version == 'offline'">
 	<div class="input-group">

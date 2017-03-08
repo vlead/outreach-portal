@@ -526,7 +526,7 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
     {
 	if(status == "over")
 	{
-	    $scope.info1 = "Gets the usage from the feedback forms submitted during a workshop. Gateway IP is mandatory to calculate the usage from online feedback forms. It determines 'where' the workshop is conducted.";
+	    $scope.info1 = "By clicking this button, ip address of the workshop location is obtained.  A nodal co-ordinator should save this key while the workshop is conducted.  This is done by copying the ip address obtained into the field 'Gateway IP Address'.  This copied IP address will be the key of the workshop and all the online feedback forms submitted during a workshop are attached to this key.";
 	}
 	else{$scope.info1="";}
     };
@@ -534,7 +534,8 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
     {
 	if(status == "over")
 	{
-	    $scope.info1 = "By clicking this button, ip address of the workshop location is obtained.  A nodal co-ordinator should save this key while the workshop is conducted.  This is done by copying the ip address obtained into the field 'Gateway IP Address'.  This copied IP address will be the key of the workshop and all the online feedback forms submitted during a workshop are attached to this key.";
+	    $scope.info1 = "Gets the usage from the feedback forms submitted during a workshop. Gateway IP is mandatory to calculate the usage from online feedback forms. It determines 'where' the workshop is conducted.";
+	    
 	}
 	else{$scope.info1="";}
     };
@@ -542,7 +543,7 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
     {
 	if(status == "over")
 	{
-	    $scope.info1 = "Gets the usage count from the vlead central database server submitted during a college cloud workshop. MAC Address  is mandatory to calculate the usage from college cloud feedback forms. It determines 'where' the workshop is conducted.";
+	    $scope.info1 = "For the given MAC Address feedback usage would be computed.";
 	}
 	else{$scope.info1="";}
     };
