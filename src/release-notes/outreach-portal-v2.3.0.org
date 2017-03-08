@@ -11,11 +11,20 @@
   - By clicking on =WORKSHOPS RUN= tab, all workshops list displayed along with reports. 
     Link : http://outreach.virtual-labs.ac.in/ws_details
 
-  - Replaced footer same as http://vlabs.ac.in footer page
+  - Replaced footer http://outreach.virtual-labs.ac.in same as http://vlabs.ac.in footer page
   
 * Outreach and Nodal Coordinator Accounts:
 
   - In =ADD WORKSHOP= section a new feature is provided to create a workshop version (offline/online).
   - In =EDIT WORKSHOP= provided a feature to modify the existing workshops version (offline/online) .
   - In all workshop related details a new field =version= is added.
+  
+* Resolved issues
+   + https://github.com/vlead/outreach-portal/issues/235
+   + https://github.com/vlead/outreach-portal/issues/236
+   + https://github.com/vlead/outreach-portal/issues/234
+   + https://github.com/vlead/outreach-portal/issues/232
+   + https://github.com/vlead/outreach-portal/issues/231
+   + https://github.com/vlead/outreach-portal/issues/230
+   + https://github.com/vlead/outreach-portal/issues/229
 
