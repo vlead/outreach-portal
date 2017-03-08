@@ -1,0 +1,21 @@
+#+TITLE: Outreach Portal Version V2.3.0
+#+AUTHOR: VLEAD
+#+DATE: [2016-11-22 Tue]
+
+* Introduction
+  This document describes the release notes of =Outreach Portal=
+  version =v2.3.0=.
+
+* Landing Page :
+
+  - By clicking on =WORKSHOPS RUN= tab, all workshops list displayed along with reports. 
+    Link : http://outreach.virtual-labs.ac.in/ws_details
+
+  - Replaced footer same as http://vlabs.ac.in footer page
+  
+* Outreach and Nodal Coordinator Accounts:
+
+  - In =ADD WORKSHOP= section a new feature is provided to create a workshop version (offline/online).
+  - In =EDIT WORKSHOP= provided a feature to modify the existing workshops version (offline/online) .
+  - In all workshop related details a new field =version= is added.
+
