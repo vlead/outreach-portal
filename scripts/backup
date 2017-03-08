@@ -4,7 +4,7 @@ DB_NAME="outreach"
 DB_PASS="root"
 
 OUT_FILE_NAME="outreachbackup"
-VERSION="v0.2.0"
+VERSION="v2.2.1"
 OUT_FILE="$OUT_FILE_NAME-$VERSION.tar"
 
 
