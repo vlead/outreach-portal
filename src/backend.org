@@ -5977,56 +5977,6 @@ def get_college_name(mac_addr):
 @api.route('/login')
 def login():
     return google_oauth.authorize(callback=url_for('APIs.authorized', _external=True))
-
-@api.route("/get_usage", methods=['GET','POST'])
-def get_usage():
-    if request.method == 'GET':
-        return "This method is not allowed"
-    
-    if request.method == 'POST':  
-        doc_name = "feedback"
-        data_dict = request.get_json()
-        oldformat = str(data_dict['date'])
-        datetimeobject = datetime.strptime(oldformat,'%Y-%m-%d')
-        date = datetimeobject.strftime('%d-%m-%Y')
-        version = str(data_dict['version'])
-        current_app.logger.debug("json = %s" % (data_dict))
-
-        if version == 'offline':
-            mac_addr = str(data_dict['mac_addr'])
-            index_name = "%s_%s" % (get_college_name(mac_addr), mac_addr)
-        else:
-            gateway_ip = str(data_dict['gateway_ip'])
-            current_app.logger.debug("gateway_ip %s" % (gateway_ip))
-            index_name = "vlabs"            
-
-        ELASTIC_URL = "%s/%s/%s/_search" % (ELASTIC_IP, index_name, doc_name)
-        current_app.logger.debug("ELASTIC_URL %s" % (ELASTIC_URL))
-        count = 0
-        usages = requests.get(ELASTIC_URL)
-        
-        if usages.status_code == 200:
-            current_app.logger.debug("usages %s" % (usages.json()))
-            for feedback in usages.json()['hits']['hits']:
-                date_of_elastic_data = feedback['_source']['date']
-                if version == "offline":
-                    current_app.logger.debug("date %s" % (feedback['_source']['date']))
-                    if date == date_of_elastic_data:
-                        current_app.logger.debug("true")
-                        count = count+1                        
-                    
-                else:
-                    gateway_ip_of_e_db = feedback['_source']['gateway_ip']
-                    current_app.logger.debug("gateway_ip %s" % (feedback['_source']['gateway_ip']))
-                    if date == date_of_elastic_data and gateway_ip == gateway_ip_of_e_db:
-                        current_app.logger.debug("true")
-                        count = count + 1                        
-            return jsonify({"usage" : count})
-        elif usages.status_code == 404:
-            return jsonify({"usage" : count})
-        else:
-            abort(int(usages.status_code), "Error in getting usage from elastic db")
-
 #+END_SRC
 ***** =Logout= API
       - When user clicks on =logout= button from f/e it will invoke
@@ -6132,6 +6082,105 @@ def index():
         return render_template("index.html")
     else:
         return render_template("index.html")
+#+END_SRC
+***** Get Usage from elastic search database
+      Following REST API is used to compute offline workshop usage
+      from elastic search database.
+****** Design
+   - URL :: /get_usage
+
+   - Method :: POST
+
+   - Data Params ::
+      {
+      "mac_addr" : "<mac_id>",
+      "version" : "<offline/online>",
+      "date" : "dd-mm-yyyy"
+      }		   
+
+   - Success Response ::
+     + Code: 200
+       
+     + Content:
+
+       #+BEGIN_EXAMPLE
+       {
+       "status": "success"
+       }
+       
+       #+END_EXAMPLE
+       
+  - Error Response ::
+    + Code: 401 UNAUTHORIZED
+
+    + Content: { error : "Not Authorized error: not Authorized to perform this action" }
+      
+    OR
+		     
+    + Code: 400 Bad Request
+
+    + Content: { error : "Malformed arguments" }
+
+    OR
+
+    + Code: 500
+
+    + Content: { error : Exception String}
+  - Example ::
+    #+BEGIN_EXAMPLE
+    http://localhost:5000/get_usage
+    #+END_EXAMPLE
+
+****** Implementation 
+#+BEGIN_SRC python :tangle src/api.py :eval 
+@api.route("/get_usage", methods=['GET','POST'])
+def get_usage():
+    if request.method == 'GET':
+        return "This method is not allowed"
+    
+    if request.method == 'POST':  
+        doc_name = "feedback"
+        data_dict = request.get_json()
+        oldformat = str(data_dict['date'])
+        datetimeobject = datetime.strptime(oldformat,'%Y-%m-%d')
+        date = datetimeobject.strftime('%d-%m-%Y')
+        version = str(data_dict['version'])
+        current_app.logger.debug("json = %s" % (data_dict))
+
+        if version == 'offline':
+            mac_addr = str(data_dict['mac_addr'])
+            index_name = "%s_%s" % (get_college_name(mac_addr), mac_addr)
+        else:
+            gateway_ip = str(data_dict['gateway_ip'])
+            current_app.logger.debug("gateway_ip %s" % (gateway_ip))
+            index_name = "vlabs"            
+
+        ELASTIC_URL = "%s/%s/%s/_search" % (ELASTIC_IP, index_name, doc_name)
+        current_app.logger.debug("ELASTIC_URL %s" % (ELASTIC_URL))
+        count = 0
+        usages = requests.get(ELASTIC_URL)
+        
+        if usages.status_code == 200:
+            current_app.logger.debug("usages %s" % (usages.json()))
+            for feedback in usages.json()['hits']['hits']:
+                date_of_elastic_data = feedback['_source']['date']
+                if version == "offline":
+                    current_app.logger.debug("date %s" % (feedback['_source']['date']))
+                    if date == date_of_elastic_data:
+                        current_app.logger.debug("true")
+                        count = count+1                    
+                else:
+                    gateway_ip_of_e_db = feedback['_source']['gateway_ip']
+                    current_app.logger.debug("gateway_ip %s" % (feedback['_source']['gateway_ip']))
+                    if date == date_of_elastic_data and gateway_ip == gateway_ip_of_e_db:
+                        current_app.logger.debug("true")
+                        count = count + 1                        
+            return jsonify({"usage" : count})
+        elif usages.status_code == 404:
+            return jsonify({"usage" : count})
+        else:
+            abort(int(usages.status_code), "Error in getting usage from elastic db")
+
 #+END_SRC
 
 ***** Other GET APIs
