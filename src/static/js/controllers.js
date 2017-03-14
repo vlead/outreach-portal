@@ -1322,7 +1322,7 @@ app.controller("upload-reports", function($scope, $http, $routeParams, dataFacto
     $scope.reports = reports;
 });
 app.controller("ws_details", function($scope, $http, $routeParams, dataFactory, $route, $window){
-    dataFactory.fetch('/workshops?status_id=3').success(function(data,status,headers,config){
+    dataFactory.fetch('/workshops?version=online&status_id=3').success(function(data,status,headers,config){
 	$scope.workshops = data;
     }).error(function(data, status, headers, config){
         console.log("Failed1");
@@ -1393,5 +1393,31 @@ app.controller("ws_reports", function($scope, $http, $routeParams, dataFactory, 
 	
 
 
+
+});
+app.controller("ws_details_offline", function($scope, $http, $routeParams, dataFactory, $route, $window){
+    dataFactory.fetch('/workshops?version=offline&status_id=3').success(function(data,status,headers,config){
+	$scope.offline_workshops = data;
+    }).error(function(data, status, headers, config){
+        console.log("Failed1");
+    });
+    dataFactory.fetch('/workshop_reports').success(function(data,status,headers,config){
+	var reports = []
+	for(i=0;i<$scope.offline_workshops.length;i++){
+	    reports = []
+	    for(j=0;j<data.length;j++){
+		if($scope.offline_workshops[i].id == data[j].workshop.id){
+		    reports.push({"name" : data[j].name, "path" :  data[j].path})
+		    //console.log("true");
+		}
+
+	    }
+	    $scope.offline_workshops[i]['reports'] = reports;
+	    
+	}
+	
+    }).error(function(data, status, headers, config){
+        console.log("Failed2");
+    });
 
 });
