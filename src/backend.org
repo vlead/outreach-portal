@@ -6187,7 +6187,8 @@ def get_usage():
 #+BEGIN_SRC python :tangle src/api.py :eval 
 @api.route("/ws_details")
 def ws_details():
-    return render_template("ws_details.html"
+    return render_template("ws_details.html")
+
 @api.route("/ws_details_offline")
 def ws_details_offline():
     return render_template("ws_details_offline.html")

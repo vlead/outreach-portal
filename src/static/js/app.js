@@ -152,7 +152,12 @@ app.config(function($routeProvider){
 	.when('/ws-list/:id', {
 	    templateUrl : '/static/partials/detailed_ws_details.html',
 	    controller  : 'ws_reports'
+	})
+	.when('/ws-list-offline/:id', {
+	    templateUrl : '/static/partials/detailed_ws_details.html',
+	    controller  : 'ws_reports'
 	});
+    
     
 }
 );
