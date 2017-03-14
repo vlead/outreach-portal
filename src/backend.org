@@ -5964,14 +5964,14 @@ def get_college_name(mac_addr):
     index_name = "college_cloud"
     doc_name = "details"
     ELASTIC_URL = "%s/%s/%s/_search" % (ELASTIC_IP, index_name, doc_name)
-    current_app.logger.error("ELASTIC_URL %s" % (ELASTIC_URL))
+    current_app.logger.debug("ELASTIC_URL %s" % (ELASTIC_URL))
     colleges = requests.get(ELASTIC_URL)
     if colleges.status_code == 200:
         for college in colleges.json()['hits']['hits']:            
             mac_addr_of_elastic_data = str(college['_source']['mac_addr'])
-            current_app.logger.error("college_details %s" % (mac_addr_of_elastic_data))
+            current_app.logger.debug("college_details %s" % (mac_addr_of_elastic_data))
             if mac_addr == mac_addr_of_elastic_data:
-                return str(college['_source']['college_details']['college_name'])
+                return str(college['_source']['college_name'])
         abort(int(college.status_code), "Error in getting college name from elastic db")
 
 @api.route('/login')
@@ -5986,38 +5986,40 @@ def get_usage():
     if request.method == 'POST':  
         doc_name = "feedback"
         data_dict = request.get_json()
-        date = str(data_dict['date'])
+        oldformat = str(data_dict['date'])
+        datetimeobject = datetime.strptime(oldformat,'%Y-%m-%d')
+        date = datetimeobject.strftime('%d-%m-%Y')
         version = str(data_dict['version'])
-        current_app.logger.error("json = %s" % (data_dict))
+        current_app.logger.debug("json = %s" % (data_dict))
 
         if version == 'offline':
             mac_addr = str(data_dict['mac_addr'])
             index_name = "%s_%s" % (get_college_name(mac_addr), mac_addr)
         else:
             gateway_ip = str(data_dict['gateway_ip'])
-            current_app.logger.error("gateway_ip %s" % (gateway_ip))
+            current_app.logger.debug("gateway_ip %s" % (gateway_ip))
             index_name = "vlabs"            
 
         ELASTIC_URL = "%s/%s/%s/_search" % (ELASTIC_IP, index_name, doc_name)
-        current_app.logger.error("ELASTIC_URL %s" % (ELASTIC_URL))
+        current_app.logger.debug("ELASTIC_URL %s" % (ELASTIC_URL))
         count = 0
         usages = requests.get(ELASTIC_URL)
         
         if usages.status_code == 200:
-            current_app.logger.error("usages %s" % (usages.json()))
+            current_app.logger.debug("usages %s" % (usages.json()))
             for feedback in usages.json()['hits']['hits']:
                 date_of_elastic_data = feedback['_source']['date']
                 if version == "offline":
-                    current_app.logger.error("date %s" % (feedback['_source']['date']))
+                    current_app.logger.debug("date %s" % (feedback['_source']['date']))
                     if date == date_of_elastic_data:
-                        current_app.logger.error("true")
+                        current_app.logger.debug("true")
                         count = count+1                        
                     
                 else:
                     gateway_ip_of_e_db = feedback['_source']['gateway_ip']
-                    current_app.logger.error("gateway_ip %s" % (feedback['_source']['gateway_ip']))
+                    current_app.logger.debug("gateway_ip %s" % (feedback['_source']['gateway_ip']))
                     if date == date_of_elastic_data and gateway_ip == gateway_ip_of_e_db:
-                        current_app.logger.error("true")
+                        current_app.logger.debug("true")
                         count = count + 1                        
             return jsonify({"usage" : count})
         elif usages.status_code == 404:
