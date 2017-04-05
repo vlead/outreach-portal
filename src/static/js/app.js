@@ -156,6 +156,10 @@ app.config(function($routeProvider){
 	.when('/ws-list-offline/:id', {
 	    templateUrl : '/static/partials/detailed_ws_details.html',
 	    controller  : 'ws_reports'
+	})
+	.when('/nc-user-list/:id', {
+	    templateUrl : '/static/partials/nc-user-list.html',
+	    controller  : 'nc_user_list'
 	});
     
     

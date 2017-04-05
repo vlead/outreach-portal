@@ -13,7 +13,6 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
                 console.log("");
             }else{
                 workshop_list.push(workshops[i]);
-
             }
         }
 	$scope.upcoming_loading = false;
@@ -131,7 +130,7 @@ app.controller("usage-ctrl", function($scope, dataFactory, $http, $routeParams, 
 	$scope.loading = false;
     }).error(function(response){console.log("Failed to fetch data");});
 });
-app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, $route, $q, $window) {
+app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, $location, $route, $q, $window) {
      $scope.showNcentres = function(){
          window.open("/ncentres");
      }
@@ -199,9 +198,35 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
         }
                  
     }
+    $scope.goToLink = function(id) {
+	window.location.href = "#/nc-user-list/" + id;
+    };
+
     dataFactory.fetch("/users?role_id=2").success(function(response){
         $scope.totaloc = response.length;
-        $scope.oc_users = response;
+        $scope.oc_users = response;	
+	var oc_users_with_ncs = []
+	//start here v2.4.0
+	var count = 0;
+	for(user=0;user<response.length;user++){
+	    
+	    dataFactory.fetch("/nodal_coordinator_details?created_by_id="+response[user].id).success(function(data){
+		count = count +1 ;
+		console.log(response[count])
+		if(data.length!=0){
+		    institute = data[0].created_by.institute_name
+		    id = data[0].created_by.id
+		    var dict = { "id" : id, "institute" : institute, "total_ncs" : data.length }
+		}
+		else{
+		    var dict = {"id" : response[count].id, "institute" : response[count].institute_name, "total_ncs" : 0}
+		}
+		oc_users_with_ncs.push(dict);
+	    });
+	    $scope.oc_users_with_ncs = oc_users_with_ncs;
+	}
+
+	//end here
         
     });
     $scope.nloading = true;
@@ -1420,4 +1445,15 @@ app.controller("ws_details_offline", function($scope, $http, $routeParams, dataF
         console.log("Failed2");
     });
 
+});
+
+app.controller("nc_user_list", function($scope, $http, $routeParams, dataFactory, $route, $window){
+    dataFactory.fetch('/nodal_coordinator_details?created_by_id='+ $routeParams.id).
+	success(function(data, status, headers, config){
+	    $scope.nc_user_list = data;
+	    console.log($scope.nc_user_list)
+	}).
+	error(function(data,status,headers,config){
+	    console.log("Failed");
+	});
 });
