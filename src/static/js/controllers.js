@@ -208,18 +208,20 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
 	var oc_users_with_ncs = []
 	//start here v2.4.0
 	var count = 0;
+	var count1 = 0;
 	for(user=0;user<response.length;user++){
 	    
 	    dataFactory.fetch("/nodal_coordinator_details?created_by_id="+response[user].id).success(function(data){
-		count = count +1 ;
-		console.log(response[count])
+		count = count +1 ;		
+		var temp_dict = [{"institute_name" : "NIT Surathkal" }];
 		if(data.length!=0){
 		    institute = data[0].created_by.institute_name
 		    id = data[0].created_by.id
 		    var dict = { "id" : id, "institute" : institute, "total_ncs" : data.length }
 		}
 		else{
-		    var dict = {"id" : response[count].id, "institute" : response[count].institute_name, "total_ncs" : 0}
+		    var dict = {"id" : response[count].id, "institute" : temp_dict[count1].institute_name, "total_ncs" : 0}
+		    count1 = count1 + 1;
 		}
 		oc_users_with_ncs.push(dict);
 	    });

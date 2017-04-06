@@ -45,8 +45,7 @@
 	</tr>
       </thead>
       <tbody>
-	
-	<tr ng-repeat="nc in oc_users_with_ncs | orderBy : -'total_ncs'" ng-click="goToLink(nc.id)" style="cursor:pointer">
+	<tr ng-repeat="nc in oc_users_with_ncs | orderBy : -'total_ncs'" ng-click="nc.total_ncs !=0 ? goToLink(nc.id) : angular.noop()" ng-style="{'cursor': (nc.total_ncs != 0) ? 'pointer' : '' }">
           <td>{{ $index+1 }}</td>
           <td>{{ nc.institute }}</td>
           <td>{{ nc.total_ncs }}</td>
