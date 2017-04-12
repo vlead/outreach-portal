@@ -1,0 +1,6 @@
+flask
+Flask-SQLAlchemy
+oursql
+flask-cors
+flask-testing
+requests

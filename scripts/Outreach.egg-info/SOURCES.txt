@@ -1,0 +1,5 @@
+Outreach.egg-info/PKG-INFO
+Outreach.egg-info/SOURCES.txt
+Outreach.egg-info/dependency_links.txt
+Outreach.egg-info/requires.txt
+Outreach.egg-info/top_level.txt

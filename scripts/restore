@@ -2,7 +2,7 @@
                                                                                                                                                
 DB_NAME="outreach"
 DB_PASS="root"
-VERSION="v2.2.1"
+VERSION="v2.3.0"
 
 BACKUP_FILE=$1
 
@@ -45,16 +45,6 @@ mysql -u root -p$DB_PASS $DB_NAME < $DB_NAME.sql
 if [ $? -ne 0 ]; then
   echo "Error: Something went wrong while restoring db dump."
   echo "Aborting restore."
-  exit 1;
-fi
-
-mysql -u root -p$DB_PASS $DB_NAME -e "use $DB_NAME; ALTER TABLE workshops add column version varchar(20) after location; update workshops set version='online' where version is NULL;"
-
-
-
-if [ $? -ne 0 ]; then
-  echo "Error: Couldn't add attribute version to workshops"
-  echo "Aborting."
   exit 1;
 else
     echo "################"
