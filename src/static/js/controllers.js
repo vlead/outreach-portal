@@ -60,8 +60,10 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
     var nodal_centre_infowindow = new google.maps.InfoWindow({
       content: '<b>Nodal Centre Location : </b>'+label.location+'<br><b>Nodal Centre Name : </b>'+label.name+'<br><b>Outreach Centre Name : </b>'+label.created_by.institute_name
     });
+      var a = 0;
       if(type == "workshops")
       {
+	  alert("dfd");
         var marker = new google.maps.Marker({
           map: $scope.map,
           animation: google.maps.Animation.DROP,
@@ -75,21 +77,19 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
         });
       }
       else{
-        var marker = new google.maps.Marker({
-          map: $scope.map,
-          animation: google.maps.Animation.DROP,
-          draggable: false,
-          icon : "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
-          position: new google.maps.LatLng(geo_code.lattitude, geo_code.longitude),
-          title: 'Click here to view the Nodal Centre details'
-        });
-        marker.addListener('click', function() {
-            nodal_centre_infowindow.open(map, marker);
-        });
+          var marker = new google.maps.Marker({
+	      map: $scope.map,
+	      animation: google.maps.Animation.DROP,
+	      draggable: false,
+	      icon : "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
+	      position: new google.maps.LatLng(geo_code.lattitude, geo_code.longitude),
+	      title: 'Click here to view the Nodal Centre details'
+          });
+          marker.addListener('click', function() {
+		  nodal_centre_infowindow.open(map, marker);
+          });
       }
-        
-
-    }
+  }
 
 });
 
@@ -220,8 +220,7 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
 		    var dict = { "id" : id, "institute" : institute, "total_ncs" : data.length }
 		}
 		else{
-		    var dict = {"id" : response[count].id, "institute" : temp_dict[count1].institute_name, "total_ncs" : 0}
-		    count1 = count1 + 1;
+		    var dict = {"id" : response[count].id, "institute" : temp_dict[0].institute_name, "total_ncs" : 0}
 		}
 		oc_users_with_ncs.push(dict);
 	    });

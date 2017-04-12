@@ -14,7 +14,7 @@
           <th>Participants</th>
 	  <th>Date</th>
           <th>Status</th>
-        
+	  <th>Usage</th>        
 	</tr>
       </thead>
       <tbody>
@@ -25,6 +25,7 @@
           <td>{{ workshop.participants_attended }}</td>
           <td>{{ workshop.date }}</td>
           <td>{{ workshop.status.name }}</td>
+	  <td>{{ workshop.experiments_conducted }}</td>
           <td><a href="#view-reports/{{workshop.id}}" class="btn btn-primary">View Reports</a><td>
           <td><a href="#/edit-workshop/{{workshop.id}}" class="btn btn-primary">Edit</a></td>
           <td><a href="#/oc-upload-reports/{{workshop.id}}" class="btn btn-primary">Upload Reports</a></td>

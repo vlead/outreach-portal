@@ -191,6 +191,10 @@ img:hover{
     color: #fff;
 }
 
+.box1:hover {
+    cursor: pointer;
+    background: #028482;
+}
 
 .profile{
     background-color: #3799FA;
