@@ -1,0 +1,37 @@
+#+TITLE: Outreach Portal Version V2.4.0
+#+AUTHOR: VLEAD
+#+DATE: [2017-04-13 Tue]
+
+* Introduction
+  This document describes the release notes of =Outreach Portal=
+  version =v2.4.0=.
+
+* Landing Page :
+
+  - By clicking on =NODAL CENTRES= tab, all nodal centres list
+    displayed along with =participating institute= against each nodal
+    centre.  
+  - Link : http://outreach.virtual-labs.ac.in/ncentres
+
+  - Updated footer http://outreach.virtual-labs.ac.in same as http://vlabs.ac.in footer page
+
+* Admin Accounts:  
+
+  - In =Nodal Coordinators= tab under dashbaord all NC's count
+    displayed with respect to each OC and each item in list is clickable for
+    detailed view.
+
+* Outreach and Nodal Coordinator Accounts:
+
+  - All tabs under dashboard section are clickable for detailed view.
+  
+* Milestone
+  + https://github.com/vlead/outreach-portal/milestone/2
+
+* Resolved issues
+   + https://github.com/vlead/outreach-portal/issues/248
+   + https://github.com/vlead/outreach-portal/issues/247
+   + https://github.com/vlead/outreach-portal/issues/246   
+   + https://github.com/vlead/outreach-portal/issues/244
+   + https://github.com/vlead/outreach-portal/issues/243
+   + https://github.com/vlead/outreach-portal/issues/242
