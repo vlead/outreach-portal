@@ -165,7 +165,8 @@ config = {
 
 ** The Data Model
 *** ER Diagram
-    [[./diagrams/model-diagram.jpg][schema diagram]] 
+#+CAPTION: Schema  Diagram
+    [[./diagrams/model-diagram.jpg]] 
 *** Name
      
     Name is an alphabetical string.

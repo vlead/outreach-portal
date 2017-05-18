@@ -50,6 +50,7 @@
 ** High Level Design
 #+CAPTION: High Level Design Diagram
   [[./diagrams/outreach.svg]]
+
 ** View & Controller
    [[./frontend.org][Front end for Outreach Portal]]
 
