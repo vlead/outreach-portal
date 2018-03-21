@@ -127,6 +127,8 @@
           "min_required": "150gb"
         },
         "installer": [
+          "rsync -avz apache2.conf /etc/apache2/",
+          "rsync -avz security.conf /etc/apache2/conf-available/security.conf",
           "bash /var/www/setup.sh",
           "python /var/www/setup.py install",
           "bash /var/www/configure.sh",
