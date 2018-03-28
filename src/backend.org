@@ -5420,7 +5420,7 @@ def create_app(config):
     app.register_blueprint(api)
     configure_logging(app)
     configure_errorhandlers(app)
-    cors = CORS(app, resources={r"/*": {"origins": "*"}})
+#    cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
     #  configure_cors(app)
     # all set; return app object
