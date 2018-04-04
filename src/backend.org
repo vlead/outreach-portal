@@ -6684,6 +6684,10 @@ delete or update an existing record.
 def modify_entity(entity, id):
     email = str(request.headers.get('email'))
     key = str(request.headers.get('key'))
+    token = str(request.headers.get('token'))
+    if not token or token != str(session['token']):
+        abort(401, "Unauthorized Credentials")
+    
     if entity == "reference_documents" or entity == "workshop_reports":
         if email is None or key is None:
             abort(401, "Unauthorized Credentials")
