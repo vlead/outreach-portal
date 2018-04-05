@@ -782,3 +782,12 @@ exit 0;
 #+END_SRC
 
 
+* Hardening apache security rules
+   To protect server from the hackers following rules have
+   been set on the apache server. Steps were taken from
+   [[https://github.com/virtadpt/ubuntu-hardening/blob/master/14.04-lts/apache2/conf-available/security.conf][referrence]]
+   1. Disable server version
+   2. Deny unwanted http methods requests
+   3. Mitigate clickjacking.
+   4. Set CORS to only allowed domains
+   5. Enable XSS protection.
