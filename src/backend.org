@@ -6683,19 +6683,19 @@ delete or update an existing record.
 @api.route('/<entity>/<id>', methods=['PUT', 'DELETE'])
 def modify_entity(entity, id):
     email = str(request.headers.get('email'))
-    key = str(request.headers.get('key'))
+    # key = str(request.headers.get('key'))
     token = str(request.headers.get('token'))
     
-    if not token or token != str(session['token']):
-        abort(401, "Unauthorized Credentials")
-
-    if not email or email != str(session['email']):
-        abort(401, "Unauthorized Credentials")
-    
     if entity == "reference_documents" or entity == "workshop_reports":
-        if email is None or key is None:
+        if email is None or token is None:
             abort(401, "Unauthorized Credentials")
-    
+    else:
+        if not token or token != str(session['token']):
+            abort(401, "Unauthorized Credentials")
+            
+        if not email or email != str(session['email']):
+            abort(401, "Unauthorized Credentials")
+
     if entity not in entity_map_types:
         current_app.logger.debug("Entity %s not in entity map types"  % entity)
         abort(400, 'Entity %s is not valid.' % entity)
@@ -6906,26 +6906,19 @@ interpreter expects them to be.
 @api.route('/<entity>', methods=['POST'])
 def create_entity(entity):
     email = str(request.headers.get('email'))
-    key = str(request.headers.get('key'))
+    # key = str(request.headers.get('key'))
     token = str(request.headers.get('token'))
-    
+    current_app.logger.debug("email = %s, token = %s " % (email, token))
     if not token or token != str(session['token']):
         abort(401, "Unauthorized Credentials")
 
     if not email or email != str(session['email']):
         abort(401, "Unauthorized Credentials")
 
-    if entity == "reference_documents" or entity == "workshop_reports":
-        if email is None or key is None:
-            abort(401, "Unauthorized Credentials")
-    else:
-        if 'email' not in session:
-            abort(401, "Unauthorized Credentials")
-    #if email is None or key is None:
-    #    abort(401, "Unauthorized Credentials")
-    
-    #if 'email' not in session:
-    #    abort(401, "Unauthorized Credentials")
+    # if entity == "reference_documents" or entity == "workshop_reports":
+    #     if email is None or key is None:
+    #         abort(401, "Unauthorized Credentials")
+
     
     if entity not in entity_map_types:
         current_app.logger.debug("Entity %s not present in entity map types"  % entity)

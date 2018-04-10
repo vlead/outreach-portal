@@ -51,7 +51,7 @@
             async:false,
             contentType: 'application/json',
                             data: JSON.stringify({name: name+"_"+fileups.files[i].name, user: {id : number}}),
-                            headers: {'email' : window.email, 'key' : window.key },
+                            headers: {'email' : window.email, 'token' : window.token },
             success: function (data){
                 return data ;
             },error : function (data){alert("Error in making request to /refrence_documents");}
@@ -68,6 +68,7 @@
             type: 'POST',
             url: url,
             data: form_data,
+            headers: {'email' : window.email, 'token' : window.token },
             contentType: false,
             cache: false,
             processData: false,
