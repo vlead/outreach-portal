@@ -124,7 +124,7 @@ $(function() {
             async:false,
             contentType: 'application/json',
             data: JSON.stringify(data),
-            headers: {'email' : window.email, 'token' : window.token },
+            headers: {'email' : window.email, 'key' : window.key, 'token' : window.token },
             success: function (data){
               return data ;
             }
@@ -154,7 +154,7 @@ $(function() {
                 type: 'PUT',
                 async:false,
                 contentType: 'application/json',
-                data: JSON.stringify({status: {id: 2}}),headers: {'email' : window.email, 'token' : window.token },
+                data: JSON.stringify({status: {id: 2}}),headers: {'email' : window.email, 'key' : window.key,'token' : window.token },
                 success: function (data){
                   count = i; i = i+count;console.log(i+1);
                 }
