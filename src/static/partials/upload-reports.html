@@ -25,7 +25,6 @@
       <thead>
 	<tr>
 	  <th>Name</th>
-
 	</tr>
       </thead>
       <tbody>
@@ -70,61 +69,75 @@
   <br><br>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
   <script>
-    var validFile = function(fileList){
-       for (var i=0; i < fileList.files.length; i++ ){           
-           var re = /(\.jpg|\.jpeg|\.png|\.gif|\.pdf|\.txt|\.csv|\.doc|\.docx)$/i;
-           if(!re.exec(fileList.files[i].name)){
-             return false;
-           }
-           
-       }
-       return true;                  
-   };  
-   $(function() {
-   $('#upload-reports').click(function() {
-        var workshop_id = location.href.split("/").pop();
-	console.log(number);
-	var photoCount = document.getElementById('photo-count').textContent;
-	var attendanceCount = document.getElementById('attendance-count').textContent;
-	var reportCount = document.getElementById('report-count').textContent;		 
-        var fileups = {'Photos':document.getElementById('photo-file'),
-                   'Attendance':document.getElementById('attendance-file'),
-                   'Reports': document.getElementById('reports-file')};
-        
-			 if(fileups['Photos'].files.length + fileups['Attendance'].files.length + fileups['Reports'].files.length == 0){
-			 
-			 $('.error').html("Select atleast one file to be uploaded!<br>");
-			 }else if(fileups['Photos'].files.length + Number(photoCount) == 0 || fileups['Attendance'].files.length + Number(attendanceCount) == 0 || fileups['Reports'].files.length + Number(reportCount) == 0){
-	    $('.error').html("Upload atleast one file per section!<br>");
-            }else if(!validFile(fileups['Photos']) || !validFile(fileups['Attendance']) || !validFile(fileups['Reports'])){
-	    $('.error').html("Allowed file formats are: <br> [txt, pdf, png, jpg, jpeg, gif, csv, doc, docx]<br>");
-            }else{
-        
-   
-        for (var key in fileups){
-                         data = {name: key, workshop: {id : workshop_id }};
-                         $('#wait-status').html("<b> Please Wait...</b>");
-        for (var i = 0; i < fileups[key].files.length; i++){console.log(fileups[key].files[i].name);
-        var jqxhr = $.ajax({
+var validFile = function(fileList){
+  for (var i=0; i < fileList.files.length; i++ ){
+    var re = /(\.jpg|\.jpeg|\.png|\.gif|\.pdf|\.txt|\.csv|\.doc|\.docx)$/i;
+    if(!re.exec(fileList.files[i].name)){
+      return false;
+    }
+  }
+  return true;
+};
+$(function() {
+  $('#upload-reports').click(function() {
+    var workshop_id = location.href.split("/").pop();
+    var photoCount = Number(document.getElementById('photo-count').textContent);
+    var attendanceCount = Number(document.getElementById('attendance-count').textContent);
+                    var reportCount = Number(document.getElementById('report-count').textContent);
+    var fileups = {
+      'Photos':document.getElementById('photo-file'),
+      'Attendance':document.getElementById('attendance-file'),
+      'Reports': document.getElementById('reports-file')
+    };
+    var total_photos = fileups['Photos'].files.length;
+    var total_atndnc_reports = fileups['Attendance'].files.length;
+    var total_reports = fileups['Reports'].files.length;
+
+    if(total_photos + total_atndnc_reports + total_reports == 0){
+      $('.error').html("Select atleast one file to be uploaded!<br>");
+    }
+    else if(total_photos + photoCount == 0 || total_atndnc_reports + attendanceCount == 0 || total_reports + reportCount == 0)
+    {
+      $('.error').html("Upload atleast one file per section!<br>");
+    }
+    else if(!validFile(fileups['Photos']) || !validFile(fileups['Attendance']) || !validFile(fileups['Reports']))
+    {
+      $('.error').html("Allowed file formats are: <br> [txt, pdf, png, jpg, jpeg, gif, csv, doc, docx]<br>");
+    }
+    else
+    {
+      for (var key in fileups){
+        data = {
+          name: key,
+          workshop: {
+            id : workshop_id
+          }
+        };
+        $('#wait-status').html("<b> Please Wait...</b>");
+        for (var i = 0; i < fileups[key].files.length; i++)
+        {
+          console.log(fileups[key].files[i].name);
+          var jqxhr = $.ajax({
             url: '/workshop_reports',
             type: 'POST',
             global: false,
             async:false,
             contentType: 'application/json',
             data: JSON.stringify(data),
+            headers: {'email' : window.email, 'key' : window.key, 'token' : window.token },
             success: function (data){
-                return data ;
-            },headers: {'email' : window.email, 'key' : window.key },
-        }).responseText;
+              return data ;
+            }
+          }).responseText;
 
-        var documentId = JSON.parse(jqxhr).id;
-        console.log(documentId);
-        var form_data = new FormData();
-       
-        form_data.append('file', fileups[key].files[i], fileups[key].files[i].name);
-        var url = '/upload_workshop_reports/' + documentId ;
-        var count = 0;
-        $.ajax({
+          var documentId = JSON.parse(jqxhr).id;
+          var form_data = new FormData();
+
+          form_data.append('file', fileups[key].files[i], fileups[key].files[i].name);
+          var url = '/upload_workshop_reports/' + documentId ;
+          var count = 0;
+
+          $.ajax({
             type: 'POST',
             url: url,
             data: form_data,
@@ -132,34 +145,33 @@
             cache: false,
             processData: false,
             async: false,
-            success: function(data) {$('#upload-status').html("<b> Uploading " + key + " File  </b>");
-                            $('#total-files').html("<b>" + fileups[key].files[i].name + "</b>");
-                            var url = '/workshops/'+workshop_id;                        
-                            $.ajax({
-                            url: url,
-                            type: 'PUT',
-                            async:false,
-                            contentType: 'application/json',
-                            data: JSON.stringify({status: {id: 2}}),headers: {'email' : window.email, 'key' : window.key },
-                            success: function (data){count = i; i = i+count;console.log(i+1);
-                            console.log('Status: Pending for Approval');
-                            }
-                            });                    
-	                    
-                            console.log('Success');
-                            },
-                            error: function(){$('#not-upload-status').html("<b> Files Not Uploaded  </b>");
-                            $('#not-upload-file').append("<font color='red'>(" + (i+1) + ") </font>" + fileups[key].files[i].name + "<br>");}
-                            });
-                            }
-                            }
+            success: function(data) {
+              $('#upload-status').html("<b> Uploading " + key + " File  </b>");
+              $('#total-files').html("<b>" + fileups[key].files[i].name + "</b>");
+              var url = '/workshops/'+workshop_id;
+              $.ajax({
+                url: url,
+                type: 'PUT',
+                async:false,
+                contentType: 'application/json',
+                data: JSON.stringify({status: {id: 2}}),headers: {'email' : window.email, 'key' : window.key,'token' : window.token },
+                success: function (data){
+                  count = i; i = i+count;console.log(i+1);
+                }
+              });
 
-                            
-    
+            },
+            error: function(){
+              $('#not-upload-status').html("<b> Files Not Uploaded  </b>");
+              $('#not-upload-file').append("<font color='red'>(" + (i+1) + ") </font>" + fileups[key].files[i].name + "<br>");}
+          });
+        }
       }
-                            $('#total-files').html("<b> Successfully uploaded all the files  </b>");
-                            $('#wait-status').html("<b> Done </b>");
-    });                        
+    }
+      $('#total-files').html("<b> Successfully uploaded all the files  </b>");
+      $('#wait-status').html("<b> Done </b>");
+  });
 });
+
  </script>
 </div>

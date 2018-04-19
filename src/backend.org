@@ -108,6 +108,7 @@ class Entity(db.Model):
 import os
 import csv
 import requests
+import uuid
 from datetime import datetime
 import inspect
 from flask import session, render_template, Blueprint, request, jsonify, abort,\
@@ -5991,6 +5992,8 @@ def logout():
         session.pop('email', None)
         session.pop('id', None)
         session.pop('name', None)
+        session.pop('token', None)
+
     if 'error' in session:
         session.pop('error', None)
 
@@ -6032,6 +6035,7 @@ def authorized():
                 session.pop('error', None)
 
             session['email'] = email
+            session['token'] = uuid.uuid4().hex
             role = backend_resp.json()[0]['role']['name'].encode('ascii')
             name = backend_resp.json()[0]['name'].encode('ascii')
             session['role'] = role
@@ -6679,22 +6683,19 @@ delete or update an existing record.
 @api.route('/<entity>/<id>', methods=['PUT', 'DELETE'])
 def modify_entity(entity, id):
     email = str(request.headers.get('email'))
-    key = str(request.headers.get('key'))
+    token = str(request.headers.get('token'))
+    current_app.logger.debug("email = %s, token = %s " % (email, token))
+    
     if entity == "reference_documents" or entity == "workshop_reports":
-        if email is None or key is None:
+        if email is None or token is None:
             abort(401, "Unauthorized Credentials")
     else:
-        if 'email' not in session:
+        if not token or token != str(session['token']):
+            abort(401, "Unauthorized Credentials")
+            
+        if not email or email != str(session['email']):
             abort(401, "Unauthorized Credentials")
 
-    #email = str(request.headers.get('email'))
-    #key = str(request.headers.get('key'))
-    #if email is None or key is None:
-    #    abort(401, "Unauthorized Credentials")
-  
-    #if 'email' not in session:
-    #    abort(401, "Unauthorized Credentials")
-    
     if entity not in entity_map_types:
         current_app.logger.debug("Entity %s not in entity map types"  % entity)
         abort(400, 'Entity %s is not valid.' % entity)
@@ -6905,18 +6906,18 @@ interpreter expects them to be.
 @api.route('/<entity>', methods=['POST'])
 def create_entity(entity):
     email = str(request.headers.get('email'))
-    key = str(request.headers.get('key'))
+    token = str(request.headers.get('token'))
+    current_app.logger.debug("email = %s, token = %s " % (email, token))
+
     if entity == "reference_documents" or entity == "workshop_reports":
-        if email is None or key is None:
+        if email is None or token is None:
             abort(401, "Unauthorized Credentials")
     else:
-        if 'email' not in session:
+        if not token or token != str(session['token']):
             abort(401, "Unauthorized Credentials")
-    #if email is None or key is None:
-    #    abort(401, "Unauthorized Credentials")
-    
-    #if 'email' not in session:
-    #    abort(401, "Unauthorized Credentials")
+            
+        if not email or email != str(session['email']):
+            abort(401, "Unauthorized Credentials")
     
     if entity not in entity_map_types:
         current_app.logger.debug("Entity %s not present in entity map types"  % entity)
