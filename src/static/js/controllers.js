@@ -231,8 +231,8 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
 	//end here
         
     });
-    $scope.nloading = true;
-    dataFactory.fetch("/nodal_centres").success(function(response){
+      $scope.nloading = true;
+    dataFactory.fetch("/total_ncenters").success(function(response){
 	$scope.nloading=false;
         $scope.nodal_centres = response.length;
 	$scope.nodal_centres_list = response;

@@ -6201,6 +6201,24 @@ def ws_details_offline():
 def ncentres():
     return render_template("ncentres.html")
 
+@api.route("/total_ncenters")
+def total_ncenters():
+    url = APP_URL + '/nodal_centres';
+    r = requests.get(url);
+    r.status_code
+    data = r.json();
+
+    temp_dict = []
+    for n_center in range(0, len(data)):
+        name = data[n_center]['created_by']['institute_name']
+        created_by_id = data[n_center]['created_by']['id']
+        temp_dict.append(name)
+
+    result =[]
+    for nodal_center in set(temp_dict):
+        result.append({'nodal_center': nodal_center, 'count':temp_dict.count(nodal_center)})
+    return result
+    
 @api.route("/usage")
 def usage():
     return render_template("usage.html")

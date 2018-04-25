@@ -4,27 +4,23 @@
 <div ng-app="outreachApp">
   <div class="container">
     <div ng-controller="admin-ctrl">
-      <h3>Total Nodal Centres : {{ nodal_centres }}</h3><br>
+      <h3>Total Institutes : {{ nodal_centres }}</h3><br>
       <div align='center' ng-show="nloading"><img id="mySpinner" src="/static/img/default.gif"></div>
       <div ng-hide="nloading">
       <table class="table table-hover">
         <thead>
           <tr>
             <th>S.No</th>
-	    <th>Participating Institute</th>
-            <th>Nodal Centre Name</th>
-            <th>Nodal Centre Location</th>
-	    
+	    <th>Institute Name</th>
+            <th>Total Nodal Centers</th>
             <th></th>
           </tr>
         </thead>
-        <tbody ng-repeat="centre in nodal_centres_list | orderBy : 'created_by.institute_name'">
+        <tbody ng-repeat="center in nodal_centres_list | orderBy : 'nodal_center'">
           <tr>
             <td>{{ $index+1 }}</td>
-	    <td>{{ centre.created_by.institute_name }}</td>
-            <td>{{ centre.name }}</td>
-            <td>{{ centre.location }}</td>
-
+	    <td>{{ center.nodal_center }}</td>
+            <td>{{ centre.count}}</td>
           </tr>
         </tbody>
       </table>
