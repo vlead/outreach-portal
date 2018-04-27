@@ -1,32 +1,13 @@
 {% extends "layout.html" %}
 {% block content %}
-{% raw %}
 <div ng-app="outreachApp">
   <div class="container">
-    <div ng-controller="admin-ctrl">
-      <h3>Total Institutes : {{ nodal_centres }}</h3><br>
-      <div align='center' ng-show="nloading"><img id="mySpinner" src="/static/img/default.gif"></div>
-      <div ng-hide="nloading">
-      <table class="table table-hover">
-        <thead>
-          <tr>
-            <th>S.No</th>
-	    <th>Institute Name</th>
-            <th>Total Nodal Centers</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody ng-repeat="center in nodal_centres_list | orderBy : 'nodal_center'">
-          <tr>
-            <td>{{ $index+1 }}</td>
-	    <td>{{ center.nodal_center }}</td>
-            <td>{{ centre.count}}</td>
-          </tr>
-        </tbody>
-      </table>
-      </div>
+    <div ng-view>
     </div>
   </div>
 </div>
-{% endraw %}
+<script type="text/javascript">
+window.location.href = "#nodal-centers-list" ;
+</script>
+
 {% endblock %}

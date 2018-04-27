@@ -6,9 +6,17 @@ app.config(function($routeProvider){
 	    controller  : 'admin-ctrl'
 	})
         .when('/workshop-list', {
-	    templateUrl : '/static/partials/workshop-list.html',
-	    controller  : 'admin-ctrl'
+	  templateUrl : '/static/partials/workshop-list.html',
+	  controller  : 'admin-ctrl'
 	})
+        .when('/nodal-centers-list', {
+          templateUrl : '/static/partials/nodal-centers-list.html',
+          controller  : 'nodal-centers-list'
+        })
+        .when('/nodal-center/:id', {
+          templateUrl : '/static/partials/nodal-center.html',
+          controller  : 'nodal-center'
+        })
         .when('/nc-users-list', {
 	    templateUrl : '/static/partials/nc-users-list.html',
 	    controller  : 'admin-ctrl'

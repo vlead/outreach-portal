@@ -6201,8 +6201,21 @@ def ws_details_offline():
 def ncentres():
     return render_template("ncentres.html")
 
+def unique(list1):
+
+    # intilize a null list                                                                                                                                                                       
+    unique_list = []
+
+    # traverse for all elements                                                                                                                                                                  
+    for x in list1:
+        # check if exists in unique_list or not                                                                                                                                                  
+        if x not in unique_list:
+            unique_list.append(x)
+    # print list                                                                                                                                                                                 
+    return unique_list
+
 @api.route("/total_ncenters")
-def total_ncenters():
+def toatal_ncentres():
     url = APP_URL + '/nodal_centres';
     r = requests.get(url);
     r.status_code
@@ -6212,12 +6225,18 @@ def total_ncenters():
     for n_center in range(0, len(data)):
         name = data[n_center]['created_by']['institute_name']
         created_by_id = data[n_center]['created_by']['id']
-        temp_dict.append(name)
+        temp_dict.append({'id': created_by_id, 'name':name})
 
     result =[]
-    for nodal_center in set(temp_dict):
-        result.append({'nodal_center': nodal_center, 'count':temp_dict.count(nodal_center)})
-    return result
+    for nodal_center in unique(temp_dict):
+        if nodal_center['name'] != None and \
+          nodal_center['name'] != 'VLEAD-IIITH':
+            result.append({'nodal_center':
+                           nodal_center['name'],
+                        'created_by_id': nodal_center['id'],
+                        'count':temp_dict.count(nodal_center)})
+    return jsonify_list(result)
+
     
 @api.route("/usage")
 def usage():

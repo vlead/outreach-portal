@@ -93,6 +93,21 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
 
 });
 
+app.controller("nodal-centers-list", function($scope, $http, $routeParams, dataFactory, $route, $window){
+    dataFactory.fetch('/total_ncenters').success(function(data,status,headers,config){
+	$scope.ncenters = data;
+    }).error(function(data, status, headers, config){
+        console.log("Failed to fetch total ncenters");
+    });
+
+});
+app.controller("nodal-center", function($scope, dataFactory, $http, $routeParams, $location, $route, $q, $window) {
+    dataFactory.fetch("/nodal_centres?created_by_id="+$routeParams.id).success(function(response){
+        $scope.nodal_center = response;
+        console.log($scope.nodal_center);
+    }).error(function(response){console.log("Failed to fetch data");});
+});
+
 app.controller("oc-ctrl", function($scope, $routeParams, dataFactory, $route, $window){
     dataFactory.fetch("/users/"+$routeParams.id).success(function(response){
 	$scope.oc_user = response;
