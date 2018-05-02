@@ -145,6 +145,10 @@ app.config(function($routeProvider){
 	    templateUrl : '/static/partials/ws_details.html',
 	    controller  : 'ws_details'
 	})
+        .when('/workshop/:id', {
+            templateUrl : '/static/partials/workshop.html',
+	    controller  : 'workshop'
+        })
 	.when('/ws-list-offline', {
 	    templateUrl : '/static/partials/ws_details_offline.html',
 	    controller  : 'ws_details_offline'

@@ -130,6 +130,24 @@ app.controller("usage-ctrl", function($scope, dataFactory, $http, $routeParams, 
 	$scope.loading = false;
     }).error(function(response){console.log("Failed to fetch data");});
 });
+
+app.controller("workshop", function($scope, dataFactory, $http, $routeParams, $location, $route, $q, $window) {
+  $scope.loading = true;
+  dataFactory.fetch("/workshops?status_id=3").success(function(response){
+    var workshops = response;
+    $scope.loading = false;
+    var oc_workshops = workshops.filter(workshop => workshop.user.id == $routeParams.id);
+    dataFactory.fetch("/nodal_coordinator_details?created_by_id="+$routeParams.id).success(function(response){
+      var ncs = response;
+      for(nc_user=0;nc_user<ncs.length;nc_user++){
+        nc_workshops = workshops.filter(workshop => workshop.user.id == ncs[nc_user].user.id);
+        oc_workshops = oc_workshops.concat(nc_workshops);
+      }
+      $scope.oc_workshops = oc_workshops;
+    }).error(function(response){console.log("Failed to fetch data");});
+  }).error(function(response){console.log("Failed to fetch data");});
+});
+
 app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, $location, $route, $q, $window) {
      $scope.showNcentres = function(){
          window.open("/ncentres");
