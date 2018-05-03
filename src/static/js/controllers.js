@@ -554,7 +554,7 @@ app.controller("add-workshop", function($scope, $location, $http, dataFactory,$r
         else{
             $scope.status = "Fill Details"
         }
-    }
+    };
     
 });
 
