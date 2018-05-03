@@ -1,0 +1,27 @@
+<div ng-controller="ws_details">
+  <h3>Total Workshops :  {{ oc_workshops.length }}</h3><br>
+  <div align='center' ng-show="loading"><img id="mySpinner" src="/static/img/default.gif"></div>
+  <div ng-hide="loading">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>S.No</th>
+          <th>Institute Name</th>
+          <th>Workshop Location</th>
+          <th>Version</th>
+          <th>Workshop Date</th>
+          <th>Participants Attended</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="workshop in oc_workshops | orderBy : '-date'" ng-click="ViewReports(workshop.id)">
+          <td>{{ $index+1 }}</td>
+          <td>{{ workshop.user.institute_name }}</td>
+          <td>{{ workshop.location }}</td>
+          <td>{{ workshop.version }}</td>
+          <td>{{ workshop.date }}</td>
+          <td>{{ workshop.participants_attended }}</td>
+        </tr>
+    </table>
+  </div>
+</div>
