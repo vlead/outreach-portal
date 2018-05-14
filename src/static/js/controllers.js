@@ -160,7 +160,7 @@ app.controller("workshop", function($scope, dataFactory, $http, $routeParams, $l
 
       }).error(function(data, status, headers, config){
         console.log("Failed2");
-
+      });  
     }).error(function(response){console.log("Failed to fetch data");});
   }).error(function(response){console.log("Failed to fetch data");});
 });
