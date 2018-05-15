@@ -7,7 +7,7 @@ app.config(function($routeProvider){
 	})
         .when('/workshop-list', {
 	    templateUrl : '/static/partials/workshop-list.html',
-	    controller  : 'admin-ctrl'
+	    controller  : 'workshop'
 	})
         .when('/nc-users-list', {
 	    templateUrl : '/static/partials/nc-users-list.html',
@@ -145,6 +145,14 @@ app.config(function($routeProvider){
 	    templateUrl : '/static/partials/ws_details.html',
 	    controller  : 'ws_details'
 	})
+        .when('/workshop/:id', {
+          templateUrl : '/static/partials/workshop.html',
+	  controller  : 'workshop'
+        })
+        .when('/one-workshop/:id', {
+          templateUrl : '/static/partials/one-workshop.html',
+          controller  : 'one-workshop'
+        })
 	.when('/ws-list-offline', {
 	    templateUrl : '/static/partials/ws_details_offline.html',
 	    controller  : 'ws_details_offline'
