@@ -131,6 +131,14 @@ app.controller("usage-ctrl", function($scope, dataFactory, $http, $routeParams, 
     }).error(function(response){console.log("Failed to fetch data");});
 });
 
+app.controller("one-workshop", function($scope, dataFactory, $http, $routeParams, $route, $q, $window) {
+  $scope.loading = true;
+  dataFactory.fetch("/workshops/"+$routeParams.id).success(function(response){
+    $scope.workshop = response;
+    $scope.loading = false;
+  }).error(function(response){console.log("Failed to fetch data");});
+});
+
 app.controller("workshop", function($scope, dataFactory, $http, $routeParams, $location, $route, $q, $window) {
   $scope.loading = true;
   dataFactory.fetch("/workshops?status_id=3").success(function(response){

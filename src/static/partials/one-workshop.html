@@ -1,0 +1,29 @@
+<div ng-controller="ws_details">
+  <div class="col-md-11"><h3>Workshop Details:</h3></div>
+  <div align='center' ng-show="loading"><img id="mySpinner" src="/static/img/default.gif"></div>
+  <div ng-hide="loading">
+    <div class="col-md-1">
+      <br><br>
+      <a onclick="history.back();" role="button" class="btn btn-success btn-large">Back</a>
+    </div>
+    <br><br><br><br>
+    <table class="table table-hover">
+        <tr><th>S.No</th><td>{{ $index+1 }}</td></tr>
+        <tr><th>Workshop Name</th><td>Workshop on Vlabs</td></tr>
+        <tr><th>Institute Name</th><td>{{ workshop.user.institute_name }}</td></tr>
+        <tr><th>Workshop Location</th><td>{{ workshop.location }}</td></tr>
+        <tr><th>Version</th><td>{{ workshop.version }}</td></tr>
+        <tr><th>Workshop Date</th><td>{{ workshop.date }}</td></tr>
+        <tr><th>Participants Expected</th><td>{{ workshop.no_of_participants_expected }}</td></tr>
+        <tr><th>Participants Attended</th><td>{{ workshop.participants_attended }}</td></tr>
+        <tr><th>Number of Sessions</th><td>{{ workshop.no_of_sessions }}</td></tr>
+        <tr><th>Participating Institutes</th><td>{{ workshop.participating_institutes }}</td></tr>
+        <tr><th>Experiments Conducted</th><td>{{ workshop.experiments_conducted }}</td></tr>
+        <tr><th>Status</th><td>{{ workshop.status.name }}</td></tr>
+        <tr><th>Labs Planned</th><td>{{ workshop.labs_planned }}</td></tr>
+        <tr><th>Workshop Conducted by</th><td>{{ workshop.user.name }}</td></tr>
+        <tr><th>Role</th><td>{{ workshop.user.role.name }}</td></tr>
+    </table>
+  </div>
+</div>
+
