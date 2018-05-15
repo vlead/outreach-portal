@@ -3,7 +3,6 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
     var workshop_list = [];
     $scope.upcoming_loading = true;
     dataFactory.fetch("/workshops?status_id=1").success(function(workshops){
-
         var today = new Date();
         for(i=0;i<workshops.length;i++){
             workshop_date = new Date(workshops[i].date);
@@ -151,7 +150,7 @@ app.controller("workshop", function($scope, dataFactory, $http, $routeParams, $l
         nc_workshops = workshops.filter(workshop => workshop.user.id == ncs[nc_user].user.id);
         oc_workshops = oc_workshops.concat(nc_workshops);
       }
-      $scope.oc_workshops = oc_workshops;
+      $scope.workshops = oc_workshops;
       dataFactory.fetch('/workshop_reports').success(function(data,status,headers,config){
         var reports = [];
         for(i=0;i<$scope.oc_workshops.length;i++){
