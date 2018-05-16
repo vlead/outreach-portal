@@ -246,21 +246,29 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
 	//end here
         
     });
-      $scope.nloading = true;
-    dataFactory.fetch("/total_ncenters").success(function(response){
-	$scope.nloading=false;
-        $scope.nodal_centres = response.length;
-	$scope.nodal_centres_list = response;
-    });
-    dataFactory.fetch("/workshops?status_id=1").success(function(response){
-        $scope.upcoming_workshops = response.length;
-    });
+
+  $scope.nloading = true;
+  dataFactory.fetch("/total_ncenters").success(function(response){
+    $scope.nloading=false;
+    $scope.nodal_centres = response.length;
+    $scope.nodal_centres_list = response;
+  });
+
+  $scope.nloading = true;
+  dataFactory.fetch("/nodal_centres").success(function(response){
+    $scope.nloading=false;
+    $scope.total_ncentres = response.length;
+  });
+
+  dataFactory.fetch("/workshops?status_id=1").success(function(response){
+    $scope.upcoming_workshops = response.length;
+  });
     
-    dataFactory.fetch("/nodal_coordinator_details").success(function(response){
-        $scope.totalnc = response.length;
-        $scope.nc_users = response;
-        
-    });
+  dataFactory.fetch("/nodal_coordinator_details").success(function(response){
+    $scope.totalnc = response.length;
+    $scope.nc_users = response;
+    
+  });
     $scope.load_analytics = true;
     dataFactory.fetch("/workshops?status_id=3").success(function(workshops){
         var participants_count = 0;
