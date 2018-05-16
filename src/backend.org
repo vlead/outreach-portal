@@ -108,6 +108,7 @@ class Entity(db.Model):
 import os
 import csv
 import requests
+import uuid
 from datetime import datetime
 import inspect
 from flask import session, render_template, Blueprint, request, jsonify, abort,\
@@ -3294,7 +3295,6 @@ class TestNodalCentre(TestCase):
 
 #+END_SRC
 
-
 *** Nodal Coordinator Details
 **** Immutable data
      + Id
@@ -5420,7 +5420,7 @@ def create_app(config):
     app.register_blueprint(api)
     configure_logging(app)
     configure_errorhandlers(app)
-    cors = CORS(app, resources={r"/*": {"origins": "*"}})
+#    cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
     #  configure_cors(app)
     # all set; return app object
@@ -5991,6 +5991,8 @@ def logout():
         session.pop('email', None)
         session.pop('id', None)
         session.pop('name', None)
+        session.pop('token', None)
+
     if 'error' in session:
         session.pop('error', None)
 
@@ -6032,6 +6034,7 @@ def authorized():
                 session.pop('error', None)
 
             session['email'] = email
+            session['token'] = uuid.uuid4().hex
             role = backend_resp.json()[0]['role']['name'].encode('ascii')
             name = backend_resp.json()[0]['name'].encode('ascii')
             session['role'] = role
@@ -6197,6 +6200,39 @@ def ws_details_offline():
 def ncentres():
     return render_template("ncentres.html")
 
+def unique(list1):
+
+    # intilize a null list                                                                                                                                                                       
+    unique_list = []
+
+    # traverse for all elements                                                                                                                                                                  
+    for x in list1:
+        # check if exists in unique_list or not                                                                                                                                                  
+        if x not in unique_list:
+            unique_list.append(x)
+    # print list                                                                                                                                                                                 
+    return unique_list
+
+@api.route("/total_ncenters")
+def toatal_ncentres():
+    url = APP_URL + '/nodal_centres';
+    r = requests.get(url);
+    r.status_code
+    data = r.json();
+
+    temp_dict = []
+    for n_center in range(0, len(data)):
+        name = data[n_center]['created_by']['institute_name']
+        created_by_id = data[n_center]['created_by']['id']
+        temp_dict.append({'id': created_by_id, 'name':name})
+
+    result = []
+    for nodal_center in unique(temp_dict):
+        result.append({'nodal_center': nodal_center['name'],
+                       'created_by_id': nodal_center['id'],
+                    'count':temp_dict.count(nodal_center)})
+    return jsonify_list(result)
+
 @api.route("/usage")
 def usage():
     return render_template("usage.html")
@@ -6267,6 +6303,7 @@ def get_nc_wise_usage():
 				    temp_dict['workshops'] = 1
 				    nc_count = get_nodal_center_count_for_OC(user_id)
 				    temp_dict['nc_count'] = nc_count
+                                    temp_dict['user_id'] = users_dict[0]['id']
 				    return_dict[institute_name] = temp_dict
 
 			    elif users_dict[0]['role']['id'] == 3:
@@ -6294,6 +6331,7 @@ def get_nc_wise_usage():
 					    temp_dict['workshops'] = 1
 					    nc_count = get_nodal_center_count_for_OC(nc_users_dict[0]['created_by']['id'])
 					    temp_dict['nc_count'] = nc_count
+                                            temp_dict['user_id'] = nc_users_dict[0]['created_by']['id']
 					    return_dict[institute_name]  = temp_dict
 				except Exception as err:
 				    raise err
@@ -6679,22 +6717,19 @@ delete or update an existing record.
 @api.route('/<entity>/<id>', methods=['PUT', 'DELETE'])
 def modify_entity(entity, id):
     email = str(request.headers.get('email'))
-    key = str(request.headers.get('key'))
+    token = str(request.headers.get('token'))
+    current_app.logger.debug("email = %s, token = %s " % (email, token))
+    
     if entity == "reference_documents" or entity == "workshop_reports":
-        if email is None or key is None:
+        if email is None or token is None:
             abort(401, "Unauthorized Credentials")
     else:
-        if 'email' not in session:
+        if not token or token != str(session['token']):
+            abort(401, "Unauthorized Credentials")
+            
+        if not email or email != str(session['email']):
             abort(401, "Unauthorized Credentials")
 
-    #email = str(request.headers.get('email'))
-    #key = str(request.headers.get('key'))
-    #if email is None or key is None:
-    #    abort(401, "Unauthorized Credentials")
-  
-    #if 'email' not in session:
-    #    abort(401, "Unauthorized Credentials")
-    
     if entity not in entity_map_types:
         current_app.logger.debug("Entity %s not in entity map types"  % entity)
         abort(400, 'Entity %s is not valid.' % entity)
@@ -6905,18 +6940,18 @@ interpreter expects them to be.
 @api.route('/<entity>', methods=['POST'])
 def create_entity(entity):
     email = str(request.headers.get('email'))
-    key = str(request.headers.get('key'))
+    token = str(request.headers.get('token'))
+    current_app.logger.debug("email = %s, token = %s " % (email, token))
+
     if entity == "reference_documents" or entity == "workshop_reports":
-        if email is None or key is None:
+        if email is None or token is None:
             abort(401, "Unauthorized Credentials")
     else:
-        if 'email' not in session:
+        if not token or token != str(session['token']):
             abort(401, "Unauthorized Credentials")
-    #if email is None or key is None:
-    #    abort(401, "Unauthorized Credentials")
-    
-    #if 'email' not in session:
-    #    abort(401, "Unauthorized Credentials")
+            
+        if not email or email != str(session['email']):
+            abort(401, "Unauthorized Credentials")
     
     if entity not in entity_map_types:
         current_app.logger.debug("Entity %s not present in entity map types"  % entity)
