@@ -3295,7 +3295,6 @@ class TestNodalCentre(TestCase):
 
 #+END_SRC
 
-
 *** Nodal Coordinator Details
 **** Immutable data
      + Id
@@ -6227,17 +6226,13 @@ def toatal_ncentres():
         created_by_id = data[n_center]['created_by']['id']
         temp_dict.append({'id': created_by_id, 'name':name})
 
-    result =[]
+    result = []
     for nodal_center in unique(temp_dict):
-        if nodal_center['name'] != None and \
-          nodal_center['name'] != 'VLEAD-IIITH':
-            result.append({'nodal_center':
-                           nodal_center['name'],
-                        'created_by_id': nodal_center['id'],
-                        'count':temp_dict.count(nodal_center)})
+        result.append({'nodal_center': nodal_center['name'],
+                       'created_by_id': nodal_center['id'],
+                    'count':temp_dict.count(nodal_center)})
     return jsonify_list(result)
 
-    
 @api.route("/usage")
 def usage():
     return render_template("usage.html")
