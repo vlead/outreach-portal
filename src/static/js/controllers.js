@@ -92,6 +92,21 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
 
 });
 
+app.controller("nodal-centers-list", function($scope, $http, $routeParams, dataFactory, $route, $window){
+    dataFactory.fetch('/total_ncenters').success(function(data,status,headers,config){
+	$scope.ncenters = data;
+    }).error(function(data, status, headers, config){
+        console.log("Failed to fetch total ncenters");
+    });
+
+});
+app.controller("nodal-center", function($scope, dataFactory, $http, $routeParams, $location, $route, $q, $window) {
+    dataFactory.fetch("/nodal_centres?created_by_id="+$routeParams.id).success(function(response){
+        $scope.nodal_center = response;
+        console.log($scope.nodal_center);
+    }).error(function(response){console.log("Failed to fetch data");});
+});
+
 app.controller("oc-ctrl", function($scope, $routeParams, dataFactory, $route, $window){
     dataFactory.fetch("/users/"+$routeParams.id).success(function(response){
 	$scope.oc_user = response;
@@ -307,21 +322,29 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
 	//end here
         
     });
-    $scope.nloading = true;
-    dataFactory.fetch("/nodal_centres").success(function(response){
-	$scope.nloading=false;
-        $scope.nodal_centres = response.length;
-	$scope.nodal_centres_list = response;
-    });
-    dataFactory.fetch("/workshops?status_id=1").success(function(response){
-        $scope.upcoming_workshops = response.length;
-    });
+
+  $scope.nloading = true;
+  dataFactory.fetch("/total_ncenters").success(function(response){
+    $scope.nloading=false;
+    $scope.nodal_centres = response.length;
+    $scope.nodal_centres_list = response;
+  });
+
+  $scope.nloading = true;
+  dataFactory.fetch("/nodal_centres").success(function(response){
+    $scope.nloading=false;
+    $scope.total_ncentres = response.length;
+  });
+
+  dataFactory.fetch("/workshops?status_id=1").success(function(response){
+    $scope.upcoming_workshops = response.length;
+  });
     
-    dataFactory.fetch("/nodal_coordinator_details").success(function(response){
-        $scope.totalnc = response.length;
-        $scope.nc_users = response;
-        
-    });
+  dataFactory.fetch("/nodal_coordinator_details").success(function(response){
+    $scope.totalnc = response.length;
+    $scope.nc_users = response;
+    
+  });
     $scope.load_analytics = true;
     dataFactory.fetch("/workshops?status_id=3").success(function(workshops){
         var participants_count = 0;

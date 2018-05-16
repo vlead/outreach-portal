@@ -1,0 +1,22 @@
+<div ng-controller="ws_details">
+  <h3>Total Institutes :  {{ ncenters.length }}</h3><br>
+  <div align='center' ng-show="nloading"><img id="mySpinner" src="/static/img/default.gif"></div>
+  <div ng-hide="nloading">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>S.No</th>
+          <th>Institute Name</th>
+          <th>Total Nodal Centers</th>
+        </tr>
+      </thead>
+        <tbody ng-repeat="center in ncenters | orderBy : 'nodal_center'">
+          <tr>
+            <td>{{ $index+1 }}</td>
+            <td><a href="/ncentres#/nodal-center/{{center.created_by_id}}">{{ center.nodal_center }}</a></td>
+            <td>{{ center.count }}</td>
+          </tr>
+        </tbody>
+    </table>
+  </div>
+</div>
