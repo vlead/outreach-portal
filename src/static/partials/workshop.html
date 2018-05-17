@@ -1,5 +1,5 @@
 <div ng-controller="ws_details">
-  <div class="col-md-11"><h3>Total Workshops :  {{ workshops.length }}</h3></div>
+  <div class="col-md-11"><h3>Total Workshops :  {{ oc_workshops.length }}</h3></div>
   <div align='center' ng-show="loading"><img id="mySpinner" src="/static/img/default.gif"></div>
   <div ng-hide="loading">
     <div class="col-md-1">
@@ -20,7 +20,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr ng-repeat="workshop in workshops | orderBy : '-date'" ng-click="ViewReports(workshop.id)">
+        <tr ng-repeat="workshop in oc_workshops | orderBy : '-date'" ng-click="ViewReports(workshop.id)">
           <td><a href="#/one-workshop/{{workshop.id}}">{{ $index+1 }}</a></td>
           <td>{{ workshop.user.institute_name }}</td>
           <td>{{ workshop.location }}</td>
