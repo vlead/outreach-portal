@@ -56,10 +56,10 @@
 |   |       | and Offline workshops      |        |          |        |            |        |         |          |
 |   |       | conducted                  |        |          |        |            |        |         |          |
 |---+-------+----------------------------+--------+----------+--------+------------+--------+---------+----------|
-|   |    7. | outreach-portal_Sensitive  | [[https://gitlab.com/vlead-systems/vlead-security-audit/issues/593][#593]]   |       48 |        | 22-05-2018 |        | Backlog |          |
+|   |    7. | outreach-portal Sensitive  | [[https://gitlab.com/vlead-systems/vlead-security-audit/issues/593][#593]]   |       48 |        | 22-05-2018 |        | Backlog |          |
 |   |       | Information Disclosure     |        |          |        |            |        |         |          |
 |---+-------+----------------------------+--------+----------+--------+------------+--------+---------+----------|
-|   |    8. | outreach-portal_Error      | [[https://gitlab.com/vlead-systems/vlead-security-audit/issues/592][#592]]   |       48 |        | 22-05-2018 |        | Backlog |          |
+|   |    8. | outreach-portal Error      | [[https://gitlab.com/vlead-systems/vlead-security-audit/issues/592][#592]]   |       48 |        | 22-05-2018 |        | Backlog |          |
 |   |       | Based SQL Injection        |        |          |        |            |        |         |          |
 |---+-------+----------------------------+--------+----------+--------+------------+--------+---------+----------|
 |   |    9. | outreach-portal            | [[https://gitlab.com/vlead-systems/vlead-security-audit/issues/591][#591]]   |       48 |        | 22-05-2018 |        | Backlog |          |
@@ -70,18 +70,6 @@
 |---+-------+----------------------------+--------+----------+--------+------------+--------+---------+----------|
 |   |   11. | outreach-portal            | [[https://gitlab.com/vlead-systems/vlead-security-audit/issues/589][#589]]   |       48 |        | 22-05-2018 |        | Backlog |          |
 |   |       | Cross-Site Tracing         |        |          |        |            |        |         |          |
-|---+-------+----------------------------+--------+----------+--------+------------+--------+---------+----------|
-|   |   12. | feedback-service_HTTP Slow | [[https://gitlab.com/vlead-systems/vlead-security-audit/issues/553][#553]]   |       48 |        | 22-05-2018 |        | Backlog |          |
-|   |       | Loris DOS                  |        |          |        |            |        |         |          |
-|---+-------+----------------------------+--------+----------+--------+------------+--------+---------+----------|
-|   |   13. | feedback-service_Internal  | [[https://gitlab.com/vlead-systems/vlead-security-audit/issues/552][#552]]   |       48 |        | 22-05-2018 |        | Backlog |          |
-|   |       | IP Address Disclosure      |        |          |        |            |        |         |          |
-|---+-------+----------------------------+--------+----------+--------+------------+--------+---------+----------|
-|   |   14. | feedback-service_Apache    | [[https://gitlab.com/vlead-systems/vlead-security-audit/issues/551][#551]]   |       48 |        | 22-05-2018 |        | Backlog |          |
-|   |       | Web server sample files    |        |          |        |            |        |         |          |
-|---+-------+----------------------------+--------+----------+--------+------------+--------+---------+----------|
-|   |   15. | feedback-service_to        | [[https://gitlab.com/vlead-systems/vlead-security-audit/issues/550][#550]]   |       48 |        | 22-05-2018 |        | Backlog |          |
-|   |       | test error handling        |        |          |        |            |        |         |          |
 |---+-------+----------------------------+--------+----------+--------+------------+--------+---------+----------|
 |   | Total |                            |        |      616 | 0      |            |        |         |          |
 | ^ |       |                            |        |      est | act    |            |        |         |          |
