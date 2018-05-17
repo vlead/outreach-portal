@@ -27,52 +27,52 @@
 #+caption:  realization-plan-milestone-1
 #+name: tbl-rlz-pln-ml-1
 
-|---+-------+----------------------------+--------+----------+--------+------------+--------+---------+----------|
-|   |    S. | Tasks                      | Github | Expected | Actual |  Estimated | Actual | Status  | Assignee |
-|   |    NO |                            | Issues |   Effort | Effort |     Start, | Start/ |         |          |
-|   |       |                            |        |      (in | (in    |        End | End    |         |          |
-|   |       |                            |        |   person | person |      Dates | Dates  |         |          |
-|   |       |                            |        |   hours) | hours) |            |        |         |          |
-|---+-------+----------------------------+--------+----------+--------+------------+--------+---------+----------|
-|   |    1. | Integrate footer service   | [[https://github.com/vlead/outreach-portal/issues/260][#260]]   |        8 |        | 21-05-2018 |        | Backlog |          |
-|   |       |                            |        |          |        | 21-05-2018 |        |         |          |
-|---+-------+----------------------------+--------+----------+--------+------------+--------+---------+----------|
-|   |    2. | Adding contact details     | [[https://github.com/vlead/outreach-portal/issues/265][#265]]   |       32 |        | 22-05-2018 |        | Backlog |          |
-|   |       | of the nodal coordinator   |        |          |        |            |        |         |          |
-|---+-------+----------------------------+--------+----------+--------+------------+--------+---------+----------|
-|   |    3. | New requirement : Sorting  | [[https://github.com/vlead/outreach-portal/issues/266][#266]]   |       48 |        | 21-05-2018 |        | Backlog |          |
-|   |       | feature in workshop        |        |          |        |            |        |         |          |
-|   |       | history details            |        |          |        |            |        |         |          |
-|---+-------+----------------------------+--------+----------+--------+------------+--------+---------+----------|
-|   |    4. | Tool tips on Create        | [[https://github.com/vlead/outreach-portal/issues/274][#274]]   |       48 |        | 21-05-2018 |        | Backlog |          |
-|   |       | Workshop fields (For e.g.  |        |          |        |            |        |         |          |
-|   |       | on Gateway IP of College)  |        |          |        |            |        |         |          |
-|---+-------+----------------------------+--------+----------+--------+------------+--------+---------+----------|
-|   |    5. | View for exporting the     | [[https://github.com/vlead/outreach-portal/issues/275][#275]]   |       24 |        | 22-05-2018 |        | Backlog |          |
-|   |       | Workshop, Nodal Centers    |        |          |        |            |        |         |          |
-|   |       | and Usage data             |        |          |        |            |        |         |          |
-|---+-------+----------------------------+--------+----------+--------+------------+--------+---------+----------|
-|   |    6. | Segregation of Online      | [[https://github.com/vlead/outreach-portal/issues/276][#276]]   |       24 |        | 22-05-2018 |        | Backlog |          |
-|   |       | and Offline workshops      |        |          |        |            |        |         |          |
-|   |       | conducted                  |        |          |        |            |        |         |          |
-|---+-------+----------------------------+--------+----------+--------+------------+--------+---------+----------|
-|   |    7. | outreach-portal Sensitive  | [[https://gitlab.com/vlead-systems/vlead-security-audit/issues/593][#593]]   |       48 |        | 22-05-2018 |        | Backlog |          |
-|   |       | Information Disclosure     |        |          |        |            |        |         |          |
-|---+-------+----------------------------+--------+----------+--------+------------+--------+---------+----------|
-|   |    8. | outreach-portal Error      | [[https://gitlab.com/vlead-systems/vlead-security-audit/issues/592][#592]]   |       48 |        | 22-05-2018 |        | Backlog |          |
-|   |       | Based SQL Injection        |        |          |        |            |        |         |          |
-|---+-------+----------------------------+--------+----------+--------+------------+--------+---------+----------|
-|   |    9. | outreach-portal            | [[https://gitlab.com/vlead-systems/vlead-security-audit/issues/591][#591]]   |       48 |        | 22-05-2018 |        | Backlog |          |
-|   |       | Authorization Bypass       |        |          |        |            |        |         |          |
-|---+-------+----------------------------+--------+----------+--------+------------+--------+---------+----------|
-|   |   10. | outreach-portal Python     | [[https://gitlab.com/vlead-systems/vlead-security-audit/issues/590][#590]]   |       48 |        | 22-05-2018 |        | Backlog |          |
-|   |       | Version Disclosure         |        |          |        |            |        |         |          |
-|---+-------+----------------------------+--------+----------+--------+------------+--------+---------+----------|
-|   |   11. | outreach-portal            | [[https://gitlab.com/vlead-systems/vlead-security-audit/issues/589][#589]]   |       48 |        | 22-05-2018 |        | Backlog |          |
-|   |       | Cross-Site Tracing         |        |          |        |            |        |         |          |
-|---+-------+----------------------------+--------+----------+--------+------------+--------+---------+----------|
-|   | Total |                            |        |      616 | 0      |            |        |         |          |
-| ^ |       |                            |        |      est | act    |            |        |         |          |
-|---+-------+----------------------------+--------+----------+--------+------------+--------+---------+----------|
+|---+-------+---------------------------+--------+----------+--------+------------+--------+---------+----------|
+|   |    S. | Tasks                     | Github | Expected | Actual |  Estimated | Actual | Status  | Assignee |
+|   |    NO |                           | Issues |   Effort | Effort |     Start, | Start/ |         |          |
+|   |       |                           |        |      (in | (in    |        End | End    |         |          |
+|   |       |                           |        |   person | person |      Dates | Dates  |         |          |
+|   |       |                           |        |   hours) | hours) |            |        |         |          |
+|---+-------+---------------------------+--------+----------+--------+------------+--------+---------+----------|
+|   |    1. | Integrate footer service  | [[https://github.com/vlead/outreach-portal/issues/260][#260]]   |        8 |        | 21-05-2018 |        | Backlog |          |
+|   |       |                           |        |          |        | 21-05-2018 |        |         |          |
+|---+-------+---------------------------+--------+----------+--------+------------+--------+---------+----------|
+|   |    2. | Adding contact details    | [[https://github.com/vlead/outreach-portal/issues/265][#265]]   |       32 |        | 22-05-2018 |        | Backlog |          |
+|   |       | of the nodal coordinator  |        |          |        |            |        |         |          |
+|---+-------+---------------------------+--------+----------+--------+------------+--------+---------+----------|
+|   |    3. | New requirement : Sorting | [[https://github.com/vlead/outreach-portal/issues/266][#266]]   |       48 |        | 21-05-2018 |        | Backlog |          |
+|   |       | feature in workshop       |        |          |        |            |        |         |          |
+|   |       | history details           |        |          |        |            |        |         |          |
+|---+-------+---------------------------+--------+----------+--------+------------+--------+---------+----------|
+|   |    4. | Tool tips on Create       | [[https://github.com/vlead/outreach-portal/issues/274][#274]]   |       48 |        | 21-05-2018 |        | Backlog |          |
+|   |       | Workshop fields (For e.g. |        |          |        |            |        |         |          |
+|   |       | on Gateway IP of College) |        |          |        |            |        |         |          |
+|---+-------+---------------------------+--------+----------+--------+------------+--------+---------+----------|
+|   |    5. | View for exporting the    | [[https://github.com/vlead/outreach-portal/issues/275][#275]]   |       24 |        | 22-05-2018 |        | Backlog |          |
+|   |       | Workshop, Nodal Centers   |        |          |        |            |        |         |          |
+|   |       | and Usage data            |        |          |        |            |        |         |          |
+|---+-------+---------------------------+--------+----------+--------+------------+--------+---------+----------|
+|   |    6. | Segregation of Online     | [[https://github.com/vlead/outreach-portal/issues/276][#276]]   |       24 |        | 22-05-2018 |        | Backlog |          |
+|   |       | and Offline workshops     |        |          |        |            |        |         |          |
+|   |       | conducted                 |        |          |        |            |        |         |          |
+|---+-------+---------------------------+--------+----------+--------+------------+--------+---------+----------|
+|   |    7. | outreach-portal Sensitive | [[https://gitlab.com/vlead-systems/vlead-security-audit/issues/593][#593]]   |       48 |        | 22-05-2018 |        | Backlog |          |
+|   |       | Information Disclosure    |        |          |        |            |        |         |          |
+|---+-------+---------------------------+--------+----------+--------+------------+--------+---------+----------|
+|   |    8. | outreach-portal Error     | [[https://gitlab.com/vlead-systems/vlead-security-audit/issues/592][#592]]   |       48 |        | 22-05-2018 |        | Backlog |          |
+|   |       | Based SQL Injection       |        |          |        |            |        |         |          |
+|---+-------+---------------------------+--------+----------+--------+------------+--------+---------+----------|
+|   |    9. | outreach-portal           | [[https://gitlab.com/vlead-systems/vlead-security-audit/issues/591][#591]]   |       48 |        | 22-05-2018 |        | Backlog |          |
+|   |       | Authorization Bypass      |        |          |        |            |        |         |          |
+|---+-------+---------------------------+--------+----------+--------+------------+--------+---------+----------|
+|   |   10. | outreach-portal Python    | [[https://gitlab.com/vlead-systems/vlead-security-audit/issues/590][#590]]   |       48 |        | 22-05-2018 |        | Backlog |          |
+|   |       | Version Disclosure        |        |          |        |            |        |         |          |
+|---+-------+---------------------------+--------+----------+--------+------------+--------+---------+----------|
+|   |   11. | outreach-portal           | [[https://gitlab.com/vlead-systems/vlead-security-audit/issues/589][#589]]   |       48 |        | 22-05-2018 |        | Backlog |          |
+|   |       | Cross-Site Tracing        |        |          |        |            |        |         |          |
+|---+-------+---------------------------+--------+----------+--------+------------+--------+---------+----------|
+|   | Total |                           |        |      424 | 0      |            |        |         |          |
+| ^ |       |                           |        |      est | act    |            |        |         |          |
+|---+-------+---------------------------+--------+----------+--------+------------+--------+---------+----------|
 #+TBLFM: $est=vsum(@II+1..@-1)
 #+TBLFM: $act=vsum(@II+1..@-1)
