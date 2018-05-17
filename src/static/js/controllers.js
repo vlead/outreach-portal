@@ -165,7 +165,7 @@ app.controller("workshop", function($scope, dataFactory, $http, $routeParams, $l
         nc_workshops = workshops.filter(workshop => workshop.user.id == ncs[nc_user].user.id);
         oc_workshops = oc_workshops.concat(nc_workshops);
       }
-      $scope.workshops = oc_workshops;
+      $scope.oc_workshops = oc_workshops;
       dataFactory.fetch('/workshop_reports').success(function(data,status,headers,config){
         var reports = [];
         for(i=0;i<$scope.oc_workshops.length;i++){
