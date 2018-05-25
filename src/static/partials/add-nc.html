@@ -40,22 +40,17 @@
 	  <span ng-show="myForm.inst_name.$error.required">Institute name is required.</span>
 	</span>
       </p>
-      
-	  <p>Phone No:<br>
-	<input type="number" name="phone"  ng-pattern="/^[(]{0,1}[0-9]{3}[)\.\-
-               ]{0,1}[0-9]{3}[\.\-
-                                                       ]{0,1}[0-9]{4}$/"
+      -->
+       <p>Phone No:<br>
+        <input type="number" name="phone"  ng-pattern="/^[(]{0,1}[0-9]{3}[)\.\-]{0,1}[0-9]{3}[\.\-]{0,1}[0-9]{4}$/"
                ng-model="phone" ng-minlength="10" ng-maxlength="10" class="form-control"
-               placeholder="Mobile Number" required>
+               placeholder="Mobile Number">
 	<span style="color:red" ng-show="myForm.phone.$dirty && myForm.phone.$invalid">
-	  <span ng-show="myForm.phone.$error.required">Phone number is
-	    required.</span>
           <span ng-show="myForm.phone.$error.minlength">Enter valid phone number</span>
           <span ng-show="myForm.phone.$error.maxlength">Enter valid phone number</span>
-          <span ng-show="myForm.phone.$error.number">Phone number is required.</span>
+          <span ng-show="myForm.phone.$error.number">Enter valid phone number</span>
 	</span>
       </p>
-          -->
       <p>Target Workshops<br>
 	<input type="number" ng-mouseover="targetWorkshops('over')"
                ng-mouseleave="targetWorkshops('unover')" name="workshops" min="0" ng-model="workshops"  class="form-control"

@@ -1030,7 +1030,7 @@ app.controller("add-nc", function($scope, $http, dataFactory, $routeParams, $win
     $scope.id = 0;
     $scope.submit = function(isvalid){
         if(isvalid){
-            dataFactory.post('/users',{'name' : $scope.name, 'created' : Date(), 'email' : $scope.email,'role' : { 'id' : 3 } } ).
+            dataFactory.post('/users',{'name' : $scope.name, 'created' : Date(), 'email' : $scope.email, 'phone' : $scope.phone, 'role' : { 'id' : 3 } } ).
                 success(function(data, status, headers, config){
                     id = data.id;       
                     $scope.status = "Success";
