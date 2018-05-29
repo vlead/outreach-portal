@@ -943,6 +943,7 @@ app.controller("edit-nc", function($scope, dataFactory, $http, $routeParams, $wi
         $scope.user = data.name;
         $scope.user_id = data.id;
         $scope.email = data.email;
+        $scope.phone = data.phone;
         $scope.inst_name = data.institute_name;
     }).error(function(data,status,headers,config){
       console.log("Failed");
@@ -961,7 +962,7 @@ app.controller("edit-nc", function($scope, dataFactory, $http, $routeParams, $wi
     $scope.id = 0;
     $scope.submit = function(user_id, nc_id){
         if(true){
-            dataFactory.put('/users/'+user_id,{'name' : $scope.user,'email' : $scope.email} ).
+            dataFactory.put('/users/'+user_id,{'name' : $scope.user, 'email' : $scope.email, 'phone' : $scope.phone} ).
                 success(function(data, status, headers, config){
                     id = data.id;       
                     $scope.status = "Success";
