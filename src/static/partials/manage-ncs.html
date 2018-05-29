@@ -11,6 +11,7 @@
 	<tr>
           <th>Name</th>
 	  <th>Email</th>
+          <th>Phone</th>
 	  <th>Created On</th>
 	  <th>Last Active</th>
 	</tr>
@@ -19,6 +20,7 @@
 	<tr ng-repeat="coordinator in coordinators">
           <td>{{ coordinator.name }}</td>
           <td>{{ coordinator.email }}</td>
+          <td>{{ coordinator.phone }}</td>
           <td id="number">{{ coordinator.created }}</td>
           <td id="number">{{ coordinator.last_active }}</td>
           <!--<td>{{ coordinator.centre.location }}</td>-->
