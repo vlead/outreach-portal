@@ -6593,13 +6593,19 @@ def create_filters(entity_map, curr_entity, args, values):
 @api.route('/<entity>/<id>', methods=['GET'])
 def get_specific_entity(entity, id):
     if entity not in entity_pairs:
-	current_app.logger.error("Entity %s is not valid."  % entity)           
-	abort(400, 'Entity %s is not valid.' % entity)
+        current_app.logger.error("Entity %s is not valid."  % entity)
+        abort(400, 'Entity %s is not valid.' % entity)
+
+    if not id.isnumeric():
+        current_app.logger.error("id %s is not valid."  % id)
+        abort(400, 'id %s is not valid.' % id)
+
     curr_entity = entity_pairs[entity]['entity_class']
     record = curr_entity.get_by_id(id)
+
     if not record:
-	current_app.logger.error("No entry for %s with id: %s found."  % (entity, id))          
-	abort(404, "No entry for %s with id: %s found." % (entity, id))
+        current_app.logger.error("No entry for %s with id: %s found."  % (entity, id))
+        abort(404, "No entry for %s with id: %s found." % (entity, id))
 
     return jsonify(record.to_client())
     
