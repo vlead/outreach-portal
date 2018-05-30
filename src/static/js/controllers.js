@@ -15,7 +15,7 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
             }
         }
 	$scope.upcomingLoading = false;
-        $scope.upcoming_workshops = workshopList;
+        $scope.upcomingWorkshops = workshopList;
 
     });
     
@@ -337,7 +337,7 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
   });
 
   dataFactory.fetch("/workshops?status_id=1").success(function(response){
-    $scope.upcoming_workshops = response.length;
+    $scope.upcomingWorkshops = response.length;
   });
     
   dataFactory.fetch("/nodal_coordinator_details").success(function(response){
