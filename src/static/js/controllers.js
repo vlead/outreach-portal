@@ -1,20 +1,20 @@
 var app = angular.module('outreachApp.controllers',[]);
 app.controller('map-ctrl', function ($scope, $http, dataFactory){
     var workshopList = [];
-    $scope.upcoming_loading = true;
+    $scope.upcomingLoading = true;
     dataFactory.fetch("/workshops?status_id=1").success(function(workshops){
         var today = new Date();
         for(i=0;i<workshops.length;i++){
-            workshop_date = new Date(workshops[i].date);
+            workshopDate = new Date(workshops[i].date);
             var workshop_id = workshops[i].id ;
-            if (((today > workshop_date) & !(today.toDateString() == workshop_date.toDateString())) &
+            if (((today > workshopDate) & !(today.toDateString() == workshopDate.toDateString())) &
                 (workshops[i].status.name == "Upcoming")){
                 console.log("");
             }else{
                 workshopList.push(workshops[i]);
             }
         }
-	$scope.upcoming_loading = false;
+	$scope.upcomingLoading = false;
         $scope.upcoming_workshops = workshopList;
 
     });
@@ -432,9 +432,9 @@ app.controller("nc-dashboard", function($scope, $http, dataFactory, $routeParams
     dataFactory.fetch("/workshops?status_id=1").success(function(workshops){
         var today = new Date();
         for(i=0;i<workshops.length;i++){
-            workshop_date = new Date(workshops[i].date);
+            workshopDate = new Date(workshops[i].date);
             var workshop_id = workshops[i].id ;
-            if (((today > workshop_date) & !(today.toDateString() == workshop_date.toDateString())) &
+            if (((today > workshopDate) & !(today.toDateString() == workshopDate.toDateString())) &
                 (workshops[i].status.name == "Upcoming")){
                 dataFactory.put('/workshops/'+workshop_id.toString(),
                                 {'status': {'id': 2}}).success(function(data, status){
@@ -502,17 +502,17 @@ app.controller("manage-workshops", function($scope, $http, $routeParams, dataFac
         var history = [];
         var pending = [];
 	for(i=0;i<data.length;i++){
-            workshop_date = new Date(data[i].date);
+            workshopDate = new Date(data[i].date);
                 var workshop_id = data[i].id ;
-            if (((today > workshop_date) & !(today.toDateString() == workshop_date.toDateString())) &
+            if (((today > workshopDate) & !(today.toDateString() == workshopDate.toDateString())) &
 		(data[i].status.name == "Upcoming")){
                 dataFactory.put('/workshops/'+workshop_id.toString(),
 				{'status': {'id': 2}}).success(function(data, status){
 				    console.log('Status success'); });
             }
-            if( (today <= workshop_date) ||(today.getDate() == workshop_date.getDate() &
-					    (today.getMonth() == workshop_date.getMonth())  &
-					    (today.getFullYear() == workshop_date.getFullYear()))){
+            if( (today <= workshopDate) ||(today.getDate() == workshopDate.getDate() &
+					    (today.getMonth() == workshopDate.getMonth())  &
+					    (today.getFullYear() == workshopDate.getFullYear()))){
                 if(data[i].cancellation_reason == null){
                     upcoming.push(data[i]);
                     count = count + 1;
@@ -601,9 +601,9 @@ app.controller("add-workshop", function($scope, $location, $http, dataFactory,$r
     $scope.submit = function(isvalid){
       if(isvalid){
             var today = new Date();
-            var workshop_date = new Date($scope.date);
+            var workshopDate = new Date($scope.date);
             var status_id = 1;
-            if((today > workshop_date) & !(today.toDateString() == workshop_date.toDateString())){
+            if((today > workshopDate) & !(today.toDateString() == workshopDate.toDateString())){
               status_id = 2;
             }
             dataFactory.post('/workshops', { "name" : $scope.name,
@@ -746,9 +746,9 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
       if(isvalid){
 	  
             var today = new Date();
-            var workshop_date = new Date($scope.message.date);
+            var workshopDate = new Date($scope.message.date);
             var status_id = $scope.message.status.id;
-            if((today > workshop_date) & !(today.toDateString() == workshop_date.toDateString())){
+            if((today > workshopDate) & !(today.toDateString() == workshopDate.toDateString())){
               if(status_id == 3){
                 status_id = 3;
               }else{
@@ -1219,17 +1219,17 @@ app.controller("oc-manage-workshops", function($scope, $http, $routeParams, data
             var history = [];
             var pending = [];
 	    for(i=0;i<data.length;i++){
-                var workshop_date = new Date(data[i].date);
+                var workshopDate = new Date(data[i].date);
                 var workshop_id = data[i].id ;
-                if (((today > workshop_date) & !(today.toDateString() == workshop_date.toDateString())) &
+                if (((today > workshopDate) & !(today.toDateString() == workshopDate.toDateString())) &
 		(data[i].status.name == "Upcoming")){
                     dataFactory.put('/workshops/'+workshop_id.toString(), {'status': {'id': 2}}).
 			success(function(data, status){ console.log('Status success'); });
                 }
-                if((today <= workshop_date) ||
-		   (today.getDate() == workshop_date.getDate() &
-		    (today.getMonth() == workshop_date.getMonth()) 
-                    & (today.getFullYear() == workshop_date.getFullYear()))){
+                if((today <= workshopDate) ||
+		   (today.getDate() == workshopDate.getDate() &
+		    (today.getMonth() == workshopDate.getMonth()) 
+                    & (today.getFullYear() == workshopDate.getFullYear()))){
                     upcoming.push(data[i]);
                     count = count + 1;
 	        }
