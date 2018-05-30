@@ -1,6 +1,6 @@
 var app = angular.module('outreachApp.controllers',[]);
 app.controller('map-ctrl', function ($scope, $http, dataFactory){
-    var workshop_list = [];
+    var workshopList = [];
     $scope.upcoming_loading = true;
     dataFactory.fetch("/workshops?status_id=1").success(function(workshops){
         var today = new Date();
@@ -11,11 +11,11 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
                 (workshops[i].status.name == "Upcoming")){
                 console.log("");
             }else{
-                workshop_list.push(workshops[i]);
+                workshopList.push(workshops[i]);
             }
         }
 	$scope.upcoming_loading = false;
-        $scope.upcoming_workshops = workshop_list;
+        $scope.upcoming_workshops = workshopList;
 
     });
     
@@ -348,12 +348,12 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
     $scope.load_analytics = true;
     dataFactory.fetch("/workshops?status_id=3").success(function(workshops){
         var participants_count = 0;
-        var workshop_list = [];
+        var workshopList = [];
         var labs = 0;
         var expts_count = 0;
         for(workshop=0;workshop<workshops.length;workshop++)
         {
-            workshop_list.push(workshops[workshop]);
+            workshopList.push(workshops[workshop]);
             participants_count = participants_count + workshops[workshop].participants_attended;
             labs = labs + workshops[workshop].labs_planned;
             expts_count = expts_count + workshops[workshop].experiments_conducted;
@@ -362,7 +362,7 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
         $scope.total_participants = participants_count;
         $scope.total_usage = expts_count;
         $scope.labs = labs;
-        $scope.workshops = workshop_list;
+        $scope.workshops = workshopList;
 	$scope.load_analytics = false;
     });
    
