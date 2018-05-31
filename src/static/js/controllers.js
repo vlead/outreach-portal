@@ -19,21 +19,20 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
 
     });
     
-  dataFactory.fetch("/nodal_centres").success(function(nodal_centre){
-      
-    for(i=0;i<nodal_centre.length;i++){
-	if(nodal_centre[i].location != "null" && nodal_centre[i].longitude != null){
-	  $scope.createMarker(nodal_centre[i], nodal_centre[i], "nodal_centres");
-          // get_geocode1(nodal_centre[i]);
+  dataFactory.fetch("/nodal_centres").success(function(nodalCentre){      
+    for(i=0;i<nodalCentre.length;i++){
+	if(nodalCentre[i].location != "null" && nodalCentre[i].longitude != null){
+	  $scope.createMarker(nodalCentre[i], nodalCentre[i], "nodal_centres");
+          // get_geocode1(nodalCentre[i]);
 	}
     }
   });
     var geocoder1 = new google.maps.Geocoder();
-    var get_geocode1 = function (nodal_centre){
-	var id = nodal_centre.id;
-	var location = nodal_centre.location;
+    var get_geocode1 = function (nodalCentre){
+	var id = nodalCentre.id;
+	var location = nodalCentre.location;
 	geocoder1.geocode(
-            { "address": nodal_centre.location+",india, Asia" }, function(results, status) {
+            { "address": nodalCentre.location+",india, Asia" }, function(results, status) {
                 if (status == google.maps.GeocoderStatus.OK && results.length > 0){
                   var geo_code = results[0].geometry.location;
                   var lat = geo_code.lat();
@@ -49,7 +48,7 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
 		}
             }
         );
-    }
+    };
   
     var mapOptions = { zoom: 5, center: new google.maps.LatLng(24,80) };
     $scope.map = new google.maps.Map(document.getElementById('map'), mapOptions);
