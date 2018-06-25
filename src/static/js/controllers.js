@@ -21,8 +21,9 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
     
   dataFactory.fetch("/nodal_centres").success(function(nodalCentre){      
     for(var i=0;i<nodalCentre.length;i++){
-      if(nodalCentre[i].location !== "null" && nodalCentre[i].longitude !== null){
-	$scope.createMarker(nodalCentre[i], nodalCentre[i], "nodal_centres");
+      var currentNodalCentre = nodalCentre[i];
+      if(currentNodalCentre.location !== "null" && currentNodalCentre.longitude !== null){
+	$scope.createMarker(currentNodalCentre, currentNodalCentre, "nodal_centres");
         // getGeocode1(nodalCentre[i]);
       }
     }
