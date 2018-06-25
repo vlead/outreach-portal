@@ -20,15 +20,15 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
     });
     
   dataFactory.fetch("/nodal_centres").success(function(nodalCentre){      
-    for(i=0;i<nodalCentre.length;i++){
-	if(nodalCentre[i].location != "null" && nodalCentre[i].longitude != null){
-	  $scope.createMarker(nodalCentre[i], nodalCentre[i], "nodal_centres");
-          // get_geocode1(nodalCentre[i]);
-	}
+    for(var i=0;i<nodalCentre.length;i++){
+      if(nodalCentre[i].location !== "null" && nodalCentre[i].longitude !== null){
+	$scope.createMarker(nodalCentre[i], nodalCentre[i], "nodal_centres");
+        // getGeocode1(nodalCentre[i]);
+      }
     }
   });
     var geocoder1 = new google.maps.Geocoder();
-    var get_geocode1 = function (nodalCentre){
+    var getGeocode1 = function (nodalCentre){
 	var id = nodalCentre.id;
 	var location = nodalCentre.location;
 	geocoder1.geocode(
