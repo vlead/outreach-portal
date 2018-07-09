@@ -28,44 +28,44 @@
 #+caption:  realization-plan-milestone-1
 #+name: tbl-rlz-pln-ml-1
 
-|-------+---------------------------+--------+----------+--------+------------+------------+---------+-----------|
-|  S.No | Tasks                     | Github | Expected | Actual |  Estimated | Actual     | Status  | Assignee  |
-|       |                           | Issues |   Effort | Effort |     Start, | Start,     |         |           |
-|       |                           |        |      (in | (in    |  End Dates | End Dates  |         |           |
-|       |                           |        |   person | person |            |            |         |           |
-|       |                           |        |   hours) | hours) |            |            |         |           |
-|-------+---------------------------+--------+----------+--------+------------+------------+---------+-----------|
-|    1. | Update footer in portal   | [[https://github.com/vlead/outreach-portal/issues/260][#260]]   |       16 |        |            |            | Backlog | Mrudhvika |
-|-------+---------------------------+--------+----------+--------+------------+------------+---------+-----------|
-|    2. | Adding contact details    | [[https://github.com/vlead/outreach-portal/issues/265][#265]]   |       64 | 56     | 23-05-2018 | 23-05-2018 | Done    | Sadhana   |
-|       | of the nodal coordinator  |        |          |        | 29-05-2018 | 30-05-2018 |         |           |
-|-------+---------------------------+--------+----------+--------+------------+------------+---------+-----------|
-|    3. | New requirement : Sorting | [[https://github.com/vlead/outreach-portal/issues/266][#266]]   |       48 |        | 10-07-2018 |            | Backlog | Sadhana   |
-|       | feature in workshop       |        |          |        | 17-07-2018 |            |         |           |
-|       | history details           |        |          |        |            |            |         |           |
-|-------+---------------------------+--------+----------+--------+------------+------------+---------+-----------|
-|    4. | Tool tips on Create       | [[https://github.com/vlead/outreach-portal/issues/274][#274]]   |       24 |        | 09-07-2018 |            | Backlog | Mrudhvika |
-|       | workshop fields (For e.g. |        |          |        | 11-07-2018 |            |         |           |
-|       | on Gateway Ip of college) |        |          |        |            |            |         |           |
-|-------+---------------------------+--------+----------+--------+------------+------------+---------+-----------|
-|    5. | Grid View for exporting   | [[https://github.com/vlead/outreach-portal/issues/275][#275]]   |       48 |        | 18-07-2018 |            | Backlog | Sadhana   |
-|       | the workshop, Nodal       |        |          |        | 25-07-2018 |            |         |           |
-|       | centers and usage data    |        |          |        |            |            |         |           |
-|-------+---------------------------+--------+----------+--------+------------+------------+---------+-----------|
-|    6. | Segregation of Online     | [[https://github.com/vlead/outreach-portal/issues/276][#276]]   |       32 |        | 04-07-2018 |            | Backlog | Sadhana   |
-|       | and Offline workshops     |        |          |        | 09-07-2018 |            |         |           |
-|       | conducted                 |        |          |        |            |            |         |           |
-|-------+---------------------------+--------+----------+--------+------------+------------+---------+-----------|
-|    7. | Fix loading time of       | [[https://github.com/vlead/outreach-portal/issues/294][#294]]   |       64 |        | 17-07-2018 |            | Backlog | Mrudhvika |
-|       | data in portal main       |        |          |        | 25-07-2018 |            |         | Sadhana   |
-|       | page                      |        |          |        |            |            |         |           |
-|-------+---------------------------+--------+----------+--------+------------+------------+---------+-----------|
-|    8. | Identify and remove       | [[https://github.com/vlead/outreach-portal/issues/295][#295]]   |       16 |        | 12-07-2018 |            | Backlog | Mrudhvika |
-|       | all the broken links in   |        |          |        | 16-07-2018 |            |         |           |
-|       | portal                    |        |          |        |            |            |         |           |
-|-------+---------------------------+--------+----------+--------+------------+------------+---------+-----------|
-| Total |                           |        |  312 est |        |            |            |         |           |
-|-------+---------------------------+--------+----------+--------+------------+------------+---------+-----------|
+|-------+---------------------------+--------+----------+-------------+--------+------------+------------+---------+-----------|
+|  S.No | Tasks                     | Github | Expected | Explanation | Actual |  Estimated | Actual     | Status  | Assignee  |
+|       |                           | Issues |   Effort |             | Effort |     Start, | Start,     |         |           |
+|       |                           |        |      (in |             | (in    |  End Dates | End Dates  |         |           |
+|       |                           |        |   person |             | person |            |            |         |           |
+|       |                           |        |   hours) |             | hours) |            |            |         |           |
+|-------+---------------------------+--------+----------+-------------+--------+------------+------------+---------+-----------|
+|    1. | Update footer in portal   | [[https://github.com/vlead/outreach-portal/issues/260][#260]]   |       16 |             |        |            |            | Backlog | Mrudhvika |
+|-------+---------------------------+--------+----------+-------------+--------+------------+------------+---------+-----------|
+|    2. | Adding contact details    | [[https://github.com/vlead/outreach-portal/issues/265][#265]]   |       64 |             | 56     | 23-05-2018 | 23-05-2018 | Done    | Sadhana   |
+|       | of the nodal coordinator  |        |          |             |        | 29-05-2018 | 30-05-2018 |         |           |
+|-------+---------------------------+--------+----------+-------------+--------+------------+------------+---------+-----------|
+|    3. | New requirement : Sorting | [[https://github.com/vlead/outreach-portal/issues/266][#266]]   |       48 |             |        | 10-07-2018 |            | Backlog | Sadhana   |
+|       | feature in workshop       |        |          |             |        | 17-07-2018 |            |         |           |
+|       | history details           |        |          |             |        |            |            |         |           |
+|-------+---------------------------+--------+----------+-------------+--------+------------+------------+---------+-----------|
+|    4. | Tool tips on Create       | [[https://github.com/vlead/outreach-portal/issues/274][#274]]   |       24 |             |        | 09-07-2018 |            | Backlog | Mrudhvika |
+|       | workshop fields (For e.g. |        |          |             |        | 11-07-2018 |            |         |           |
+|       | on Gateway Ip of college) |        |          |             |        |            |            |         |           |
+|-------+---------------------------+--------+----------+-------------+--------+------------+------------+---------+-----------|
+|    5. | Grid View for exporting   | [[https://github.com/vlead/outreach-portal/issues/275][#275]]   |       48 |             |        | 18-07-2018 |            | Backlog | Sadhana   |
+|       | the workshop, Nodal       |        |          |             |        | 25-07-2018 |            |         |           |
+|       | centers and usage data    |        |          |             |        |            |            |         |           |
+|-------+---------------------------+--------+----------+-------------+--------+------------+------------+---------+-----------|
+|    6. | Segregation of Online     | [[https://github.com/vlead/outreach-portal/issues/276][#276]]   |       32 |             |        | 04-07-2018 |            | Backlog | Sadhana   |
+|       | and Offline workshops     |        |          |             |        | 09-07-2018 |            |         |           |
+|       | conducted                 |        |          |             |        |            |            |         |           |
+|-------+---------------------------+--------+----------+-------------+--------+------------+------------+---------+-----------|
+|    7. | Fix loading time of       | [[https://github.com/vlead/outreach-portal/issues/294][#294]]   |       64 |             |        | 17-07-2018 |            | Backlog | Mrudhvika |
+|       | data in portal main       |        |          |             |        | 25-07-2018 |            |         | Sadhana   |
+|       | page                      |        |          |             |        |            |            |         |           |
+|-------+---------------------------+--------+----------+-------------+--------+------------+------------+---------+-----------|
+|    8. | Identify and remove       | [[https://github.com/vlead/outreach-portal/issues/295][#295]]   |       16 |             |        | 12-07-2018 |            | Backlog | Mrudhvika |
+|       | all the broken links in   |        |          |             |        | 16-07-2018 |            |         |           |
+|       | portal                    |        |          |             |        |            |            |         |           |
+|-------+---------------------------+--------+----------+-------------+--------+------------+------------+---------+-----------|
+| Total |                           |        |  312 est |             |        |            |            |         |           |
+|-------+---------------------------+--------+----------+-------------+--------+------------+------------+---------+-----------|
  
 ** C-DAC Phase II
 #+caption:  realization-plan-milestone-1
