@@ -29,9 +29,9 @@
 #+name: tbl-rlz-pln-ml-1
 
 |-------+---------------------------+--------+----------+------------------------------------------------------+--------+------------+------------+---------+-----------|
-|  S.No | Tasks                     | Github | Expected | Explanation                                          | Actual |  Estimated | Actual     | Status  | Assignee  |
-|       |                           | Issues |   Effort |                                                      | Effort |     Start, | Start,     |         |           |
-|       |                           |        |      (in |                                                      | (in    |  End Dates | End Dates  |         |           |
+|  S.No | Tasks                     | Github | Expected | Explanation                                          | Actual |  Estimated |     Actual | Status  | Assignee  |
+|       |                           | Issues |   Effort |                                                      | Effort |     Start, |     Start, |         |           |
+|       |                           |        |      (in |                                                      | (in    |  End Dates |  End Dates |         |           |
 |       |                           |        |   person |                                                      | person |            |            |         |           |
 |       |                           |        |   hours) |                                                      | hours) |            |            |         |           |
 |-------+---------------------------+--------+----------+------------------------------------------------------+--------+------------+------------+---------+-----------|
@@ -62,8 +62,8 @@
 |       | the workshop, Nodal       |        |          |                                                      |        | 25-07-2018 |            |         |           |
 |       | centers and usage data    |        |          |                                                      |        |            |            |         |           |
 |-------+---------------------------+--------+----------+------------------------------------------------------+--------+------------+------------+---------+-----------|
-|    6. | Segregation of Online and | [[https://github.com/vlead/outreach-portal/issues/276][#276]]   |       32 | Need to add filter(for eg: radio                     |        | 04-07-2018 |            | Backlog | Sadhana   |
-|       | offline workshops         |        |          | buttons or dropdownbox) in workshops                 |        | 09-07-2018 |            |         |           |
+|    6. | Segregation of Online and | [[https://github.com/vlead/outreach-portal/issues/276][#276]]   |       32 | Need to add filter(for eg: radio                     | 24     | 04-07-2018 | 04-07-2018 | Done    | Sadhana   |
+|       | offline workshops         |        |          | buttons or dropdownbox) in workshops                 |        | 09-07-2018 | 09-07-2018 |         |           |
 |       |                           |        |          | template and should understand how the               |        |            |            |         |           |
 |       |                           |        |          | workshops data is getting populated in               |        |            |            |         |           |
 |       |                           |        |          | page. Then need to add a function                    |        |            |            |         |           |
