@@ -26,10 +26,10 @@ be able to add contact details of the Nodal coordinator.
 *** Existing Template
 At present, this is the form used by OC's(Outreachx
 Coordinators) to create a NC(Nodal Coordinator)
-[.images/][Nodal coordinators form]
+[[images/][Nodal coordinators form]]
 
 This is how the NC details on the page looks
-[.images/nodal-coordinators.png][Nodal coordinators details]
+[[images/nodal-coordinators.png]]
 
 *** User Interface Requirements 
 - Login as OC(Outreach Coordinator) the application should
@@ -61,9 +61,9 @@ every new workshop they conduct.
 *** Existing Template 
 This is how the templates(Nodal Centers, Workshop Run,
 Usage) looks.
-[./images/nodal-centers.png][Nodal centers template]
-[./images/workshops-run.png][Workshops Run template]
-[./images/usage-template.png][Usage template]
+[images/nodal-centers.png][Nodal centers template]
+[images/workshops-run.png][Workshops Run template]
+[images/usage-template.png][Usage template]
 
 *** Use Interface Requirements
 - This feature should be implemented without login
