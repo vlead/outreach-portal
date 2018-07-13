@@ -154,7 +154,7 @@ function $RouteProvider(){
 
     // create redirection for trailing slashes
     if (path) {
-      var redirectPath = (path[path.length-1] == '/')
+      var redirectPath = (path[path.length-1] === '/')
             ? path.substr(0, path.length-1)
             : path +'/';
 

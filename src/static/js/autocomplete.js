@@ -165,7 +165,7 @@ app.directive('autocomplete', function() {
         var l = angular.element(this).find('li').length;
 
         // this allows submitting forms by pressing Enter in the autocompleted field
-        if(!scope.completing || l == 0) return;
+        if(!scope.completing || l === 0) return;
 
         // implementation of the up and down movement in the list of suggestions
         switch (keycode){
@@ -215,7 +215,7 @@ app.directive('autocomplete', function() {
             // scope.preSelectOff();
             if(index !== -1) {
               scope.select(angular.element(angular.element(this).find('li')[index]).text());
-              if(keycode == key.enter) {
+              if(keycode === key.enter) {
                 e.preventDefault();
               }
             } else {
