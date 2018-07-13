@@ -61,9 +61,9 @@ every new workshop they conduct.
 *** Existing Template 
 This is how the templates(Nodal Centers, Workshop Run,
 Usage) looks.
-[images/nodal-centers.png][Nodal centers template]
-[images/workshops-run.png][Workshops Run template]
-[images/usage-template.png][Usage template]
+[[images/nodal-centers.png]]
+[[images/workshops-run.png]]
+[[images/usage-template.png]]
 
 *** Use Interface Requirements
 - This feature should be implemented without login
