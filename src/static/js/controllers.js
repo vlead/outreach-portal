@@ -504,7 +504,7 @@ app.controller("manage-workshops", function($scope, $http, $routeParams, dataFac
 	for(i=0;i<data.length;i++){
             workshop_date = new Date(data[i].date);
                 var workshop_id = data[i].id ;
-            if (((today > workshop_date) & !(today.toDateString() == workshop_date.toDateString())) &
+            if (((today > workshop_date) & !(today.toDateString() === workshop_date.toDateString())) &
 		(data[i].status.name == "Upcoming")){
                 dataFactory.put('/workshops/'+workshop_id.toString(),
 				{'status': {'id': 2}}).success(function(data, status){
@@ -1190,7 +1190,7 @@ app.controller("edit-centre", function($scope, dataFactory, $http, $routeParams,
           var get_geocode = function (){
             geocoder.geocode(
               { "address": $scope.centres.location+","+$scope.centres.pincode+",India,Asia" }, function(results, status) {
-                if (status == google.maps.GeocoderStatus.OK && results.length > 0){
+                if (status === google.maps.GeocoderStatus.OK && results.length > 0){
                   var geo_code = results[0].geometry.location;
                   var lat = geo_code.lat();
                   var lng = geo_code.lng();

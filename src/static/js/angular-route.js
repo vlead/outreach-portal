@@ -550,7 +550,7 @@ function $RouteProvider(){
               $rootScope.$broadcast('$routeChangeSuccess', next, last);
             }
           }, function(error) {
-            if (next == $route.current) {
+            if (next === $route.current) {
               $rootScope.$broadcast('$routeChangeError', next, last, error);
             }
           });
