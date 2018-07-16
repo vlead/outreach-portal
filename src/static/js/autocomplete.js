@@ -204,9 +204,9 @@ app.directive('autocomplete', function() {
             }
             scope.setIndex(index);
 
-            if(index!==-1)
-              scope.preSelect(angular.element(angular.element(this).find('li')[index]).text());
-
+          if(index!==-1){
+            scope.preSelect(angular.element(angular.element(this).find('li')[index]).text());
+          }
             break;
           case key.left:
             break;
