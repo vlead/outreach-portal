@@ -94,15 +94,8 @@ Data to be shown in specific user dashboard is given below:
  + Lab Usage
  + Domain Usage
  
-- PIC:
-   All applicable for NC
-            + 
-   NC wise Usage
-
-- Overall Outreach Coordinator:
-   All applicable for PIC
-            +
-   PIC wise usage
+- PIC: All applicable for NC + NC wise Usage
+- Overall Outreach Coordinator: All applicable for PIC + PIC wise usage
 
 *** Existing Feature for Reference
 [[images/oc-dashboard.png]]
