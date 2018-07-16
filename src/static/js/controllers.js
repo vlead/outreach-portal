@@ -9,7 +9,6 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
             var workshop_id = workshops[i].id ;
             if (((today > workshop_date) & !(today.toDateString() == workshop_date.toDateString())) &
                 (workshops[i].status.name == "Upcoming")){
-                console.log("");
             }else{
                 workshop_list.push(workshops[i]);
             }
@@ -38,10 +37,8 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
                   var geo_code = results[0].geometry.location;
                   var lat = geo_code.lat();
                   var lng = geo_code.lng();
-                  console.log(pincode);
                   var data = {"longitude" : lng, "lattitude" : lat };
                     dataFactory.put("/nodal_centres/"+id, data).success(function(response){
-			console.log("success for id "+id);
                     });
                 }
 		else{
@@ -49,7 +46,7 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
 		}
             }
         );
-    }
+    };
   
     var mapOptions = { zoom: 5, center: new google.maps.LatLng(24,80) };
     $scope.map = new google.maps.Map(document.getElementById('map'), mapOptions);
