@@ -542,7 +542,7 @@ function $RouteProvider(){
           }).
           // after route change
           then(function(locals) {
-            if (next == $route.current) {
+            if (next === $route.current) {
               if (next) {
                 next.locals = locals;
                 angular.copy(next.params, $routeParams);

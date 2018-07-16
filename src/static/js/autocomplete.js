@@ -219,7 +219,7 @@ app.directive('autocomplete', function() {
                 e.preventDefault();
               }
             } else {
-              if(keycode == key.enter) {
+              if(keycode === key.enter) {
                 scope.select();
               }
             }
