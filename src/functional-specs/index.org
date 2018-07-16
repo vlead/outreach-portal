@@ -95,9 +95,9 @@ Data to be shown in specific user dashboard is given below:
  + Domain Usage
  
 - PIC:
-  All applicable for NC
+   All applicable for NC
             + 
-  NC wise Usage
+   NC wise Usage
 
 - Overall Outreach Coordinator:
    All applicable for PIC
