@@ -86,22 +86,22 @@ outreach. These enhancements to be inculcated in the users
 dashboards.
 
 Data to be shown in specific user dashboard is given below:
-NC:
-- From Date - To Date (Default for last 6 months)
-- Workshops - Month wise
-- Usage - Month wise
-- Colleges wise - Workshop usage
-- Lab Usage
-- Domain Usage
+- NC:
+ + From Date - To Date (Default for last 6 months)
+ + Workshops - Month wise
+ + Usage - Month wise
+ + Colleges wise - Workshop usage
+ + Lab Usage
+ + Domain Usage
  
-PIC:
-    All applicable for NC
+- PIC:
+ All applicable for NC
             + 
-    NC wise Usage
+ NC wise Usage
 
-Overall Outreach Coordinator:
-    All applicable for PIC
-            +
+- Overall Outreach Coordinator:
+   All applicable for PIC
+           +
     PIC wise usage
 
 *** Existing Feature for Reference
