@@ -4,8 +4,8 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
     $scope.upcoming_loading = true;
     dataFactory.fetch("/workshops?status_id=1").success(function(workshops){
         var today = new Date();
-        for(i=0;i<workshops.length;i++){
-            workshop_date = new Date(workshops[i].date);
+        for(var i=0;i<workshops.length;i++){
+            var workshop_date = new Date(workshops[i].date);
             var workshop_id = workshops[i].id ;
             if (((today > workshop_date) & !(today.toDateString() == workshop_date.toDateString())) &
                 (workshops[i].status.name == "Upcoming")){
@@ -21,7 +21,7 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
     
   dataFactory.fetch("/nodal_centres").success(function(nodal_centre){
       
-    for(i=0;i<nodal_centre.length;i++){
+    for(var i=0;i<nodal_centre.length;i++){
 	if(nodal_centre[i].location != "null" && nodal_centre[i].longitude != null){
 	  $scope.createMarker(nodal_centre[i], nodal_centre[i], "nodal_centres");
           // get_geocode1(nodal_centre[i]);
@@ -38,7 +38,7 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
                   var geo_code = results[0].geometry.location;
                   var lat = geo_code.lat();
                   var lng = geo_code.lng();
-                  console.log(pincode);
+                  //console.log(pincode);
                   var data = {"longitude" : lng, "lattitude" : lat };
                     dataFactory.put("/nodal_centres/"+id, data).success(function(response){
 			console.log("success for id "+id);
@@ -49,7 +49,7 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
 		}
             }
         );
-    }
+    };
   
     var mapOptions = { zoom: 5, center: new google.maps.LatLng(24,80) };
     $scope.map = new google.maps.Map(document.getElementById('map'), mapOptions);
@@ -76,7 +76,7 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
         });
       }
       else{
-          var marker = new google.maps.Marker({
+             marker = new google.maps.Marker({
 	      map: $scope.map,
 	      animation: google.maps.Animation.DROP,
 	      draggable: false,
