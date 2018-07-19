@@ -1221,7 +1221,7 @@ app.controller("oc-manage-workshops", function($scope, $http, $routeParams, data
 	    for(i=0;i<data.length;i++){
                 var workshop_date = new Date(data[i].date);
                 var workshop_id = data[i].id ;
-                if (((today > workshop_date) & !(today.toDateString() == workshop_date.toDateString())) &
+                if (((today > workshop_date) & !(today.toDateString() === workshop_date.toDateString())) &
 		(data[i].status.name == "Upcoming")){
                     dataFactory.put('/workshops/'+workshop_id.toString(), {'status': {'id': 2}}).
 			success(function(data, status){ console.log('Status success'); });
