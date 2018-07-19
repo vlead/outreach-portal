@@ -41,8 +41,8 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
                     dataFactory.put("/nodal_centres/"+id, data).success(function(response){
                     });
                 }
-		else{
-                    console.log("failed for id "+id+"error: "+status);
+	      else{
+                $scope.status = "Failed for id "+ id +"error: " + status;
 		}
             }
         );
