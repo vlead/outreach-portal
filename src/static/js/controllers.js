@@ -88,7 +88,7 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
 		  nodal_centre_infowindow.open(map, marker);
           });
       }
-  }
+  };
 
 });
 
