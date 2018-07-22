@@ -167,7 +167,7 @@ app.directive('autocomplete', function() {
         var l = angular.element(this).find('li').length;
 
         // this allows submitting forms by pressing Enter in the autocompleted field
-        if(!scope.completing || l == 0){
+        if(!scope.completing || l === 0){
           return;
         }
         // implementation of the up and down movement in the list of suggestions
@@ -268,8 +268,8 @@ app.directive('autocomplete', function() {
 
 app.filter('highlight', ['$sce', function ($sce) {
   return function (input, searchParam) {
-    if (typeof input === 'function'){
-      return '';
+    if (typeof input === "function"){
+      return "";
     }
     if (searchParam) {
       var words = '(' +
