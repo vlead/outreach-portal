@@ -5529,7 +5529,7 @@ if __name__ == "__main__":
 
 ** Configuring the application
 Below is the configuration for the application
-#+BEGIN_SRC python :tangle src/config.py :eval no
+#+BEGIN_SRC python :tangle src/aconfig.py :eval no
 # DB URI
 # example DB URI:
 # mysql+oursql://scott:tiger@localhost/mydatabase
@@ -5576,6 +5576,8 @@ PERSONA_VERIFIER_URL = "https://verifier.login.persona.org/verify"
 CONSUMER_KEY = "420719460133-g13g6abnnised3v4nq4d430jo8mpb9m8.apps.googleusercontent.com"
 CONSUMER_SECRET = "DQxOnwOectvfFFe05jqKTIQT"
 
+EMAIL_FOR_GET_AUTH = "admin@vlabs.ac.in"
+TOKEN_FOR_GET_AUTH = "dummytoken"
 #+END_SRC
 
 ** Deploying the application
@@ -6027,8 +6029,10 @@ def authorized():
     try:
         url_for_getting_the_user = "%s/users?email=%s" % \
                                    (APP_URL, email)
-        backend_resp = requests.get(url_for_getting_the_user)
-
+        backend_resp = requests.get(url_for_getting_the_user,
+                                    headers={'email': EMAIL_FOR_GET_AUTH,
+                                             'token': TOKEN_FOR_GET_AUTH})
+                                             
         if (len(backend_resp.text.encode('ascii')) != 2):
             if 'error' in session:
                 session.pop('error', None)
@@ -6536,6 +6540,20 @@ def delete_file(file_path):
 # =/<:entity>s?query_param1=val1&query_param2=val2&..query_paramn=valn=
 @api.route('/<entity>', methods=['GET'])
 def query_an_entity(entity):
+    email = str(request.headers.get('email'))
+    token = str(request.headers.get('token'))
+    current_app.logger.debug("email = %s, token = %s " % (email, token))
+
+    if entity == "reference_documents" or entity == "workshop_reports":
+        if email is None or token is None:
+            abort(401, "Unauthorized Credentials")
+    else:
+        if not token or token != TOKEN_FOR_GET_AUTH:
+            abort(401, "Unauthorized Credentials")
+
+        if not email or email != EMAIL_FOR_GET_AUTH:
+            abort(401, "Unauthorized Credentials")
+
     if entity not in entity_pairs:
 	current_app.logger.error("Entity %s is not valid " % entity)    
 	abort(400, 'Entity %s is not valid.' % entity)
