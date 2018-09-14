@@ -5529,7 +5529,7 @@ if __name__ == "__main__":
 
 ** Configuring the application
 Below is the configuration for the application
-#+BEGIN_SRC python :tangle src/aconfig.py :eval no
+#+BEGIN_SRC python :tangle src/config.py :eval no
 # DB URI
 # example DB URI:
 # mysql+oursql://scott:tiger@localhost/mydatabase
