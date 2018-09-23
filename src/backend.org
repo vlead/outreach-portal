@@ -6220,7 +6220,8 @@ def unique(list1):
 @api.route("/total_ncenters")
 def toatal_ncentres():
     url = APP_URL + '/nodal_centres';
-    r = requests.get(url);
+    r = requests.get(url, headers={'email': EMAIL_FOR_GET_AUTH,
+                                   'token': TOKEN_FOR_GET_AUTH});
     r.status_code
     data = r.json();
 
