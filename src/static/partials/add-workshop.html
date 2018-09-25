@@ -9,7 +9,7 @@
       <div class="col-md-4 inputGroupContainer">
 	<div class="input-group">
 	  <label><input type="radio" name="version" ng-model="version" value="online"/ required> online</label>&emsp;&emsp;
-	  <label><input type="radio" name="version" ng-model="version" disable="" value="offline"/ required> offline (college cloud edition)</label>
+	  <label><input type="radio" name="version" ng-model="version" disabled="" value="offline"/ required> offline (college cloud edition)</label>
 	  <span style="color:red" ng-show="myForm.version.$dirty && myForm.version.$invalid">
 	    <span ng-show="myForm.version.$error.required">Choose workshop version</span>
 	  </span>
@@ -17,11 +17,17 @@
       </div>
     </div>
     
+
+
+
+
     <div class="form-group">
       <label class="col-md-4 control-label">Workshop Name *</label>  
       <div class="col-md-4 inputGroupContainer">
 	<div class="input-group">
-	  <input type="text" name="user" ng-model="name"  ng-pattern="/^[a-zA-Z0-9._-\s]*$/"  class="form-control"  placeholder="Workshop Name" required>
+	  <input type="text" type="number" ng-mouseover="targetWorkshops('over')"
+               ng-mouseleave="targetWorkshops('unover')" name="workshops" min="0" ng-model="workshops"  class="form-control"
+               placeholder="No of workshops" name="user" ng-model="name"  ng-pattern="/^[a-zA-Z0-9._-\s]*$/"  class="form-control"  placeholder="Workshop Name" required>
 	  <span style="color:red" ng-show="myForm.user.$dirty && myForm.user.$invalid">
 	    <span ng-show="myForm.user.$error.required">Workshop name is required.</span>
 	    <span ng-show="myForm.user.$error.pattern">Enter valid name</span>
