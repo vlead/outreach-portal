@@ -3,7 +3,7 @@ service.factory('dataFactory', function($http, $window){
   var headers = { 'email' : $window.email, 'key' : $window.key, 'token' : $window.token};
     var data = {};
     data.fetch = function(url){
-      return $http.get(url, {headers: {'email' : 'admin@vlabs.ac.in', 'token':'dummytoken'}});
+      return $http.get(url, {headers: {"email" : "admin@vlabs.ac.in", "token":"dummytoken"}});
     };
     data.post = function(url, data){
       return $http.post(url, data, {headers : headers });
