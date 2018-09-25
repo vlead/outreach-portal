@@ -598,7 +598,39 @@ app.controller("nodal-centers", function($scope, $http, dataFactory, $routeParam
   
 });
 app.controller("add-workshop", function($scope, $location, $http, dataFactory,$routeParams, $route, $window){
-    $scope.submit = function(isvalid){
+    
+dataFactory.fetch("/nodal_centres?created_by_id="+$window.number).success(function(data, status, headers, config){
+        $scope.ncentres = data;
+        $scope.ncentre_id = data[0];
+    }).error(function(data,status,headers,config){
+      console.log("Failed");
+    });
+  $scope.targetWorkshops = function(status)
+  {
+    if(status == "over")
+    {
+      $scope.info = "Discipline/Department for which, workshop being conducted such as CSE, ECE, ANY.";
+    }
+    else{$scope.info="";}
+  };
+  $scope.targetExperiments = function(status)
+  {
+    if(status == "over")
+    {
+      $scope.info1 = "Town/City, State and PINCODE of the workshop location.";
+    }
+    else{$scope.info1="";}
+  };
+  $scope.targetParticipants = function(status)
+  {
+    if(status == "over")
+    {
+      $scope.info2 = "College(s) that are participating as a part of the workshop.";
+    }
+    else{$scope.info2="";}
+  };
+
+$scope.submit = function(isvalid){
       if(isvalid){
             var today = new Date();
             var workshop_date = new Date($scope.date);

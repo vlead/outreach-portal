@@ -16,22 +16,21 @@
 	</div>
       </div>
     </div>
-    
-
-
-
-
     <div class="form-group">
       <label class="col-md-4 control-label">Workshop Name *</label>  
       <div class="col-md-4 inputGroupContainer">
 	<div class="input-group">
 	  <input type="text" type="number" ng-mouseover="targetWorkshops('over')"
-               ng-mouseleave="targetWorkshops('unover')" name="workshops" min="0" ng-model="workshops"  class="form-control"
-               placeholder="No of workshops" name="user" ng-model="name"  ng-pattern="/^[a-zA-Z0-9._-\s]*$/"  class="form-control"  placeholder="Workshop Name" required>
+               ng-mouseleave="targetWorkshops('unover')"
+               name="workshops" min="0" ng-model="workshops"
+               class="form-control" placeholder="eg.xxxx"
+               name="user" ng-model="name"
+               ng-pattern="/^[a-zA-Z0-9._-\s]*$/" class="form-control"
+               placeholder="Workshop Name" required>
 	  <span style="color:red" ng-show="myForm.user.$dirty && myForm.user.$invalid">
 	    <span ng-show="myForm.user.$error.required">Workshop name is required.</span>
 	    <span ng-show="myForm.user.$error.pattern">Enter valid name</span>
-	  </span>
+	  </span> {{info}}
 	</div>
       </div>
     </div>
@@ -40,27 +39,34 @@
       <label class="col-md-4 control-label">Location of Workshop *</label>  
       <div class="col-md-4 inputGroupContainer">
 	<div class="input-group">
-	  <input type="text" name="location" ng-model="location" ng-pattern="/^[a-zA-Z\s,]*$/"  class="form-control"
-		 placeholder="College Name, City Name, State Name, Country Name" required>
+	  <input type="text" ng-mouseover="targetExperiments('over')" ng-mouseleave="targetExperiments('unover')" name="expts" min="0" ng-model="expts"  class="form-control"
+               placeholder="location" type="text"
+		 name="location" ng-model="eg.xxx"
+		 ng-pattern="/^[a-zA-Z\s,]*$/" class="form-control"
+		 placeholder="College Name, City Name, State Name,
+		 Country Name" required>
 	  <span style="color:red" ng-show="myForm.location.$dirty && myForm.location.$invalid">
 	    <span ng-show="myForm.location.$error.required">Location is required.</span>
 	    <span ng-show="myForm.location.$error.pattern">Enter valid location</span>
-	  </span>
+	  </span> {{info1}}
 	</div>
       </div>
     </div>
 
 
     <div class="form-group">
-      <label class="col-md-4 control-label">Participating Institutes *</label>  
+      <label class="col-md-4 control-label">Workshop College Name *</label>  
       <div class="col-md-4 inputGroupContainer">
 	<div class="input-group">
-	  <input type="text" name="insts" ng-model="insts"  ng-pattern="/^[a-zA-Z._-\s,]*$/" class="form-control"
+	  <input type="text" ng-mouseover="targetParticipants('over')" ng-mouseleave="targetParticipants('unover')" name="parti" min="0" ng-model="parti"  class="form-control"
+               placeholder="eg.xxx" type="text"
+		 name="insts" ng-model="insts"
+		 ng-pattern="/^[a-zA-Z._-\s,]*$/" class="form-control"
 		 placeholder="Institute names" required>
 	  <span style="color:red" ng-show="myForm.insts.$dirty && myForm.insts.$invalid">
 	    <span ng-show="myForm.insts.$error.required">Institute names required.</span>
 	    <span ng-show="myForm.insts.$error.pattern">Enter valid institutes</span>
-	  </span>
+	  </span>{{info2}}
 	</div>
       </div>
     </div>
