@@ -6246,7 +6246,9 @@ def usage():
 def admin():
     if request.method == 'GET':
 	if ('email' in session) and (session['role'] == 'admin'):
-	    rg = requests.get(APP_URL + "/reference_documents?user_id="+str(session['id']))
+	    rg = requests.get(APP_URL + "/reference_documents?user_id="+str(session['id']),
+                          headers={'email': EMAIL_FOR_GET_AUTH,
+                                   'token': TOKEN_FOR_GET_AUTH})
 	    rg_json = json.loads(rg.text)
 	    documents =  rg_json
 	    return render_template("admin.html", documents=documents)
@@ -6273,7 +6275,9 @@ def get_nc_wise_usage():
     return_dict = {}
     if request.method == 'GET':
 	usage_url = APP_URL + "/workshops?status_id=3"
-	ws_usage_response = requests.get(usage_url)
+	ws_usage_response = requests.get(usage_url,
+                                     headers={'email': EMAIL_FOR_GET_AUTH,
+                                             'token': TOKEN_FOR_GET_AUTH})
 	try:
 	    if ws_usage_response.ok:
 		ws = ws_usage_response.text
@@ -6284,7 +6288,9 @@ def get_nc_wise_usage():
 		   # print"here"
 		    user_id = workshop['user']['id']
 		    user_url = APP_URL + "/users?id=" + str(user_id)
-		    user_response = requests.get(user_url)
+		    user_response = requests.get(user_url,
+                                     headers={'email': EMAIL_FOR_GET_AUTH,
+                                             'token': TOKEN_FOR_GET_AUTH})
 		    try:
 			if user_response.ok:
 			    users = user_response.text
@@ -6315,7 +6321,9 @@ def get_nc_wise_usage():
 			      #  print"NC user dict = %s" % users_dict[0]
 				ncd_url = APP_URL + "/nodal_coordinator_details?user_id=" + str(user_id)
 
-				ncd_response = requests.get(ncd_url)
+				ncd_response = requests.get(ncd_url,
+                                     headers={'email': EMAIL_FOR_GET_AUTH,
+                                             'token': TOKEN_FOR_GET_AUTH})
 				try:
 				    if ncd_response.ok:
 					nc_users = ncd_response.text
@@ -6350,7 +6358,9 @@ def get_nc_wise_usage():
 def get_nodal_center_count_for_OC(user_id):
     nc_count_url = APP_URL + "/nodal_centres?created_by_id=" + str(user_id)
     try:
-	nc_count_response = requests.get(nc_count_url)
+	nc_count_response = requests.get(nc_count_url,
+                                     headers={'email': EMAIL_FOR_GET_AUTH,
+                                             'token': TOKEN_FOR_GET_AUTH})
 	if nc_count_response.ok:
 	    return len(json.loads(nc_count_response.text))
 	else:
@@ -6364,7 +6374,9 @@ def get_nodal_center_count_for_OC(user_id):
 def get_outreach_portal_usage():
     if request.method == 'GET':
 	usage_url = APP_URL + "/workshops?status_id=3"
-	ws_usage_response = requests.get(usage_url)
+	ws_usage_response = requests.get(usage_url,
+                                     headers={'email': EMAIL_FOR_GET_AUTH,
+                                             'token': TOKEN_FOR_GET_AUTH})
 	try:
 	    if ws_usage_response.ok:
 		ws_usages = ws_usage_response.text
@@ -6390,10 +6402,20 @@ def get_outreach_portal_analytics():
 	ws_url = APP_URL + "/workshops?status_id=3"
 	upcoming_ws_url = APP_URL + "/workshops?status_id=1"
 	usage_url = APP_URL + "/get_outreach_usage"
-	nc_response = requests.get(nc_url)
-	ws_response = requests.get(ws_url)
-	upcoming_ws_response = requests.get(upcoming_ws_url)
-	ws_usage_response = requests.get(usage_url)
+	nc_response = requests.get(nc_url,
+                               headers={'email': EMAIL_FOR_GET_AUTH,
+                                        'token': TOKEN_FOR_GET_AUTH})
+	ws_response = requests.get(ws_url,
+                               headers={'email': EMAIL_FOR_GET_AUTH,
+                                        'token': TOKEN_FOR_GET_AUTH})
+	upcoming_ws_response = requests.get(upcoming_ws_url,
+                               headers={'email': EMAIL_FOR_GET_AUTH,
+                                        'token': TOKEN_FOR_GET_AUTH})
+                                        
+	ws_usage_response = requests.get(usage_url,
+                               headers={'email': EMAIL_FOR_GET_AUTH,
+                                        'token': TOKEN_FOR_GET_AUTH})
+                                     
 	try:
 	    if nc_response.ok and ws_response.ok and ws_usage_response.ok and \
 		upcoming_ws_response.ok:
