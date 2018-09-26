@@ -20,10 +20,10 @@
       <label class="col-md-4 control-label">Workshop Name *</label>  
       <div class="col-md-4 inputGroupContainer">
 	<div class="input-group">
-	  <input type="text" type="number" ng-mouseover="targetWorkshops('over')"
-               ng-mouseleave="targetWorkshops('unover')"
+	  <input type="text" type="number" ng-mouseover="targetWorkshopName('over')"
+               ng-mouseleave="targetWorkshopName('unover')"
                name="workshops" min="0" ng-model="workshops"
-               class="form-control" placeholder="eg.xxxx"
+               class="form-control" placeholder="Name"
                name="user" ng-model="name"
                ng-pattern="/^[a-zA-Z0-9._-\s]*$/" class="form-control"
                placeholder="Workshop Name" required>
@@ -39,9 +39,8 @@
       <label class="col-md-4 control-label">Location of Workshop *</label>  
       <div class="col-md-4 inputGroupContainer">
 	<div class="input-group">
-	  <input type="text" ng-mouseover="targetExperiments('over')" ng-mouseleave="targetExperiments('unover')" name="expts" min="0" ng-model="expts"  class="form-control"
-               placeholder="location" type="text"
-		 name="location" ng-model="eg.xxx"
+	  <input type="text" ng-mouseover="targetWorkshopLocation('over')" ng-mouseleave="targetWorkshopLocation('unover')" name="expts" min="0" ng-model="expts"  class="form-control"
+                 type="text" name="location" ng-model="workshops"
 		 ng-pattern="/^[a-zA-Z\s,]*$/" class="form-control"
 		 placeholder="College Name, City Name, State Name,
 		 Country Name" required>
@@ -58,8 +57,8 @@
       <label class="col-md-4 control-label">Workshop College Name *</label>  
       <div class="col-md-4 inputGroupContainer">
 	<div class="input-group">
-	  <input type="text" ng-mouseover="targetParticipants('over')" ng-mouseleave="targetParticipants('unover')" name="parti" min="0" ng-model="parti"  class="form-control"
-               placeholder="eg.xxx" type="text"
+	  <input type="text" ng-mouseover="targetWorkshopCollegeName('over')" ng-mouseleave="targetWorkshopCollegeName('unover')" name="parti" min="0" ng-model="parti"  class="form-control"
+                type="text"
 		 name="insts" ng-model="insts"
 		 ng-pattern="/^[a-zA-Z._-\s,]*$/" class="form-control"
 		 placeholder="Institute names" required>
@@ -75,12 +74,12 @@
       <label class="col-md-4 control-label">No of Expected Participants *</label>  
       <div class="col-md-4 inputGroupContainer">
 	<div class="input-group">
-	  <input type="number" name="parti" ng-model="parti"  min="0" class="form-control"
+	  <input type="number" ng-mouseover="targetExpectedParticipants('over')" ng-mouseleave="targetExpectedParticipants('unover')" name="parti" ng-model="parti"  min="0" class="form-control"
 		 placeholder="Participants " required/>
           <span class="error" ng-show="myForm.parti.$error.number">Not valid number!</span>
 	  <span style="color:red" ng-show="myForm.parti.$dirty && myForm.parti.$invalid">
 	    <span ng-show="myForm.parti.$error.required">Participants required.</span>
-	  </span>
+	  </span>{{info3}}
 	</div>
       </div>
     </div>

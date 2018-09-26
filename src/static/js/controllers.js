@@ -605,7 +605,7 @@ dataFactory.fetch("/nodal_centres?created_by_id="+$window.number).success(functi
     }).error(function(data,status,headers,config){
       console.log("Failed");
     });
-  $scope.targetWorkshops = function(status)
+  $scope.targetWorkshopName = function(status)
   {
     if(status == "over")
     {
@@ -613,7 +613,7 @@ dataFactory.fetch("/nodal_centres?created_by_id="+$window.number).success(functi
     }
     else{$scope.info="";}
   };
-  $scope.targetExperiments = function(status)
+  $scope.targetWorkshopLocation = function(status)
   {
     if(status == "over")
     {
@@ -621,7 +621,7 @@ dataFactory.fetch("/nodal_centres?created_by_id="+$window.number).success(functi
     }
     else{$scope.info1="";}
   };
-  $scope.targetParticipants = function(status)
+  $scope.targetWorkshopCollegeName = function(status)
   {
     if(status == "over")
     {
@@ -629,6 +629,17 @@ dataFactory.fetch("/nodal_centres?created_by_id="+$window.number).success(functi
     }
     else{$scope.info2="";}
   };
+$scope.targetExpectedParticipants = function(status)
+  {
+    if(status == "over")
+    {
+      $scope.info3 = "Expected Students/Faculty that are part of the workshop.";
+    }
+    else{$scope.info3="";}
+  };
+
+
+
 
 $scope.submit = function(isvalid){
       if(isvalid){
