@@ -598,6 +598,10 @@ app.controller("nodal-centers", function($scope, $http, dataFactory, $routeParam
   
 });
 app.controller("add-workshop", function($scope, $location, $http, dataFactory,$routeParams, $route, $window){
+
+//added mouse over functionality to the fields of Workshop Name,
+//Location of Workshop, Workshop College Name and No of Expected
+//Participants. 
     
 dataFactory.fetch("/nodal_centres?created_by_id="+$window.number).success(function(data, status, headers, config){
         $scope.ncentres = data;
