@@ -1,6 +1,6 @@
-var service = angular.module('outreachApp.factories', []);
-service.factory('dataFactory', function($http, $window){
-  var headers = { 'email' : $window.email, 'key' : $window.key, 'token' : $window.token};
+var service = angular.module("outreachApp.factories", []);
+service.factory("dataFactory", function($http, $window){
+  var headers = { "email" : $window.email, "key" : $window.key, "token" : $window.token};
     var data = {};
     data.fetch = function(url){
         return $http.get(url);
