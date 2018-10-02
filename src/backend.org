@@ -6495,7 +6495,7 @@ def upload_file(file, url):
 	    file.save(file_path)                   
 	    current_app.logger.debug("file saved successfully")      
 	except Exception, e:
-	    response = requests.delete(url, headers= {'email' : session['email'], 'key' : session['key']})
+	    response = requests.delete(url, headers= {'email' : str(session['email']), 'token' : str(session['token'])})
 	    current_app.logger.error("Error unable to save file: " + str(e))
 	    abort(500, 'error is %s' % (str(e)))
 
@@ -6506,7 +6506,7 @@ def upload_file(file, url):
 		current_app.logger.error("db path is set successfully")
 	    else:
 		current_app.logger.debug("Unable to save file path in database")
-		response = requests.delete(url, headers= {'email' : session['email'], 'key' : session['key']}) # Delete the record in database
+		response = requests.delete(url, headers= {'email' : str(session['email']), 'token' : str(session['token'])}) # Delete the record in database
 
 		if response.status_code == 200:
 		    current_app.logger.error("Sucessfully deleted record from database")
