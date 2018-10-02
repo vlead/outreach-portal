@@ -1,21 +1,21 @@
 /* --- Made by justgoscha and licensed under MIT license --- */
 
-var app = angular.module('autocomplete', []);
+var app = angular.module("autocomplete", []);
 
-app.directive('autocomplete', function() {
+app.directive("autocomplete", function() {
   var index = -1;
 
   return {
-    restrict: 'E',
+    restrict: "E",
     scope: {
-      searchParam: '=ngModel',
-      suggestions: '=data',
-      onType: '=onType',
-      onSelect: '=onSelect',
-      autocompleteRequired: '='
+      searchParam: "=ngModel",
+      suggestions: "=data",
+      onType: "=onType",
+      onSelect: "=onSelect",
+      autocompleteRequired: "="
     },
-    controller: ['$scope', function($scope){
-      // the index of the suggestions that's currently selected
+    controller: ["$scope", function($scope){
+      // the index of the suggestions that"s currently selected
       $scope.selectedIndex = -1;
 
       $scope.initLock = true;
@@ -41,13 +41,13 @@ app.directive('autocomplete', function() {
       $scope.completing = false;
 
       // starts autocompleting on typing in something
-      $scope.$watch('searchParam', function(newValue, oldValue){
+      $scope.$watch("searchParam", function(newValue, oldValue){
 
         if (oldValue === newValue || (!oldValue && $scope.initLock)) {
           return;
         }
 
-        if(watching && typeof $scope.searchParam !== 'undefined' && $scope.searchParam !== null) {
+        if(watching && typeof $scope.searchParam !== "undefined" && $scope.searchParam !== null) {
           $scope.completing = true;
           $scope.searchFilter = $scope.searchParam;
           $scope.selectedIndex = -1;
@@ -64,7 +64,7 @@ app.directive('autocomplete', function() {
         watching = false;
 
         // this line determines if it is shown
-        // in the input field before it's selected:
+        // in the input field before it"s selected:
         //$scope.searchParam = suggestion;
 
         $scope.$apply();
@@ -103,7 +103,7 @@ app.directive('autocomplete', function() {
         scope.$apply();
       }, 250);
 
-      var attr = '';
+      var attr = "";
 
       // Default atts
       scope.attrs = {
@@ -115,10 +115,10 @@ app.directive('autocomplete', function() {
       };
 
       for (var a in attrs) {
-        attr = a.replace('attr', '').toLowerCase();
+        attr = a.replace("attr", "").toLowerCase();
         // add attribute overriding defaults
         // and preventing duplication
-        if (a.indexOf('attr') === 0) {
+        if (a.indexOf("attr") === 0) {
           scope.attrs[attr] = attrs[a];
         }
       }
@@ -162,7 +162,7 @@ app.directive('autocomplete', function() {
       element[0].addEventListener("keydown",function (e){
         var keycode = e.keyCode || e.which;
 
-        var l = angular.element(this).find('li').length;
+        var l = angular.element(this).find("li").length;
 
         // this allows submitting forms by pressing Enter in the autocompleted field
         if(!scope.completing || l == 0) return;
@@ -183,7 +183,7 @@ app.directive('autocomplete', function() {
             scope.setIndex(index);
 
             if(index!==-1)
-              scope.preSelect(angular.element(angular.element(this).find('li')[index]).text());
+              scope.preSelect(angular.element(angular.element(this).find("li")[index]).text());
 
             scope.$apply();
 
@@ -202,7 +202,7 @@ app.directive('autocomplete', function() {
             scope.setIndex(index);
 
             if(index!==-1)
-              scope.preSelect(angular.element(angular.element(this).find('li')[index]).text());
+              scope.preSelect(angular.element(angular.element(this).find("li")[index]).text());
 
             break;
           case key.left:
@@ -214,7 +214,7 @@ app.directive('autocomplete', function() {
             index = scope.getIndex();
             // scope.preSelectOff();
             if(index !== -1) {
-              scope.select(angular.element(angular.element(this).find('li')[index]).text());
+              scope.select(angular.element(angular.element(this).find("li")[index]).text());
               if(keycode == key.enter) {
                 e.preventDefault();
               }
@@ -240,7 +240,7 @@ app.directive('autocomplete', function() {
 
       });
     },
-    template: '\
+    template: "\
         <div class="autocomplete {{ attrs.class }}" id="{{ attrs.id }}">\
           <input\
             type="text"\
@@ -252,26 +252,26 @@ app.directive('autocomplete', function() {
           <ul ng-show="completing && (suggestions | filter:searchFilter).length > 0">\
             <li\
               suggestion\
-              ng-repeat="suggestion in suggestions | filter:searchFilter | orderBy:\'toString()\' track by $index"\
+              ng-repeat="suggestion in suggestions | filter:searchFilter | orderBy:\"toString()\" track by $index"\
               index="{{ $index }}"\
               val="{{ suggestion }}"\
               ng-class="{ active: ($index === selectedIndex) }"\
               ng-click="select(suggestion)"\
               ng-bind-html="suggestion | highlight:searchParam"></li>\
           </ul>\
-        </div>'
+        </div>"
   };
 });
 
-app.filter('highlight', ['$sce', function ($sce) {
+app.filter("highlight", ["$sce", function ($sce) {
   return function (input, searchParam) {
-    if (typeof input === 'function') return '';
+    if (typeof input === "function") return "";
     if (searchParam) {
-      var words = '(' +
-            searchParam.split(/\ /).join(' |') + '|' +
-            searchParam.split(/\ /).join('|') +
-          ')',
-          exp = new RegExp(words, 'gi');
+      var words = "(" +
+            searchParam.split(/\ /).join(" |") + "|" +
+            searchParam.split(/\ /).join("|") +
+          ")",
+          exp = new RegExp(words, "gi");
       if (words.length) {
         input = input.replace(exp, "<span class=\"highlight\">$1</span>");
       }
@@ -280,17 +280,17 @@ app.filter('highlight', ['$sce', function ($sce) {
   };
 }]);
 
-app.directive('suggestion', function(){
+app.directive("suggestion", function(){
   return {
-    restrict: 'A',
-    require: '^autocomplete', // ^look for controller on parents element
+    restrict: "A",
+    require: "^autocomplete", // ^look for controller on parents element
     link: function(scope, element, attrs, autoCtrl){
-      element.bind('mouseenter', function() {
+      element.bind("mouseenter", function() {
         autoCtrl.preSelect(attrs.val);
         autoCtrl.setIndex(attrs.index);
       });
 
-      element.bind('mouseleave', function() {
+      element.bind("mouseleave", function() {
         autoCtrl.preSelectOff();
       });
     }
