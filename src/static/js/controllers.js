@@ -7,9 +7,8 @@ app.controller("map-ctrl", function ($scope, $http, dataFactory){
         for(var i=0;i<workshops.length;i++){
             var workshop_date = new Date(workshops[i].date);
             var workshop_id = workshops[i].id ;
-            if (((today > workshop_date) & !(today.toDateString() === workshop_date.toDateString())) &
-                (workshops[i].status.name === "Upcoming")){
-                console.log("");
+            if (((today > workshop_date) & !(today.toDateString() == workshop_date.toDateString())) &
+                (workshops[i].status.name == "Upcoming")){
             }else{
                 workshop_list.push(workshops[i]);
             }
@@ -37,14 +36,12 @@ app.controller("map-ctrl", function ($scope, $http, dataFactory){
                   var geo_code = results[0].geometry.location;
                   var lat = geo_code.lat();
                   var lng = geo_code.lng();
-                  //console.log(pincode);
                   var data = {"longitude" : lng, "lattitude" : lat };
                     dataFactory.put("/nodal_centres/"+id, data).success(function(response){
-			console.log("success for id "+id);
                     });
                 }
-		else{
-                    console.log("failed for id "+id+"error: "+status);
+	      else{
+                $scope.status = "Failed for id "+ id +"error: " + status;
 		}
             }
         );
