@@ -54,9 +54,10 @@ app.directive("autocomplete", function() {
         }
 
         // function thats passed to on-type attribute gets executed
-        if($scope.onType)
+        if($scope.onType){
           $scope.onType($scope.searchParam);
-      });
+        }
+        });
 
       // for hovering over suggestions
       this.preSelect = function(suggestion){
@@ -85,8 +86,9 @@ app.directive("autocomplete", function() {
         if(suggestion){
           $scope.searchParam = suggestion;
           $scope.searchFilter = suggestion;
-          if($scope.onSelect)
+          if($scope.onSelect){
             $scope.onSelect(suggestion);
+          }
         }
         watching = false;
         $scope.completing = false;
@@ -165,8 +167,9 @@ app.directive("autocomplete", function() {
         var l = angular.element(this).find("li").length;
 
         // this allows submitting forms by pressing Enter in the autocompleted field
-        if(!scope.completing || l == 0) return;
-
+        if(!scope.completing || l === 0){
+          return;
+        }
         // implementation of the up and down movement in the list of suggestions
         switch (keycode){
           case key.up:
@@ -182,9 +185,9 @@ app.directive("autocomplete", function() {
             }
             scope.setIndex(index);
 
-            if(index!==-1)
-              scope.preSelect(angular.element(angular.element(this).find("li")[index]).text());
-
+          if(index!==-1){
+              scope.preSelect(angular.element(angular.element(this).find('li')[index]).text());
+          }
             scope.$apply();
 
             break;
@@ -201,9 +204,9 @@ app.directive("autocomplete", function() {
             }
             scope.setIndex(index);
 
-            if(index!==-1)
-              scope.preSelect(angular.element(angular.element(this).find("li")[index]).text());
-
+          if(index!==-1){
+            scope.preSelect(angular.element(angular.element(this).find('li')[index]).text());
+          }
             break;
           case key.left:
             break;
@@ -265,7 +268,9 @@ app.directive("autocomplete", function() {
 
 app.filter("highlight", ["$sce", function ($sce) {
   return function (input, searchParam) {
-    if (typeof input === "function") return "";
+    if (typeof input === "function"){
+      return "";
+    }
     if (searchParam) {
       var words = "(" +
             searchParam.split(/\ /).join(" |") + "|" +
