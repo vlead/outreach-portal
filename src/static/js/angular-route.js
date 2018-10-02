@@ -154,7 +154,7 @@ function $RouteProvider(){
 
     // create redirection for trailing slashes
     if (path) {
-      var redirectPath = (path[path.length-1] == "/")
+      var redirectPath = (path[path.length-1] === '/')
             ? path.substr(0, path.length-1)
             : path +"/";
 
@@ -546,7 +546,7 @@ function $RouteProvider(){
           }).
           // after route change
           then(function(locals) {
-            if (next == $route.current) {
+            if (next === $route.current) {
               if (next) {
                 next.locals = locals;
                 angular.copy(next.params, $routeParams);
@@ -554,8 +554,8 @@ function $RouteProvider(){
               $rootScope.$broadcast("$routeChangeSuccess", next, last);
             }
           }, function(error) {
-            if (next == $route.current) {
-              $rootScope.$broadcast("$routeChangeError", next, last, error);
+            if (next === $route.current) {
+              $rootScope.$broadcast('$routeChangeError', next, last, error);
             }
           });
       }

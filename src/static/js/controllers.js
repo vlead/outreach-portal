@@ -7,8 +7,8 @@ app.controller("map-ctrl", function ($scope, $http, dataFactory){
         for(var i=0;i<workshops.length;i++){
             var workshop_date = new Date(workshops[i].date);
             var workshop_id = workshops[i].id ;
-            if (((today > workshop_date) & !(today.toDateString() == workshop_date.toDateString())) &
-                (workshops[i].status.name == "Upcoming")){
+            if (((today > workshop_date) & !(today.toDateString() === workshop_date.toDateString())) &
+                (workshops[i].status.name === "Upcoming")){
                 console.log("");
             }else{
                 workshop_list.push(workshops[i]);
@@ -20,9 +20,8 @@ app.controller("map-ctrl", function ($scope, $http, dataFactory){
     });
     
   dataFactory.fetch("/nodal_centres").success(function(nodal_centre){
-      
-    for(var i=0;i<nodal_centre.length;i++){
-	if(nodal_centre[i].location != "null" && nodal_centre[i].longitude != null){
+    for(i=0;i<nodal_centre.length;i++){
+	if(nodal_centre[i].location !== "null" && nodal_centre[i].longitude !== null){
 	  $scope.createMarker(nodal_centre[i], nodal_centre[i], "nodal_centres");
           // get_geocode1(nodal_centre[i]);
 	}
@@ -34,7 +33,7 @@ app.controller("map-ctrl", function ($scope, $http, dataFactory){
 	var location = nodal_centre.location;
 	geocoder1.geocode(
             { "address": nodal_centre.location+",india, Asia" }, function(results, status) {
-                if (status == google.maps.GeocoderStatus.OK && results.length > 0){
+                if (status === google.maps.GeocoderStatus.OK && results.length > 0){
                   var geo_code = results[0].geometry.location;
                   var lat = geo_code.lat();
                   var lng = geo_code.lng();
@@ -60,7 +59,7 @@ app.controller("map-ctrl", function ($scope, $http, dataFactory){
       content: "<b>Nodal Centre Location : </b>"+label.location+"<br><b>Nodal Centre Name : </b>"+label.name+"<br><b>Outreach Centre Name : </b>"+label.created_by.institute_name
     });
       var a = 0;
-      if(type == "workshops")
+      if(type === "workshops")
       {
 	  alert("dfd");
         var marker = new google.maps.Marker({
@@ -434,11 +433,11 @@ app.controller("nc-dashboard", function($scope, $http, dataFactory, $routeParams
         for(var i=0;i<workshops.length;i++){
             var workshop_date = new Date(workshops[i].date);
             var workshop_id = workshops[i].id ;
-            if (((today > workshop_date) & !(today.toDateString() == workshop_date.toDateString())) &
-                (workshops[i].status.name == "Upcoming")){
-                dataFactory.put("/workshops/"+workshop_id.toString(),
-                                {"status": {"id": 2}}).success(function(data, status){
-                                    console.log("Status success"); });
+            if (((today > workshop_date) & !(today.toDateString() === workshop_date.toDateString())) &
+                (workshops[i].status.name === "Upcoming")){
+                dataFactory.put('/workshops/'+workshop_id.toString(),
+                                {'status': {'id': 2}}).success(function(data, status){
+                                    console.log('Status success'); });
             }
         }
     });
@@ -505,7 +504,7 @@ app.controller("manage-workshops", function($scope, $http, $routeParams, dataFac
 	for(var i=0;i<data.length;i++){
             var workshop_date = new Date(data[i].date);
                 var workshop_id = data[i].id ;
-            if (((today > workshop_date) & !(today.toDateString() == workshop_date.toDateString())) &
+            if (((today > workshop_date) & !(today.toDateString() === workshop_date.toDateString())) &
 		(data[i].status.name == "Upcoming")){
                 dataFactory.put("/workshops/"+workshop_id.toString(),
 				{"status": {"id": 2}}).success(function(data, status){
@@ -1116,7 +1115,7 @@ app.controller("manage-centres", function($scope, $http, dataFactory, $routePara
             var get_geocode = function (){
           geocoder.geocode(
             { "address": $scope.centre+","+$scope.pincode+",India,Asia" }, function(results, status) {
-              if (status == google.maps.GeocoderStatus.OK && results.length > 0){
+              if (status === google.maps.GeocoderStatus.OK && results.length > 0){
                   var geo_code = results[0].geometry.location;
                   var lat = geo_code.lat();
                   var lng = geo_code.lng();
@@ -1190,7 +1189,7 @@ app.controller("edit-centre", function($scope, dataFactory, $http, $routeParams,
           var get_geocode = function (){
             geocoder.geocode(
               { "address": $scope.centres.location+","+$scope.centres.pincode+",India,Asia" }, function(results, status) {
-                if (status == google.maps.GeocoderStatus.OK && results.length > 0){
+                if (status === google.maps.GeocoderStatus.OK && results.length > 0){
                   var geo_code = results[0].geometry.location;
                   var lat = geo_code.lat();
                   var lng = geo_code.lng();
@@ -1221,7 +1220,7 @@ app.controller("oc-manage-workshops", function($scope, $http, $routeParams, data
 	    for(var i=0;i<data.length;i++){
                 var workshop_date = new Date(data[i].date);
                 var workshop_id = data[i].id ;
-                if (((today > workshop_date) & !(today.toDateString() == workshop_date.toDateString())) &
+                if (((today > workshop_date) & !(today.toDateString() === workshop_date.toDateString())) &
 		(data[i].status.name == "Upcoming")){
                     dataFactory.put("/workshops/"+workshop_id.toString(), {"status": {"id": 2}}).
 			success(function(data, status){ console.log("Status success"); });
