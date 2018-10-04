@@ -1,11 +1,11 @@
-var app = angular.module('outreachApp.controllers',[]);
-app.controller('map-ctrl', function ($scope, $http, dataFactory){
+var app = angular.module("outreachApp.controllers",[]);
+app.controller("map-ctrl", function ($scope, $http, dataFactory){
     var workshopList = [];
     $scope.upcomingLoading = true;
     dataFactory.fetch("/workshops?status_id=1").success(function(workshops){
         var today = new Date();
-        for(i=0;i<workshops.length;i++){
-            workshopDate = new Date(workshops[i].date);
+        for(var i=0;i<workshops.length;i++){
+            var workshopDate = new Date(workshops[i].date);
             var workshopId = workshops[i].id ;
             if (((today > workshopDate) & !(today.toDateString() == workshopDate.toDateString())) &
                 (workshops[i].status.name == "Upcoming")){
@@ -33,7 +33,7 @@ app.controller('map-ctrl', function ($scope, $http, dataFactory){
 	var location = nodalCentre.location;
 	geocoder1.geocode(
             { "address": nodalCentre.location+",india, Asia" }, function(results, status) {
-                if (status == google.maps.GeocoderStatus.OK && results.length > 0){
+                if (status === google.maps.GeocoderStatus.OK && results.length > 0){
                   var geo_code = results[0].geometry.location;
                   var lat = geo_code.lat();
                   var lng = geo_code.lng();
