@@ -18,7 +18,7 @@
 	</tr>
       </thead>
       <tbody>
-	<tr ng-repeat="workshop in workshops">
+	<tr ng-repeat="workshop in workshops | orderBy : 'date'">
           <td>{{ workshop.name }}</td>
 	  <td>{{ workshop.version }}</td>
           <td>{{ workshop.location }}</td>
