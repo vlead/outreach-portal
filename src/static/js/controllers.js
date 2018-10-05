@@ -7,8 +7,8 @@ app.controller("map-ctrl", function ($scope, $http, dataFactory){
         for(var i=0;i<workshops.length;i++){
             var workshopDate = new Date(workshops[i].date);
             var workshopId = workshops[i].id ;
-            if (((today > workshopDate) & !(today.toDateString() == workshopDate.toDateString())) &
-                (workshops[i].status.name == "Upcoming")){
+            if (((today > workshopDate) & !(today.toDateString() === workshopDate.toDateString())) &
+                (workshops[i].status.name === "Upcoming")){
             }else{
                 workshopList.push(workshops[i]);
             }
@@ -92,8 +92,7 @@ app.controller("map-ctrl", function ($scope, $http, dataFactory){
 app.controller("nodal-centers-list", function($scope, $http, $routeParams, dataFactory, $route, $window){
     dataFactory.fetch("/total_ncenters").success(function(data,status,headers,config){
 	$scope.ncenters = data;
-    }).error(function(data, status, headers, config){
-        console.log("Failed to fetch total ncenters");
+    }).error(function(response){console.log("Failed to fetch total ncenters");
     });
 
 });
@@ -112,7 +111,7 @@ app.controller("oc-ctrl", function($scope, $routeParams, dataFactory, $route, $w
     
     $scope.edit_oc = function(isvalid){
         if(isvalid){
-            data = {"name" : $scope.oc_user.name,"email" : $scope.oc_user.email, "institute_name" : $scope.oc_user.institute_name };
+           var data = {"name" : $scope.oc_user.name,"email" : $scope.oc_user.email, "institute_name" : $scope.oc_user.institute_name };
             dataFactory.put("/users/"+$routeParams.id, data).success(function(response){
                 history.back();
             }).error(function(data, status, headers, config){
@@ -158,16 +157,16 @@ app.controller("workshop", function($scope, dataFactory, $http, $routeParams, $l
     var oc_workshops = workshops.filter(workshop => workshop.user.id == $routeParams.id);
     dataFactory.fetch("/nodal_coordinator_details?created_by_id="+$routeParams.id).success(function(response){
       var ncs = response;
-      for(nc_user=0;nc_user<ncs.length;nc_user++){
-        nc_workshops = workshops.filter(workshop => workshop.user.id == ncs[nc_user].user.id);
+      for(var nc_user=0;nc_user<ncs.length;nc_user++){
+        var nc_workshops = workshops.filter(workshop => workshop.user.id == ncs[nc_user].user.id);
         oc_workshops = oc_workshops.concat(nc_workshops);
       }
       $scope.oc_workshops = oc_workshops;
       dataFactory.fetch("/workshop_reports").success(function(data,status,headers,config){
         var reports = [];
-        for(i=0;i<$scope.oc_workshops.length;i++){
+        for(var i=0;i<$scope.oc_workshops.length;i++){
           reports = [];
-          for(j=0;j<data.length;j++){
+          for(var j=0;j<data.length;j++){
             if($scope.oc_workshops[i].id == data[j].workshop.id){
               reports.push({"name" : data[j].name, "path" :  data[j].path});
               //console.log("true");                                                                                                    
@@ -192,16 +191,16 @@ app.controller("workshop", function($scope, dataFactory, $http, $routeParams, $l
       var oc_workshops = workshops.filter(workshop => workshop.user.id == $routeParams.id);
       dataFactory.fetch("/nodal_coordinator_details?created_by_id="+$routeParams.id).success(function(response){
 	var ncs = response;
-        for(nc_user=0;nc_user<ncs.length;nc_user++){
-          nc_workshops = workshops.filter(workshop => workshop.user.id == ncs[nc_user].user.id);
+        for(var nc_user=0;nc_user<ncs.length;nc_user++){
+          var nc_workshops = workshops.filter(workshop => workshop.user.id == ncs[nc_user].user.id);
           oc_workshops = oc_workshops.concat(nc_workshops);
         }
         $scope.oc_workshops = oc_workshops;
         dataFactory.fetch("/workshop_reports").success(function(data,status,headers,config){
           var reports = [];
-          for(i=0;i<$scope.oc_workshops.length;i++){
+          for(var i=0;i<$scope.oc_workshops.length;i++){
             reports = [];
-            for(j=0;j<data.length;j++){
+            for(var j=0;j<data.length;j++){
               if($scope.oc_workshops[i].id == data[j].workshop.id){
                 reports.push({"name" : data[j].name, "path" :  data[j].path});
                 //console.log("true");                                                                                                    
@@ -254,7 +253,7 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
     
     $scope.add_oc = function(isvalid){    
         if(isvalid){
-            data = {"name" : $scope.name,"created" : Date(), "email" : $scope.email, "institute_name" : $scope.inst_name, "role" : { "id" : 2 } };
+            var data = {"name" : $scope.name,"created" : Date(), "email" : $scope.email, "institute_name" : $scope.inst_name, "role" : { "id" : 2 } };
             dataFactory.post("/users", data).success(function(response){
                 history.back();
             }).error(function(data, status, headers, config){
@@ -297,18 +296,18 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
 	//start here v2.4.0
 	var count = 0;
 	var count1 = 0;
-	for(user=0;user<response.length;user++){
+	for(var user=0;user<response.length;user++){
 	    dataFactory.fetch("/nodal_coordinator_details?created_by_id="+response[user].id).success(function(data){
 		count = count +1 ;		
 		var temp_dict = [{"institute_name" : "NIT Surathkal" }];
 		if(data.length!=0){
-		  institute = data[0].created_by.institute_name;
-		  id = data[0].created_by.id;
+		  var institute = data[0].created_by.institute_name;
+		  var id = data[0].created_by.id;
 		  var dict = { "id" : id, "institute" : institute, "total_ncs" : data.length };
 		    oc_users_with_ncs.push(dict);
 		}
 		else{
-		  var dict = {"id" : response[count].id, "institute" : temp_dict[0].institute_name, "total_ncs" : 0};
+		  dict = {"id" : response[count].id, "institute" : temp_dict[0].institute_name, "total_ncs" : 0};
 		    console.log(dict);	    
 		}
 		
@@ -348,7 +347,7 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
         var workshopList = [];
         var labs = 0;
         var expts_count = 0;
-        for(workshop=0;workshop<workshops.length;workshop++)
+        for(var workshop=0;workshop<workshops.length;workshop++)
         {
             workshopList.push(workshops[workshop]);
             participants_count = participants_count + workshops[workshop].participants_attended;
@@ -372,9 +371,9 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
     });    
     dataFactory.fetch("/nodal_coordinator_details"). success(function(data, status, headers, config) {
 	
-	for(i=0;i<data.length;i++){
+	for(var i=0;i<data.length;i++){
 	    usage=0;
-	    for(j=0;j<$scope.workshops.length;j++){
+	    for(var j=0;j<$scope.workshops.length;j++){
 		if(($scope.workshops[j].user.id == data[i].user.id)){
 		    usage=Number(usage) + Number($scope.workshops[j].experiments_conducted);
 		}
@@ -428,8 +427,8 @@ app.controller("nc-dashboard", function($scope, $http, dataFactory, $routeParams
 
     dataFactory.fetch("/workshops?status_id=1").success(function(workshops){
         var today = new Date();
-        for(i=0;i<workshops.length;i++){
-            workshopDate = new Date(workshops[i].date);
+        for(var i=0;i<workshops.length;i++){
+            var workshopDate = new Date(workshops[i].date);
             var workshopId = workshops[i].id ;
             if (((today > workshopDate) & !(today.toDateString() == workshopDate.toDateString())) &
                 (workshops[i].status.name == "Upcoming")){
@@ -499,8 +498,8 @@ app.controller("manage-workshops", function($scope, $http, $routeParams, dataFac
         var upcoming = [];
         var history = [];
         var pending = [];
-	for(i=0;i<data.length;i++){
-            workshopDate = new Date(data[i].date);
+	for(var i=0;i<data.length;i++){
+            var workshopDate = new Date(data[i].date);
                 var workshopId = data[i].id ;
             if (((today > workshopDate) & !(today.toDateString() == workshopDate.toDateString())) &
 		(data[i].status.name == "Upcoming")){
@@ -1215,7 +1214,7 @@ app.controller("oc-manage-workshops", function($scope, $http, $routeParams, data
             var upcoming = [];
             var history = [];
             var pending = [];
-	    for(i=0;i<data.length;i++){
+	    for(var i=0;i<data.length;i++){
                 var workshopDate = new Date(data[i].date);
                 var workshopId = data[i].id ;
                 if (((today > workshopDate) & !(today.toDateString() == workshopDate.toDateString())) &
