@@ -19,7 +19,7 @@
 	</tr>
       </thead>
       <tbody>
-	<tr ng-repeat="workshop in history">
+        <tr ng-repeat="workshop in history | orderBy : 'date'">
           <td>{{ workshop.name }}</td>
 	  <td>{{ workshop.version }}</td>
           <td>{{ workshop.location }}</td>
