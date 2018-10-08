@@ -17,7 +17,7 @@
 	  <th>Usage (in terms of total experiments performed)</th>
 	</tr>
       </thead>
-      <tbody ng-repeat="name in oc_usage | orderBy : '-usage'">
+      <tbody ng-repeat="name in oc_usage | orderBy : 'usage'">
         <tr ng-if="name.oc_centre!='VLEAD-IIITH'">
           <td>{{ name.oc_name }}</td>
           <td>{{ name.oc_email }}</td>

@@ -5576,6 +5576,8 @@ PERSONA_VERIFIER_URL = "https://verifier.login.persona.org/verify"
 CONSUMER_KEY = "420719460133-g13g6abnnised3v4nq4d430jo8mpb9m8.apps.googleusercontent.com"
 CONSUMER_SECRET = "DQxOnwOectvfFFe05jqKTIQT"
 
+EMAIL_FOR_GET_AUTH = "admin@vlabs.ac.in"
+TOKEN_FOR_GET_AUTH = "dummytoken"
 #+END_SRC
 
 ** Deploying the application
@@ -6027,8 +6029,10 @@ def authorized():
     try:
         url_for_getting_the_user = "%s/users?email=%s" % \
                                    (APP_URL, email)
-        backend_resp = requests.get(url_for_getting_the_user)
-
+        backend_resp = requests.get(url_for_getting_the_user,
+                                    headers={'email': EMAIL_FOR_GET_AUTH,
+                                             'token': TOKEN_FOR_GET_AUTH})
+                                             
         if (len(backend_resp.text.encode('ascii')) != 2):
             if 'error' in session:
                 session.pop('error', None)
@@ -6216,7 +6220,8 @@ def unique(list1):
 @api.route("/total_ncenters")
 def toatal_ncentres():
     url = APP_URL + '/nodal_centres';
-    r = requests.get(url);
+    r = requests.get(url, headers={'email': EMAIL_FOR_GET_AUTH,
+                                   'token': TOKEN_FOR_GET_AUTH});
     r.status_code
     data = r.json();
 
@@ -6241,7 +6246,9 @@ def usage():
 def admin():
     if request.method == 'GET':
 	if ('email' in session) and (session['role'] == 'admin'):
-	    rg = requests.get(APP_URL + "/reference_documents?user_id="+str(session['id']))
+	    rg = requests.get(APP_URL + "/reference_documents?user_id="+str(session['id']),
+                          headers={'email': EMAIL_FOR_GET_AUTH,
+                                   'token': TOKEN_FOR_GET_AUTH})
 	    rg_json = json.loads(rg.text)
 	    documents =  rg_json
 	    return render_template("admin.html", documents=documents)
@@ -6268,7 +6275,9 @@ def get_nc_wise_usage():
     return_dict = {}
     if request.method == 'GET':
 	usage_url = APP_URL + "/workshops?status_id=3"
-	ws_usage_response = requests.get(usage_url)
+	ws_usage_response = requests.get(usage_url,
+                                     headers={'email': EMAIL_FOR_GET_AUTH,
+                                             'token': TOKEN_FOR_GET_AUTH})
 	try:
 	    if ws_usage_response.ok:
 		ws = ws_usage_response.text
@@ -6279,7 +6288,9 @@ def get_nc_wise_usage():
 		   # print"here"
 		    user_id = workshop['user']['id']
 		    user_url = APP_URL + "/users?id=" + str(user_id)
-		    user_response = requests.get(user_url)
+		    user_response = requests.get(user_url,
+                                     headers={'email': EMAIL_FOR_GET_AUTH,
+                                             'token': TOKEN_FOR_GET_AUTH})
 		    try:
 			if user_response.ok:
 			    users = user_response.text
@@ -6310,7 +6321,9 @@ def get_nc_wise_usage():
 			      #  print"NC user dict = %s" % users_dict[0]
 				ncd_url = APP_URL + "/nodal_coordinator_details?user_id=" + str(user_id)
 
-				ncd_response = requests.get(ncd_url)
+				ncd_response = requests.get(ncd_url,
+                                     headers={'email': EMAIL_FOR_GET_AUTH,
+                                             'token': TOKEN_FOR_GET_AUTH})
 				try:
 				    if ncd_response.ok:
 					nc_users = ncd_response.text
@@ -6345,7 +6358,9 @@ def get_nc_wise_usage():
 def get_nodal_center_count_for_OC(user_id):
     nc_count_url = APP_URL + "/nodal_centres?created_by_id=" + str(user_id)
     try:
-	nc_count_response = requests.get(nc_count_url)
+	nc_count_response = requests.get(nc_count_url,
+                                     headers={'email': EMAIL_FOR_GET_AUTH,
+                                             'token': TOKEN_FOR_GET_AUTH})
 	if nc_count_response.ok:
 	    return len(json.loads(nc_count_response.text))
 	else:
@@ -6359,7 +6374,9 @@ def get_nodal_center_count_for_OC(user_id):
 def get_outreach_portal_usage():
     if request.method == 'GET':
 	usage_url = APP_URL + "/workshops?status_id=3"
-	ws_usage_response = requests.get(usage_url)
+	ws_usage_response = requests.get(usage_url,
+                                     headers={'email': EMAIL_FOR_GET_AUTH,
+                                             'token': TOKEN_FOR_GET_AUTH})
 	try:
 	    if ws_usage_response.ok:
 		ws_usages = ws_usage_response.text
@@ -6385,10 +6402,20 @@ def get_outreach_portal_analytics():
 	ws_url = APP_URL + "/workshops?status_id=3"
 	upcoming_ws_url = APP_URL + "/workshops?status_id=1"
 	usage_url = APP_URL + "/get_outreach_usage"
-	nc_response = requests.get(nc_url)
-	ws_response = requests.get(ws_url)
-	upcoming_ws_response = requests.get(upcoming_ws_url)
-	ws_usage_response = requests.get(usage_url)
+	nc_response = requests.get(nc_url,
+                               headers={'email': EMAIL_FOR_GET_AUTH,
+                                        'token': TOKEN_FOR_GET_AUTH})
+	ws_response = requests.get(ws_url,
+                               headers={'email': EMAIL_FOR_GET_AUTH,
+                                        'token': TOKEN_FOR_GET_AUTH})
+	upcoming_ws_response = requests.get(upcoming_ws_url,
+                               headers={'email': EMAIL_FOR_GET_AUTH,
+                                        'token': TOKEN_FOR_GET_AUTH})
+                                        
+	ws_usage_response = requests.get(usage_url,
+                               headers={'email': EMAIL_FOR_GET_AUTH,
+                                        'token': TOKEN_FOR_GET_AUTH})
+                                     
 	try:
 	    if nc_response.ok and ws_response.ok and ws_usage_response.ok and \
 		upcoming_ws_response.ok:
@@ -6495,7 +6522,7 @@ def upload_file(file, url):
 	    file.save(file_path)                   
 	    current_app.logger.debug("file saved successfully")      
 	except Exception, e:
-	    response = requests.delete(url, headers= {'email' : session['email'], 'key' : session['key']})
+	    response = requests.delete(url, headers= {'email' : str(session['email']), 'token' : str(session['token'])})
 	    current_app.logger.error("Error unable to save file: " + str(e))
 	    abort(500, 'error is %s' % (str(e)))
 
@@ -6506,7 +6533,7 @@ def upload_file(file, url):
 		current_app.logger.error("db path is set successfully")
 	    else:
 		current_app.logger.debug("Unable to save file path in database")
-		response = requests.delete(url, headers= {'email' : session['email'], 'key' : session['key']}) # Delete the record in database
+		response = requests.delete(url, headers= {'email' : str(session['email']), 'token' : str(session['token'])}) # Delete the record in database
 
 		if response.status_code == 200:
 		    current_app.logger.error("Sucessfully deleted record from database")
@@ -6536,6 +6563,20 @@ def delete_file(file_path):
 # =/<:entity>s?query_param1=val1&query_param2=val2&..query_paramn=valn=
 @api.route('/<entity>', methods=['GET'])
 def query_an_entity(entity):
+    email = str(request.headers.get('email'))
+    token = str(request.headers.get('token'))
+    current_app.logger.debug("email = %s, token = %s " % (email, token))
+
+    if entity == "reference_documents" or entity == "workshop_reports":
+        if email is None or token is None:
+            abort(401, "Unauthorized Credentials")
+    else:
+        if not token or token != TOKEN_FOR_GET_AUTH:
+            abort(401, "Unauthorized Credentials")
+
+        if not email or email != EMAIL_FOR_GET_AUTH:
+            abort(401, "Unauthorized Credentials")
+
     if entity not in entity_pairs:
 	current_app.logger.error("Entity %s is not valid " % entity)    
 	abort(400, 'Entity %s is not valid.' % entity)
@@ -6593,13 +6634,19 @@ def create_filters(entity_map, curr_entity, args, values):
 @api.route('/<entity>/<id>', methods=['GET'])
 def get_specific_entity(entity, id):
     if entity not in entity_pairs:
-	current_app.logger.error("Entity %s is not valid."  % entity)           
-	abort(400, 'Entity %s is not valid.' % entity)
+        current_app.logger.error("Entity %s is not valid."  % entity)
+        abort(400, 'Entity %s is not valid.' % entity)
+
+    if not id.isnumeric():
+        current_app.logger.error("id %s is not valid."  % id)
+        abort(400, 'id %s is not valid.' % id)
+
     curr_entity = entity_pairs[entity]['entity_class']
     record = curr_entity.get_by_id(id)
+
     if not record:
-	current_app.logger.error("No entry for %s with id: %s found."  % (entity, id))          
-	abort(404, "No entry for %s with id: %s found." % (entity, id))
+        current_app.logger.error("No entry for %s with id: %s found."  % (entity, id))
+        abort(404, "No entry for %s with id: %s found." % (entity, id))
 
     return jsonify(record.to_client())
     
