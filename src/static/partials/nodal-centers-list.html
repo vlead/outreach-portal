@@ -1,6 +1,7 @@
 <div ng-controller="ws_details">
   <h3>Total Institutes :  {{ ncenters.length }}</h3><br>
   <div align='center' ng-show="nloading"><img id="mySpinner" src="/static/img/default.gif"></div>
+ <div class="col-md-12"><a href="" class="btn btn-default">Export</a></div>  
   <div ng-hide="nloading">
     <table class="table table-hover">
       <thead>
