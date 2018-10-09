@@ -27,45 +27,45 @@ app.controller("map-ctrl", function ($scope, $http, dataFactory){
       }
     }
   });
-    var geocoder1 = new google.maps.Geocoder();
-    var getGeocode1 = function (nodalCentre){
-	var id = nodalCentre.id;
-	var location = nodalCentre.location;
-	geocoder1.geocode(
-            { "address": nodalCentre.location+",india, Asia" }, function(results, status) {
-                if (status === google.maps.GeocoderStatus.OK && results.length > 0){
-                  var geo_code = results[0].geometry.location;
-                  var lat = geo_code.lat();
-                  var lng = geo_code.lng();
-                  var data = {"longitude" : lng, "lattitude" : lat };
-                    dataFactory.put("/nodal_centres/"+id, data).success(function(response){
-                    });
-                }
-	      else{
-                $scope.status = "Failed for id "+ id +"error: " + status;
-		}
-            }
-        );
-    };
+  var geocoder1 = new google.maps.Geocoder();
+  var getGeocode1 = function (nodalCentre){
+    var id = nodalCentre.id;
+    var location = nodalCentre.location;
+    geocoder1.geocode(
+      { "address": nodalCentre.location+",india, Asia" }, function(results, status) {
+        if (status === google.maps.GeocoderStatus.OK && results.length > 0){
+          var geoCode = results[0].geometry.location;
+          var lat = geoCode.lat();
+          var lng = geoCode.lng();
+          var data = {"longitude" : lng, "lattitude" : lat };
+          dataFactory.put("/nodal_centres/"+id, data).success(function(response){
+          });
+        }
+	else{
+          $scope.status = "Failed for id "+ id +"error: " + status;
+	}
+      }
+    );
+  };
   
     var mapOptions = { zoom: 5, center: new google.maps.LatLng(24,80) };
     $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
     var geocoder = new google.maps.Geocoder();
     
-  $scope.createMarker = function (label, geo_code,type){
-    var nodal_centre_infowindow = new google.maps.InfoWindow({
+  $scope.createMarker = function (label, geoCode,type){
+    var nodalCentreInfowindow = new google.maps.InfoWindow({
       content: "<b>Nodal Centre Location : </b>"+label.location+"<br><b>Nodal Centre Name : </b>"+label.name+"<br><b>Outreach Centre Name : </b>"+label.created_by.institute_name
     });
       var a = 0;
       if(type === "workshops")
       {
-	  alert("dfd");
+	alert("dfd");
         var marker = new google.maps.Marker({
           map: $scope.map,
           animation: google.maps.Animation.DROP,
           draggable: false,
           icon: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
-          position: new google.maps.LatLng(geo_code.lattitude, geo_code.longitude),
+          position: new google.maps.LatLng(geoCode.lattitude, geoCode.longitude),
           title: "Click here to view the workshop details"
         });
         marker.addListener("click", function() {
@@ -73,17 +73,17 @@ app.controller("map-ctrl", function ($scope, $http, dataFactory){
         });
       }
       else{
-             marker = new google.maps.Marker({
-	      map: $scope.map,
-	      animation: google.maps.Animation.DROP,
-	      draggable: false,
-	      icon : "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
-	      position: new google.maps.LatLng(geo_code.lattitude, geo_code.longitude),
-	      title: "Click here to view the Nodal Centre details"
-          });
-          marker.addListener("click", function() {
-		  nodal_centre_infowindow.open(map, marker);
-          });
+        marker = new google.maps.Marker({
+	  map: $scope.map,
+	  animation: google.maps.Animation.DROP,
+	  draggable: false,
+	  icon : "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
+	  position: new google.maps.LatLng(geoCode.lattitude, geoCode.longitude),
+	  title: "Click here to view the Nodal Centre details"
+        });
+        marker.addListener("click", function() {
+	  nodalCentreInfowindow.open(map, marker);
+        });
       }
   };
 
@@ -98,20 +98,19 @@ app.controller("nodal-centers-list", function($scope, $http, $routeParams, dataF
 });
 app.controller("nodal-center", function($scope, dataFactory, $http, $routeParams, $location, $route, $q, $window) {
     dataFactory.fetch("/nodal_centres?created_by_id="+$routeParams.id).success(function(response){
-        $scope.nodal_center = response;
-        console.log($scope.nodal_center);
+        $scope.nodalCenter = response;
     }).error(function(response){console.log("Failed to fetch data");});
 });
 
 app.controller("oc-ctrl", function($scope, $routeParams, dataFactory, $route, $window){
     dataFactory.fetch("/users/"+$routeParams.id).success(function(response){
-	$scope.oc_user = response;
+	$scope.ocUser = response;
 	
     }).error(function(response){console.log("Failed to fetch data");});
     
-    $scope.edit_oc = function(isvalid){
+    $scope.editOC = function(isvalid){
         if(isvalid){
-           var data = {"name" : $scope.oc_user.name,"email" : $scope.oc_user.email, "institute_name" : $scope.oc_user.institute_name };
+           var data = {"name" : $scope.ocUser.name,"email" : $scope.ocUser.email, "institute_name" : $scope.ocUser.institute_name };
             dataFactory.put("/users/"+$routeParams.id, data).success(function(response){
                 history.back();
             }).error(function(data, status, headers, config){
@@ -430,8 +429,8 @@ app.controller("nc-dashboard", function($scope, $http, dataFactory, $routeParams
         for(var i=0;i<workshops.length;i++){
             var workshopDate = new Date(workshops[i].date);
             var workshopId = workshops[i].id ;
-            if (((today > workshopDate) & !(today.toDateString() == workshopDate.toDateString())) &
-                (workshops[i].status.name == "Upcoming")){
+            if (((today > workshopDate) & !(today.toDateString() === workshopDate.toDateString())) &
+                (workshops[i].status.name === "Upcoming")){
                 dataFactory.put('/workshops/'+workshopId.toString(),
                                 {'status': {'id': 2}}).success(function(data, status){
                                     console.log('Status success'); });
@@ -1160,9 +1159,9 @@ app.controller("manage-centres", function($scope, $http, dataFactory, $routePara
           geocoder.geocode(
             { "address": $scope.centre+","+$scope.pincode+",India,Asia" }, function(results, status) {
               if (status === google.maps.GeocoderStatus.OK && results.length > 0){
-                  var geo_code = results[0].geometry.location;
-                  var lat = geo_code.lat();
-                  var lng = geo_code.lng();
+                  var geoCode = results[0].geometry.location;
+                  var lat = geoCode.lat();
+                  var lng = geoCode.lng();
 		  console.log("lat="+lat+"lng="+lng);
                   add(lat, lng);
               }
@@ -1234,9 +1233,9 @@ app.controller("edit-centre", function($scope, dataFactory, $http, $routeParams,
             geocoder.geocode(
               { "address": $scope.centres.location+","+$scope.centres.pincode+",India,Asia" }, function(results, status) {
                 if (status === google.maps.GeocoderStatus.OK && results.length > 0){
-                  var geo_code = results[0].geometry.location;
-                  var lat = geo_code.lat();
-                  var lng = geo_code.lng();
+                  var geoCode = results[0].geometry.location;
+                  var lat = geoCode.lat();
+                  var lng = geoCode.lng();
                   add(lat, lng);
                 }
                 else{
