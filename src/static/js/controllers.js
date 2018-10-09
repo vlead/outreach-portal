@@ -1597,7 +1597,7 @@ app.controller("nc_user_list", function($scope, $http, $routeParams, dataFactory
 
 /*export button function*/
 
-/*$(document).ready(function){
+$(document).ready(function){
 var table = $('#example').DataTable({
 lengthChange: false,
 buttons: ['copy', 'excel', 'pdf', 'colvis']
@@ -1605,4 +1605,4 @@ buttons: ['copy', 'excel', 'pdf', 'colvis']
 table.buttons().container()
 .appendTo('#example_wrapper .col-sm-6:eq(0)');
 
-});*/
+});
