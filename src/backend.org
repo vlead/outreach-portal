@@ -6633,6 +6633,20 @@ def create_filters(entity_map, curr_entity, args, values):
 
 @api.route('/<entity>/<id>', methods=['GET'])
 def get_specific_entity(entity, id):
+    email = str(request.headers.get('email'))
+    token = str(request.headers.get('token'))
+    current_app.logger.debug("email = %s, token = %s " % (email, token))
+
+    if entity == "reference_documents" or entity == "workshop_reports":
+        if email is None or token is None:
+            abort(401, "Unauthorized Credentials")
+    else:
+        if not token or token != TOKEN_FOR_GET_AUTH:
+            abort(401, "Unauthorized Credentials")
+
+        if not email or email != EMAIL_FOR_GET_AUTH:
+            abort(401, "Unauthorized Credentials")
+
     if entity not in entity_pairs:
         current_app.logger.error("Entity %s is not valid."  % entity)
         abort(400, 'Entity %s is not valid.' % entity)
