@@ -20,7 +20,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr ng-repeat="workshop in oc_workshops | orderBy : '-date'" ng-click="ViewReports(workshop.id)">
+        <tr ng-repeat="workshop in oc_workshops | orderBy : 'date'" ng-click="ViewReports(workshop.id)">
           <td><a href="#/one-workshop/{{workshop.id}}">{{ $index+1 }}</a></td>
           <td>{{ workshop.user.institute_name }}</td>
           <td>{{ workshop.location }}</td>

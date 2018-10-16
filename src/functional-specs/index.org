@@ -1,0 +1,157 @@
+#+TITLE: Detail Functional specs of Outreach Portal enhacements
+#+AUTHOR: VLEAD
+#+DATE: [2018-07-12 Thu]
+#+PROPERTY: results output
+#+PROPERTY: exports code
+#+SETUPFILE: ../org-templates/level-1.org
+#+options: ^:nil
+#+LATEX: Literal LaTeX code for export
+
+* Introduction 
+This document enlists the detail functional specifications
+of the outreach portal enhancements.
+
+* Purpose
+The Functional Specification Document is a document that
+provides detailed information on how the application/system
+should work on implementation of the requirements. This
+document is created based on the high-level requirements.
+ 
+* Functional Specifications
+** Specification 1 (Adding Nodal Coordinators contact details)
+*** Specification Description  
+When the user logged in as OC (outreach coordinator) should
+be able to add contact details of the Nodal coordinator.
+
+*** Existing Feature for Reference
+At present this is the form used by OC's(Outreach
+Coordinators) to create a NC(Nodal Coordinator)
+[[images/nodal-coordinators-form.png]]
+
+This is the how the NC details on the page looks
+[[images/nodal-coordinators-details.png]]
+
+*** User Interface Requirements 
+- Login as OC(Outreach Coordinator) the application should
+  render a OC user dashboard.
+- In the dashboard clicking on "Manage Nodal Coordinator"
+  tab in the left side of panel application should render a
+  page with a table populated with "phone" column along with
+  the other fields.
+- Need to provide a provision to add contact details in two
+  different ways:
+  1. To add new Nodal Coordinator
+  2. To add contact details for the existing Nodal
+     Coordinator
+
+**** To add new Nodal Coordinator
+Following are the steps to add new coordinator:
+- User on clicking "Add Nodal coordinator" button, a page
+  should be rederered with a form with "phone" field along
+  with the other fields.
+- On entering the data into the phone field validation on
+  the field should be performed by the application.
+  i.e.,
+  Test Cases:
+        1. Check if the data entered is a numeric value
+        2. It should not extend the length of the contact
+           number
+        3. It should be a mandatory field.
+- On click of a "submit" button application should be able
+  to submit user entered form data to the database.
+- On click of a "Manage Nodal Coordinator" tab in the left
+  side of the panel, user should be redirected to a page
+  with Nodal coordinator details.
+
+**** To add contact details for the existing Nodal Coordinator
+- On click of a "Manage Nodal Coordinator" tab in the left
+  side of the panel, user should be redirected to a page
+  with Nodal coordinator details along with an option i.e.,
+  an "Edit" button to edit the exiting the details of nodal
+  coordinator.
+- On click of an "Edit" button application should render a 
+  form to edit the details and contact number.
+- On click of a "submit" button application should be able
+  to submit user entered form data to the database.
+- On click of a "Manage Nodal Coordinator" tab in the left
+  side of the panel, application should render a page
+  populated with Nodal Coordinator details.
+
+** Specification 2 (Users dashboard)
+*** Specification Description
+The latest enhanced requirements are, including graphical
+representations like pie charts, bar charts, etc., to give a
+detailed information about the analytics of the
+outreach. These enhancements to be inculcated in the users
+dashboards.
+
+Data to be shown in specific user dashboard is given below:
+- NC:
+ + From Date - To Date (Default for last 6 months)
+ + Workshops - Month wise
+ + Usage - Month wise
+ + Colleges wise - Workshop usage
+ + Lab Usage
+ + Domain Usage
+ 
+- PIC: All applicable for NC + NC wise Usage
+- Overall Outreach Coordinator: All applicable for PIC + PIC wise usage
+
+*** Existing Feature for Reference
+[[images/oc-dashboard.png]]
+
+*** User Interface Requirements
+- User logged in as NC/OC/admin should be able to view the
+  data related to that user in grahical form
+
+** Specification 3 (Tool tips on Create Workshop fields (For e.g. on Gateway IP of College))
+*** Specification Description
+For better understanding by the users, there should be tool
+tips on each Create Workshop field explaining the purpose of
+the field. On hover over the fields, we should be able to
+see the basic description for the data to be entered while
+NCs/OCs create the workshops.
+
+*** Use Interface Requirements
+- This feature is implemented with login
+- Login as either NC/OC
+- Application should render user specific dashboard
+- On click of a "Manage Workshops" tab on the left side of a
+  panel, application should render a page with a form to
+  create workshop
+- In the workshops creation form, on mousehover of each
+  field application should be able to show a correspondng
+  field description
+
+** Specification 4 (Grid view)
+*** Specification Description
+Currency there is no provision to seperate/sort/filter/
+export the data in Nodal centers, workshops run, etc.,. We
+need a feature for it. The requirement is to build a Grid
+view with the features like filtering, sorting, exporting,
+pagination etc.,
+
+*** Existing feature for Reference
+[[images/workshops-data.png]]
+
+*** User Interface Requirements
+- This feature should be implemented on with and without
+  login data
+- Grid view with the above mentioned features should be
+  shown in the pages where there is a scope to
+  filter/sort/export the populated data
+- On click of user chosen action on the grid view
+  appropriate action should be performed and display the
+  data.
+For example in workshop history details page we should be
+able to filter/sort the data location wise, highest/lowest
+usage wise, alphabatical wise, date wise etc.,
+
+** Specification 5 (Other)
+- Should update the footer in portal  
+- Fix/remove broken links if exists
+- Currently the outreach home page and in the pages where
+  the data is getting populated is taking more time to load
+  than expected which is hampering the user experience in
+  terms of performance. It must load within 2-3 seconds on a
+  2G connection for a better experience.

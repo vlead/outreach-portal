@@ -20,38 +20,16 @@ STATUS=0
 
 all:  build-with-lint
 
-clean-literate:
-	rm -rf ${ELISP_DIR}
-	rm -rf src/${ORG_DIR}
-	rm -rf src/${STYLE_DIR}
+clean:	
+	make -f tangle-make clean
 
-pull-literate-tools:
-	@echo "pulling literate support code"
-	echo ${PWD}
-ifeq ($(wildcard elisp),)
-	@echo "proxy is..."
-	echo $$http_proxy
-	git clone ${LITERATE_TOOLS}
-	mv ${LITERATE_DIR}/${ELISP_DIR} .
-	mv ${LITERATE_DIR}/${ORG_DIR} ${SRC_DIR}
-	mv ${LITERATE_DIR}/${STYLE_DIR} ${SRC_DIR}
-	rm -rf ${LITERATE_DIR}
-else
-	@echo "Literate support code already present"
-endif
+init:
+	./init.sh
 
-init: pull-literate-tools
-	rm -rf ${BUILD_DIR}
-	mkdir -p ${BUILD_DIR} ${CODE_DIR}
-
-build: init write-version
-	emacs  --script elisp/publish.el
-	rsync -a ${SRC_DIR}/${ORG_DIR} ${BUILD_DIR}/docs
-	rsync -a ${SRC_DIR}/${STYLE_DIR} ${BUILD_DIR}/docs
-	rsync -a ${DIAGRAMS_DIR} ${BUILD_DIR}/docs
+build: init
+	make -f tangle-make -k all
 	rsync -a ${SRC_DIR}/static ${CODE_DIR}/src/
 	rsync -a ${SRC_DIR}/templates ${CODE_DIR}/src/
-	rm -f ${BUILD_DIR}/docs/*.html~
 
 # get the latest commit hash and its subject line
 # and write that to the VERSION file
@@ -64,7 +42,3 @@ lint:
 	(pep8 --ignore=E302 ${PWD}/${CODE_DIR} > ${LINT_FILE}; ([ $$? -eq 0 ] && echo "no lint errors!") || echo "lint errors exist!")
 
 build-with-lint: build lint
-
-clean:	clean-literate
-	rm -rf ${BUILD_DIR}
-
