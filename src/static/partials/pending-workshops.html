@@ -2,6 +2,7 @@
   <li><a data-toggle="tab" href="#manage-workshops">Upcoming Workshops</a></li>
   <li  class="active"><a data-toggle="tab" href="#manage-workshops/pending-action">Pending Action Workshops</a></li>
   <li><a data-toggle="tab" href="#manage-workshops/workshop-history">Workshop History</a></li>
+  <li> <input placeholder="search workshop" type = "text" ng-model = "workshopName"></li>
 </ul>
 <div class="row" style="margin-top: 30px">
   <div class="col-md-12">
@@ -18,7 +19,7 @@
 	</tr>
       </thead>
       <tbody>
-	<tr ng-repeat="workshop in pending | orderBy : 'date'">
+	<tr ng-repeat="workshop in pending | filter : workshopName | orderBy : 'date'">
           <td>{{ workshop.name }}</td>
 	  <td>{{ workshop.version }}</td>
           <td>{{ workshop.location }}</td>
