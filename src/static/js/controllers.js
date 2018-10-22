@@ -1360,7 +1360,12 @@ app.controller("nc-workshops", function($scope, $http, $routeParams, dataFactory
     }).error(function(data, status, headers, config){
         console.log("Failed");
     });
-    $scope.workshops = nc_workshops;
+  $scope.workshops = nc_workshops;
+  $scope.sort = function(keyname){
+    $scope.sortKey = keyname;   //set the sortKey to the param passed
+    $scope.reverse = !$scope.reverse; //if true make it false and vice versa
+  };
+
 });
 app.controller("review-reports", function($scope, $http, $routeParams, dataFactory,  $route, $window){
     $scope.approve = function(){
