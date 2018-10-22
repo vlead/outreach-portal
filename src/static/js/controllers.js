@@ -1288,10 +1288,15 @@ app.controller("oc-manage-workshops", function($scope, $http, $routeParams, data
                     count = count + 1;
                 }
             }
-            $scope.history = history;
-            $scope.pending = pending;
-            $scope.upcoming = upcoming;
-            $scope.count = count;
+          $scope.history = history;
+          $scope.pending = pending;
+          $scope.upcoming = upcoming;
+          $scope.count = count;
+          $scope.sort = function(keyname){
+            $scope.sortKey = keyname;   //set the sortKey to the param passed
+            $scope.reverse = !$scope.reverse; //if true make it false and vice versa
+          };
+
             //    $scope.experiments = experiments;
             //    $scope.count = count;
         }).
