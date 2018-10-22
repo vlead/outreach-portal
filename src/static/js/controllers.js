@@ -1455,7 +1455,11 @@ app.controller("oc-workshop-history", function($scope, $http, $routeParams, data
     }).error(function(data, status, headers, config){
         console.log(data);
     });
-    $scope.workshops = workshops;
+  $scope.workshops = workshops;
+  $scope.sort = function(keyname){
+    $scope.sortKey = keyname;   //set the sortKey to the param passed
+    $scope.reverse = !$scope.reverse; //if true make it false and vice versa
+  };
 });
 app.controller("upload-reports", function($scope, $http, $routeParams, dataFactory, $route, $window){
     var photos = [];
