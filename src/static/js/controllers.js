@@ -521,10 +521,15 @@ app.controller("manage-workshops", function($scope, $http, $routeParams, dataFac
                 pending.push(data[i]);
             }
         }
-        $scope.history = history;
-        $scope.pending = pending;
-        $scope.upcoming = upcoming;
-        $scope.count = count;
+      $scope.history = history;
+      $scope.pending = pending;
+      $scope.upcoming = upcoming;
+      $scope.count = count;
+      $scope.sort = function(keyname){
+        $scope.sortKey = keyname;   //set the sortKey to the param passed
+        $scope.reverse = !$scope.reverse; //if true make it false and vice versa
+      };
+      
     }).error(function(data, status, headers, config){
 	console.log(data);
     });

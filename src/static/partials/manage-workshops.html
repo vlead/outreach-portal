@@ -15,17 +15,28 @@
     <table class="table table-hover">
       <thead>
 	<tr>
-	  <th>Name</th>
-	  <th>Version</th>
-	  <th>Location</th>
-          <th>Participants</th>
-	  <th>Date</th>
-          <th>Status</th>
-
+          <th ng-click="sort('name')">Name
+                <span class="glyphicon sort-icon" ng-show="sortKey=='name'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+            </th>
+            <th ng-click="sort('version')">Version
+                <span class="glyphicon sort-icon" ng-show="sortKey=='version'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+            </th>
+            <th ng-click="sort('location')">Location
+                <span class="glyphicon sort-icon" ng-show="sortKey=='location'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+            </th>
+            <th ng-click="sort('no_of_participants_expected')">Participants
+                <span class="glyphicon sort-icon" ng-show="sortKey=='no_of_participants_expected'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+            </th>
+            <th ng-click="sort('date')">Date
+                <span class="glyphicon sort-icon" ng-show="sortKey=='date'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+            </th>
+            <th ng-click="sort('status')">Status
+                <span class="glyphicon sort-icon" ng-show="sortKey=='status'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+            </th>
 	</tr>
       </thead>
       <tbody>
-        <tr ng-repeat="workshop in upcoming | filter: workshopName | orderBy : 'date'">        
+        <tr ng-repeat="workshop in upcoming | filter: workshopName | orderBy:sortKey:reverse">        
           <td>{{ workshop.name }}</td>
 	  <td>{{ workshop.version }}</td>
           <td>{{ workshop.location }}</td>
