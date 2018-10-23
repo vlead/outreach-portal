@@ -1,0 +1,36 @@
+#+Author: Sravanthi. B
+#+Date: 2018 Oct 23
+
+* Environment
+- OS: Windows 7, Ubuntu-16.04,Centos-6
+- Browsers: Firefox-42.0,Chrome-47.0,chromium-45.0
+- Bandwidth : 100Mbps
+- Hardware Configuration:8GBRAM ,
+- Processor:i5,
+
+* Objective
+  The tooltip enhancements should be applicable to the required
+  fields.
+
+* Pre conditions
+1. Navigate to the [[http://outreach.base1.virtual-labs.ac.in/][URL]]
+2. The URL should redirects to the home page of the outreach portal.
+3. To be checked - The home page of the portal should have all the
+   necessary fields with appropriate links.
+
+* Post conditions
+- Nill
+
+* Test steps
+- While testing check the quietude to use the features of the portal.
+
+  1. Navigation
+  2. Look and feel
+  3. Information to use the portal.
+
+* Expected Result
+- Portal should be user friendly
+
+* Review/Comments
+
+* Status  
