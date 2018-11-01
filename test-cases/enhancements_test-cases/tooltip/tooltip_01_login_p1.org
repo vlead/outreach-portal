@@ -1,0 +1,31 @@
+#+Author: Sravanthi. B
+#+Date: 2018 Oct 23
+
+* Environment
+- OS: Windows 7, Ubuntu-16.04,Centos-6
+- Browsers: Firefox-42.0,Chrome-47.0,chromium-45.0
+- Bandwidth : 100Mbps
+- Hardware Configuration:8GBRAM ,
+- Processor:i5,
+
+* Objective
+  The tooltip enhancements should be applicable to the required
+  fields.
+
+* Pre conditions
+- Refer to the [[https://github.com/vlead/outreach-portal/blob/master/test-cases/enhancements_test-cases/tooltip/tooltip_01_usability_smk.org][test-case]]
+
+* Post conditions
+- Nill
+
+* Test steps
+- Click on the "login" button to add a new workshop.
+- The link should navigates to the google authentication page.
+- Can login either as Admin, OC and NC
+
+* Expected Result
+- The page should navigate to the appropriate dashboard. 
+  
+* Review/Comments
+
+* Status  
