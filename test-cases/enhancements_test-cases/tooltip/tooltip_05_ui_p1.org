@@ -19,9 +19,12 @@
 - Nill
 
 * Test steps
-- Once the 
+- Once the "Add workshop"page is open check whether the toop tip is activated for the fields "Workshop name", "Location of the workshop",
+  "Workshop collage name" and "No of expected participants".
+
 * Expected Result
-- The page should navigate to the appropriate dashboard. 
+- On mouse hover on the "Workshop name", "Location of the workshop",
+  "Workshop collage name" and "No of expected participants" fields concerned text should be displayed. 
   
 * Review/Comments
 

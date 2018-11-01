@@ -9,7 +9,7 @@
 - Processor:i5,
 
 * Objective
-  The tooltip enhancements should be applicable to the required
+  The enhancements related to tooltip to be applicable for the required
   fields.
 
 * Pre conditions
@@ -19,10 +19,10 @@
 - Nill
 
 * Test steps
-- Check the UI of the fields that are provided to add the workshop details.
+- Check whether an error message is displayed when a field is skipped to fill.
 
 * Expected Result
-- UI for the page and for all the text fields should be appropriate. 
+- When any field is unfilled and try to fill the next field the unfilled field should be highlighted with an error message
   
 * Review/Comments
 
