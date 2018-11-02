@@ -28,79 +28,103 @@
 #+caption:  realization-plan-milestone-1
 #+name: tbl-rlz-pln-ml-1
 
-|-------+---------------------------+--------+----------+--------------------------------------------+--------+------------+------------+---------+-----------|
-|  S.No | Tasks                     | Github | Expected | Explanation                                | Actual |  Estimated |     Actual | Status  | Assignee  |
-|       |                           | Issues |   Effort |                                            | Effort |     Start, |     Start, |         |           |
-|       |                           |        |      (in |                                            | (in    |  End Dates |  End Dates |         |           |
-|       |                           |        |   person |                                            | person |            |            |         |           |
-|       |                           |        |   hours) |                                            | hours) |            |            |         |           |
-|-------+---------------------------+--------+----------+--------------------------------------------+--------+------------+------------+---------+-----------|
-|    1. | Update footer in portal   | [[https://github.com/vlead/outreach-portal/issues/260][#260]]   |       16 | Need to compare with footer service,       |        |            |            | Backlog | Mrudhvika |
-|       |                           |        |          | remove irrelevant urls and also            |        |            |            |         |           |
-|       |                           |        |          | reformat the data with the working         |        |            |            |         |           |
-|       |                           |        |          | URL's in src/templates/footer.html         |        |            |            |         |           |
-|-------+---------------------------+--------+----------+--------------------------------------------+--------+------------+------------+---------+-----------|
-|    2. | Adding contact details    | [[https://github.com/vlead/outreach-portal/issues/265][#265]]   |       64 | Should add contact field in add-nc         | 56     | 23-05-2018 | 23-05-2018 | Done    | Sadhana   |
-|       | of the nodal coordinator  |        |          | template. Need to make changes in          |        | 29-05-2018 | 30-05-2018 |         |           |
-|       |                           |        |          | backend code and templates controller      |        |            |            |         |           |
-|       |                           |        |          | to submit the data in database. Need to    |        |            |            |         |           |
-|       |                           |        |          | write a migration script to modify the     |        |            |            |         |           |
-|       |                           |        |          | database schema. Get the latest database   |        |            |            |         |           |
-|       |                           |        |          | dump and use migration script to alter     |        |            |            |         |           |
-|       |                           |        |          | the database schema. Then test the         |        |            |            |         |           |
-|       |                           |        |          | application.                               |        |            |            |         |           |
-|-------+---------------------------+--------+----------+--------------------------------------------+--------+------------+------------+---------+-----------|
-|    3. | New requirement : Sorting | [[https://github.com/vlead/outreach-portal/issues/266][#266]]   |       48 | Should add a dropdown box in workshop      |        | 10-07-2018 |            | Backlog | Sadhana   |
-|       | feature in workshop       |        |          | history details template to filter         |        | 17-07-2018 |            |         |           |
-|       | history details           |        |          | the data based on user chosen filter.      |        |            |            |         |           |
-|       |                           |        |          | (For eg: based on location, status,        |        |            |            |         |           |
-|       |                           |        |          | usage etc.,) Need to understand how the    |        |            |            |         |           |
-|       |                           |        |          | worshop-history details template           |        |            |            |         |           |
-|       |                           |        |          | controller is populating data in page and  |        |            |            |         |           |
-|       |                           |        |          | should figure out whether we need to write |        |            |            |         |           |
-|       |                           |        |          | a function in controller or check if       |        |            |            |         |           |
-|       |                           |        |          | angularjs  has any inbuilt filters         |        |            |            |         |           |
-|       |                           |        |          | functions to filter the data.              |        |            |            |         |           |
-|-------+---------------------------+--------+----------+--------------------------------------------+--------+------------+------------+---------+-----------|
-|    4. | Tool tips on Create       | [[https://github.com/vlead/outreach-portal/issues/274][#274]]   |       24 | Changes to be made in add-workshop.html    |        | 09-07-2018 |            | Backlog | Mrudhvika |
-|       | workshop fields (For e.g. |        |          | based on the fields required, we need to   |        | 11-07-2018 |            |         |           |
-|       | on Gateway Ip of college) |        |          | add the content of respective controller   |        |            |            |         |           |
-|       |                           |        |          | of app.controller function in              |        |            |            |         |           |
-|       |                           |        |          | controller.js                              |        |            |            |         |           |
-|-------+---------------------------+--------+----------+--------------------------------------------+--------+------------+------------+---------+-----------|
-|    5. | View for exporting        | [[https://github.com/vlead/outreach-portal/issues/275][#275]]   |       48 | Need to add dropdownbox or radio buttons   |        | 18-07-2018 |            | Backlog | Sadhana   |
-|       | the workshop, Nodal       |        |          | in all the workshops run, Nodal centers    |        | 25-07-2018 |            |         |           |
-|       | centers and usage data in |        |          | and usage data templates to export the     |        |            |            |         |           |
-|       | CSV/PDF format.           |        |          | data. Should figure out how to implement   |        |            |            |         |           |
-|       |                           |        |          | this either through templates respective   |        |            |            |         |           |
-|       |                           |        |          | controllers or using the data populated    |        |            |            |         |           |
-|       |                           |        |          | in tables with some inbuilt filters.       |        |            |            |         |           |
-|-------+---------------------------+--------+----------+--------------------------------------------+--------+------------+------------+---------+-----------|
-|    6. | Segregation of Online and | [[https://github.com/vlead/outreach-portal/issues/276][#276]]   |       32 | Need to add filter(for eg: radio buttons   | 24     | 04-07-2018 | 04-07-2018 | Done    | Sadhana   |
-|       | offline workshops         |        |          | or dropdownbox) in workshops template      |        | 09-07-2018 | 09-07-2018 |         |           |
-|       |                           |        |          | and should understand how the workshops    |        |            |            |         |           |
-|       |                           |        |          | data is getting populated in page. Then    |        |            |            |         |           |
-|       |                           |        |          | need to add a function in workshops        |        |            |            |         |           |
-|       |                           |        |          | template respective controller to filter   |        |            |            |         |           |
-|       |                           |        |          | the data and populate it in template,      |        |            |            |         |           |
-|       |                           |        |          | based on user chosen workshop version.     |        |            |            |         |           |
-|-------+---------------------------+--------+----------+--------------------------------------------+--------+------------+------------+---------+-----------|
-|    7. | Fix loading time of       | [[https://github.com/vlead/outreach-portal/issues/294][#294]]   |       64 | Need to cache the requests to the          |        | 17-07-2018 |            | Backlog | Mrudhvika |
-|       | data in portal main       |        |          | server in local memory and check in        |        | 25-07-2018 |            |         | Sadhana   |
-|       | page                      |        |          | the code level which might be causing      |        |            |            |         |           |
-|       |                           |        |          | more time to process if, thats the case    |        |            |            |         |           |
-|       |                           |        |          | we need to optimize it or may be we need   |        |            |            |         |           |
-|       |                           |        |          | to use indexing in database to decrease    |        |            |            |         |           |
-|       |                           |        |          | the time to fetch the data.                |        |            |            |         |           |
-|-------+---------------------------+--------+----------+--------------------------------------------+--------+------------+------------+---------+-----------|
-|    8. | Identify and remove       | [[https://github.com/vlead/outreach-portal/issues/295][#295]]   |       16 | Go through the portal and identify the     |        | 12-07-2018 |            | Backlog | Mrudhvika |
-|       | all the broken links in   |        |          | broken portal                              |        | 16-07-2018 |            |         |           |
-|-------+---------------------------+--------+----------+--------------------------------------------+--------+------------+------------+---------+-----------|
-|    9. | Grid view in users        |        |          |                                            |        |            |            |         |           |
-|       | dashboard                 |        |          |                                            |        |            |            |         |           |
-|-------+---------------------------+--------+----------+--------------------------------------------+--------+------------+------------+---------+-----------|
-| Total |                           |        |  312 est |                                            |        |            |            |         |           |
-|-------+---------------------------+--------+----------+--------------------------------------------+--------+------------+------------+---------+-----------|
+|-------+----------------------------+--------+----------+----------------------------------------------+--------+------------+------------+---------+-----------|
+|  S.No | Tasks                      | Github | Expected | Explanation                                  | Actual |  Estimated |     Actual | Status  | Assignee  |
+|       |                            | Issues |   Effort |                                              | Effort |     Start, |     Start, |         |           |
+|       |                            |        |      (in |                                              | (in    |  End Dates |  End Dates |         |           |
+|       |                            |        |   person |                                              | person |            |            |         |           |
+|       |                            |        |   hours) |                                              | hours) |            |            |         |           |
+|-------+----------------------------+--------+----------+----------------------------------------------+--------+------------+------------+---------+-----------|
+|    1. | Update footer in portal    | [[https://github.com/vlead/outreach-portal/issues/260][#260]]   |       16 | Need to compare with footer service,         |        |            |            | Backlog | Mrudhvika |
+|       |                            |        |          | remove irrelevant urls and also              |        |            |            |         |           |
+|       |                            |        |          | reformat the data with the working           |        |            |            |         |           |
+|       |                            |        |          | URL's in src/templates/footer.html           |        |            |            |         |           |
+|-------+----------------------------+--------+----------+----------------------------------------------+--------+------------+------------+---------+-----------|
+|    2. | Adding contact details     | [[https://github.com/vlead/outreach-portal/issues/265][#265]]   |       64 | Should add contact field in add-nc           | 56     | 23-05-2018 | 23-05-2018 | Done    | Sadhana   |
+|       | of the nodal coordinator   |        |          | template. Need to make changes in            |        | 29-05-2018 | 30-05-2018 |         |           |
+|       |                            |        |          | backend code and templates controller        |        |            |            |         |           |
+|       |                            |        |          | to submit the data in database. Need to      |        |            |            |         |           |
+|       |                            |        |          | write a migration script to modify the       |        |            |            |         |           |
+|       |                            |        |          | database schema. Get the latest database     |        |            |            |         |           |
+|       |                            |        |          | dump and use migration script to alter       |        |            |            |         |           |
+|       |                            |        |          | the database schema. Then test the           |        |            |            |         |           |
+|       |                            |        |          | application.                                 |        |            |            |         |           |
+|-------+----------------------------+--------+----------+----------------------------------------------+--------+------------+------------+---------+-----------|
+|    3. | New requirement : Sorting  | [[https://github.com/vlead/outreach-portal/issues/266][#266]]   |       48 | Should add a dropdown box in workshop        |        | 10-07-2018 |            | Backlog | Sadhana   |
+|       | feature in workshop        |        |          | history details template to filter           |        | 17-07-2018 |            |         |           |
+|       | history details            |        |          | the data based on user chosen filter.        |        |            |            |         |           |
+|       |                            |        |          | (For eg: based on location, status,          |        |            |            |         |           |
+|       |                            |        |          | usage etc.,) Need to understand how the      |        |            |            |         |           |
+|       |                            |        |          | worshop-history details template             |        |            |            |         |           |
+|       |                            |        |          | controller is populating data in page and    |        |            |            |         |           |
+|       |                            |        |          | should figure out whether we need to write   |        |            |            |         |           |
+|       |                            |        |          | a function in controller or check if         |        |            |            |         |           |
+|       |                            |        |          | angularjs  has any inbuilt filters           |        |            |            |         |           |
+|       |                            |        |          | functions to filter the data.                |        |            |            |         |           |
+|-------+----------------------------+--------+----------+----------------------------------------------+--------+------------+------------+---------+-----------|
+|    4. | Tool tips on Create        | [[https://github.com/vlead/outreach-portal/issues/274][#274]]   |       24 | Changes to be made in add-workshop.html      |        | 09-07-2018 |            | Backlog | Mrudhvika |
+|       | workshop fields (For e.g.  |        |          | based on the fields required, we need to     |        | 11-07-2018 |            |         |           |
+|       | on Gateway Ip of college)  |        |          | add the content of respective controller     |        |            |            |         |           |
+|       |                            |        |          | of app.controller function in                |        |            |            |         |           |
+|       |                            |        |          | controller.js                                |        |            |            |         |           |
+|-------+----------------------------+--------+----------+----------------------------------------------+--------+------------+------------+---------+-----------|
+|    5. | View for exporting         | [[https://github.com/vlead/outreach-portal/issues/275][#275]]   |       48 | Need to add dropdownbox or radio buttons     |        | 18-07-2018 |            | Backlog | Sadhana   |
+|       | the workshop, Nodal        |        |          | in all the workshops run, Nodal centers      |        | 25-07-2018 |            |         |           |
+|       | centers and usage data in  |        |          | and usage data templates to export the       |        |            |            |         |           |
+|       | CSV/PDF format.            |        |          | data. Should figure out how to implement     |        |            |            |         |           |
+|       |                            |        |          | this either through templates respective     |        |            |            |         |           |
+|       |                            |        |          | controllers or using the data populated      |        |            |            |         |           |
+|       |                            |        |          | in tables with some inbuilt filters.         |        |            |            |         |           |
+|-------+----------------------------+--------+----------+----------------------------------------------+--------+------------+------------+---------+-----------|
+|    6. | Segregation of Online and  | [[https://github.com/vlead/outreach-portal/issues/276][#276]]   |       32 | Need to add filter(for eg: radio buttons     | 24     | 04-07-2018 | 04-07-2018 | Done    | Sadhana   |
+|       | offline workshops          |        |          | or dropdownbox) in workshops template        |        | 09-07-2018 | 09-07-2018 |         |           |
+|       |                            |        |          | and should understand how the workshops      |        |            |            |         |           |
+|       |                            |        |          | data is getting populated in page. Then      |        |            |            |         |           |
+|       |                            |        |          | need to add a function in workshops          |        |            |            |         |           |
+|       |                            |        |          | template respective controller to filter     |        |            |            |         |           |
+|       |                            |        |          | the data and populate it in template,        |        |            |            |         |           |
+|       |                            |        |          | based on user chosen workshop version.       |        |            |            |         |           |
+|-------+----------------------------+--------+----------+----------------------------------------------+--------+------------+------------+---------+-----------|
+|    7. | Fix loading time of        | [[https://github.com/vlead/outreach-portal/issues/294][#294]]   |       64 | Need to cache the requests to the            |        | 17-07-2018 |            | Backlog | Mrudhvika |
+|       | data in portal main        |        |          | server in local memory and check in          |        | 25-07-2018 |            |         | Sadhana   |
+|       | page                       |        |          | the code level which might be causing        |        |            |            |         |           |
+|       |                            |        |          | more time to process if, thats the case      |        |            |            |         |           |
+|       |                            |        |          | we need to optimize it or may be we need     |        |            |            |         |           |
+|       |                            |        |          | to use indexing in database to decrease      |        |            |            |         |           |
+|       |                            |        |          | the time to fetch the data.                  |        |            |            |         |           |
+|-------+----------------------------+--------+----------+----------------------------------------------+--------+------------+------------+---------+-----------|
+|    8. | Identify and remove        | [[https://github.com/vlead/outreach-portal/issues/295][#295]]   |       16 | Go through the portal and identify the       |        | 12-07-2018 |            | Backlog | Mrudhvika |
+|       | all the broken links in    |        |          | broken portal                                |        | 16-07-2018 |            |         |           |
+|-------+----------------------------+--------+----------+----------------------------------------------+--------+------------+------------+---------+-----------|
+|    9. | Grid view in users         | [[https://github.com/vlead/outreach-portal/issues/297][#297]]   |          | Use opensource libraries to includes filters |        |            |            | Backlog |           |
+|       | dashboard                  |        |          | sorting, export and search                   |        |            |            |         |           |
+|-------+----------------------------+--------+----------+----------------------------------------------+--------+------------+------------+---------+-----------|
+|    10 | data cleansing             | [[https://github.com/vlead/outreach-portal/issues/319][#319]]   |          | Take mysql dump of outreach and setup the    |        | 21-11-2018 |            | Backlog | Mrudhvika |
+|       |                            |        |          | mysql and make changes in the corresponding  |        | 23-11-2018 |            |         | Balamma   |
+|       |                            |        |          | data table.                                  |        |            |            |         |           |
+|-------+----------------------------+--------+----------+----------------------------------------------+--------+------------+------------+---------+-----------|
+|    11 | Integrity checks           | [[https://github.com/vlead/outreach-portal/issues/320][#320]]   |          | Need to check the The SQL FOREIGN KEY        |        | 17-12-2018 |            | Backlog | Mrudhvika |
+|       |                            |        |          | CONSTRAINT is used to ensure the             |        | 20-12-2018 |            |         | Balamma   |
+|       |                            |        |          | referential integrity of the data in         |        |            |            |         |           |
+|       |                            |        |          | one table to match values in another table   |        |            |            |         |           |
+|       |                            |        |          | and also remove duplicate entries.           |        |            |            |         |           |
+|-------+----------------------------+--------+----------+----------------------------------------------+--------+------------+------------+---------+-----------|
+|    12 | Activation/Inactivation    | [[https://github.com/vlead/outreach-portal/issues/321][#321]]   |          | We have add a new attribute with status of   |        | 05-11-2018 |            | Backlog | Mrudhvika |
+|       | flags for master records   |        |          | active and inactive in the user interface    |        | 16-11-2018 |            |         | Balamma   |
+|       |                            |        |          | as we as in the database and in all the      |        |            |            |         |           |
+|       |                            |        |          | three pages (admin) IOC and NC.              |        |            |            |         |           |
+|-------+----------------------------+--------+----------+----------------------------------------------+--------+------------+------------+---------+-----------|
+|    13 | Dashboard                  | [[https://github.com/vlead/outreach-portal/issues/303][#303]]   |          | Graphical representation of the data on the  |        | 26-11-2018 |            | Backlog | Mrudhvika |
+|       |                            |        |          | outreach dashboard using d3 library.         |        | 14-12-2018 |            |         | Balamma   |
+|-------+----------------------------+--------+----------+----------------------------------------------+--------+------------+------------+---------+-----------|
+|    14 | twitter/youtube/post links | [[https://github.com/vlead/outreach-portal/issues/322][#322]]   |          | We should display/scroll the twitter/youtube |        | 19-11-2018 |            | Backlog | Mrudhvika |
+|       |                            |        |          | updates on home page                         |        | 20-11-2018 |            |         | Balamma   |
+|-------+----------------------------+--------+----------+----------------------------------------------+--------+------------+------------+---------+-----------|
+|    15 | deployment issue           | [[https://github.com/vlead/outreach-portal/issues/304][#304]]   |          | we should be able to run outreach portal on  |        | 21-12-2018 |            | Backlog | Mrudhvika |
+|       |                            |        |          | local machine without getting any issue      |        | 26-12-2018 |            |         | Balamma   |
+|-------+----------------------------+--------+----------+----------------------------------------------+--------+------------+------------+---------+-----------|
+| Total |                            |        |  312 est |                                              |        |            |            |         |           |
+|-------+----------------------------+--------+----------+----------------------------------------------+--------+------------+------------+---------+-----------|
  
 ** C-DAC Phase II
 #+caption:  realization-plan-milestone-1
