@@ -1,5 +1,4 @@
 import requests
-import json
 import sys
 
 url = sys.argv[1]
@@ -11,9 +10,8 @@ nodal_centre_ids = []
 for i in range(total_ncentres):
     centre = ncentres.json()[i]
     try:
-        id = centre["id"]
         location = str(centre["location"])
-        nodal_centre_ids.append({"id": id, "location" : location})
+        nodal_centre_ids.append({"id": centre["id"], "location" : location})
     except Exception, e:
         print "Exception : " + str(e)
 
