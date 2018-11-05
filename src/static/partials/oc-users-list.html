@@ -13,17 +13,17 @@
             <th>S.NO</th>
 	    <th>Name</th>
 	    <th>Email</th>
-            <th>Last Active</th>
 	    <th>Institute Name</th>
+            <th>Last Active</th>
 	  </tr>
 	</thead>
 	<tbody>
-	  <tr ng-repeat="oc in oc_users">
+          <tr ng-repeat="oc in oc_users | orderBy : 'institute_name'">          
             <td>{{ $index+1 }}</td>
             <td>{{ oc.name }}</td>
             <td>{{ oc.email }}</td>
-            <td>{{ oc.last_active }}</td>
             <td>{{ oc.institute_name }}</td>
+            <td>{{ oc.last_active }}</td>
 	  </tr>
       </tbody>
       </table>

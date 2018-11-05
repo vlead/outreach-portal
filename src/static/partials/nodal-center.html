@@ -1,5 +1,5 @@
 <div ng-controller="ws_details">
-  <div class="col-md-11"><h3>Total Nodal Centers :  {{ nodal_center.length }}</h3></div>
+  <div class="col-md-11"><h3>Total Nodal Centers :  {{ nodalCenter.length }}</h3></div>
   <div class="col-md-1">
     <br><br>
     <a onclick="history.back();" role="button" class="btn btn-success btn-large">Back</a>
@@ -16,7 +16,7 @@
           <th>Location</th>
         </tr>
       </thead>
-        <tbody ng-repeat="center in nodal_center | orderBy : 'name'">
+        <tbody ng-repeat="center in nodalCenter | orderBy : 'name'">
           <tr>
             <td>{{ $index+1 }}</td>
 	    <td>{{ center.created_by.institute_name }}</td>

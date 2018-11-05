@@ -3,10 +3,10 @@
 @import url(https://fonts.googleapis.com/css?family=Open+Sans);
 
 body{
-     font-family: 'Raleway' !important;
+    font-family: 'Raleway';
 }
 label {
-    font-weight: normal !important;
+    font-weight: normal; 
 }
 .navbar-custom{
 	min-height: 90px;
@@ -202,7 +202,7 @@ img:hover{
 
 .text-h2-lightblue-small
 {
-    font-family: 'Raleway' !important;        
+    font-family: 'Raleway'; 
 	color: #2C99CE;
 	font-size: 1.5em;
 }
@@ -216,7 +216,7 @@ img:hover{
 
 .text-a-lightgreen:HOVER
 {
-	color: #72AB44 !important;
+    color: #72AB44; 
 }
 
 .text-normal-gray-small

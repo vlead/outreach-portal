@@ -580,6 +580,30 @@ for nc in ncs:
      print response.status_code
 
 #+END_SRC
+* Program to add the phone column in existing database 
+#+BEGIN_SRC python :tangle migrate_phone.py :eval
+#!/usr/bin/python                                                                                           
+import MySQLdb
+from src.app import create_app
+from src.db import *
+import src.config as config
+
+def populate_users():
+    print "Populating users table.."
+    cursor1.execute("alter table users add phone varchar(10)")
+
+if __name__ == "__main__":
+    connection1 = MySQLdb.connect(host="localhost", user="root",
+                                  passwd="root", db="outreach")
+    cursor1 = connection1.cursor()
+
+    db.create_all(app=create_app(config))
+    populate_users()
+
+    cursor1.close()
+    connection1.close()
+
+#+END_SRC
 * Install all dependencies and setup the software
   Install all dependencies, including the OS related packages, Python packages,
   setup the database, configure the webserver, and finally deploy the

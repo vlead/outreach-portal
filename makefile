@@ -28,6 +28,8 @@ init:
 
 build: init
 	make -f tangle-make -k all
+	rsync -a ${SRC_DIR}/static ${CODE_DIR}/src/
+	rsync -a ${SRC_DIR}/templates ${CODE_DIR}/src/
 
 # get the latest commit hash and its subject line
 # and write that to the VERSION file
