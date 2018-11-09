@@ -604,6 +604,66 @@ if __name__ == "__main__":
     connection1.close()
 
 #+END_SRC
+
+* Program to add the analytics table in existing database 
+#+BEGIN_SRC python :tangle add_analytics.py :eval
+#!/usr/bin/python                                                                                           
+import MySQLdb
+from src.app import create_app
+from src.db import *
+import src.config as config
+
+def populate_analytics():
+    print "Populating analytics table.."
+    cursor1.execute("CREATE TABLE analytics 
+    (name VARCHAR(128) NOT NULL,
+    total_value INT  NOT NULL);")
+    cursor1.execute("INSERT INTO analytics SELECT  "WORKSHOPS RUN", COUNT(*) FROM workshops where status_id=3;")
+    cursor1.execute("INSERT INTO analytics SELECT  "UPCOMING WORKSHOPS", COUNT(*) FROM workshops where status_id=1;")
+    cursor1.execute("INSERT INTO analytics SELECT "NODAL CENTRES", COUNT(*) FROM nodal_centres;")
+    cursor1.execute("INSERT INTO analytics SELECT  "PARTICIPANTS ATTENDED", SUM(participants_attended) FROM workshops;")
+    cursor1.execute("INSERT INTO analytics SELECT  "USAGE", SUM(experiments_conducted) FROM workshops;")
+    cursor1.execute("
+    DROP PROCEDURE refresh_analytics_now;
+
+    DELIMITER $$
+
+    CREATE PROCEDURE refresh_analytics_now (
+        OUT rc INT
+    )
+    BEGIN
+
+      TRUNCATE TABLE analytics;
+
+      INSERT INTO analytics
+      SELECT "WORKSHOPS RUN", COUNT(*) FROM workshops where status_id=3;
+      INSERT INTO analytics SELECT  "UPCOMING WORKSHOPS", COUNT(*) FROM workshops where status_id=1;
+      INSERT INTO analytics SELECT "NODAL CENTRES", COUNT(*) FROM nodal_centres;
+      INSERT INTO analytics SELECT  "PARTICIPANTS ATTENDED", SUM(participants_attended) FROM workshops;
+      INSERT INTO analytics SELECT  "USAGE", SUM(experiments_conducted) FROM workshops;
+
+      SET rc = 0;
+    END;
+    $$
+
+    DELIMITER ;
+
+    ")
+    cursor1.execute("CALL refresh_analytics_now(@rc);")
+
+if __name__ == "__main__":
+    connection1 = MySQLdb.connect(host="localhost", user="root",
+                                  passwd="root", db="outreach")
+    cursor1 = connection1.cursor()
+
+    db.create_all(app=create_app(config))
+    populate_analytics()
+
+    cursor1.close()
+    connection1.close()
+
+#+END_SRC
+
 * Install all dependencies and setup the software
   Install all dependencies, including the OS related packages, Python packages,
   setup the database, configure the webserver, and finally deploy the
