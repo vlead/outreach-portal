@@ -1320,6 +1320,76 @@ class TestStatus(TestCase):
         status_dict = status.to_client()
         self.assertEqual("Rejected", status_dict['name'])
 #+END_SRC
+*** Analytics
+**** Immutable data
+     + Id
+
+**** Mutable data
+     + Name
+     + Total Value
+**** Definition
+#+BEGIN_SRC python :tangle src/db.py :eval no
+class Analytics(Entity):
+
+    __tablename__ = 'analytics'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128), nullable=False, unique=True)
+    total_value = db.Column(db.Integer)
+        
+#+END_SRC
+
+**** Constructor
+#+BEGIN_EXAMPLE
+    status = Status(name=<instance of class Name>)
+                    
+#+END_EXAMPLE
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def __init__(self, **kwargs):
+        if 'name' not in kwargs:
+            raise AttributeRequired("mandatory attribute `name` is missing")
+        self.set_name(kwargs['name'])
+
+#+END_SRC
+
+**** Functions that operate on the Analytics domain
+***** getStatus: Id --> Analytics
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @staticmethod
+    def get_by_id(id):
+        current_app.logger.debug("get by Analytics id: %s"  % id)
+        return Analytics.query.get(id)
+
+#+END_SRC
+
+***** getAll: Nil --> set[Status]
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @staticmethod
+    def get_all():
+        current_app.logger.debug("get all rows of Analytics entity")
+
+        return Analytics.query.all()
+#+END_SRC
+
+***** setName: Status, Name --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(name=str)
+    def set_name(self, name):
+        self.name = name.value
+#+END_SRC
+
+***** to_client
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def to_client(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'total_value': self.total_value
+        }
+
+#+END_SRC
+
+
 *** Workshop
 **** Immutable data
      + Id
@@ -5812,6 +5882,19 @@ status = {'entity_class': Status,
              'relationship': 'many'}
             ]}
 
+analytics = {'entity_class': Analytics,
+	     'attributes': [
+                 {'name': 'id',
+                  'class': None,
+	          'relationship': 'one'},
+                 {'name': 'name',
+                  'class': None,
+                  'relationship': 'one'},
+                 {'name': 'total_value',
+                  'class': None,
+                  'relationship': 'one'}
+             ]}
+
 workshop = {'entity_class': Workshop,
             'attributes': [
                 {'name': 'id',
@@ -6746,6 +6829,14 @@ entity_map_types = {
             'name': Name
         }
     },
+    'analytics': {
+        'entity': Analytics,
+        'types': {
+            'name': str,
+            'total_value': int
+        }
+    },
+
     'workshops': {
         'entity': Workshop,
         'types': {

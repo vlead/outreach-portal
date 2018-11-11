@@ -615,14 +615,17 @@ import src.config as config
 
 def populate_analytics():
     print "Populating analytics table.."
-    cursor1.execute("CREATE TABLE analytics 
-    (name VARCHAR(128) NOT NULL,
-    total_value INT  NOT NULL);")
-    cursor1.execute("INSERT INTO analytics SELECT  "WORKSHOPS RUN", COUNT(*) FROM workshops where status_id=3;")
-    cursor1.execute("INSERT INTO analytics SELECT  "UPCOMING WORKSHOPS", COUNT(*) FROM workshops where status_id=1;")
-    cursor1.execute("INSERT INTO analytics SELECT "NODAL CENTRES", COUNT(*) FROM nodal_centres;")
-    cursor1.execute("INSERT INTO analytics SELECT  "PARTICIPANTS ATTENDED", SUM(participants_attended) FROM workshops;")
-    cursor1.execute("INSERT INTO analytics SELECT  "USAGE", SUM(experiments_conducted) FROM workshops;")
+    cursor1.execute("
+    CREATE TABLE analytics (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(128) NOT NULL,
+    total_value INT  NOT NULL
+    );")
+    cursor1.execute("INSERT INTO analytics SELECT 1, "WORKSHOPS RUN", COUNT(*) FROM workshops where status_id=3;")
+    cursor1.execute("INSERT INTO analytics SELECT 2, "UPCOMING WORKSHOPS", COUNT(*) FROM workshops where status_id=1;")
+    cursor1.execute("INSERT INTO analytics SELECT 3, "NODAL CENTRES", COUNT(*) FROM nodal_centres;")
+    cursor1.execute("INSERT INTO analytics SELECT 4, "PARTICIPANTS ATTENDED", SUM(participants_attended) FROM workshops;")
+    cursor1.execute("INSERT INTO analytics SELECT 5, "USAGE", SUM(experiments_conducted) FROM workshops;")
     cursor1.execute("
     DROP PROCEDURE refresh_analytics_now;
 
