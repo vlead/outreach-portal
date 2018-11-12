@@ -14,7 +14,7 @@ app.controller("map-ctrl", function ($scope, $http, dataFactory){
             }
         }
 	$scope.upcomingLoading = false;
-        $scope.upcomingWorkshops = workshopList;
+        $scope.upcomingWorkshopsList = workshopList;
 
     });
     
