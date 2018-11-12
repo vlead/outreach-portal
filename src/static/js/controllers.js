@@ -14,7 +14,7 @@ app.controller("map-ctrl", function ($scope, $http, dataFactory){
             }
         }
 	$scope.upcomingLoading = false;
-        $scope.upcomingWorkshops = workshopList;
+        $scope.upcomingWorkshopsList = workshopList;
 
     });
     
@@ -340,6 +340,27 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
     $scope.nc_users = response;
     
   });
+
+  dataFactory.fetch("/analytics/1").success(function(response){
+    $scope.totalWorkshops = response.total_value;
+  });
+
+  dataFactory.fetch("/analytics/2").success(function(response){
+    $scope.upcomingWorkshops = response.total_value;
+  });
+
+  dataFactory.fetch("/analytics/3").success(function(data){
+    $scope.totalNodalCentres = data.total_value;
+  });
+
+  dataFactory.fetch("/analytics/4").success(function(data){
+    $scope.totalParticipants = data.total_value;
+  });
+
+  dataFactory.fetch("/analytics/5").success(function(response){
+    $scope.totalUsage = response.total_value;
+  });
+
     $scope.load_analytics = true;
     dataFactory.fetch("/workshops?status_id=3").success(function(workshops){
         var participants_count = 0;
@@ -353,7 +374,7 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
             labs = labs + workshops[workshop].labs_planned;
             expts_count = expts_count + workshops[workshop].experiments_conducted;
         }
-        $scope.total_workshops = workshops.length;
+      $scope.total_workshops = workshops.length;
         $scope.total_participants = participants_count;
         $scope.total_usage = expts_count;
         $scope.labs = labs;
@@ -1615,12 +1636,12 @@ app.controller("nc_user_list", function($scope, $http, $routeParams, dataFactory
 
 /*export button function*/
 
-$(document).ready(function){
-var table = $('#example').DataTable({
-lengthChange: false,
-buttons: ['copy', 'excel', 'pdf', 'colvis']
-});
-table.buttons().container()
-.appendTo('#example_wrapper .col-sm-6:eq(0)');
+// $(document).ready(function){
+// var table = $('#example').DataTable({
+// lengthChange: false,
+// buttons: ['copy', 'excel', 'pdf', 'colvis']
+// });
+// table.buttons().container()
+// .appendTo('#example_wrapper .col-sm-6:eq(0)');
 
-});
+// });
