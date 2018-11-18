@@ -666,6 +666,29 @@ if __name__ == "__main__":
 
 #+END_SRC
 
+* Program to setup cron job to update analytics for every 4 hours
+** Shell script to call the procedure.
+   Following shell script will execute the
+   =refresh_analytics_now= procedure which defined in the
+   above section to update the analytics.
+   #+BEGIN_SRC sh :tangle update_analytics.sh :eval no
+   #!/bin/bash                                                                                                                                           
+
+   mysql --user="root" --password="root" --database="outreach" --execute="CALL refresh_analytics_now(@rc);"
+
+   #+END_SRC
+** crontab
+   The following commands will set the cronjob for updating
+   analytics for every 4 hours.
+   #+BEGIN_EXAMPLE
+   cd /var/www/
+   chmod 755 update_analytics.sh
+   crontab -l
+   crontab -e
+   * */4 * * * /var/www/update_analytics.sh
+
+   #+END_EXAMPLE
+
 * Install all dependencies and setup the software
   Install all dependencies, including the OS related packages, Python packages,
   setup the database, configure the webserver, and finally deploy the
