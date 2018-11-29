@@ -6141,6 +6141,8 @@ workshops = workshop
 nodal_coordinator_details = nodal_coordinator_detail
 nodal_centres = nodal_centre
 workshop_reports = workshop_report
+institute_analytics = institue_analytics
+analytics= analytics
 
 entity_pairs = {
     'roles': role,
@@ -6150,7 +6152,10 @@ entity_pairs = {
     'workshops': workshop,
     'nodal_coordinator_details': nodal_coordinator_detail,
     'nodal_centres': nodal_centre,
-    'workshop_reports': workshop_report
+    'workshop_reports': workshop_report,
+    'institute_analytics': institute_analytics,
+    'analytics': analytics
+
 }
                    
 #+END_SRC
