@@ -134,7 +134,7 @@ app.controller("oc-ctrl", function($scope, $routeParams, dataFactory, $route, $w
 });
 app.controller("usage-ctrl", function($scope, dataFactory, $http, $routeParams, $route, $q, $window) {
     $scope.loading = true;
-    dataFactory.fetch("/get_nc_wise_usage").success(function(response){
+    dataFactory.fetch("/institute_analytics").success(function(response){
 	$scope.usages = response;
 	$scope.loading = false;
     }).error(function(response){console.log("Failed to fetch data");});
@@ -1636,12 +1636,12 @@ app.controller("nc_user_list", function($scope, $http, $routeParams, dataFactory
 
 /*export button function*/
 
-$(document).ready(function){
-var table = $('#example').DataTable({
-lengthChange: false,
-buttons: ['copy', 'excel', 'pdf', 'colvis']
-});
-table.buttons().container()
-.appendTo('#example_wrapper .col-sm-6:eq(0)');
+// $(document).ready(function){
+// var table = $('#example').DataTable({
+// lengthChange: false,
+// buttons: ['copy', 'excel', 'pdf', 'colvis']
+// });
+// table.buttons().container()
+// .appendTo('#example_wrapper .col-sm-6:eq(0)');
 
-});
+// });
