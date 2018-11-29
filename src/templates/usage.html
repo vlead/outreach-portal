@@ -49,20 +49,14 @@
               <tr>
                 <th>S.NO</th>
                 <th>Institute Name</th>
-                <th>Total Workshops</th>
                 <th>Total Usage</th>
-                <th>Total Participants Attended</th>
-
               </tr>
             </thead>
             <tbody ng-repeat="usage in usages">
               <tr>
                 <td>{{ $index+1 }}</td>
                 <td>{{ usage.institute_name }}</td>
-	        <td>{{ usage.total_workshops }}</td>
 	        <td>{{ usage.total_usage }}</td>
-                <td>{{ usage.total_participants_attended }}</td>
-
               </tr>
             </tbody>
 	  </table>
