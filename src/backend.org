@@ -6155,7 +6155,6 @@ entity_pairs = {
     'workshop_reports': workshop_report,
     'institute_analytics': institute_analytics,
     'analytics': analytics
-
 }
                    
 #+END_SRC
@@ -6443,7 +6442,7 @@ def unique(list1):
     return unique_list
 
 @api.route("/total_ncenters")
-def toatal_ncentres():
+def total_ncentres():
     url = APP_URL + '/nodal_centres';
     r = requests.get(url, headers={'email': EMAIL_FOR_GET_AUTH,
                                    'token': TOKEN_FOR_GET_AUTH});

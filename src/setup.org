@@ -638,12 +638,11 @@ def populate_analytics():
 
       TRUNCATE TABLE analytics;
 
-      INSERT INTO analytics
-      SELECT "WORKSHOPS RUN", COUNT(*) FROM workshops where status_id=3;
-      INSERT INTO analytics SELECT  "UPCOMING WORKSHOPS", COUNT(*) FROM workshops where status_id=1;
-      INSERT INTO analytics SELECT "NODAL CENTRES", COUNT(*) FROM nodal_centres;
-      INSERT INTO analytics SELECT  "PARTICIPANTS ATTENDED", SUM(participants_attended) FROM workshops;
-      INSERT INTO analytics SELECT  "USAGE", SUM(experiments_conducted) FROM workshops;
+      INSERT INTO analytics SELECT 1, "WORKSHOPS RUN", COUNT(*) FROM workshops where status_id=3;
+      INSERT INTO analytics SELECT 2, "UPCOMING WORKSHOPS", COUNT(*) FROM workshops where status_id=1;
+      INSERT INTO analytics SELECT 3, "NODAL CENTRES", COUNT(*) FROM nodal_centres;
+      INSERT INTO analytics SELECT 4, "PARTICIPANTS ATTENDED", SUM(participants_attended) FROM workshops;
+      INSERT INTO analytics SELECT 5, "USAGE", SUM(experiments_conducted) FROM workshops;
 
       SET rc = 0;
     END;

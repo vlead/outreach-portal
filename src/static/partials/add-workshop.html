@@ -22,10 +22,9 @@
 	<div class="input-group col-md-12">
 	  <input type="text" type="number" ng-mouseover="targetWorkshopName('over')"
                ng-mouseleave="targetWorkshopName('unover')"
-               name="workshops" min="0" ng-model="name"
+               name="name" min="0" ng-model="name"
                class="form-control" placeholder="Name"
-               name="user" ng-model="name"
-               ng-pattern="/^[a-zA-Z0-9._-\s]*$/" class="form-control"
+               ng-pattern="/^[a-zA-Z0-9._-\s]*$/" 
                placeholder="Workshop Name" required>
 	  <span style="color:red" ng-show="myForm.user.$dirty && myForm.user.$invalid">
 	    <span ng-show="myForm.user.$error.required">Workshop name is required.</span>
@@ -39,9 +38,9 @@
       <label class="col-md-4 control-label">Location of Workshop *</label>  
       <div class="col-md-3 inputGroupContainer">
 	<div class="input-group col-md-12">
-	  <input type="text" ng-mouseover="targetWorkshopLocation('over')" ng-mouseleave="targetWorkshopLocation('unover')" name="expts" min="0" ng-model="expts"  class="form-control"
-                 type="text" name="location" ng-model="workshops"
-		 ng-pattern="/^[a-zA-Z\s,]*$/" class="form-control"
+	  <input type="text" ng-mouseover="targetWorkshopLocation('over')" ng-mouseleave="targetWorkshopLocation('unover')" name="location" min="0" ng-model="location"  class="form-control"
+                 type="text" 
+		 ng-pattern="/^[a-zA-Z\s,]*$/" 
 		 placeholder="College Name, City Name, State Name,
 		 Country Name" required>
 	  <span style="color:red" ng-show="myForm.location.$dirty && myForm.location.$invalid">
@@ -59,8 +58,8 @@
 	<div class="input-group col-md-12">
 	  <input type="text" ng-mouseover="targetWorkshopCollegeName('over')" ng-mouseleave="targetWorkshopCollegeName('unover')" name="insts" min="0" ng-model="insts"  class="form-control"
                 type="text"
-		 name="insts" ng-model="insts"
-		 ng-pattern="/^[a-zA-Z._-\s,]*$/" class="form-control"
+		 ng-model="insts"
+		 ng-pattern="/^[a-zA-Z._-\s,]*$/" 
 		 placeholder="Institute names" required>
 	  <span style="color:red" ng-show="myForm.insts.$dirty && myForm.insts.$invalid">
 	    <span ng-show="myForm.insts.$error.required">Institute names required.</span>
