@@ -1320,6 +1320,82 @@ class TestStatus(TestCase):
         status_dict = status.to_client()
         self.assertEqual("Rejected", status_dict['name'])
 #+END_SRC
+*** Institute Analytics
+**** Immutable data
+     + Id
+
+**** Mutable data
+     + Institute Name
+     + Total Workshops
+     + Total Usage
+     + Total Participants Attended
+
+**** Definition
+#+BEGIN_SRC python :tangle src/db.py :eval no
+class InstituteAnalytics(Entity):
+
+    __tablename__ = 'institute_analytics'
+
+    id = db.Column(db.Integer, primary_key=True)
+    institute_name = db.Column(db.String(128), nullable=False, unique=True)
+    total_workshops = db.Column(db.Integer)
+    total_usage = db.Column(db.Integer)
+    total_participants_attended = db.Column(db.Integer)
+        
+#+END_SRC
+
+**** Constructor
+#+BEGIN_EXAMPLE
+    status = Status(name=<instance of class Name>)
+                    
+#+END_EXAMPLE
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def __init__(self, **kwargs):
+        if 'institute_name' not in kwargs:
+            raise AttributeRequired("mandatory attribute `institute_name` is missing")
+        self.set_institute_name(kwargs['institute_name'])
+
+#+END_SRC
+
+**** Functions that operate on the Analytics domain
+***** getStatus: Id --> Analytics
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @staticmethod
+    def get_by_id(id):
+        current_app.logger.debug("get by Institute Analytics id: %s"  % id)
+        return InstituteAnalytics.query.get(id)
+
+#+END_SRC
+
+***** getAll: Nil --> set[Status]
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @staticmethod
+    def get_all():
+        current_app.logger.debug("get all rows of Institute Analytics entity")
+
+        return InstituteAnalytics.query.all()
+#+END_SRC
+
+***** setName: Status, Name --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(institute_name=str)
+    def set_institute_name(self, institute_name):
+        self.institute_name = institute_name.value
+#+END_SRC
+
+***** to_client
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def to_client(self):
+        return {
+            'id': self.id,
+            'institute_name': self.institute_name,
+            'total_workshops': self.total_workshops,
+            'total_usage': self.total_usage,
+            'total_participants_attended': self.total_participants_attended
+        }
+
+#+END_SRC
+
 *** Analytics
 **** Immutable data
      + Id
@@ -1388,7 +1464,6 @@ class Analytics(Entity):
         }
 
 #+END_SRC
-
 
 *** Workshop
 **** Immutable data
@@ -5882,6 +5957,26 @@ status = {'entity_class': Status,
              'relationship': 'many'}
             ]}
 
+institute_analytics = {'entity_class': InstituteAnalytics,
+	     'attributes': [
+                 {'name': 'id',
+                  'class': None,
+	          'relationship': 'one'},
+                 {'name': 'institute_name',
+                  'class': None,
+                  'relationship': 'one'},
+                 {'name': 'total_workshops',
+                  'class': None,
+                  'relationship': 'one'},
+                 {'name': 'total_usage',
+                  'class': None,
+                  'relationship': 'one'},
+                 {'name': 'total_participants_attended',
+                  'class': None,
+                  'relationship': 'one'}
+
+             ]}
+
 analytics = {'entity_class': Analytics,
 	     'attributes': [
                  {'name': 'id',
@@ -6046,7 +6141,8 @@ workshops = workshop
 nodal_coordinator_details = nodal_coordinator_detail
 nodal_centres = nodal_centre
 workshop_reports = workshop_report
-analytics = analytics
+institute_analytics = institute_analytics
+analytics= analytics
 
 entity_pairs = {
     'roles': role,
@@ -6057,6 +6153,7 @@ entity_pairs = {
     'nodal_coordinator_details': nodal_coordinator_detail,
     'nodal_centres': nodal_centre,
     'workshop_reports': workshop_report,
+    'institute_analytics': institute_analytics,
     'analytics': analytics
 }
                    
@@ -6829,6 +6926,15 @@ entity_map_types = {
         'entity': Status,
         'types': {
             'name': Name
+        }
+    },
+    'institute_analytics': {
+        'entity': InstituteAnalytics,
+        'types': {
+            'institute_name': str,
+            'total_workshops': int,
+            'total_usage': int,
+            'total_participants_attended': int
         }
     },
     'analytics': {
