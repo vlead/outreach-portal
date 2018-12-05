@@ -134,7 +134,7 @@ app.controller("oc-ctrl", function($scope, $routeParams, dataFactory, $route, $w
 });
 app.controller("usage-ctrl", function($scope, dataFactory, $http, $routeParams, $route, $q, $window) {
     $scope.loading = true;
-    dataFactory.fetch("/get_nc_wise_usage").success(function(response){
+    dataFactory.fetch("/institute_analytics").success(function(response){
 	$scope.usages = response;
 	$scope.loading = false;
     }).error(function(response){console.log("Failed to fetch data");});
