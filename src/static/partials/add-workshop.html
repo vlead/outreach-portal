@@ -6,77 +6,87 @@
     <span class="error"> {{ status }}</span>
     <div class="form-group">
       <label class="col-md-4 control-label">Workshop Version *</label>
-      <div class="col-md-4 inputGroupContainer">
-	<div class="input-group">
+      <div class="col-md-3 inputGroupContainer">
+	<div class="input-group col-md-12">
 	  <label><input type="radio" name="version" ng-model="version" value="online"/ required> online</label>&emsp;&emsp;
-	  <label><input type="radio" name="version" ng-model="version" value="offline"/ required> offline (college cloud edition)</label>
+	  <label><input type="radio" name="version" ng-model="version" disabled="" value="offline"/ required> offline (college cloud edition)</label>
 	  <span style="color:red" ng-show="myForm.version.$dirty && myForm.version.$invalid">
 	    <span ng-show="myForm.version.$error.required">Choose workshop version</span>
 	  </span>
 	</div>
       </div>
     </div>
-    
     <div class="form-group">
       <label class="col-md-4 control-label">Workshop Name *</label>  
-      <div class="col-md-4 inputGroupContainer">
-	<div class="input-group">
-	  <input type="text" name="user" ng-model="name"  ng-pattern="/^[a-zA-Z0-9._-\s]*$/"  class="form-control"  placeholder="Workshop Name" required>
+      <div class="col-md-3 inputGroupContainer">
+	<div class="input-group col-md-12">
+	  <input type="text" type="number" ng-mouseover="targetWorkshopName('over')"
+               ng-mouseleave="targetWorkshopName('unover')"
+               name="name" min="0" ng-model="name"
+               class="form-control" placeholder="Name"
+               ng-pattern="/^[a-zA-Z0-9._-\s]*$/" 
+               placeholder="Workshop Name" required>
 	  <span style="color:red" ng-show="myForm.user.$dirty && myForm.user.$invalid">
 	    <span ng-show="myForm.user.$error.required">Workshop name is required.</span>
 	    <span ng-show="myForm.user.$error.pattern">Enter valid name</span>
-	  </span>
+	  </span> {{info}}
 	</div>
       </div>
     </div>
 
     <div class="form-group">
       <label class="col-md-4 control-label">Location of Workshop *</label>  
-      <div class="col-md-4 inputGroupContainer">
-	<div class="input-group">
-	  <input type="text" name="location" ng-model="location" ng-pattern="/^[a-zA-Z\s,]*$/"  class="form-control"
-		 placeholder="College Name, City Name, State Name, Country Name" required>
+      <div class="col-md-3 inputGroupContainer">
+	<div class="input-group col-md-12">
+	  <input type="text" ng-mouseover="targetWorkshopLocation('over')" ng-mouseleave="targetWorkshopLocation('unover')" name="location" min="0" ng-model="location"  class="form-control"
+                 type="text" 
+		 ng-pattern="/^[a-zA-Z\s,]*$/" 
+		 placeholder="College Name, City Name, State Name,
+		 Country Name" required>
 	  <span style="color:red" ng-show="myForm.location.$dirty && myForm.location.$invalid">
 	    <span ng-show="myForm.location.$error.required">Location is required.</span>
 	    <span ng-show="myForm.location.$error.pattern">Enter valid location</span>
-	  </span>
+	  </span> {{info1}}
 	</div>
       </div>
     </div>
 
 
     <div class="form-group">
-      <label class="col-md-4 control-label">Participating Institutes *</label>  
-      <div class="col-md-4 inputGroupContainer">
-	<div class="input-group">
-	  <input type="text" name="insts" ng-model="insts"  ng-pattern="/^[a-zA-Z._-\s,]*$/" class="form-control"
+      <label class="col-md-4 control-label">Workshop College Name *</label>  
+      <div class="col-md-3 inputGroupContainer">
+	<div class="input-group col-md-12">
+	  <input type="text" ng-mouseover="targetWorkshopCollegeName('over')" ng-mouseleave="targetWorkshopCollegeName('unover')" name="insts" min="0" ng-model="insts"  class="form-control"
+                type="text"
+		 ng-model="insts"
+		 ng-pattern="/^[a-zA-Z._-\s,]*$/" 
 		 placeholder="Institute names" required>
 	  <span style="color:red" ng-show="myForm.insts.$dirty && myForm.insts.$invalid">
 	    <span ng-show="myForm.insts.$error.required">Institute names required.</span>
 	    <span ng-show="myForm.insts.$error.pattern">Enter valid institutes</span>
-	  </span>
+	  </span>{{info2}}
 	</div>
       </div>
     </div>
     
     <div class="form-group">
       <label class="col-md-4 control-label">No of Expected Participants *</label>  
-      <div class="col-md-4 inputGroupContainer">
-	<div class="input-group">
-	  <input type="number" name="parti" ng-model="parti"  min="0" class="form-control"
+      <div class="col-md-3 inputGroupContainer">
+	<div class="input-group col-md-12">
+	  <input type="number" ng-mouseover="targetExpectedParticipants('over')" ng-mouseleave="targetExpectedParticipants('unover')" name="parti" ng-model="parti"  min="0" class="form-control"
 		 placeholder="Participants " required/>
           <span class="error" ng-show="myForm.parti.$error.number">Not valid number!</span>
 	  <span style="color:red" ng-show="myForm.parti.$dirty && myForm.parti.$invalid">
 	    <span ng-show="myForm.parti.$error.required">Participants required.</span>
-	  </span>
+	  </span>{{info3}}
 	</div>
       </div>
     </div>
 
     <div class="form-group">
       <label class="col-md-4 control-label">No of Sessions *</label>  
-      <div class="col-md-4 inputGroupContainer">
-	<div class="input-group">
+      <div class="col-md-3 inputGroupContainer">
+	<div class="input-group  col-md-12">
 	  <input type="number" name="sessions" ng-model="sessions"  min="0"  class="form-control"  placeholder="Sessions" required>
           <span class="error" ng-show="myForm.sessions.$error.number">Not valid number!</span>
 	  <span style="color:red" ng-show="myForm.sessions.$dirty && myForm.session.$invalid">
@@ -90,8 +100,8 @@
 
     <div class="form-group">
       <label class="col-md-4 control-label">Duration of Each Session *</label>  
-      <div class="col-md-4 inputGroupContainer">
-	<div class="input-group">
+      <div class="col-md-3 inputGroupContainer">
+	<div class="input-group col-md-12">
 	  <input type="text" name="session" ng-model="session" ng-pattern="/^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$/"  min="0"  class="form-control"  placeholder="HH:MM" required>	
 	  <span style="color:red" ng-show="myForm.session.$dirty && myForm.session.$invalid">
 	    <span ng-show="myForm.session.$error.required">Sessions duration required.</span>
@@ -104,8 +114,8 @@
     
     <div class="form-group">
       <label class="col-md-4 control-label">No of Labs Planned *</label>  
-      <div class="col-md-4 inputGroupContainer">
-	<div class="input-group">
+      <div class="col-md-3 inputGroupContainer">
+	<div class="input-group col-md-12">
 	  <input type="number" name="labs" ng-model="labs"  min="0"  class="form-control" placeholder="Labs planned" required>
           <span class="error" ng-show="myForm.labs.$error.number">Not valid number!</span>
           <span style="color:red" ng-show="myForm.labs.$dirty && myForm.labs.$invalid">
@@ -118,8 +128,8 @@
 
     <div class="form-group">
       <label class="col-md-4 control-label">Date of Workshop *</label>  
-      <div class="col-md-4 inputGroupContainer">
-	<div class="input-group">
+      <div class="col-md-3 inputGroupContainer">
+	<div class="input-group col-md-12">
 	  <input type="text" name="date" ng-model="date" id="datepicker"
 		 class="form-control"  placeholder="YYYY-MM-DD" required>
 	  <span class="error" ng-show="myForm.date.$error.date">
@@ -133,7 +143,7 @@
     <div class="form-group" ng-if="version == 'online'">
       <label class="col-md-4 control-label">Gateway IP of College</label>  
       <div class="col-md-3 inputGroupContainer">
-	<div class="input-group">
+	<div class="input-group col-md-12">
 	  <input type="text" name="gateway_ip" ng-model="gateway_ip" ng-pattern="/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/"  class="form-control"
 		 placeholder="Gateway IP of college">
 	  <span style="color:red" ng-show="myForm.gateway_ip.$dirty && myForm.gateway_ip.$invalid">Invalid IP Address</span>

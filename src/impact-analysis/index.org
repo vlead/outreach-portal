@@ -1,0 +1,34 @@
+#+TITLE: impact analysis
+#+AUTHOR: VLEAD
+#+DATE: [2018-07-17 Tue]
+#+PROPERTY: results output
+#+PROPERTY: exports code
+#+SETUPFILE: ../org-templates/level-1.org
+#+options: ^:nil
+#+LATEX: Literal LaTeX code for export
+
+* Introduction
+  - This document contains the impact analysis of Outreach
+    portal.
+* Detailed analysis
+
+|-------+-------+-------------------+-----------------------+----------------------+--------------------+----------+--------+----------+-------------------------+-----------|
+| S. No | Issue | Tasks             | Current status        | Future status        | Type of            | Expected | Actual | Level of | Requirement explanation | Key risks |
+|       | No.   |                   |                       | status               | impact             | time     | time   | impact   |                         |           |
+|       |       |                   |                       |                      |                    | of       | of     |          |                         |           |
+|       |       |                   |                       |                      |                    | impact   | impact |          |                         |           |
+|-------+-------+-------------------+-----------------------+----------------------+--------------------+----------+--------+----------+-------------------------+-----------|
+|    1. | [[https://github.com/vlead/outreach-portal/issues/265][#265]]  | Adding contact    | There is no provision | User logged in as OC | User interface is  | 64       | 56     | High     |                         |           |
+|       |       | details of the    | to add contact        | will be able to add  | changed, Changes   |          |        |          |                         |           |
+|       |       | nodal coordinator | details for the new   | contact details of   | in the application |          |        |          |                         |           |
+|       |       |                   | or existing NC's      | the NC's in manage   | level              |          |        |          |                         |           |
+|       |       |                   |                       | Nodal Coordinators   |                    |          |        |          |                         |           |
+|-------+-------+-------------------+-----------------------+----------------------+--------------------+----------+--------+----------+-------------------------+-----------|
+|    2. | [[https://github.com/vlead/outreach-portal/issues/274][#274]]  | Tool tips on      | There is no basic     | On hover over the    | It would give a    |          |        | Medium   |                         | No        |
+|       |       | Create Workshop   | description for the   | fields, it will have | clear description  |          |        |          |                         |           |
+|       |       | fields            | fields for which      | tool tips on each    | about the details  |          |        |          |                         |           |
+|       |       |                   | data to be entered    | Create Workshop      | to be filled in    |          |        |          |                         |           |
+|       |       |                   | while NCs/OCs create  | field explaining the | the fields         |          |        |          |                         |           |
+|       |       |                   | the workshops         | purpose of the field |                    |          |        |          |                         |           |
+|-------+-------+-------------------+-----------------------+----------------------+--------------------+----------+--------+----------+-------------------------+-----------|
+|       |       |                   |                       |                      |                    |          |        |          |                         |           |
