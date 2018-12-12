@@ -1,0 +1,29 @@
+#+Author: Sravanthi 
+#+Date: 10 Dec 2018
+* Environment
+  - OS: Windows 7, Ubuntu-16.04,Centos-6
+  - Browsers: Firefox-42.0,Chrome-47.0,chromium-45.0
+  - Bandwidth : 100Mbps
+  - Hardware Configuration:8GBRAM , 
+  - Processor:i5,
+
+* Objective
+  - To be able to delete the OC
+
+* Pre conditions
+  - Refer to first test case (Usability)
+
+* Post conditions
+  - Nil
+* Test Steps
+  1. Refer to the (31st)
+  2. Click on the browser back navigation button
+  3. Click on the browser forward navigation button
+
+* Expected result
+  1. Refer to the(31st)
+  2. It should redirect to the previous page and the corresponding OC should not get deleted
+  3. The browser forward navigation button should be disabeled
+
+* Review/comments
+

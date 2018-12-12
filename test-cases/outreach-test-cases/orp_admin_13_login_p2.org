@@ -1,0 +1,27 @@
+* Author: Sravanthi
+* Date Created: 22 Dec 2018
+* Environment
+  - OS: Windows 7, Ubuntu-16.04,Centos-6
+  - Browsers: Firefox-42.0,Chrome-47.0,chromium-45.0
+  - Bandwidth : 100Mbps
+  - Hardware Configuration:8GBRAM , 
+  - Processor:i5,
+
+* Objective
+  - To be able to view the portal dashboard
+
+* Pre conditions
+  - Refer to first test case
+
+* Post conditions
+  - Nil
+* Test Steps
+  1. Click on the dashboard link
+  2. It should redirect to the dashboard page
+
+* Expected result
+  1. The dashboard page with information about All OC's,All NC's,Total number of workshops run and Total usage per institute should be displayed on the screen
+  2. Content should be present with no distortions and junk characters
+
+* Review/comments
+

@@ -1,0 +1,28 @@
+* Author: Sravnathi
+* Date Created: 10 Dec 2018
+* Environment
+  - OS: Windows 7, Ubuntu-16.04,Centos-6
+  - Browsers: Firefox-42.0,Chrome-47.0,chromium-45.0
+  - Bandwidth : 100Mbps
+  - Hardware Configuration:8GBRAM , 
+  - Processor:i5,
+
+* Objective
+  - To be able to add the OC
+
+* Pre conditions
+  - Refer to first test case (usability)
+
+* Post conditions
+  - Nil
+* Test Steps
+  1. Refer to the (15th)  
+  2. Enter the username and don't enter email id in the username and email id fields respectively
+  3. Hit enter or click 'Add' button.
+
+* Expected result
+  1. Refer to the  (15th)  
+  2. An error message should be displayed on the screen as to enter the valid email id in the corresponding field
+
+* Review/comments
+

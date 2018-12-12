@@ -1,0 +1,29 @@
+#+Author: Sravanthi 
+#+Date: 10 Dec 2018
+* Environment
+  - OS: Windows 7, Ubuntu-16.04,Centos-6
+  - Browsers: Firefox-42.0,Chrome-47.0,chromium-45.0
+  - Bandwidth : 100Mbps
+  - Hardware Configuration:8GBRAM , 
+  - Processor:i5,
+  - Data: supported formats .pdf, .doc, jpg, ppt, xls
+
+* Objective
+  - To Add the  documents
+
+* Pre conditions
+  - Refer to first test case [Usability]
+
+* Post conditions
+  - Nil
+* Test Steps
+  1. Refer to the [38] 
+  2. Enter valid name and upload a valid document and click on submit button
+
+* Expected result
+  1. Refer to the [38]
+  2. An message should be displayed on the screen as the document is successfully uploaded
+
+* Review/comments
+
+
