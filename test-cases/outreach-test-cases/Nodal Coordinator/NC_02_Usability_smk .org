@@ -11,7 +11,7 @@
   - Portal should be easily usable
 
 * Pre conditions
-  1. Open the [[http://outreach.base1.virtual-labs.ac.in/][url]]
+  1. Open the url "http://10.4.15.169:5000"
   2. Outreach portal dashboard will be displayed on the screen
   3. Check if the redirected page has the necessary fields
 
