@@ -240,6 +240,7 @@ img:hover{
   display: inline-block;
   width: 55px;
   height: 25px;
+  top:3px;
 }
 
 .switch input { 
@@ -263,8 +264,8 @@ img:hover{
 .slider:before {
     position: absolute;
     content: "";
-    height: 24px;
-    width: 24px;
+    height: 22px;
+    width: 23px;
     left: 4px;
     bottom: 4px;
     background-color: white;
@@ -272,10 +273,6 @@ img:hover{
     transition: .4s;
     top: 1.4px;
 }
-
-
-
- 
 
 input:checked + .slider {
   background-color: #16da00;
