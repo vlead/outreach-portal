@@ -1143,6 +1143,7 @@ app.controller("manage-centres", function($scope, $http, dataFactory, $routePara
                            {"name" : $scope.name,
                             "pincode" : $scope.pincode,
                             "location" : $scope.centre,
+			    "centre_status": "active",
                             "lattitude" : lat,
                             "longitude" : lng,
                             "created_by" : { "id" : $window.number } } ).
@@ -1235,6 +1236,7 @@ app.controller("edit-centre", function($scope, dataFactory, $http, $routeParams,
                             { "name" : $scope.centres.name,
                               "longitude" : lng,
                               "lattitude" : lat,
+			      "centre_status" : $scope.centres.centre_status,
                               "pincode" : $scope.centres.pincode,
                               "location" : $scope.centres.location,
                               "created_by" : { "id" : $window.number } }).success(function(data, status, headers, config){
