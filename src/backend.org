@@ -2894,6 +2894,7 @@ class NodalCentre(Entity):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), nullable=False)
+    centre_status = db.Column(db.String(128), nullable=False)
     location = db.Column(db.String(128))
     pincode = db.Column(db.String(128))
     longitude = db.Column(db.String(128))
@@ -2933,14 +2934,16 @@ class NodalCentre(Entity):
         if 'pincode' in kwargs:
             self.set_pincode(kwargs['pincode'])
 
+        if 'centre_status' in kwargs:
+            self.set_centre_status(kwargs['centre_status'])
         
     def __str__(self):
-        return "Name = %s, location = %s, created_by = %s" % \
-            (self.name, self.location, self.created_by)
+        return "Name = %s, location = %s, centre_status = %s, created_by = %s" % \
+            (self.name, self.location, self.centre_status, self.created_by)
 
     def __repr__(self):
-        return "Name = %s, location = %s, created_by = %s" % \
-            (self.name, self.location, self.created_by)
+        return "Name = %s, location = %s, centre_status =%s, created_by = %s" % \
+            (self.name, self.location, self.centre_status, self.created_by)
 
 #+END_SRC
 
@@ -3176,6 +3179,50 @@ class TestNodalCentre(TestCase):
         self.assertEqual(centre_name, "IIIT-Hyd")
 #+END_SRC
 
+
+***** getCentreStatus: NodalCentre --> CentreStatus
+#+BEGIN_SRC python :tangle src/db.py :eval no 
+    def get_centre_status(self):
+        current_app.logger.debug("get name of the NodalCentre: %s"  % self.centre_status)
+        return self.centre_status
+#+END_SRC
+
+***** Test getCentreStatus: NodalCentre --> CentreStatus 
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no 
+    def test_get_nodal_centre_name(self):
+        print "test_get_nodal_centre_name"
+        role1 = Role(name=Name("OC"))
+        role1.save()
+
+        role2 = Role(name=Name("NC"))
+        role2.save()
+
+        user_1 = User(name=Name("Ambika"),
+                      email=Email("ambika@vlabs.ac.in"), role=role1)
+        user_2 = User(name=Name("Madhavi"),
+                      email=Email("madhavi@vlabs.ac.in"), role=role2)
+        user_3 = User(name=Name("Will Smith"),
+                      email=Email("smith@vlabs.ac.in"), role=role2)
+
+        user_1.save()
+        user_2.save()
+        user_3.save()
+
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
+                                   created_by=user_1)
+
+        nodal_centre1.save()
+
+        nodal_centre2 = NodalCentre(name="HCU", location="Lingampalli", \
+                                    created_by=user_2)               
+        nodal_centre2.save()
+
+        centre_name = nodal_centre1.get_name()
+        self.assertEqual(centre_name, "IIIT-Hyd")
+#+END_SRC
+
+
+
 ***** getLocation: NodalCentre --> Location
 #+BEGIN_SRC python :tangle src/db.py :eval no 
     def get_location(self):
@@ -3304,6 +3351,52 @@ class TestNodalCentre(TestCase):
         centre = NodalCentre.get_by_id(2)
         self.assertEqual("IIIT-Hyd", centre.name)
 #+END_SRC
+
+
+***** setCentreStatus: NodalCentre, CentreStatus --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no 
+    @typecheck(centre_status=str)
+    def set_centre_status(self, centre_status):
+        self.centre_status = centre_status
+#+END_SRC
+      
+***** Test setName: NodalCentre, Name --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no 
+    def test_set_nodal_centre_name(self):
+        print "test_set_nodal_centre_name"
+        role1 = Role(name=Name("OC"))
+        role1.save()
+
+        role2 = Role(name=Name("NC"))
+        role2.save()
+
+        user_1 = User(name=Name("Ambika"),
+                      email=Email("ambika@vlabs.ac.in"), role=role1)
+        user_2 = User(name=Name("Madhavi"),
+                      email=Email("madhavi@vlabs.ac.in"), role=role2)
+        user_3 = User(name=Name("Will Smith"),
+                      email=Email("smith@vlabs.ac.in"), role=role2)
+
+        user_1.save()
+        user_2.save()
+        user_3.save()
+
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
+                                   created_by=user_1)
+
+        nodal_centre1.save()
+
+        nodal_centre2 = NodalCentre(name="HCU", location="Lingampalli", \
+                                    created_by=user_2)               
+        nodal_centre2.save()
+
+        nodal_centre2.set_name("IIIT-Hyd")
+        nodal_centre2.save()
+        centre = NodalCentre.get_by_id(2)
+        self.assertEqual("IIIT-Hyd", centre.name)
+#+END_SRC
+
+
 
 ***** setLocation: NodalCentre, Location --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no 
@@ -3441,7 +3534,8 @@ class TestNodalCentre(TestCase):
             'location': self.location,
             'pincode': self.pincode,
             'longitude': self.longitude,
-            'lattitude': self.lattitude
+            'lattitude': self.lattitude,
+            'centre_status': self.centre_status
         }
 #+END_SRC
       
@@ -6117,7 +6211,10 @@ nodal_centre = {'entity_class': NodalCentre,
                      'relationship': 'one'},
                      {'name': 'lattitude',
                      'class': None,
-                     'relationship': 'one'}
+                     'relationship': 'one'},
+                     {'name': 'centre_status',
+                      'class': None,
+                      'relationship':'one'}
             ]}
 
 workshop_report = {'entity_class': WorkshopReport,
@@ -6978,7 +7075,8 @@ entity_map_types = {
             'location': str,
             'pincode': str,
             'longitude': str,
-            'lattitude': str
+            'lattitude': str,
+            'centre_status': str
         }
     },
  
