@@ -987,6 +987,21 @@ app.controller("manage-nc", function($scope, $http, $routeParams, dataFactory, $
     
 });
 app.controller("edit-nc", function($scope, dataFactory, $http, $routeParams, $window, $route) {
+    $scope.init = function(){
+	$scope.centre_status = "Active";
+    }
+
+    $scope.changeStatus = function(){
+	if ($scope.centre_status == 'Active'){
+	    $scope.centre_status = "Inactive";
+	}
+	else
+	{
+	    $scope.centre_status='Active'
+	}
+    }
+
+
     $scope.flag1=true;
     $scope.change = function()
     {
@@ -1036,6 +1051,7 @@ app.controller("edit-nc", function($scope, dataFactory, $http, $routeParams, $wi
                     $scope.status = "Success";
                     dataFactory.put("/nodal_coordinator_details/"+nc_id,
                                     {"target_workshops":Number($scope.workshops),
+				     "user_status": $scope.centre_status,
                                      "target_experiments":Number($scope.expts),
                                      "target_participants":Number($scope.parti),
                                      "created_by":{"id": $window.number},
