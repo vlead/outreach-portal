@@ -1143,7 +1143,7 @@ app.controller("manage-centres", function($scope, $http, dataFactory, $routePara
                            {"name" : $scope.name,
                             "pincode" : $scope.pincode,
                             "location" : $scope.centre,
-			    "centre_status": "active",
+			    "centre_status": "Active",
                             "lattitude" : lat,
                             "longitude" : lng,
                             "created_by" : { "id" : $window.number } } ).
@@ -1222,6 +1222,19 @@ app.controller("manage-centres", function($scope, $http, dataFactory, $routePara
 });
 
 app.controller("edit-centre", function($scope, dataFactory, $http, $routeParams, $route, $window) {
+     $scope.init = function(){
+	$scope.centre_status = "Active";
+    }
+
+    $scope.changeStatus = function(){
+	if ($scope.centre_status == 'Active'){
+	    $scope.centre_status = "Inactive";
+	}
+	else
+	{
+	    $scope.centre_status='Active'
+	}
+    }
     dataFactory.fetch("/nodal_centres/"+$routeParams.id).
         success(function(data, status, headers, config) {
           $scope.centres= data;
@@ -1236,7 +1249,7 @@ app.controller("edit-centre", function($scope, dataFactory, $http, $routeParams,
                             { "name" : $scope.centres.name,
                               "longitude" : lng,
                               "lattitude" : lat,
-			      "centre_status" : $scope.centres.centre_status,
+			      "centre_status" : $scope.centre_status,
                               "pincode" : $scope.centres.pincode,
                               "location" : $scope.centres.location,
                               "created_by" : { "id" : $window.number } }).success(function(data, status, headers, config){

@@ -52,12 +52,19 @@
 	<label class="control-label col-sm-4">Active/Inactive</label>
 	<div class="col-sm-6">
 	 
+	  <div ng-init="init()">
+	    <div class="well">
+	      <i style="color:#009933" class="fa fa-toggle-on active" ng-if="centre_status == 'Active'" ng-click="changeStatus();"></i>
+	      <i style="color:#ff0000" class="fa fa-toggle-on fa-rotate-180 inactive" ng-if="centre_status == 'Inactive'" ng-click="changeStatus();"></i>
+	    </div>
 
+	  </div>
 	  
-	  <label class="switch">
+	  
+<!--	  <label class="switch">
 	    <input checked="" type="checkbox" ng-model="centres.centre_status" class="form-control" >
 	    <span class="slider round"></span>
-	  </label>
+	  </label>-->
 
 	</div>
       </div>
