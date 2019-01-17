@@ -299,7 +299,7 @@ input:checked + .slider:before {
 
 /* Styles go here */
 
-.active, .inactive {font-size:40px;cursor:pointer;}
-.active, .inactive {font-size:40px;cursor:pointer;}
+.active, .inactive {font-size:16px;cursor:pointer;}
+.active, .inactive {font-size:16px;cursor:pointer;}
 i.active { color: #5cb85c}
 i.inactive {color: #d9534f}
