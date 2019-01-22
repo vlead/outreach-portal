@@ -413,7 +413,7 @@ class User(Entity):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), nullable=False)
     email = db.Column(db.String(128), unique=True)
-    user_status = db.Column(db.String(128), nullable=False)
+    user_status = db.Column(db.String(128))
     phone = db.Column(db.String(128))
     institute_name = db.Column(db.String(128))
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
@@ -6040,10 +6040,7 @@ user = {'entity_class': User,
              'relationship': 'many'},
             {'name': 'user_status',
              'class': None,
-             'relationship': 'one'},
-            {'name': 'centre_status',
-             'class': None,
-             'relationship':'one'}
+             'relationship': 'one'}
         ]}
 
 reference_document = {'entity_class': ReferenceDocument,
