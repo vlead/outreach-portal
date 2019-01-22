@@ -299,7 +299,13 @@ input:checked + .slider:before {
 
 /* Styles go here */
 
-.active, .inactive {font-size:16px;cursor:pointer;}
-.active, .inactive {font-size:16px;cursor:pointer;}
+.active, .inactive {font-size:36px;cursor:pointer;}
+.active, .inactive {font-size:36px;cursor:pointer;}
 i.active { color: #5cb85c}
 i.inactive {color: #d9534f}
+
+.nav-pills > li.active > a, .nav-pills > li.active > a:focus, .nav-pills > li.active > a:hover {
+								  color :#fff !important;
+								  background-color: #337ab7 !important;
+								  font-size:16px !important;
+							      }
