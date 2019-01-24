@@ -1114,7 +1114,7 @@ app.controller("add-nc", function($scope, $http, dataFactory, $routeParams, $win
     $scope.id = 0;
     $scope.submit = function(isvalid){
         if(isvalid){
-            dataFactory.post("/users",{"name" : $scope.name, "created" : Date(), "email" : $scope.email, "phone" : $scope.phone, "role" : { "id" : 3 } } ).                success(function(data, status, headers, config){
+            dataFactory.post("/users",{"name" : $scope.name, "created" : Date(), "email" : $scope.email, "phone" : $scope.phone, "user_status": "Active", "role" : { "id" : 3 } } ).                success(function(data, status, headers, config){
                     var id = data.id;       
                     $scope.status = "Success";
                     dataFactory.post("/nodal_coordinator_details",
