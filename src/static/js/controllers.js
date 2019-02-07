@@ -1,4 +1,4 @@
-var app = angular.module("outreachApp.controllers",['ngAnimate', 'ngTouch', 'ui.grid', 'ui.grid.selection', 'ui.grid.exporter']);
+var app = angular.module("outreachApp.controllers",[]);
 app.controller("map-ctrl", function ($scope, $http, dataFactory){
     var workshopList = [];
     $scope.upcomingLoading = true;
@@ -987,20 +987,6 @@ app.controller("manage-nc", function($scope, $http, $routeParams, dataFactory, $
     
 });
 app.controller("edit-nc", function($scope, dataFactory, $http, $routeParams, $window, $route) {
-    $scope.init = function(){
-	$scope.user_status = "Active";
-    }
-
-    $scope.changeStatus = function(){
-	if ($scope.user_status == 'Active'){
-	    $scope.user_status = "Inactive";
-	}
-	else
-	{
-	    $scope.user_status='Active'
-	}
-    }
-
 
     $scope.flag1=true;
     $scope.change = function()
@@ -1045,7 +1031,7 @@ app.controller("edit-nc", function($scope, dataFactory, $http, $routeParams, $wi
     $scope.id = 0;
     $scope.submit = function(user_id, nc_id){
         if(true){
-            dataFactory.put("/users/"+user_id,{"name" : $scope.user,"email" : $scope.email, "user_status": $scope.user_status, "phone" : $scope.phone} ).
+            dataFactory.put("/users/"+user_id,{"name" : $scope.user,"email" : $scope.email, "phone" : $scope.phone} ).
                 success(function(data, status, headers, config){
                     var id = data.id;       
                     $scope.status = "Success";
@@ -1114,7 +1100,7 @@ app.controller("add-nc", function($scope, $http, dataFactory, $routeParams, $win
     $scope.id = 0;
     $scope.submit = function(isvalid){
         if(isvalid){
-            dataFactory.post("/users",{"name" : $scope.name, "created" : Date(), "email" : $scope.email, "phone" : $scope.phone, "user_status": "Active", "role" : { "id" : 3 } } ).                success(function(data, status, headers, config){
+            dataFactory.post("/users",{"name" : $scope.name, "created" : Date(), "email" : $scope.email, "phone" : $scope.phone, "role" : { "id" : 3 } } ).                success(function(data, status, headers, config){
                     var id = data.id;       
                     $scope.status = "Success";
                     dataFactory.post("/nodal_coordinator_details",
@@ -1158,8 +1144,7 @@ app.controller("manage-centres", function($scope, $http, dataFactory, $routePara
                            {"name" : $scope.name,
                             "pincode" : $scope.pincode,
                             "location" : $scope.centre,
-			    "centre_status": "Active",
-                            "lattitude" : lat,
+			    "lattitude" : lat,
                             "longitude" : lng,
                             "created_by" : { "id" : $window.number } } ).
             success(function(data, status, headers, config){
@@ -1276,22 +1261,7 @@ app.controller("edit-centre", function('MainCtrl', $scope, dataFactory, $http, $
 	});
     
 }]);
-    
 
-    
-     $scope.init = function(){
-	$scope.centre_status = "Active";
-    }
-
-    $scope.changeStatus = function(){
-	if ($scope.centre_status == 'Active'){
-	    $scope.centre_status = "Inactive";
-	}
-	else
-	{
-	    $scope.centre_status='Active'; 
-	}
-    }
     dataFactory.fetch("/nodal_centres/"+$routeParams.id).
         success(function(data, status, headers, config) {
           $scope.centres= data;
@@ -1306,8 +1276,7 @@ app.controller("edit-centre", function('MainCtrl', $scope, dataFactory, $http, $
                             { "name" : $scope.centres.name,
                               "longitude" : lng,
                               "lattitude" : lat,
-			      "centre_status" : $scope.centre_status,
-                              "pincode" : $scope.centres.pincode,
+			      "pincode" : $scope.centres.pincode,
                               "location" : $scope.centres.location,
                               "created_by" : { "id" : $window.number } }).success(function(data, status, headers, config){
                                 $scope.status = "Success";

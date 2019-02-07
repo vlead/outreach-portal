@@ -413,7 +413,6 @@ class User(Entity):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), nullable=False)
     email = db.Column(db.String(128), unique=True)
-    user_status = db.Column(db.String(128))
     phone = db.Column(db.String(128))
     institute_name = db.Column(db.String(128))
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
@@ -464,8 +463,7 @@ class User(Entity):
         if 'institute_name' in kwargs:
             self.set_institute_name(kwargs['institute_name'])
         
-        if 'user_status' in kwargs:
-            self.set_user_status(kwargs['user_status'])
+        
         
         
     def __str__(self):
@@ -592,18 +590,7 @@ class TestUser(TestCase):
         self.assertEqual(user_name, "ambika")
 #+END_SRC
 
-***** getUserStatus: User --> UserStatus
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def get_user_status(self):
-        current_app.logger.debug("get user status of the User: %s" % self.user_status)
-        return self.user_status
-#+END_SRC
 
-***** setUserStatus: User, UserStatus --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
-    def set_user_status(self, user_status):
-        self.user_status = user_status
-#+END_SRC
 
 ***** getEmail: User --> Email
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -859,8 +846,8 @@ class TestUser(TestCase):
             'role': self.role.to_client(),
             'last_active': self.last_active,
             'institute_name': self.institute_name,
-            'created': self.created,
-            'user_status': self.user_status
+            'created': self.created
+            
         }
 #+END_SRC
       
@@ -2912,7 +2899,6 @@ class NodalCentre(Entity):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), nullable=False)
-    centre_status = db.Column(db.String(128), nullable=False)
     location = db.Column(db.String(128))
     pincode = db.Column(db.String(128))
     longitude = db.Column(db.String(128))
@@ -2952,16 +2938,14 @@ class NodalCentre(Entity):
         if 'pincode' in kwargs:
             self.set_pincode(kwargs['pincode'])
 
-        if 'centre_status' in kwargs:
-            self.set_centre_status(kwargs['centre_status'])
-        
+                
     def __str__(self):
-        return "Name = %s, location = %s, centre_status = %s, created_by = %s" % \
-            (self.name, self.location, self.centre_status, self.created_by)
+        return "Name = %s, location = %s, created_by = %s" % \
+            (self.name, self.location, self.created_by)
 
     def __repr__(self):
-        return "Name = %s, location = %s, centre_status =%s, created_by = %s" % \
-            (self.name, self.location, self.centre_status, self.created_by)
+        return "Name = %s, location = %s,  created_by = %s" % \
+            (self.name, self.location, self.created_by)
 
 #+END_SRC
 
@@ -3198,49 +3182,6 @@ class TestNodalCentre(TestCase):
 #+END_SRC
 
 
-***** getCentreStatus: NodalCentre --> CentreStatus
-#+BEGIN_SRC python :tangle src/db.py :eval no 
-    def get_centre_status(self):
-        current_app.logger.debug("get name of the NodalCentre: %s"  % self.centre_status)
-        return self.centre_status
-#+END_SRC
-
-***** Test getCentreStatus: NodalCentre --> CentreStatus 
-#+BEGIN_SRC python :tangle tests/test_db.py :eval no 
-    def test_get_nodal_centre_name(self):
-        print "test_get_nodal_centre_name"
-        role1 = Role(name=Name("OC"))
-        role1.save()
-
-        role2 = Role(name=Name("NC"))
-        role2.save()
-
-        user_1 = User(name=Name("Ambika"),
-                      email=Email("ambika@vlabs.ac.in"), role=role1)
-        user_2 = User(name=Name("Madhavi"),
-                      email=Email("madhavi@vlabs.ac.in"), role=role2)
-        user_3 = User(name=Name("Will Smith"),
-                      email=Email("smith@vlabs.ac.in"), role=role2)
-
-        user_1.save()
-        user_2.save()
-        user_3.save()
-
-        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
-                                   created_by=user_1)
-
-        nodal_centre1.save()
-
-        nodal_centre2 = NodalCentre(name="HCU", location="Lingampalli", \
-                                    created_by=user_2)               
-        nodal_centre2.save()
-
-        centre_name = nodal_centre1.get_name()
-        self.assertEqual(centre_name, "IIIT-Hyd")
-#+END_SRC
-
-
-
 ***** getLocation: NodalCentre --> Location
 #+BEGIN_SRC python :tangle src/db.py :eval no 
     def get_location(self):
@@ -3371,13 +3312,6 @@ class TestNodalCentre(TestCase):
 #+END_SRC
 
 
-***** setCentreStatus: NodalCentre, CentreStatus --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no 
-    @typecheck(centre_status=str)
-    def set_centre_status(self, centre_status):
-        self.centre_status = centre_status
-#+END_SRC
-      
 ***** Test setName: NodalCentre, Name --> Void
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no 
     def test_set_nodal_centre_name(self):
@@ -3552,9 +3486,8 @@ class TestNodalCentre(TestCase):
             'location': self.location,
             'pincode': self.pincode,
             'longitude': self.longitude,
-            'lattitude': self.lattitude,
-            'centre_status': self.centre_status
-        }
+            'lattitude': self.lattitude
+            }
 #+END_SRC
       
 ***** Test Nodal Centre to_client
@@ -6037,10 +5970,8 @@ user = {'entity_class': User,
              'relationship': 'one'},
             {'name': 'nodal_centres',
              'class': NodalCentre,
-             'relationship': 'many'},
-            {'name': 'user_status',
-             'class': None,
-             'relationship': 'one'}
+             'relationship': 'many'}
+            
         ]}
 
 reference_document = {'entity_class': ReferenceDocument,
@@ -7027,8 +6958,8 @@ entity_map_types = {
             'institute_name': str,
             'role': Role,
             'last_active': str,
-            'created': str,
-            'user_status':str
+            'created': str
+            
         }
     },
     'reference_documents': {
@@ -7095,8 +7026,8 @@ entity_map_types = {
             'location': str,
             'pincode': str,
             'longitude': str,
-            'lattitude': str,
-            'centre_status': str
+            'lattitude': str
+            
         }
     },
  

@@ -14,7 +14,6 @@
 	  <th>Name</th>
 	  <th>Location</th>
           <th>Pincode</th>
-	  <th>Active/Inactive</th>
 	</tr>
       </thead>
       <tbody>
@@ -22,7 +21,6 @@
           <td>{{ centre.name }}</td>
           <td>{{ centre.location }}</td>
           <td>{{ centre.pincode }}</td>
-	  <td><span>{{ centre.centre_status }}<span></td>
           <td><a href="#/edit-centre/{{centre.id}}" class="btn btn-primary">Edit</a></td>
           <td><a class="btn btn-primary" ng-click="del_centre(centre.id)">Delete</a></td>
 	</tr>
