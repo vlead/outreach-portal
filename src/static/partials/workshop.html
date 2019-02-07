@@ -27,7 +27,7 @@
           <td>{{ workshop.location }}</td>
           <td>{{ workshop.version }}</td>
           <td>{{ workshop.date }}</td>
-          <td ng-if="workshop.participants_attended != 0">{{ workshop.participants_attended }}</td>
+          <td>{{ workshop.participants_attended }}</td>
           <td ng-if="workshop.reports.length == 0">Not Available</td>
           <td ng-if="workshop.reports.length > 0 && workshop.version == 'online'"><a href="#/ws-list/{{workshop.id}}"><button class="btn-primary">View</button></a></td>
           <td ng-if="workshop.reports.length > 0 && workshop.version == 'offline'"><a href="#/ws-list/{{workshop.id}}"><button class="btn-primary">View</button></a></td>
