@@ -1221,7 +1221,7 @@ app.controller("manage-centres", function($scope, $http, dataFactory, $routePara
     
 });
 
-app.controller("edit-centre", function('MainCtrl', $scope, dataFactory, $http, $routeParams, $route, $window) {
+app.controller("edit-centre", function($scope, dataFactory, $http, $routeParams, $route, $window) {
     $scope.gridOptions = {
 	columnDefs: [
 	    { field: 'Name' },
