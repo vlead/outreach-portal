@@ -19,10 +19,10 @@
       </thead>
       <tbody>
 	<tr ng-repeat="coordinator in coordinators">
-          <td>{{ coordinator.name }}</td>
-          <td>{{ coordinator.email }}</td>
-          <td>{{ coordinator.phone }}</td>
-          <td id="number">{{ coordinator.created }}</td>
+          <td><span>{{ coordinator.name }}</span></td>
+          <td><span>{{ coordinator.email }}</span></td>
+          <td><span>{{ coordinator.phone }}</span></td>
+          <td id="number"><span>{{ coordinator.created }}</span></td>
 	  <td><span>{{coordinator.user_status}}</span></td>
           <td id="number">{{ coordinator.last_active }}</td>
           <!--<td>{{ coordinator.centre.location }}</td>-->
