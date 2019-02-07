@@ -2912,7 +2912,6 @@ class NodalCentre(Entity):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), nullable=False)
-    centre_status = db.Column(db.String(128), nullable=False)
     location = db.Column(db.String(128))
     pincode = db.Column(db.String(128))
     longitude = db.Column(db.String(128))
@@ -2952,16 +2951,14 @@ class NodalCentre(Entity):
         if 'pincode' in kwargs:
             self.set_pincode(kwargs['pincode'])
 
-        if 'centre_status' in kwargs:
-            self.set_centre_status(kwargs['centre_status'])
         
     def __str__(self):
-        return "Name = %s, location = %s, centre_status = %s, created_by = %s" % \
-            (self.name, self.location, self.centre_status, self.created_by)
+        return "Name = %s, location = %s,  created_by = %s" % \
+            (self.name, self.location, self.created_by)
 
     def __repr__(self):
-        return "Name = %s, location = %s, centre_status =%s, created_by = %s" % \
-            (self.name, self.location, self.centre_status, self.created_by)
+        return "Name = %s, location = %s, created_by = %s" % \
+            (self.name, self.location, self.created_by)
 
 #+END_SRC
 
@@ -3198,13 +3195,6 @@ class TestNodalCentre(TestCase):
 #+END_SRC
 
 
-***** getCentreStatus: NodalCentre --> CentreStatus
-#+BEGIN_SRC python :tangle src/db.py :eval no 
-    def get_centre_status(self):
-        current_app.logger.debug("get name of the NodalCentre: %s"  % self.centre_status)
-        return self.centre_status
-#+END_SRC
-
 ***** Test getCentreStatus: NodalCentre --> CentreStatus 
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no 
     def test_get_nodal_centre_name(self):
@@ -3238,7 +3228,6 @@ class TestNodalCentre(TestCase):
         centre_name = nodal_centre1.get_name()
         self.assertEqual(centre_name, "IIIT-Hyd")
 #+END_SRC
-
 
 
 ***** getLocation: NodalCentre --> Location
@@ -3371,13 +3360,6 @@ class TestNodalCentre(TestCase):
 #+END_SRC
 
 
-***** setCentreStatus: NodalCentre, CentreStatus --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no 
-    @typecheck(centre_status=str)
-    def set_centre_status(self, centre_status):
-        self.centre_status = centre_status
-#+END_SRC
-      
 ***** Test setName: NodalCentre, Name --> Void
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no 
     def test_set_nodal_centre_name(self):
@@ -3552,8 +3534,8 @@ class TestNodalCentre(TestCase):
             'location': self.location,
             'pincode': self.pincode,
             'longitude': self.longitude,
-            'lattitude': self.lattitude,
-            'centre_status': self.centre_status
+            'lattitude': self.lattitude
+            
         }
 #+END_SRC
       
@@ -7095,8 +7077,7 @@ entity_map_types = {
             'location': str,
             'pincode': str,
             'longitude': str,
-            'lattitude': str,
-            'centre_status': str
+            'lattitude': str
         }
     },
  
