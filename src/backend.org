@@ -3179,49 +3179,12 @@ class TestNodalCentre(TestCase):
         self.assertEqual(centre_name, "IIIT-Hyd")
 #+END_SRC
 
-
 ***** getCentreStatus: NodalCentre --> CentreStatus
 #+BEGIN_SRC python :tangle src/db.py :eval no 
     def get_centre_status(self):
         current_app.logger.debug("get name of the NodalCentre: %s"  % self.centre_status)
         return self.centre_status
 #+END_SRC
-
-***** Test getCentreStatus: NodalCentre --> CentreStatus 
-#+BEGIN_SRC python :tangle tests/test_db.py :eval no 
-    def test_get_nodal_centre_name(self):
-        print "test_get_nodal_centre_name"
-        role1 = Role(name=Name("OC"))
-        role1.save()
-
-        role2 = Role(name=Name("NC"))
-        role2.save()
-
-        user_1 = User(name=Name("Ambika"),
-                      email=Email("ambika@vlabs.ac.in"), role=role1)
-        user_2 = User(name=Name("Madhavi"),
-                      email=Email("madhavi@vlabs.ac.in"), role=role2)
-        user_3 = User(name=Name("Will Smith"),
-                      email=Email("smith@vlabs.ac.in"), role=role2)
-
-        user_1.save()
-        user_2.save()
-        user_3.save()
-
-        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
-                                   created_by=user_1)
-
-        nodal_centre1.save()
-
-        nodal_centre2 = NodalCentre(name="HCU", location="Lingampalli", \
-                                    created_by=user_2)               
-        nodal_centre2.save()
-
-        centre_name = nodal_centre1.get_name()
-        self.assertEqual(centre_name, "IIIT-Hyd")
-#+END_SRC
-
-
 
 ***** getLocation: NodalCentre --> Location
 #+BEGIN_SRC python :tangle src/db.py :eval no 
@@ -3352,7 +3315,6 @@ class TestNodalCentre(TestCase):
         self.assertEqual("IIIT-Hyd", centre.name)
 #+END_SRC
 
-
 ***** setCentreStatus: NodalCentre, CentreStatus --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no 
     @typecheck(centre_status=str)
@@ -3360,44 +3322,6 @@ class TestNodalCentre(TestCase):
         self.centre_status = centre_status
 #+END_SRC
       
-***** Test setName: NodalCentre, Name --> Void
-#+BEGIN_SRC python :tangle tests/test_db.py :eval no 
-    def test_set_nodal_centre_name(self):
-        print "test_set_nodal_centre_name"
-        role1 = Role(name=Name("OC"))
-        role1.save()
-
-        role2 = Role(name=Name("NC"))
-        role2.save()
-
-        user_1 = User(name=Name("Ambika"),
-                      email=Email("ambika@vlabs.ac.in"), role=role1)
-        user_2 = User(name=Name("Madhavi"),
-                      email=Email("madhavi@vlabs.ac.in"), role=role2)
-        user_3 = User(name=Name("Will Smith"),
-                      email=Email("smith@vlabs.ac.in"), role=role2)
-
-        user_1.save()
-        user_2.save()
-        user_3.save()
-
-        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
-                                   created_by=user_1)
-
-        nodal_centre1.save()
-
-        nodal_centre2 = NodalCentre(name="HCU", location="Lingampalli", \
-                                    created_by=user_2)               
-        nodal_centre2.save()
-
-        nodal_centre2.set_name("IIIT-Hyd")
-        nodal_centre2.save()
-        centre = NodalCentre.get_by_id(2)
-        self.assertEqual("IIIT-Hyd", centre.name)
-#+END_SRC
-
-
-
 ***** setLocation: NodalCentre, Location --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no 
     @typecheck(location=str)
