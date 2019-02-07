@@ -1222,46 +1222,6 @@ app.controller("manage-centres", function($scope, $http, dataFactory, $routePara
 });
 
 app.controller("edit-centre", function($scope, dataFactory, $http, $routeParams, $route, $window) {
-    $scope.gridOptions = {
-	columnDefs: [
-	    { field: 'Name' },
-	    { field: 'Location', visible: false},
-	    { field: 'Pincode' },
-	    { field: 'Active-Inactive'}
-	],
-	enableGridMenu: true,
-	enableSelectAll: true,
-	exporterCsvFilename: 'myFile.csv',
-	exporterPdfDefaultStyle: {fontSize: 9},
-	exporterPdfTableStyle: {margin: [30, 30, 30, 30]},
-	exporterPdfTableHeaderStyle: {fontSize: 10, bold: true, italics: true, color: 'red'},
-	exporterPdfHeader: { text: "My Header", style: 'headerStyle' },
-	exporterPdfFooter: function ( currentPage, pageCount ) {
-	    return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
-	},
-	exporterPdfCustomFormatter: function ( docDefinition ) {
-	    docDefinition.styles.headerStyle = { fontSize: 22, bold: true };
-	    docDefinition.styles.footerStyle = { fontSize: 10, bold: true };
-	    return docDefinition;
-	},
-	exporterPdfOrientation: 'portrait',
-	exporterPdfPageSize: 'LETTER',
-	exporterPdfMaxGridWidth: 500,
-	exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
-	exporterExcelFilename: 'myFile.xlsx',
-	exporterExcelSheetName: 'Sheet1',
-	onRegisterApi: function(gridApi){
-	    $scope.gridApi = gridApi;
-	}
-    };
-    
-    $http.get('https://cdn.rawgit.com/angular-ui/ui-grid.info/gh-pages/data/100.json')
-	.then(function(response) {
-	    $scope.gridOptions.data = response.data;
-	});
-    
-}]);
-
     dataFactory.fetch("/nodal_centres/"+$routeParams.id).
         success(function(data, status, headers, config) {
           $scope.centres= data;
