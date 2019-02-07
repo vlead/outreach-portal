@@ -168,6 +168,7 @@ DELIMITER ;
 CALL refresh_institute_analytics_now(@rc);
 #+END_SRC
 ** sample table
+select * from institute_analytics;
 |----+-------------------+-----------------+-------------+-----------------------------|
 | id | institute_name    | total_workshops | total_usage | total_participants_attended |
 |----+-------------------+-----------------+-------------+-----------------------------|
@@ -190,6 +191,10 @@ CALL refresh_institute_analytics_now(@rc);
 
 #+END_EXAMPLE
 * Total Analytics
+** Drop table analytics
+#+BEGIN_SRC 
+drop table analytics;
+#+END_SRC
 ** Create table analytics
 #+BEGIN_SRC 
 CREATE TABLE analytics (
@@ -239,6 +244,7 @@ DELIMITER ;
 CALL refresh_analytics_now(@rc);
 #+END_SRC
 ** sample table
+select * from analytics;
 |----+-----------------------+-------------|
 | id | name                  | total_value |
 |----+-----------------------+-------------|
