@@ -1232,7 +1232,7 @@ app.controller("edit-centre", function($scope, dataFactory, $http, $routeParams,
 	}
 	else
 	{
-	    $scope.centre_status='Active'
+	    $scope.centre_status='Active';
 	}
     }
     dataFactory.fetch("/nodal_centres/"+$routeParams.id).

@@ -1,4 +1,4 @@
-@import url(https://fonts.googleapis.com/css?family=Raleway:400,300);
+>@import url(https://fonts.googleapis.com/css?family=Raleway:400,300);
 @import url(https://fonts.googleapis.com/css?family=Lato:400,300);
 @import url(https://fonts.googleapis.com/css?family=Open+Sans);
 
@@ -299,7 +299,7 @@ input:checked + .slider:before {
 
 /* Styles go here */
 
-.active, .inactive {font-size:16px;cursor:pointer;}
-.active, .inactive {font-size:16px;cursor:pointer;}
-i.active { color: #5cb85c}
-i.inactive {color: #d9534f}
+.centeractive, .centerinactive {font-size:36px !important;cursor:pointer;}
+.centeractive, .centerinactive {font-size:36p !importantx;cursor:pointer;}
+i.centeractive { color: #5cb85c}
+i.centerinactive {color: #d9534f}
