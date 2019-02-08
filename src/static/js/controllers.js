@@ -997,7 +997,7 @@ app.controller("edit-nc", function($scope, dataFactory, $http, $routeParams, $wi
 	}
 	else
 	{
-	    $scope.user_status='Active'
+	    $scope.user_status='Active';
 	}
     }
 
