@@ -463,20 +463,21 @@ class User(Entity):
         if 'institute_name' in kwargs:
             self.set_institute_name(kwargs['institute_name'])
         
+                
         
     def __str__(self):
         return "Name = %s, e-mail id = %s,\ created = %s,\
         institute_name = %s, role=%s, last_active = %s"\
         % (self.name, self.email, self.created,
            self.institute_name, self.role.name,
-           self.last_active, self.phone)
+           self.last_active)
 
     def __repr__(self):
         return "Name = %s, e-mail id = %s, created=%s\
         institute_name = %s, role=%s, last_active = %s"\
         % (self.name, self.email, self.created,
            self.institute_name, self.role.name,
-           self.last_active, self.phone)
+           self.last_active)
 
 #+END_SRC
      
@@ -587,6 +588,7 @@ class TestUser(TestCase):
         user_name = user.get_name()
         self.assertEqual(user_name, "ambika")
 #+END_SRC
+
 
 ***** getEmail: User --> Email
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -843,6 +845,7 @@ class TestUser(TestCase):
             'last_active': self.last_active,
             'institute_name': self.institute_name,
             'created': self.created
+
         }
 #+END_SRC
       
@@ -2933,7 +2936,7 @@ class NodalCentre(Entity):
         if 'pincode' in kwargs:
             self.set_pincode(kwargs['pincode'])
 
-        
+                
     def __str__(self):
         return "Name = %s, location = %s, created_by = %s" % \
             (self.name, self.location, self.created_by)
@@ -3176,6 +3179,8 @@ class TestNodalCentre(TestCase):
         self.assertEqual(centre_name, "IIIT-Hyd")
 #+END_SRC
 
+
+
 ***** getLocation: NodalCentre --> Location
 #+BEGIN_SRC python :tangle src/db.py :eval no 
     def get_location(self):
@@ -3304,6 +3309,46 @@ class TestNodalCentre(TestCase):
         centre = NodalCentre.get_by_id(2)
         self.assertEqual("IIIT-Hyd", centre.name)
 #+END_SRC
+
+
+
+***** Test setName: NodalCentre, Name --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no 
+    def test_set_nodal_centre_name(self):
+        print "test_set_nodal_centre_name"
+        role1 = Role(name=Name("OC"))
+        role1.save()
+
+        role2 = Role(name=Name("NC"))
+        role2.save()
+
+        user_1 = User(name=Name("Ambika"),
+                      email=Email("ambika@vlabs.ac.in"), role=role1)
+        user_2 = User(name=Name("Madhavi"),
+                      email=Email("madhavi@vlabs.ac.in"), role=role2)
+        user_3 = User(name=Name("Will Smith"),
+                      email=Email("smith@vlabs.ac.in"), role=role2)
+
+        user_1.save()
+        user_2.save()
+        user_3.save()
+
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
+                                   created_by=user_1)
+
+        nodal_centre1.save()
+
+        nodal_centre2 = NodalCentre(name="HCU", location="Lingampalli", \
+                                    created_by=user_2)               
+        nodal_centre2.save()
+
+        nodal_centre2.set_name("IIIT-Hyd")
+        nodal_centre2.save()
+        centre = NodalCentre.get_by_id(2)
+        self.assertEqual("IIIT-Hyd", centre.name)
+#+END_SRC
+
+
 
 ***** setLocation: NodalCentre, Location --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no 
@@ -3442,6 +3487,7 @@ class TestNodalCentre(TestCase):
             'pincode': self.pincode,
             'longitude': self.longitude,
             'lattitude': self.lattitude
+            
         }
 #+END_SRC
       
@@ -5926,6 +5972,7 @@ user = {'entity_class': User,
             {'name': 'nodal_centres',
              'class': NodalCentre,
              'relationship': 'many'}
+            
         ]}
 
 reference_document = {'entity_class': ReferenceDocument,
@@ -6118,6 +6165,7 @@ nodal_centre = {'entity_class': NodalCentre,
                      {'name': 'lattitude',
                      'class': None,
                      'relationship': 'one'}
+                     
             ]}
 
 workshop_report = {'entity_class': WorkshopReport,
@@ -6912,6 +6960,7 @@ entity_map_types = {
             'role': Role,
             'last_active': str,
             'created': str
+            
         }
     },
     'reference_documents': {
@@ -6979,6 +7028,7 @@ entity_map_types = {
             'pincode': str,
             'longitude': str,
             'lattitude': str
+            
         }
     },
  
@@ -8546,7 +8596,7 @@ class TestWorkshopReport(TestCase):
 
 #+END_SRC
     
-* Run the Test Cases
+* Run the test Cases
 ** Python DB Tests
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
 

@@ -1,0 +1,29 @@
+#+Author: Sravanthi 
+#+Date: 10 Dec 2018
+* Environment
+  - OS: Windows 7, Ubuntu-16.04,Centos-6
+  - Browsers: Firefox-42.0,Chrome-47.0,chromium-45.0
+  - Bandwidth : 100Mbps
+  - Hardware Configuration:8GBRAM , 
+  - Processor:i5,
+
+* Objective
+  - To Add the  documents
+
+* Pre conditions
+  - Refer to first test case (Usability)
+
+* Post conditions
+  - Nil
+* Test Steps
+  1. Refer to the  (36st)
+  2. Click on the 'Add' button
+  3. Check if the redirected page has the necessary fields
+
+* Expected result
+  1. Refer to the  (36st)
+  2. It should redirect to a document upload page with the required fields
+
+* Review/comments
+
+

@@ -1,0 +1,29 @@
+#+Author: Sravanthi. B
+#+Date: 2018 Oct 23
+
+* Environment
+- OS: Windows 7, Ubuntu-16.04,Centos-6
+- Browsers: Firefox-42.0,Chrome-47.0,chromium-45.0
+- Bandwidth : 100Mbps
+- Hardware Configuration:8GBRAM ,
+- Processor:i5,
+
+* Objective
+  The enhancements related to tooltip to be applicable for the required
+  fields.
+
+* Pre conditions
+- Refer to the [[https://github.com/vlead/outreach-portal/blob/master/test-cases/enhancements_test-cases/tooltip/tooltip_01_usability_smk.org][test-case]]
+
+* Post conditions
+- Nill
+
+* Test steps
+- Check whether an error message is displayed when a field is skipped to fill.
+
+* Expected Result
+- When any field is unfilled and try to fill the next field the unfilled field should be highlighted with an error message
+  
+* Review/Comments
+
+* Status  

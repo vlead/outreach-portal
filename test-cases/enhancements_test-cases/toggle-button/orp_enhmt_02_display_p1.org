@@ -1,0 +1,38 @@
+#+Author: Sravanthi
+#+Date: 10 Dec 2018
+
+* Environment
+
+- OS: Windows 7, Ubuntu-16.04,Centos-6
+- Browsers: Firefox-42.0,Chrome-47.0,chromium-45.0
+- Bandwidth : 100Mbps
+- Hardware Configuration:8GBRAM ,
+- Processor:i5,
+
+* Objective
+
+- The toggle button should display against each Nodal Center entry
+  with the status of the center. The 
+
+* Pre conditions
+
+1. Navigate to the [[http://outreach.base1.virtual-labs.ac.in/][URL]]
+2. The URL should redirects to the home page of the outreach portal.
+3. Login - Follow the [[https://github.com/vlead/outreach-portal/blob/master/test-cases/outreach-test-cases/orp_admin_15n_p2.org][test-case]]
+4. Edit - Follow the [[https://github.com/vlead/outreach-portal/blob/master/test-cases/outreach-test-cases/orp_admin_24_edit_p1.org][test-case]]   
+5. The button should navigate to the "edit Nodal centers" page.
+* Post conditions
+
+- Nil
+
+* Test Steps
+
+- While testing observe for functionality of the "Toggle button".
+- Look and feel of the button.
+- Size of the buttons is similar for all the enties.
+
+* Expected result
+
+- On click status of the toggle button should change to Active/Inactive modes accordingly.
+
+* Review/comments
