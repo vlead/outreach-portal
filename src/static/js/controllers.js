@@ -1235,7 +1235,7 @@ app.controller("manage-centres", function($scope, $http, dataFactory, $routePara
     
 });
 
-app.controller("edit-centre", function('MainCtrl', $scope, dataFactory, $http, $routeParams, $route, $window) {
+app.controller("edit-centre", function($scope, dataFactory, $http, $routeParams, $route, $window) {
     dataFactory.fetch("/nodal_centres/"+$routeParams.id).
         success(function(data, status, headers, config) {
           $scope.centres= data;
