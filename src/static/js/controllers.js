@@ -1221,7 +1221,20 @@ app.controller("manage-centres", function($scope, $http, dataFactory, $routePara
 });
 
 app.controller("edit-centre", function($scope, dataFactory, $http, $routeParams, $route, $window) {
-       dataFactory.fetch("/nodal_centres/"+$routeParams.id).
+     $scope.init = function(){
+	$scope.centre_status = "Active";
+    }
+
+    $scope.changeStatus = function(){
+	if ($scope.centre_status == 'Active'){
+	    $scope.centre_status = "Inactive";
+	}
+	else
+	{
+	    $scope.centre_status='Active';
+	}
+    }
+    dataFactory.fetch("/nodal_centres/"+$routeParams.id).
         success(function(data, status, headers, config) {
           $scope.centres= data;
         }).
