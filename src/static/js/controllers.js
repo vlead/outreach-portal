@@ -682,7 +682,7 @@ $scope.submit = function(isvalid){
 					     "participating_institutes" : $scope.insts,
 					     "no_of_participants_expected" : $scope.parti,
 					     "no_of_sessions" : Number($scope.sessions),
-					     "version" : $scope.version,
+					     "version" : "online",
 					     "labs_planned" : Number($scope.labs),
 					     "status" : {"id": status_id},  "date" : $scope.date }).
 		success(function(data, status, headers, config){
