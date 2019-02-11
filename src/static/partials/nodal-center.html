@@ -11,15 +11,14 @@
       <thead>
         <tr>
           <th>S.No</th>
-	  <th>Institute Name</th>
-	  <th>Nodal Center Name</th>
+	  <th>Nodal Center Name/Participating College Name</th>
           <th>Location</th>
         </tr>
       </thead>
         <tbody ng-repeat="center in nodalCenter | orderBy : 'name'">
           <tr>
             <td>{{ $index+1 }}</td>
-	    <td>{{ center.created_by.institute_name }}</td>
+	    <!-- <td>{{ center.created_by.institute_name }}</td> -->
             <td>{{ center.name }}</td>
             <td>{{ center.location }}</td>
           </tr>
