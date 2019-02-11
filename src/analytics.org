@@ -257,3 +257,16 @@ select * from analytics;
 
 
 
+* Remove workshops with zero participants
+#+BEGIN_EXAMPLE
+update workshops set status_id=4 where participants_attended=0;
+#+END_EXAMPLE
+* Add user_status coloumn to users table
+#+BEGIN_EXAMPLE
+alter table users add user_status varchar(128);
+#+END_EXAMPLE
+* Add center_status to nodal centers table
+#+BEGIN_EXAMPLE
+alter table nodal_centers add center_status varchar(128)
+#+END_EXAMPLE
+
