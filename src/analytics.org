@@ -9,7 +9,7 @@
 
 * Introduction
   This document has analytics related to outreach portal.
-* Intitute wise Analytics
+* Institute wise Analytics
 ** Create view to list only approved workshops
 #+BEGIN_SRC 
 CREATE VIEW approved_workshops AS SELECT * from workshops where status_id=3;
