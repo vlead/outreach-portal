@@ -269,4 +269,7 @@ alter table users add user_status varchar(128);
 #+BEGIN_EXAMPLE
 alter table nodal_centers add center_status varchar(128)
 #+END_EXAMPLE
-
+* Remove status of workshop from upcoming to rejected in upcoming workshops list
+#+BEGIN_EXAMPLE
+update workshops set status_id=4 where id=3107;
+#+END_EXAMPLE
