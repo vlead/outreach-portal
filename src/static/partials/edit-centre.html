@@ -48,8 +48,27 @@
 	</div>
       </div>
 
-            
-      
+      <div class="form-group">
+	<label class="control-label col-sm-4">Active/Inactive</label>
+	<div class="col-sm-6">
+	 
+	  <div ng-init="init()">
+	    <div class="well">
+	      <i style="color:#009933" class="fa fa-toggle-on centeractive" ng-if="centre_status == 'Active'" ng-click="changeStatus();"></i>
+	      <i style="color:#ff0000" class="fa fa-toggle-on fa-rotate-180 centerinactive" ng-if="centre_status == 'Inactive'" ng-click="changeStatus();"></i>
+	    </div>
+
+	  </div>
+	  
+	  
+<!--	  <label class="switch">
+	    <input checked="" type="checkbox" ng-model="centres.centre_status" class="form-control" >
+	    <span class="slider round"></span>
+	  </label>-->
+
+	</div>
+      </div>
+
       <!--
       <p>Centre Name :<br>
 	<input type="text" name="name" ng-model="name"  class="form-control"

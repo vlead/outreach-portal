@@ -7037,8 +7037,8 @@ entity_map_types = {
             'location': str,
             'pincode': str,
             'longitude': str,
-            'lattitude': str
-            
+            'lattitude': str,
+            'center_status': str
         }
     },
  

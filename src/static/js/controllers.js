@@ -1234,6 +1234,7 @@ app.controller("edit-centre", function($scope, dataFactory, $http, $routeParams,
 	    $scope.centre_status='Active';
 	}
     };
+    }
     dataFactory.fetch("/nodal_centres/"+$routeParams.id).
         success(function(data, status, headers, config) {
           $scope.centres= data;
