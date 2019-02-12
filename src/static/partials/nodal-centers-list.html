@@ -11,7 +11,7 @@
         </tr>
       </thead>
         <tbody ng-repeat="center in ncenters | orderBy : 'nodal_center'">
-          <tr>
+          <tr ng-if="center.nodal_center!='VLEAD'">
             <td>{{ $index+1 }}</td>
             <td><a href="/ncentres#/nodal-center/{{center.created_by_id}}">{{ center.nodal_center }}</a></td>
             <td>{{ center.count }}</td>
