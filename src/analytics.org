@@ -9,7 +9,7 @@
 
 * Introduction
   This document has analytics related to outreach portal.
-* Intitute wise Analytics
+* Institute wise Analytics
 ** Create view to list only approved workshops
 #+BEGIN_SRC 
 CREATE VIEW approved_workshops AS SELECT * from workshops where status_id=3;
@@ -168,6 +168,7 @@ DELIMITER ;
 CALL refresh_institute_analytics_now(@rc);
 #+END_SRC
 ** sample table
+select * from institute_analytics;
 |----+-------------------+-----------------+-------------+-----------------------------|
 | id | institute_name    | total_workshops | total_usage | total_participants_attended |
 |----+-------------------+-----------------+-------------+-----------------------------|
@@ -190,6 +191,10 @@ CALL refresh_institute_analytics_now(@rc);
 
 #+END_EXAMPLE
 * Total Analytics
+** Drop table analytics
+#+BEGIN_SRC 
+drop table analytics;
+#+END_SRC
 ** Create table analytics
 #+BEGIN_SRC 
 CREATE TABLE analytics (
@@ -203,7 +208,7 @@ CREATE TABLE analytics (
 #+BEGIN_SRC 
 INSERT INTO analytics SELECT 1, "WORKSHOPS RUN", SUM(total_workshops) FROM institute_analytics;
 INSERT INTO analytics SELECT 2, "UPCOMING WORKSHOPS", COUNT(*) FROM workshops where status_id=1;
-INSERT INTO analytics SELECT 3, "NODAL CENTRES", COUNT(*) FROM nodal_centres;
+INSERT INTO analytics SELECT 3, "NODAL CENTRES", COUNT(*) FROM nodal_centres where centre_status="Active";
 INSERT INTO analytics SELECT 4, "PARTICIPANTS ATTENDED", SUM(total_participants_attended) FROM institute_analytics;
 INSERT INTO analytics SELECT 5, "USAGE", SUM(total_usage) FROM institute_analytics;
 #+END_SRC
@@ -222,7 +227,7 @@ BEGIN
 
   INSERT INTO analytics SELECT 1, "WORKSHOPS RUN", SUM(total_workshops) FROM institute_analytics;
   INSERT INTO analytics SELECT 2, "UPCOMING WORKSHOPS", COUNT(*) FROM workshops where status_id=1;
-  INSERT INTO analytics SELECT 3, "NODAL CENTRES", COUNT(*) FROM nodal_centres;
+  INSERT INTO analytics SELECT 3, "NODAL CENTRES", COUNT(*) FROM nodal_centres where centre_status="Active";
   INSERT INTO analytics SELECT 4, "PARTICIPANTS ATTENDED", SUM(total_participants_attended) FROM institute_analytics;
   INSERT INTO analytics SELECT 5, "USAGE", SUM(total_usage) FROM institute_analytics;
 
@@ -239,6 +244,7 @@ DELIMITER ;
 CALL refresh_analytics_now(@rc);
 #+END_SRC
 ** sample table
+select * from analytics;
 |----+-----------------------+-------------|
 | id | name                  | total_value |
 |----+-----------------------+-------------|
@@ -251,3 +257,19 @@ CALL refresh_analytics_now(@rc);
 
 
 
+* Remove workshops with zero participants
+#+BEGIN_EXAMPLE
+update workshops set status_id=4 where participants_attended=0;
+#+END_EXAMPLE
+* Add user_status coloumn to users table
+#+BEGIN_EXAMPLE
+alter table users add user_status varchar(128);
+#+END_EXAMPLE
+* Add center_status to nodal centers table
+#+BEGIN_EXAMPLE
+alter table nodal_centers add center_status varchar(128)
+#+END_EXAMPLE
+* Remove status of workshop from upcoming to rejected in upcoming workshops list
+#+BEGIN_EXAMPLE
+update workshops set status_id=4 where id=3107;
+#+END_EXAMPLE

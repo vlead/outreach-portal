@@ -37,13 +37,22 @@
     <div ng-controller="map-ctrl">
       <div class="section-one">
         <div class="row">
-	  <div class="col-md-12">
-            <div style="height: 800px;" id="map">
+	  <div class="col-md-8">
+            <img id="map" style="height:800; width:700px;" src="/static/img/google-map-2.png" class="logo-img">            
+            <!-- <div style="height: 800px;" id="map"> -->
             </div>
           </div>
+	  <div class="col-md-4">
+	    <a class="twitter-timeline" data-width="350"
+	      data-height="810"
+	      href="https://twitter.com/TheVirtual_Labs?ref_src=twsrc%5Etfw">Tweets
+	      by TheVirtual_Labs</a> <script async
+	      src="https://platform.twitter.com/widgets.js"
+	      charset="utf-8"></script>
+	  </div>
         </div>
       </div>
-      <div ng-if="upcoming_workshops.length !=0">
+      <div class="col-md-8" ng-if="upcoming_workshops.length !=0">
         <h3>Upcoming Workshops</h3>
         <table class="table table-hover">
           <thead>
@@ -65,6 +74,9 @@
 	    </tr>
 	  </tbody>
         </table>
+      </div>
+      <div class="col-md-4">
+	<iframe src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2FVirtual-Labs-IIT-Delhi-301510159983871%2F&amp;tabs=timeline&amp;width=300&amp;height=350&amp;small_header=false&amp;adapt_container_width=true&amp;hide_cover=false&amp;show_facepile=true&amp;appId" style="border:none;overflow:hidden" scrolling="no" allowtransparency="true" allow="encrypted-media" width="350" height="350" frameborder="0"></iframe>
       </div>
     </div>
   </div>
