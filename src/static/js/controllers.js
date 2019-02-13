@@ -679,6 +679,7 @@ $scope.submit = function(isvalid){
 					     "duration_of_sessions" : $scope.session,
 					     "location" : $scope.location,  "user" : {"id" : $window.number },
 					     "gateway_ip" : $scope.gateway_ip,
+                                             "workshop_status": "Active",
 					     "participating_institutes" : $scope.insts,
 					     "no_of_participants_expected" : $scope.parti,
 					     "no_of_sessions" : Number($scope.sessions),
@@ -709,7 +710,21 @@ $scope.submit = function(isvalid){
 });
 
 app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParams, $route, $window){
-    $scope.PaperUsage = function(status)
+  $scope.init = function(){
+    $scope.user_status = "Active";
+  };
+
+  $scope.changeStatus = function(){
+    if ($scope.user_status == 'Active'){
+      $scope.user_status = "Inactive";
+    }
+    else
+    {
+      $scope.user_status='Active';
+    }
+  };
+
+  $scope.PaperUsage = function(status)
     {
 	if(status == "over")
 	{
@@ -835,6 +850,7 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
 	  dataFactory.put("/workshops/"+$routeParams.id,
 			    { "name" : $scope.message.name,
 			      "location" : $scope.message.location,
+                              "workshop_status" : $scope.workshop_status,
 			      "user" : {"id" : $window.number },
 			      "participating_institutes" : $scope.message.participating_institutes,
 			      "gateway_ip" : $scope.message.gateway_ip,

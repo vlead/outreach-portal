@@ -268,9 +268,15 @@ update users set user_status="Active";
 #+END_EXAMPLE
 * Add center_status to nodal centers table
 #+BEGIN_EXAMPLE
-alter table nodal_centers add center_status varchar(128)
-update nodal_centers set center_status="Active"
+alter table nodal_centers add center_status varchar(128);
+update nodal_centers set center_status="Active";
 #+END_EXAMPLE
+* Add workshop_status to workshops table
+#+BEGIN_EXAMPLE
+alter table workshops add workshop_status varchar(128);
+update workshops set workshop_status="Active";
+#+END_EXAMPLE
+
 * Remove status of workshop from upcoming to rejected in upcoming workshops list
 #+BEGIN_EXAMPLE
 update workshops set status_id=4 where id=3107;
