@@ -59,7 +59,6 @@ import json
 from op_exceptions import AttributeRequired
 from utils import typecheck
 
-
 db = SQLAlchemy()
 
 
