@@ -13,6 +13,7 @@
 	  <th>Email</th>
           <th>Phone</th>
 	  <th>Created On</th>
+          <th>Active/Inactive</th>
 	  <th>Last Active</th>
 	</tr>
       </thead>
@@ -22,6 +23,7 @@
           <td>{{ coordinator.email }}</td>
           <td>{{ coordinator.phone }}</td>
           <td id="number">{{ coordinator.created }}</td>
+          <td><span>{{coordinator.user_status}}</span></td>
 	  <td id="number">{{ coordinator.last_active }}</td>
           <!--<td>{{ coordinator.centre.location }}</td>-->
           <td><a href="#/edit-nc/{{ coordinator.nc_user_id }}" class="btn btn-primary">Edit</a></td>

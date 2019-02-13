@@ -987,7 +987,21 @@ app.controller("manage-nc", function($scope, $http, $routeParams, dataFactory, $
     
 });
 app.controller("edit-nc", function($scope, dataFactory, $http, $routeParams, $window, $route) {
-    $scope.flag1=true;
+  $scope.init = function(){
+    $scope.user_status = "Active";
+  };
+
+  $scope.changeStatus = function(){
+    if ($scope.user_status == 'Active'){
+      $scope.user_status = "Inactive";
+    }
+    else
+    {
+      $scope.user_status='Active';
+    }
+  };
+
+  $scope.flag1=true;
     $scope.change = function()
     {
         $scope.flag2 = true;
@@ -1030,7 +1044,7 @@ app.controller("edit-nc", function($scope, dataFactory, $http, $routeParams, $wi
     $scope.id = 0;
     $scope.submit = function(user_id, nc_id){
         if(true){
-            dataFactory.put("/users/"+user_id,{"name" : $scope.user,"email" : $scope.email, "phone" : $scope.phone} ).
+          dataFactory.put("/users/"+user_id,{"name" : $scope.user,"email" : $scope.email, "user_status": $scope.user_status, "phone" : $scope.phone} ).
                 success(function(data, status, headers, config){
                     var id = data.id;       
                     $scope.status = "Success";
@@ -1099,7 +1113,8 @@ app.controller("add-nc", function($scope, $http, dataFactory, $routeParams, $win
     $scope.id = 0;
     $scope.submit = function(isvalid){
         if(isvalid){
-            dataFactory.post("/users",{"name" : $scope.name, "created" : Date(), "email" : $scope.email, "phone" : $scope.phone, "role" : { "id" : 3 } } ).                success(function(data, status, headers, config){
+          dataFactory.post("/users",{"name" : $scope.name, "created" : Date(), "email" : $scope.email, "phone" : $scope.phone, "user_status":"Active", "role" : { "id" : 3 } } ).
+            success(function(data, status, headers, config){
                     var id = data.id;       
                     $scope.status = "Success";
                     dataFactory.post("/nodal_coordinator_details",
