@@ -1142,6 +1142,7 @@ app.controller("manage-centres", function($scope, $http, dataFactory, $routePara
           dataFactory.post("/nodal_centres",
                            {"name" : $scope.name,
                             "pincode" : $scope.pincode,
+                            "centre_status": "Active",
                             "location" : $scope.centre,
 			    "lattitude" : lat,
                             "longitude" : lng,

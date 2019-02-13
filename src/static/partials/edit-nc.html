@@ -73,9 +73,17 @@
 	</span>
       </p>
 
+      <p>Active/Inactive<br>
 
-      	 
-      
+        <div ng-init="init()">
+          <div class="well">
+            <i style="color:#009933" class="fa fa-toggle-on active" ng-if="user_status == 'Active'" ng-click="changeStatus();"></i>
+            <i style="color:#ff0000" class="fa fa-toggle-on fa-rotate-180 inactive" ng-if="user_status == 'Inactive'" ng-click="changeStatus();"></\
+i>
+</div>
+</div>
+</p>
+       
       <p>
 	<input type="submit" value="submit" class="btn btn-primary"  ng-disabled="myForm.$invalid">
 	<a href="#/manage-nc">Cancel</a>

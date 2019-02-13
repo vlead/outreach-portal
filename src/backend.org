@@ -413,6 +413,7 @@ class User(Entity):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), nullable=False)
     email = db.Column(db.String(128), unique=True)
+    user_status = db.Column(db.String(128))
     phone = db.Column(db.String(128))
     institute_name = db.Column(db.String(128))
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
@@ -463,7 +464,8 @@ class User(Entity):
         if 'institute_name' in kwargs:
             self.set_institute_name(kwargs['institute_name'])
         
-                
+        if 'user_status' in kwargs:
+            self.set_user_status(kwargs['user_status'])                
         
     def __str__(self):
         return "Name = %s, e-mail id = %s,\ created = %s,\
@@ -588,7 +590,6 @@ class TestUser(TestCase):
         user_name = user.get_name()
         self.assertEqual(user_name, "ambika")
 #+END_SRC
-
 
 ***** getEmail: User --> Email
 #+BEGIN_SRC python :tangle src/db.py :eval no
@@ -833,6 +834,21 @@ class TestUser(TestCase):
         self.assertEqual(user.role, role2)
 #+END_SRC
 
+***** setUserStatus: User, UserStatus --> void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def set_user_status(self, user_status):
+        self.user_status = user_status
+
+#+END_SRC
+
+***** getUserStatus: User --> UserStatus
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_user_status(self):
+	current_app.logger.debug("get user status of the User: %s" % self.user_status)
+        return self.user_status
+
+#+END_SRC
+
 ***** to_client
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def to_client(self):
@@ -844,8 +860,8 @@ class TestUser(TestCase):
             'role': self.role.to_client(),
             'last_active': self.last_active,
             'institute_name': self.institute_name,
-            'created': self.created
-
+            'created': self.created,
+            'user_status': self.user_status
         }
 #+END_SRC
       
@@ -5983,7 +5999,10 @@ user = {'entity_class': User,
              'relationship': 'one'},
             {'name': 'nodal_centres',
              'class': NodalCentre,
-             'relationship': 'many'}
+             'relationship': 'many'},
+            {'name': 'user_status',
+             'class': None,
+             'relationship': 'one'}
             
         ]}
 
@@ -6974,8 +6993,8 @@ entity_map_types = {
             'institute_name': str,
             'role': Role,
             'last_active': str,
-            'created': str
-            
+            'created': str,
+            'user_status': str            
         }
     },
     'reference_documents': {
