@@ -1221,62 +1221,75 @@ app.controller("manage-centres", function($scope, $http, dataFactory, $routePara
 });
 
 app.controller("edit-centre", function($scope, dataFactory, $http, $routeParams, $route, $window) {
-       dataFactory.fetch("/nodal_centres/"+$routeParams.id).
-        success(function(data, status, headers, config) {
-          $scope.centres= data;
-        }).
-        error(function(data, status, headers, config){
-            console.log(data);
-        });
-    $scope.submit = function(isvalid) {
-        if(isvalid){
-          var add = function(lat,lng){
-            dataFactory.put("/nodal_centres/"+$routeParams.id,
-                            { "name" : $scope.centres.name,
-                              "longitude" : lng,
-                              "lattitude" : lat,
-			      "pincode" : $scope.centres.pincode,
-                              "location" : $scope.centres.location,
-                              "created_by" : { "id" : $window.number } }).success(function(data, status, headers, config){
-                                $scope.status = "Success";
-                                window.location.href = "#/manage-centres";
-                              }).
-              error(function(data, status, headers, config){
-                if(status == 500){
-                  $scope.status = "Duplicate Email";
-                }
-                else if(status == 400){
-                  $scope.status = "Invalid username";
-                }
-                else {
-                  $scope.status = "Failed";
-                }
-              
-              });
-          };
-          var geocoder = new google.maps.Geocoder();
-          var get_geocode = function (){
-            geocoder.geocode(
-              { "address": $scope.centres.location+","+$scope.centres.pincode+",India,Asia" }, function(results, status) {
-                if (status === google.maps.GeocoderStatus.OK && results.length > 0){
-                  var geoCode = results[0].geometry.location;
-                  var lat = geoCode.lat();
-                  var lng = geoCode.lng();
-                  add(lat, lng);
-                }
-                else{
-                  add("0","0");
-                  console.log("failed for id error: "+status);
-                }
-              }
-            );
-          };
-          get_geocode();
-        }
-      else{
-        $scope.status = "Not empty";
-      }
-    };
+  $scope.init = function(){
+    $scope.centre_status = "Active";
+  };
+
+  $scope.changeStatus = function(){
+    if ($scope.centre_status == 'Active'){
+      $scope.centre_status = "Inactive";
+    }
+    else
+    {
+      $scope.centre_status='Active';
+    }
+  };
+  dataFactory.fetch("/nodal_centres/"+$routeParams.id).
+    success(function(data, status, headers, config) {
+      $scope.centres= data;
+    }).
+    error(function(data, status, headers, config){
+      console.log(data);
+    });
+  $scope.submit = function(isvalid) {
+    if(isvalid){
+      var add = function(lat,lng){
+        dataFactory.put("/nodal_centres/"+$routeParams.id,
+                        { "name" : $scope.centres.name,
+                          "longitude" : lng,
+                          "lattitude" : lat,
+			  "pincode" : $scope.centres.pincode,
+                          "location" : $scope.centres.location,
+                          "created_by" : { "id" : $window.number } }).success(function(data, status, headers, config){
+                            $scope.status = "Success";
+                            window.location.href = "#/manage-centres";
+                          }).
+          error(function(data, status, headers, config){
+            if(status == 500){
+              $scope.status = "Duplicate Email";
+            }
+            else if(status == 400){
+              $scope.status = "Invalid username";
+            }
+            else {
+              $scope.status = "Failed";
+            }
+          
+          });
+      };
+      var geocoder = new google.maps.Geocoder();
+      var get_geocode = function (){
+        geocoder.geocode(
+          { "address": $scope.centres.location+","+$scope.centres.pincode+",India,Asia" }, function(results, status) {
+            if (status === google.maps.GeocoderStatus.OK && results.length > 0){
+              var geoCode = results[0].geometry.location;
+              var lat = geoCode.lat();
+              var lng = geoCode.lng();
+              add(lat, lng);
+            }
+            else{
+              add("0","0");
+              console.log("failed for id error: "+status);
+            }
+          }
+        );
+      };
+      get_geocode();
+    }
+    else{
+      $scope.status = "Not empty";
+    }
+  };
 });
 app.controller("oc-manage-workshops", function($scope, $http, $routeParams, dataFactory,$route, $window) {
     dataFactory.fetch("/workshops?user_id="+$window.number).
