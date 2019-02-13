@@ -3,11 +3,13 @@
   <div class="col-md-8">
     <h2>Edit Nodal Centre</h2><br><br>
   </div>
-</dvi>
+</div>
 <div class="row">
   <div class="col-md-2"></div>
   <div class="col-md-8">
+
     <span class="error"> {{ status }}</span>
+
     <form class="form-horizontal" name="myForm" novalidate ng-submit="submit(myForm.$valid)">
       <div class="form-group">
 	<label class="control-label col-sm-4">Centre Name:</label>
@@ -21,6 +23,7 @@
 	  </span>
 	</div>
       </div>
+
       <div class="form-group">
 	<label class="control-label col-sm-4">Centre Location:</label>
 	<div class="col-sm-6">
@@ -34,6 +37,7 @@
 	  </span>
 	</div>
       </div>
+
       <div class="form-group">
 	<label class="control-label col-sm-4">Pincode:</label>
 	<div class="col-sm-6">
@@ -48,42 +52,16 @@
 	</div>
       </div>
 
-            
-      
-      <!--
-      <p>Centre Name :<br>
-	<input type="text" name="name" ng-model="name"  class="form-control"
-               ng-pattern="/^[a-zA-Z\s]*$/" placeholder="Centre Name" required>
-	<span style="color:red" ng-show="myForm.name.$dirty && myForm.name.$invalid">
-	  <span ng-show="myForm.name.$error.required">Centre name is
-	    required.</span>
-          <span ng-show="myForm.name.$error.pattern">Enter valid name</span>
-	</span>
-      </p>
-      <p>Centre Location :<br>
-	<input type="text" name="centre" ng-pattern="/^[a-zA-Z\s,-;0-9]*$/" ng-model="centre"
-               class="form-control"  placeholder="Location name" required><br>
-        <span>(Ex : - College Name, City, Pincode)</span>
-	<span style="color:red" ng-show="myForm.centre.$dirty && myForm.centre.$invalid">
-	  <span ng-show="myForm.centre.$error.required">Location name is
-	    required.</span>
-          <span ng-show="myForm.centre.$error.pattern">Enter valid location</span>
-	</span>
-      </p>
-      <p>Pincode:<br>
-	<input type="number" name="pincode" ng-model="pincode"  min="0"  ng-minlength="6" ng-maxlength="6" class="form-control"  placeholder="503114" required>
-        <span class="error" ng-show="myForm.pincode.$error.number">Pincode should be number!</span>
-	<span class="error" ng-show="myForm.pincode.$error.maxlength">Not valid pincode!</span>
-	<span class="error" ng-show="myForm.pincode.$error.minlength">Not valid pincode!</span>
-	<span style="color:red" ng-show="myForm.pincode.$dirty && myForm.pincode.$invalid">
-	  <span ng-show="myForm.pincode.$error.required">Pincode is required.</span>
-	</span>
-      </p>
-      <p>
-	<input type="submit" value="submit" class="btn btn-primary"  ng-disabled="myForm.$invalid">
-	<a href="#/manage-centres">Cancel</a>
-      </p>
-      -->
+      <div class="form-group">
+	<label class="control-label col-sm-4">Active/Inactive</label>
+	<div class="col-sm-6">
+	  <div ng-init="init()">
+	    <div class="well">
+	      <i style="color:#009933" class="fa fa-toggle-on centeractive" ng-if="centre_status == 'Active'" ng-click="changeStatus();"></i>
+	      <i style="color:#ff0000" class="fa fa-toggle-on fa-rotate-180 centerinactive" ng-if="centre_status == 'Inactive'" ng-click="changeStatus();"></i>
+	    </div>
+	  </div>
+          
       <br><br>
       <div class="form-group">
 	<label class="col-sm-4"></label>

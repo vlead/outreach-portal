@@ -264,10 +264,12 @@ update workshops set status_id=4 where participants_attended=0;
 * Add user_status coloumn to users table
 #+BEGIN_EXAMPLE
 alter table users add user_status varchar(128);
+update users set user_status="Active";
 #+END_EXAMPLE
 * Add center_status to nodal centers table
 #+BEGIN_EXAMPLE
 alter table nodal_centers add center_status varchar(128)
+update nodal_centers set center_status="Active"
 #+END_EXAMPLE
 * Remove status of workshop from upcoming to rejected in upcoming workshops list
 #+BEGIN_EXAMPLE

@@ -2901,6 +2901,7 @@ class NodalCentre(Entity):
     pincode = db.Column(db.String(128))
     longitude = db.Column(db.String(128))
     lattitude = db.Column(db.String(128))
+    centre_status = db.Column(db.String(128))
     created_by_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     created_by = relationship('User', foreign_keys=[created_by_id])
@@ -2926,6 +2927,9 @@ class NodalCentre(Entity):
         if 'created_by' not in kwargs:
             raise AttributeRequired("mandatory attribute `created_by` is missing")
         self.set_created_by(kwargs['created_by'])
+
+        if 'centre_status' in kwargs:
+            self.set_centre_status(kwargs['centre_status'])
         
         if 'longitude' in kwargs:
             self.set_longitude(kwargs['longitude'])
@@ -3179,8 +3183,6 @@ class TestNodalCentre(TestCase):
         self.assertEqual(centre_name, "IIIT-Hyd")
 #+END_SRC
 
-
-
 ***** getLocation: NodalCentre --> Location
 #+BEGIN_SRC python :tangle src/db.py :eval no 
     def get_location(self):
@@ -3310,8 +3312,6 @@ class TestNodalCentre(TestCase):
         self.assertEqual("IIIT-Hyd", centre.name)
 #+END_SRC
 
-
-
 ***** Test setName: NodalCentre, Name --> Void
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no 
     def test_set_nodal_centre_name(self):
@@ -3347,8 +3347,6 @@ class TestNodalCentre(TestCase):
         centre = NodalCentre.get_by_id(2)
         self.assertEqual("IIIT-Hyd", centre.name)
 #+END_SRC
-
-
 
 ***** setLocation: NodalCentre, Location --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no 
@@ -3476,6 +3474,20 @@ class TestNodalCentre(TestCase):
         self.assertEqual("Hyderabad", centre.location)
 #+END_SRC
 
+
+***** getCentreStatus: NodalCentre --> CentreStatus
+
+#+BEGIN_SRC python :tangle src/db.py :eval no 
+    def get_centre_status(self):
+        current_app.logger.debug("get name of the NodalCentre: %s"  % self.centre_status)
+        return self.centre_status
+#+END_SRC
+***** setCentreStatus: NodalCentre, CentreStatus --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no 
+    @typecheck(centre_status=str)
+    def set_centre_status(self, centre_status):
+        self.centre_status = centre_status
+#+END_SRC
 ***** to_client
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def to_client(self):
@@ -3486,8 +3498,8 @@ class TestNodalCentre(TestCase):
             'location': self.location,
             'pincode': self.pincode,
             'longitude': self.longitude,
-            'lattitude': self.lattitude
-            
+            'lattitude': self.lattitude,
+            'center_status': self.center_status
         }
 #+END_SRC
       
@@ -6164,6 +6176,9 @@ nodal_centre = {'entity_class': NodalCentre,
                      'relationship': 'one'},
                      {'name': 'lattitude',
                      'class': None,
+                     'relationship': 'one'},
+                     {'name': 'centre_status',
+                     'class': None,
                      'relationship': 'one'}
                      
             ]}
@@ -7027,8 +7042,8 @@ entity_map_types = {
             'location': str,
             'pincode': str,
             'longitude': str,
-            'lattitude': str
-            
+            'lattitude': str,
+            'center_status': str            
         }
     },
  
