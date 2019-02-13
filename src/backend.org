@@ -1520,6 +1520,7 @@ class Workshop(Entity):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     status_id = db.Column(db.Integer, db.ForeignKey('status.id'))
 
+    workshop_status = db.Column(db.String(128))
     date = db.Column(db.String(128), nullable=False)
     created = db.Column(db.DateTime(), default=datetime.utcnow)
     last_updated = db.Column(db.String(128))
@@ -1632,6 +1633,9 @@ class Workshop(Entity):
 
         if 'last_updated' in kwargs:
             self.set_last_updated(kwargs['last_updated'])
+
+        if 'workshop_status' in kwargs:
+            self.set_workshop_status(kwargs['workshop_status'])                
 
         
     def __str__(self):
@@ -2841,6 +2845,22 @@ class TestWorkshop(TestCase):
         workshop = Workshop.get_by_id(1)
         self.assertEqual("Attendance Sheet missing", workshop.not_approval_reason)
 #+END_SRC
+***** setWorkshopStatus: Workshop, WorkshopStatus --> void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def set_workshop_status(self, workshop_status):
+	current_app.logger.debug("set workshop status of the User: %s" % self.workshop_status)
+        self.workshop_status = workshop_status
+
+#+END_SRC
+
+***** getWorkshopStatus: Workshop --> WorkshopStatus
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_workshop_status(self):
+	current_app.logger.debug("get workshop status of the User: %s" % self.workshop_status)
+        return self.workshop_status
+
+#+END_SRC
+
 ***** to_client
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def to_client(self):
@@ -2865,7 +2885,8 @@ class TestWorkshop(TestCase):
             'cancellation_reason': self.cancellation_reason,
             'not_approval_reason': self.not_approval_reason,
             'gateway_ip': self.gateway_ip,
-            'version': self.version
+            'version': self.version,
+            'workshop_status': self.workshop_status
         }
 #+END_SRC
       
@@ -6134,7 +6155,10 @@ workshop = {'entity_class': Workshop,
                  'relationship': 'one'},
                 {'name': 'workshop_reports',
                  'class': WorkshopReport,
-                 'relationship': 'many'}
+                 'relationship': 'many'},
+                {'name': 'workshop_status',
+                 'class': None,
+                 'relationship': 'one'}
             ]}
 
 
@@ -7049,7 +7073,8 @@ entity_map_types = {
             'created': datetime,
             'last_updated': str,
             'status': Status,
-            'date': str
+            'date': str,
+            'workshop_status': str
         }
     },
    'nodal_centres': {
