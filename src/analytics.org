@@ -206,7 +206,7 @@ CREATE TABLE analytics (
 #+END_SRC
 ** Insert the total analytics into analytics table
 #+BEGIN_SRC 
-INSERT INTO analytics SELECT 1, "WORKSHOPS RUN", SUM(total_workshops) FROM institute_analytics;
+INSERT INTO analytics SELECT 1, "WORKSHOPS RUN", SUM(total_workshops) FROM institute_analytics where workshop_status="Active";
 INSERT INTO analytics SELECT 2, "UPCOMING WORKSHOPS", COUNT(*) FROM workshops where status_id=1;
 INSERT INTO analytics SELECT 3, "NODAL CENTRES", COUNT(*) FROM nodal_centres where centre_status="Active";
 INSERT INTO analytics SELECT 4, "PARTICIPANTS ATTENDED", SUM(total_participants_attended) FROM institute_analytics;
