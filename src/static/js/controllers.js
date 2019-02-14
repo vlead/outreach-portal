@@ -1280,6 +1280,7 @@ app.controller("edit-centre", function($scope, dataFactory, $http, $routeParams,
                         { "name" : $scope.centres.name,
                           "longitude" : lng,
                           "lattitude" : lat,
+                          "centre_status": $scope.centre_status,                          
 			  "pincode" : $scope.centres.pincode,
                           "location" : $scope.centres.location,
                           "created_by" : { "id" : $window.number } }).success(function(data, status, headers, config){
