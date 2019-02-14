@@ -7086,7 +7086,7 @@ entity_map_types = {
             'pincode': str,
             'longitude': str,
             'lattitude': str,
-            'center_status': str            
+            'centre_status': str            
         }
     },
  
