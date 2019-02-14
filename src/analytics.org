@@ -256,7 +256,6 @@ select * from analytics;
 |----+-----------------------+-------------|
 
 
-
 * Remove workshops with zero participants
 #+BEGIN_EXAMPLE
 update workshops set status_id=4 where participants_attended=0;

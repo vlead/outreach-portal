@@ -3535,7 +3535,7 @@ class TestNodalCentre(TestCase):
             'pincode': self.pincode,
             'longitude': self.longitude,
             'lattitude': self.lattitude,
-            'center_status': self.center_status
+            'centre_status': self.centre_status
         }
 #+END_SRC
       
