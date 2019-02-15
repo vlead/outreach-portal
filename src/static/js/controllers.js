@@ -711,16 +711,16 @@ $scope.submit = function(isvalid){
 
 app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParams, $route, $window){
   $scope.init = function(){
-    $scope.user_status = "Active";
+    $scope.workshop_status = "Active";
   };
 
   $scope.changeStatus = function(){
-    if ($scope.user_status == 'Active'){
-      $scope.user_status = "Inactive";
+    if ($scope.workshop_status == 'Active'){
+      $scope.workshop_status = "Inactive";
     }
     else
     {
-      $scope.user_status='Active';
+      $scope.workshop_status='Active';
     }
   };
 
