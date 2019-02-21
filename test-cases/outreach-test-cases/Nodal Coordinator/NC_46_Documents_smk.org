@@ -1,0 +1,28 @@
+#+Author: Sravanthi
+#+Date Created: 13 Dec 2018
+* Environment
+  - OS: Windows 7, Ubuntu-16.04,Centos-6
+  - Browsers: Firefox-42.0,Chrome-47.0,chromium-45.0
+  - Bandwidth : 100Mbps
+  - Hardware Configuration:8GBRAM , 
+  - Processor:i5
+
+* Objective
+  - To be able to view the list of the workshops documents that were uploaded by Admin,OC's and other NC,s
+
+* Pre conditions
+  - Refer to first test case [[https://github.com/vlead/outreach-portal/blob/master/test-cases/integration_test-cases/NC/NC_01_Feature.org][NC_01_Feature.org]]
+
+* Post conditions
+  - Nil
+* Test Steps
+  1. Click on the documents link
+  2. It should redirect to the documents page
+
+* Expected result
+  1. Documents page should be displayed on the screen
+  2. Content should not have any distortions and junk characters
+
+* Review/comments
+
+

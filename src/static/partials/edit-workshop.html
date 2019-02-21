@@ -4,15 +4,15 @@
     <span class="error"> {{ status }}</span>
     
     <!-- Text input-->
-    <div class="form-group">
-      <label class="col-md-4 control-label">Workshop Version *</label>
-      <div class="col-md-4 inputGroupContainer">
-	<div class="input-group">
-	  <label><input type="radio" name="test" ng-model="message.version" ng-click="enable = true" value="online"/> online</label>&emsp;&emsp;
-	  <label><input type="radio" name="test" ng-model="message.version" ng-click="enable = false" value="offline"/> offline (college cloud edition)</label>
-	</div>
-      </div>
-    </div>
+    <!-- <div class="form-group"> -->
+    <!--   <label class="col-md-4 control-label">Workshop Version *</label> -->
+    <!--   <div class="col-md-4 inputGroupContainer"> -->
+    <!--     <div class="input-group"> -->
+    <!--       <label><input type="radio" name="test" ng-model="message.version" ng-click="enable = true" value="online"/> online</label>&emsp;&emsp; -->
+    <!--       <label><input type="radio" name="test" ng-model="message.version" ng-click="enable = false" value="offline"/> offline (college cloud edition)</label> -->
+    <!--     </div> -->
+    <!--   </div> -->
+    <!-- </div> -->
     
     <div class="form-group">
       <label class="col-md-4 control-label">Workshop Name *</label>  
@@ -200,9 +200,20 @@
     </div>
     {{ info }}
     <p><br><br>
-       <div class="col-md-4"></div>
+      <div class="form-group">
+      	<label class="control-label col-sm-4">Active/Inactive</label>
+      	<div class="col-sm-4">
+      	  <div ng-init="init()">
+      	    <div class="well">
+      	      <i style="color:#009933" class="fa fa-toggle-on centeractive" ng-if="workshop_status == 'Active'" ng-click="changeStatus();"></i>
+      	      <i style="color:#ff0000" class="fa fa-toggle-on fa-rotate-180 centerinactive" ng-if="workshop_status == 'Inactive'" ng-click="changeStatus();"></i>
+      	    </div>
+      	  </div>
+	</div>
+      </div>
+      <div class="col-md-4"></div>
       <div class="col-md-4">
-	<input type="submit" value="submit" class="btn btn-primary"  ng-disabled="myForm.$invalid">&emsp;&emsp;&emsp;<a href="#/manage-workshops">Cancel</a>
+      	<input type="submit" value="submit" class="btn btn-primary"  ng-disabled="myForm.$invalid">&emsp;&emsp;&emsp;<a href="#/manage-workshops">Cancel</a>
       </div>
   </fieldset>
 </form>

@@ -13,6 +13,7 @@
 	  <th>Email</th>
           <th>Phone</th>
 	  <th>Created On</th>
+          <th>Active/Inactive</th>
 	  <th>Last Active</th>
 	</tr>
       </thead>
@@ -22,7 +23,8 @@
           <td>{{ coordinator.email }}</td>
           <td>{{ coordinator.phone }}</td>
           <td id="number">{{ coordinator.created }}</td>
-          <td id="number">{{ coordinator.last_active }}</td>
+          <td>{{coordinator.user_status}}</td>
+	  <td id="number">{{ coordinator.last_active }}</td>
           <!--<td>{{ coordinator.centre.location }}</td>-->
           <td><a href="#/edit-nc/{{ coordinator.nc_user_id }}" class="btn btn-primary">Edit</a></td>
           <td><a class="btn btn-primary" ng-click="del(coordinator.nc_details_id, coordinator.id)">Delete</a></td>

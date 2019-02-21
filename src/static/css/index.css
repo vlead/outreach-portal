@@ -233,4 +233,8 @@ img:hover{
 	 border-right-color: #678f48;
 	 min-height: 115px;
 }
- 
+
+.centeractive, .centerinactive {font-size:36px !important;cursor:pointer;}
+.centeractive, .centerinactive {font-size:36p !importantx;cursor:pointer;}
+i.centeractive { color: #5cb85c}
+i.centerinactive {color: #d9534f}

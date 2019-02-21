@@ -59,7 +59,6 @@ import json
 from op_exceptions import AttributeRequired
 from utils import typecheck
 
-
 db = SQLAlchemy()
 
 
@@ -413,6 +412,7 @@ class User(Entity):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), nullable=False)
     email = db.Column(db.String(128), unique=True)
+    user_status = db.Column(db.String(128))
     phone = db.Column(db.String(128))
     institute_name = db.Column(db.String(128))
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
@@ -463,20 +463,22 @@ class User(Entity):
         if 'institute_name' in kwargs:
             self.set_institute_name(kwargs['institute_name'])
         
+        if 'user_status' in kwargs:
+            self.set_user_status(kwargs['user_status'])                
         
     def __str__(self):
         return "Name = %s, e-mail id = %s,\ created = %s,\
         institute_name = %s, role=%s, last_active = %s"\
         % (self.name, self.email, self.created,
            self.institute_name, self.role.name,
-           self.last_active, self.phone)
+           self.last_active)
 
     def __repr__(self):
         return "Name = %s, e-mail id = %s, created=%s\
         institute_name = %s, role=%s, last_active = %s"\
         % (self.name, self.email, self.created,
            self.institute_name, self.role.name,
-           self.last_active, self.phone)
+           self.last_active)
 
 #+END_SRC
      
@@ -831,6 +833,21 @@ class TestUser(TestCase):
         self.assertEqual(user.role, role2)
 #+END_SRC
 
+***** setUserStatus: User, UserStatus --> void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def set_user_status(self, user_status):
+        self.user_status = user_status
+
+#+END_SRC
+
+***** getUserStatus: User --> UserStatus
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_user_status(self):
+	current_app.logger.debug("get user status of the User: %s" % self.user_status)
+        return self.user_status
+
+#+END_SRC
+
 ***** to_client
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def to_client(self):
@@ -842,7 +859,8 @@ class TestUser(TestCase):
             'role': self.role.to_client(),
             'last_active': self.last_active,
             'institute_name': self.institute_name,
-            'created': self.created
+            'created': self.created,
+            'user_status': self.user_status
         }
 #+END_SRC
       
@@ -1320,6 +1338,82 @@ class TestStatus(TestCase):
         status_dict = status.to_client()
         self.assertEqual("Rejected", status_dict['name'])
 #+END_SRC
+*** Institute Analytics
+**** Immutable data
+     + Id
+
+**** Mutable data
+     + Institute Name
+     + Total Workshops
+     + Total Usage
+     + Total Participants Attended
+
+**** Definition
+#+BEGIN_SRC python :tangle src/db.py :eval no
+class InstituteAnalytics(Entity):
+
+    __tablename__ = 'institute_analytics'
+
+    id = db.Column(db.Integer, primary_key=True)
+    institute_name = db.Column(db.String(128), nullable=False, unique=True)
+    total_workshops = db.Column(db.Integer)
+    total_usage = db.Column(db.Integer)
+    total_participants_attended = db.Column(db.Integer)
+        
+#+END_SRC
+
+**** Constructor
+#+BEGIN_EXAMPLE
+    status = Status(name=<instance of class Name>)
+                    
+#+END_EXAMPLE
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def __init__(self, **kwargs):
+        if 'institute_name' not in kwargs:
+            raise AttributeRequired("mandatory attribute `institute_name` is missing")
+        self.set_institute_name(kwargs['institute_name'])
+
+#+END_SRC
+
+**** Functions that operate on the Analytics domain
+***** getStatus: Id --> Analytics
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @staticmethod
+    def get_by_id(id):
+        current_app.logger.debug("get by Institute Analytics id: %s"  % id)
+        return InstituteAnalytics.query.get(id)
+
+#+END_SRC
+
+***** getAll: Nil --> set[Status]
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @staticmethod
+    def get_all():
+        current_app.logger.debug("get all rows of Institute Analytics entity")
+
+        return InstituteAnalytics.query.all()
+#+END_SRC
+
+***** setName: Status, Name --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(institute_name=str)
+    def set_institute_name(self, institute_name):
+        self.institute_name = institute_name.value
+#+END_SRC
+
+***** to_client
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def to_client(self):
+        return {
+            'id': self.id,
+            'institute_name': self.institute_name,
+            'total_workshops': self.total_workshops,
+            'total_usage': self.total_usage,
+            'total_participants_attended': self.total_participants_attended
+        }
+
+#+END_SRC
+
 *** Analytics
 **** Immutable data
      + Id
@@ -1389,7 +1483,6 @@ class Analytics(Entity):
 
 #+END_SRC
 
-
 *** Workshop
 **** Immutable data
      + Id
@@ -1427,6 +1520,7 @@ class Workshop(Entity):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     status_id = db.Column(db.Integer, db.ForeignKey('status.id'))
 
+    workshop_status = db.Column(db.String(128))
     date = db.Column(db.String(128), nullable=False)
     created = db.Column(db.DateTime(), default=datetime.utcnow)
     last_updated = db.Column(db.String(128))
@@ -1539,6 +1633,9 @@ class Workshop(Entity):
 
         if 'last_updated' in kwargs:
             self.set_last_updated(kwargs['last_updated'])
+
+        if 'workshop_status' in kwargs:
+            self.set_workshop_status(kwargs['workshop_status'])                
 
         
     def __str__(self):
@@ -2748,6 +2845,22 @@ class TestWorkshop(TestCase):
         workshop = Workshop.get_by_id(1)
         self.assertEqual("Attendance Sheet missing", workshop.not_approval_reason)
 #+END_SRC
+***** setWorkshopStatus: Workshop, WorkshopStatus --> void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def set_workshop_status(self, workshop_status):
+	current_app.logger.debug("set workshop status of the User: %s" % self.workshop_status)
+        self.workshop_status = workshop_status
+
+#+END_SRC
+
+***** getWorkshopStatus: Workshop --> WorkshopStatus
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def get_workshop_status(self):
+	current_app.logger.debug("get workshop status of the User: %s" % self.workshop_status)
+        return self.workshop_status
+
+#+END_SRC
+
 ***** to_client
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def to_client(self):
@@ -2772,7 +2885,8 @@ class TestWorkshop(TestCase):
             'cancellation_reason': self.cancellation_reason,
             'not_approval_reason': self.not_approval_reason,
             'gateway_ip': self.gateway_ip,
-            'version': self.version
+            'version': self.version,
+            'workshop_status': self.workshop_status
         }
 #+END_SRC
       
@@ -2823,6 +2937,7 @@ class NodalCentre(Entity):
     pincode = db.Column(db.String(128))
     longitude = db.Column(db.String(128))
     lattitude = db.Column(db.String(128))
+    centre_status = db.Column(db.String(128))
     created_by_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     created_by = relationship('User', foreign_keys=[created_by_id])
@@ -2848,6 +2963,9 @@ class NodalCentre(Entity):
         if 'created_by' not in kwargs:
             raise AttributeRequired("mandatory attribute `created_by` is missing")
         self.set_created_by(kwargs['created_by'])
+
+        if 'centre_status' in kwargs:
+            self.set_centre_status(kwargs['centre_status'])
         
         if 'longitude' in kwargs:
             self.set_longitude(kwargs['longitude'])
@@ -2858,7 +2976,7 @@ class NodalCentre(Entity):
         if 'pincode' in kwargs:
             self.set_pincode(kwargs['pincode'])
 
-        
+                
     def __str__(self):
         return "Name = %s, location = %s, created_by = %s" % \
             (self.name, self.location, self.created_by)
@@ -3230,6 +3348,42 @@ class TestNodalCentre(TestCase):
         self.assertEqual("IIIT-Hyd", centre.name)
 #+END_SRC
 
+***** Test setName: NodalCentre, Name --> Void
+#+BEGIN_SRC python :tangle tests/test_db.py :eval no 
+    def test_set_nodal_centre_name(self):
+        print "test_set_nodal_centre_name"
+        role1 = Role(name=Name("OC"))
+        role1.save()
+
+        role2 = Role(name=Name("NC"))
+        role2.save()
+
+        user_1 = User(name=Name("Ambika"),
+                      email=Email("ambika@vlabs.ac.in"), role=role1)
+        user_2 = User(name=Name("Madhavi"),
+                      email=Email("madhavi@vlabs.ac.in"), role=role2)
+        user_3 = User(name=Name("Will Smith"),
+                      email=Email("smith@vlabs.ac.in"), role=role2)
+
+        user_1.save()
+        user_2.save()
+        user_3.save()
+
+        nodal_centre1 = NodalCentre(name="IIIT-Hyd", location="Gachibowli",\
+                                   created_by=user_1)
+
+        nodal_centre1.save()
+
+        nodal_centre2 = NodalCentre(name="HCU", location="Lingampalli", \
+                                    created_by=user_2)               
+        nodal_centre2.save()
+
+        nodal_centre2.set_name("IIIT-Hyd")
+        nodal_centre2.save()
+        centre = NodalCentre.get_by_id(2)
+        self.assertEqual("IIIT-Hyd", centre.name)
+#+END_SRC
+
 ***** setLocation: NodalCentre, Location --> Void
 #+BEGIN_SRC python :tangle src/db.py :eval no 
     @typecheck(location=str)
@@ -3356,6 +3510,20 @@ class TestNodalCentre(TestCase):
         self.assertEqual("Hyderabad", centre.location)
 #+END_SRC
 
+
+***** getCentreStatus: NodalCentre --> CentreStatus
+
+#+BEGIN_SRC python :tangle src/db.py :eval no 
+    def get_centre_status(self):
+        current_app.logger.debug("get name of the NodalCentre: %s"  % self.centre_status)
+        return self.centre_status
+#+END_SRC
+***** setCentreStatus: NodalCentre, CentreStatus --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no 
+    @typecheck(centre_status=str)
+    def set_centre_status(self, centre_status):
+        self.centre_status = centre_status
+#+END_SRC
 ***** to_client
 #+BEGIN_SRC python :tangle src/db.py :eval no
     def to_client(self):
@@ -3366,7 +3534,8 @@ class TestNodalCentre(TestCase):
             'location': self.location,
             'pincode': self.pincode,
             'longitude': self.longitude,
-            'lattitude': self.lattitude
+            'lattitude': self.lattitude,
+            'centre_status': self.centre_status
         }
 #+END_SRC
       
@@ -5850,7 +6019,11 @@ user = {'entity_class': User,
              'relationship': 'one'},
             {'name': 'nodal_centres',
              'class': NodalCentre,
-             'relationship': 'many'}
+             'relationship': 'many'},
+            {'name': 'user_status',
+             'class': None,
+             'relationship': 'one'}
+            
         ]}
 
 reference_document = {'entity_class': ReferenceDocument,
@@ -5881,6 +6054,26 @@ status = {'entity_class': Status,
              'class': Workshop,
              'relationship': 'many'}
             ]}
+
+institute_analytics = {'entity_class': InstituteAnalytics,
+	     'attributes': [
+                 {'name': 'id',
+                  'class': None,
+	          'relationship': 'one'},
+                 {'name': 'institute_name',
+                  'class': None,
+                  'relationship': 'one'},
+                 {'name': 'total_workshops',
+                  'class': None,
+                  'relationship': 'one'},
+                 {'name': 'total_usage',
+                  'class': None,
+                  'relationship': 'one'},
+                 {'name': 'total_participants_attended',
+                  'class': None,
+                  'relationship': 'one'}
+
+             ]}
 
 analytics = {'entity_class': Analytics,
 	     'attributes': [
@@ -5962,7 +6155,10 @@ workshop = {'entity_class': Workshop,
                  'relationship': 'one'},
                 {'name': 'workshop_reports',
                  'class': WorkshopReport,
-                 'relationship': 'many'}
+                 'relationship': 'many'},
+                {'name': 'workshop_status',
+                 'class': None,
+                 'relationship': 'one'}
             ]}
 
 
@@ -6022,7 +6218,11 @@ nodal_centre = {'entity_class': NodalCentre,
                      'relationship': 'one'},
                      {'name': 'lattitude',
                      'class': None,
+                     'relationship': 'one'},
+                     {'name': 'centre_status',
+                     'class': None,
                      'relationship': 'one'}
+                     
             ]}
 
 workshop_report = {'entity_class': WorkshopReport,
@@ -6046,7 +6246,8 @@ workshops = workshop
 nodal_coordinator_details = nodal_coordinator_detail
 nodal_centres = nodal_centre
 workshop_reports = workshop_report
-analytics = analytics
+institute_analytics = institute_analytics
+analytics= analytics
 
 entity_pairs = {
     'roles': role,
@@ -6057,6 +6258,7 @@ entity_pairs = {
     'nodal_coordinator_details': nodal_coordinator_detail,
     'nodal_centres': nodal_centre,
     'workshop_reports': workshop_report,
+    'institute_analytics': institute_analytics,
     'analytics': analytics
 }
                    
@@ -6814,7 +7016,8 @@ entity_map_types = {
             'institute_name': str,
             'role': Role,
             'last_active': str,
-            'created': str
+            'created': str,
+            'user_status': str            
         }
     },
     'reference_documents': {
@@ -6829,6 +7032,15 @@ entity_map_types = {
         'entity': Status,
         'types': {
             'name': Name
+        }
+    },
+    'institute_analytics': {
+        'entity': InstituteAnalytics,
+        'types': {
+            'institute_name': str,
+            'total_workshops': int,
+            'total_usage': int,
+            'total_participants_attended': int
         }
     },
     'analytics': {
@@ -6861,7 +7073,8 @@ entity_map_types = {
             'created': datetime,
             'last_updated': str,
             'status': Status,
-            'date': str
+            'date': str,
+            'workshop_status': str
         }
     },
    'nodal_centres': {
@@ -6872,7 +7085,8 @@ entity_map_types = {
             'location': str,
             'pincode': str,
             'longitude': str,
-            'lattitude': str
+            'lattitude': str,
+            'centre_status': str            
         }
     },
  
@@ -8440,7 +8654,7 @@ class TestWorkshopReport(TestCase):
 
 #+END_SRC
     
-* Run the Test Cases
+* Run the test Cases
 ** Python DB Tests
 #+BEGIN_SRC python :tangle tests/test_db.py :eval no
 
