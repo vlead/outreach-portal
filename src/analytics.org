@@ -12,74 +12,76 @@
 * Institute wise Analytics
 ** Create view to list only approved workshops
 #+BEGIN_SRC 
-CREATE VIEW approved_workshops AS SELECT * from workshops where status_id=3;
+drop view approved_workshops;
+CREATE VIEW approved_workshops AS SELECT * from workshops where status_id=3 and workshop_status="Active";
 #+END_SRC
 ** Create table to list institute wise analytics to capture total_workshops, total_usage and total participants attended
 #+BEGIN_SRC 
 CREATE TABLE institute_analytics ( id INT PRIMARY KEY
 AUTO_INCREMENT, institute_name VARCHAR(128) NOT NULL,
+    user_id INT,
     total_workshops INT  NOT NULL,
     total_usage INT  NOT NULL,
     total_participants_attended INT  NOT NULL);
 #+END_SRC
 ** Insert the analytics of each institute into institute_analyitcs table.
 #+BEGIN_SRC 
-INSERT INTO institute_analytics SELECT 1, "Amrita University",
+INSERT INTO institute_analytics SELECT 1, "Amrita University", 353,
 COUNT(*), SUM(experiments_conducted),
 SUM(participants_attended) from approved_workshops where
 user_id=353 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=353));
 
-INSERT INTO institute_analytics SELECT 2, "COEP",
+INSERT INTO institute_analytics SELECT 2, "COEP", 33,
 COUNT(*), SUM(experiments_conducted),
 SUM(participants_attended) from approved_workshops where
 user_id=33 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=33));
 
-INSERT INTO institute_analytics SELECT 3, "DEI Dayalbagh",
+INSERT INTO institute_analytics SELECT 3, "DEI Dayalbagh", 20, 
 COUNT(*), SUM(experiments_conducted),
 SUM(participants_attended) from approved_workshops where
 user_id=20 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=20));
 
-INSERT INTO institute_analytics SELECT 4, "IIIT Hyderabad",
+INSERT INTO institute_analytics SELECT 4, "IIIT Hyderabad", 5,
 COUNT(*), SUM(experiments_conducted),
 SUM(participants_attended) from approved_workshops where
 user_id=5 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=5));
 
-INSERT INTO institute_analytics SELECT 5, "IIT Bombay",
+INSERT INTO institute_analytics SELECT 5, "IIT Bombay", 12,
 COUNT(*), SUM(experiments_conducted),
 SUM(participants_attended) from approved_workshops where
 user_id=12 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=12));
 
-INSERT INTO institute_analytics SELECT 6, "IIT Delhi",
+INSERT INTO institute_analytics SELECT 6, "IIT Delhi", 70,
 COUNT(*), SUM(experiments_conducted),
 SUM(participants_attended) from approved_workshops where
 user_id=70 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=70));
 
-INSERT INTO institute_analytics SELECT 7, "IIT Guwahati",
+INSERT INTO institute_analytics SELECT 7, "IIT Guwahati", 34,
 COUNT(*), SUM(experiments_conducted),
 SUM(participants_attended) from approved_workshops where
 user_id=34 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=34));
 
-INSERT INTO institute_analytics SELECT 8, "IIT Kanpur",
+INSERT INTO institute_analytics SELECT 8, "IIT Kanpur", 11,
 COUNT(*), SUM(experiments_conducted),
 SUM(participants_attended) from approved_workshops where
 user_id=11 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=11));
 
-INSERT INTO institute_analytics SELECT 9, "IIT Kharagpur",
+INSERT INTO institute_analytics SELECT 9, "IIT Kharagpur", 285,
 COUNT(*), SUM(experiments_conducted),
 SUM(participants_attended) from approved_workshops where
 user_id=285 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=285));
 
-INSERT INTO institute_analytics SELECT 10, "IIT Roorkee",
+INSERT INTO institute_analytics SELECT 10, "IIT Roorkee", 21,
 COUNT(*), SUM(experiments_conducted),
 SUM(participants_attended) from approved_workshops where
 user_id=21 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=21));
 
-INSERT INTO institute_analytics SELECT 11, "NITK Surathkal",
+INSERT INTO institute_analytics SELECT 11, "NITK Surathkal", 334,
 COUNT(*), SUM(experiments_conducted),
 SUM(participants_attended) from approved_workshops where
 user_id=334 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=334));
 
-INSERT INTO institute_analytics SELECT 12, "VLEAD",
+INSERT INTO institute_analytics SELECT 12, "VLEAD", 546,
 COUNT(*), SUM(experiments_conducted),
 SUM(participants_attended) from approved_workshops where
 user_id=546 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=546));
@@ -97,62 +99,62 @@ BEGIN
 
   TRUNCATE TABLE institute_analytics;
 
-  INSERT INTO institute_analytics SELECT 1, "Amrita University",
+  INSERT INTO institute_analytics SELECT 1, "Amrita University", 353,
   COUNT(*), SUM(experiments_conducted),
   SUM(participants_attended) from approved_workshops where
   user_id=353 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=353));
 
-  INSERT INTO institute_analytics SELECT 2, "COEP",
+  INSERT INTO institute_analytics SELECT 2, "COEP", 33,
   COUNT(*), SUM(experiments_conducted),
   SUM(participants_attended) from approved_workshops where
   user_id=33 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=33));
 
-  INSERT INTO institute_analytics SELECT 3, "DEI Dayalbagh",
+  INSERT INTO institute_analytics SELECT 3, "DEI Dayalbagh", 20,
   COUNT(*), SUM(experiments_conducted),
   SUM(participants_attended) from approved_workshops where
   user_id=20 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=20));
 
-  INSERT INTO institute_analytics SELECT 4, "IIIT Hyderabad",
+  INSERT INTO institute_analytics SELECT 4, "IIIT Hyderabad", 5,
   COUNT(*), SUM(experiments_conducted),
   SUM(participants_attended) from approved_workshops where
   user_id=5 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=5));
 
-  INSERT INTO institute_analytics SELECT 5, "IIT Bombay",
+  INSERT INTO institute_analytics SELECT 5, "IIT Bombay", 12,
   COUNT(*), SUM(experiments_conducted),
   SUM(participants_attended) from approved_workshops where
   user_id=12 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=12));
-
-  INSERT INTO institute_analytics SELECT 6, "IIT Delhi",
+ 
+  INSERT INTO institute_analytics SELECT 6, "IIT Delhi", 70,
   COUNT(*), SUM(experiments_conducted),
   SUM(participants_attended) from approved_workshops where
   user_id=70 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=70));
 
-  INSERT INTO institute_analytics SELECT 7, "IIT Guwahati",
+  INSERT INTO institute_analytics SELECT 7, "IIT Guwahati", 34,
   COUNT(*), SUM(experiments_conducted),
   SUM(participants_attended) from approved_workshops where
   user_id=34 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=34));
 
-  INSERT INTO institute_analytics SELECT 8, "IIT Kanpur",
+  INSERT INTO institute_analytics SELECT 8, "IIT Kanpur", 11,
   COUNT(*), SUM(experiments_conducted),
   SUM(participants_attended) from approved_workshops where
   user_id=11 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=11));
 
-  INSERT INTO institute_analytics SELECT 9, "IIT Kharagpur",
+  INSERT INTO institute_analytics SELECT 9, "IIT Kharagpur", 285,
   COUNT(*), SUM(experiments_conducted),
   SUM(participants_attended) from approved_workshops where
   user_id=285 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=285));
 
-  INSERT INTO institute_analytics SELECT 10, "IIT Roorkee",
+  INSERT INTO institute_analytics SELECT 10, "IIT Roorkee", 21,
   COUNT(*), SUM(experiments_conducted),
   SUM(participants_attended) from approved_workshops where
   user_id=21 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=21));
   
-  INSERT INTO institute_analytics SELECT 11, "NITK Surathkal",
+  INSERT INTO institute_analytics SELECT 11, "NITK Surathkal", 334,
   COUNT(*), SUM(experiments_conducted),
   SUM(participants_attended) from approved_workshops where
   user_id=334 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=334));
 
-  INSERT INTO institute_analytics SELECT 12, "VLEAD",
+  INSERT INTO institute_analytics SELECT 12, "VLEAD", 546,
   COUNT(*), SUM(experiments_conducted),
   SUM(participants_attended) from approved_workshops where
   user_id=546 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=546));
@@ -169,22 +171,22 @@ CALL refresh_institute_analytics_now(@rc);
 #+END_SRC
 ** sample table
 select * from institute_analytics;
-|----+-------------------+-----------------+-------------+-----------------------------|
-| id | institute_name    | total_workshops | total_usage | total_participants_attended |
-|----+-------------------+-----------------+-------------+-----------------------------|
-|  1 | Amrita University |             114 |      239729 |                      312604 |
-|  2 | COEP              |              64 |      258093 |                       47613 |
-|  3 | DEI Dayalbagh     |              18 |       67300 |                        2655 |
-|  4 | IIIT Hyderabad    |             135 |      137424 |                       12431 |
-|  5 | IIT Bombay        |            2077 |      536814 |                      104498 |
-|  6 | IIT Delhi         |             182 |      498185 |                       35488 |
-|  7 | IIT Guwahati      |              24 |      116050 |                        3007 |
-|  8 | IIT Kanpur        |              37 |       67031 |                        2563 |
-|  9 | IIT Kharagpur     |             164 |      273686 |                        8226 |
-| 10 | IIT Roorkee       |              84 |      382854 |                       12586 |
-| 11 | NITK Surathkal    |              79 |      125437 |                       10792 |
-| 12 | VLEAD             |               0 |           0 |                           0 |
-|----+-------------------+-----------------+-------------+-----------------------------|
++----+-------------------+-----------------+-------------+-----------------------------+---------+
+| id | institute_name    | total_workshops | total_usage | total_participants_attended | user_id |
++----+-------------------+-----------------+-------------+-----------------------------+---------+
+|  1 | Amrita University |             340 |      314655 |                      388009 |     353 |
+|  2 | COEP              |              68 |      260340 |                       47854 |      33 |
+|  3 | DEI Dayalbagh     |              18 |       67300 |                        2655 |      20 |
+|  4 | IIIT Hyderabad    |             182 |      180017 |                       16676 |       5 |
+|  5 | IIT Bombay        |            2071 |      536526 |                      104210 |      12 |
+|  6 | IIT Delhi         |             224 |      633592 |                       42848 |      70 |
+|  7 | IIT Guwahati      |              24 |      150350 |                        3007 |      34 |
+|  8 | IIT Kanpur        |              46 |       87233 |                        3221 |      11 |
+|  9 | IIT Kharagpur     |             199 |      274964 |                        9648 |     285 |
+| 10 | IIT Roorkee       |              90 |      399129 |                       13498 |      21 |
+| 11 | NITK Surathkal    |              79 |      125437 |                       10792 |     334 |
+| 12 | VLEAD             |               2 |        5399 |                        5987 |     546 |
++----+-------------------+-----------------+-------------+-----------------------------+---------+
 
 
 #+BEGIN_EXAMPLE
@@ -206,7 +208,7 @@ CREATE TABLE analytics (
 #+END_SRC
 ** Insert the total analytics into analytics table
 #+BEGIN_SRC 
-INSERT INTO analytics SELECT 1, "WORKSHOPS RUN", SUM(total_workshops) FROM institute_analytics where workshop_status="Active";
+INSERT INTO analytics SELECT 1, "WORKSHOPS RUN", SUM(total_workshops) FROM institute_analytics where ;
 INSERT INTO analytics SELECT 2, "UPCOMING WORKSHOPS", COUNT(*) FROM workshops where status_id=1;
 INSERT INTO analytics SELECT 3, "NODAL CENTRES", COUNT(*) FROM nodal_centres where centre_status="Active";
 INSERT INTO analytics SELECT 4, "PARTICIPANTS ATTENDED", SUM(total_participants_attended) FROM institute_analytics;
@@ -254,7 +256,6 @@ select * from analytics;
 |  4 | PARTICIPANTS ATTENDED |      552463 |
 |  5 | USAGE                 |     2702603 |
 |----+-----------------------+-------------|
-
 
 * Remove workshops with zero participants
 #+BEGIN_EXAMPLE
