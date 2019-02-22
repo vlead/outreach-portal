@@ -1356,6 +1356,7 @@ class InstituteAnalytics(Entity):
 
     id = db.Column(db.Integer, primary_key=True)
     institute_name = db.Column(db.String(128), nullable=False, unique=True)
+    user_id = db.Column(db.Integer)
     total_workshops = db.Column(db.Integer)
     total_usage = db.Column(db.Integer)
     total_participants_attended = db.Column(db.Integer)
@@ -1409,7 +1410,8 @@ class InstituteAnalytics(Entity):
             'institute_name': self.institute_name,
             'total_workshops': self.total_workshops,
             'total_usage': self.total_usage,
-            'total_participants_attended': self.total_participants_attended
+            'total_participants_attended': self.total_participants_attended,
+            'user_id': self.user_id
         }
 
 #+END_SRC
@@ -6071,6 +6073,9 @@ institute_analytics = {'entity_class': InstituteAnalytics,
                   'relationship': 'one'},
                  {'name': 'total_participants_attended',
                   'class': None,
+                  'relationship': 'one'},
+                 {'name': 'user_id',
+                  'class': None,
                   'relationship': 'one'}
 
              ]}
@@ -7040,7 +7045,8 @@ entity_map_types = {
             'institute_name': str,
             'total_workshops': int,
             'total_usage': int,
-            'total_participants_attended': int
+            'total_participants_attended': int,
+            'user_id': int
         }
     },
     'analytics': {
