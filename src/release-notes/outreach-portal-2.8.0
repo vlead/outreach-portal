@@ -1,0 +1,41 @@
+#+TITLE: Outreach Portal Version V2.8.0
+#+AUTHOR: VLEAD
+#+DATE: [2019-02-22 Fri]
+
+* Introduction
+  This document describes the release notes of =Outreach Portal=
+  version =v2.8.0=.
+
+* Landing Page :
+
+  - Updated Vlabs logo link redirection from open-edx to vlab.co.in
+
+  - Added materialized views for =NODAL CENTRES=, =WORKSHOPS RUN' and =USAGE= tab in analytics to increase the performance.
+
+  - By clicking on =NODAL CENTRES= tab, institute wise total NODAL CENTRES list will be displayed. Also, By clicking on each institute, list of NODAL CENTRES of that institute will be displayed.
+    Link : http://outreach.vlabs.ac.in/ncentres#/nodal-centers-list
+
+  - By clicking on =WORKSHOPS RUN= tab, institute wise total workshops list will be displayed. Also, By clicking on each institute, list of workshops done by that institute will be displayed. (removed workshop reports for security purpose). By clicking on =S.no= of each workshop, complete details of that workshop will be displayed. Search feature is also enabled to filter workshops.
+    Link : http://outreach.vlabs.ac.in/ws_details
+ 
+  - By clicking on =USAGE= tab, institute wise total USAGE list will be displayed.
+    Link : http://outreach.vlabs.ac.in/usage
+        
+  
+  - Resolved Google map loading issue on outreach portal home page. (Replaced google map with static image)
+
+  - Added social media links like facebook and twitter tweets on right hand side of the page.
+
+  - In Upcoming Workshops list, location is removed. Added participating institute name
+  
+  - Updated footer http://outreach.vlabs.ac.in Removed unnecessary/unused links from footer.
+  
+* Outreach Coordinator and Nodal Coordinator Accounts:
+  - In =MANAGE NODAL CENTRES= section, Nodal Centres Details has a new coloumn =Active/Inactive= is added.
+  - In =EDIT NODAL CENTRES= page, Active/Inactive slider is provided to update.
+  - In =MANAGE WORKSHOPS= section, MY WORKSHOPS list has a new coloumn =Active/Inactive= is added.
+  - In =EDIT WORKSHOPS= page, Active/Inactive slider is provided to update.
+  - Removed =online/off-line= option from add workshop and edit workshops page.
+  - In =MANAGE NODAL COORDINATOR= section, NODAL COORDINATORS list has a new coloumn =Active/Inactive= is added.
+
+
