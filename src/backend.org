@@ -5693,6 +5693,7 @@ def create_app(config):
     # init our app
     app = Flask(__name__)
     app.secret_key = 'djfjsdkjXXS7979dfdfd'
+    app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024
     # load config values from the config file
     app.config.from_object(config)
 
@@ -5861,6 +5862,9 @@ CONSUMER_SECRET = "DQxOnwOectvfFFe05jqKTIQT"
 
 EMAIL_FOR_GET_AUTH = "admin@vlabs.ac.in"
 TOKEN_FOR_GET_AUTH = "dummytoken"
+
+#restrict file uploading size to 2MB
+MAX_CONTENT_LENGTH = "2 * 1024 * 1024"
 #+END_SRC
 
 ** Deploying the application
