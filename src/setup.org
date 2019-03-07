@@ -890,7 +890,6 @@ setup_db
 exit 0;
 #+END_SRC
 
-
 * Hardening apache security rules
    To protect server from the hackers following rules have
    been set on the apache server. Steps were taken from
@@ -900,3 +899,21 @@ exit 0;
    3. Mitigate clickjacking.
    4. Set CORS to only allowed domains
    5. Enable XSS protection.
+* Convert doc, docx files to pdf
+  - Install LibreOffice and use the following commands to convert files from doc and docx to pdf.
+#+BEGIN_EXAMPLE
+sudo apt-get install openoffice.org-writer
+lowriter --headless --convert-to pdf *.doc 
+lowriter --headless --convert-to pdf *.docx 
+rm -rf *.doc
+rm -rf *.docx
+#+END_EXAMPLE
+- Also Update the files path in database using following commands.
+#+BEGIN_EXAMPLE
+mysql -u root -proot
+use outreach;
+update workshop_reports set path='%.pdf' where path like '%.doc';
+update workshop_reports set path='%.pdf' where path like'%.docx';
+update reference_documents set path='%.pdf' where path like '%.doc';
+update reference_documents set path='%.pdf' where path like '%.docx';
+#+END_EXAMPLE

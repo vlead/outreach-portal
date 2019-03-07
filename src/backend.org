@@ -5845,7 +5845,7 @@ LOG_LEVEL = 10
 UPLOAD_DIR_PATH = '/static/uploads/'
 
 # allowed file extensions that can be uploaded
-ALLOWED_FILE_EXTENSIONS = ['txt', 'TXT', 'pdf', 'PDF', 'png', 'PNG', 'jpg', 'JPG', 'jpeg', 'JPEG', 'gif', 'GIF', 'csv' , 'CSV', 'doc' , 'DOC', 'docx', 'DOCX']
+ALLOWED_FILE_EXTENSIONS = ['txt', 'TXT', 'pdf', 'PDF', 'png', 'PNG', 'jpg', 'JPG', 'jpeg', 'JPEG', 'csv' , 'CSV']
 
 # APP_URL
 ELASTIC_IP = "http://10.100.2.40:9200"
@@ -6417,9 +6417,9 @@ def get_google_oauth_token():
 @api.route("/")
 def index():
     remote_url = request.url
-    if remote_url.find("vlabs.ac.in") != -1:
-        return redirect(APP_URL)
-    elif remote_url.find("localhost") != -1:
+#    if remote_url.find("vlabs.ac.in") != -1:
+#        return redirect(APP_URL)
+    if remote_url.find("localhost") != -1:
         return render_template("index.html")
     else:
         return render_template("index.html")
