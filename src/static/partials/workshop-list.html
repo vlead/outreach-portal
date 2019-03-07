@@ -13,13 +13,20 @@
                 <th>Workshops</th>
               </tr>
             </thead>
+            <tbody ng-repeat="usage in usages">
+              <tr ng-if="usage.institute_name!='VLEAD'">
+                <td>{{ $index+1 }}</td>
+                <td><a href="#/workshop/{{usage.user_id}}">{{ usage.institute_name }}</a></td>
+                <td>{{ usage.total_workshops }}</td>
+              </tr>
+            </tbody>            
             <tbody ng-repeat="(key, value) in usages | orderBy : 'value.usage'">
               <tr  ng-if="key!='VLEAD-IIITH'">
                 <td>{{ $index+1 }}</td>
                 <td><a href="#/workshop/{{value.user_id}}">{{ key }}</a></td>
                 <td>{{ value.workshops }}</td>
-              </tr>
-            </tbody>
+            <!--   </tr> -->
+            <!-- </tbody> -->
           </table>
         </div>
       </div>

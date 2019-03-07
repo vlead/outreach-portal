@@ -7,7 +7,7 @@ app.config(function($routeProvider){
     })
     .when("/workshop-list", {
       templateUrl : "/static/partials/workshop-list.html",
-      controller  : "workshop"
+      controller  : "usage-ctrl"
     })
     .when("/nodal-centers-list", {
       templateUrl : "/static/partials/nodal-centers-list.html",
