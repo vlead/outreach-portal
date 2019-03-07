@@ -623,7 +623,15 @@ app.controller("add-workshop", function($scope, $location, $http, dataFactory,$r
 
 //added mouse over functionality to the fields of Workshop Name,
 //Location of Workshop, Workshop College Name and No of Expected
-//Participants. 
+//Participants.
+  dataFactory.fetch("/users/"+$window.number).
+    success(function(data, status, headers, config){
+      $scope.user = data;
+    }).
+    error(function(data, status, headers, config){    
+      console.log(data);
+    });
+  
     
 dataFactory.fetch("/nodal_centres?created_by_id="+$window.number).success(function(data, status, headers, config){
         $scope.ncentres = data;
