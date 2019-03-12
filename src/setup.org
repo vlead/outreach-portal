@@ -902,7 +902,7 @@ exit 0;
 * Convert doc, docx files to pdf
   - Install LibreOffice and use the following commands to convert files from doc and docx to pdf.
 #+BEGIN_EXAMPLE
-sudo apt-get install openoffice.org-writer
+sudo apt-get install libreoffice-writer
 lowriter --headless --convert-to pdf *.doc 
 lowriter --headless --convert-to pdf *.docx 
 rm -rf *.doc

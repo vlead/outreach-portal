@@ -5693,6 +5693,8 @@ def create_app(config):
     # init our app
     app = Flask(__name__)
     app.secret_key = 'djfjsdkjXXS7979dfdfd'
+    # restrict file uploading size to 2MB
+    app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024
     # load config values from the config file
     app.config.from_object(config)
 
@@ -5742,6 +5744,22 @@ def configure_errorhandlers(app):
                 resp = make_response(jsonify(error=err.message), 405)
             except Exception:
                 resp = make_response(jsonify(error=str(err)), 405)
+                app.logger.error("error = %s" % str(err))
+        return resp
+
+    @app.errorhandler(413)
+    def method_not_allowed(err):
+	app.logger.error("error code = %s" % "413")
+        resp = None
+        try:
+            app.logger.error("error desc = %s" % err.description)
+            resp = make_response(jsonify(error=err.description), 413)
+        except Exception:
+            try:
+                app.logger.error("error mesg = %s" % err.message)
+                resp = make_response(jsonify(error=err.message), 413)
+            except Exception:
+                resp = make_response(jsonify(error=str(err)), 413)
                 app.logger.error("error = %s" % str(err))
         return resp
 
@@ -5861,6 +5879,7 @@ CONSUMER_SECRET = "DQxOnwOectvfFFe05jqKTIQT"
 
 EMAIL_FOR_GET_AUTH = "admin@vlabs.ac.in"
 TOKEN_FOR_GET_AUTH = "dummytoken"
+
 #+END_SRC
 
 ** Deploying the application
