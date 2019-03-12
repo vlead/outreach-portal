@@ -512,6 +512,14 @@ app.controller("nc-dashboard", function($scope, $http, dataFactory, $routeParams
 });
 app.controller("manage-workshops", function($scope, $http, $routeParams, dataFactory,$route, $window) {
 
+  dataFactory.fetch("/users/"+$window.number).
+    success(function(data, status, headers, config){
+      $scope.user = data;
+    }).
+    error(function(data, status, headers, config){
+      console.log(data);
+    });
+  
     dataFactory.fetch('/workshops?user_id='+$window.number).success(function(data, status, headers, config){
         var today = new Date();
         var count = 0;
