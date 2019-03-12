@@ -45,7 +45,7 @@
       </thead>
       <tbody>
         <tr ng-repeat="workshop in upcoming | filter: workshopName | orderBy:sortKey:reverse">
-          <td>{{ user.name }}</td> 
+          <td>{{ workshop.user.name }}</td> 
           <td>{{ workshop.name }}</td>
 	  <td>{{ workshop.version }}</td>
           <td>{{ workshop.location }}</td>
