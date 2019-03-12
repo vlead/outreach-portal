@@ -16,6 +16,7 @@
     <table class="table table-hover">
       <thead>
 	<tr>
+          <th>Coordinator Name</th>
           <th ng-click="sort('name')">Name
                 <span class="glyphicon sort-icon" ng-show="sortKey=='name'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
             </th>
@@ -44,6 +45,7 @@
       </thead>
       <tbody>
         <tr ng-repeat="workshop in upcoming | filter: workshopName | orderBy:sortKey:reverse">
+          <td>{{ user.name }}</td> 
           <td>{{ workshop.name }}</td>
 	  <td>{{ workshop.version }}</td>
           <td>{{ workshop.location }}</td>

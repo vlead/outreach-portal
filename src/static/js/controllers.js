@@ -1333,6 +1333,13 @@ app.controller("edit-centre", function($scope, dataFactory, $http, $routeParams,
   };
 });
 app.controller("oc-manage-workshops", function($scope, $http, $routeParams, dataFactory,$route, $window) {
+  dataFactory.fetch("/users/"+$window.number).
+    success(function(data, status, headers, config){
+      $scope.user = data;
+    }).
+    error(function(data, status, headers, config){
+      console.log(data);
+    });
     dataFactory.fetch("/workshops?user_id="+$window.number).
 	success(function(data, status, headers, config) {
             var today = new Date();
