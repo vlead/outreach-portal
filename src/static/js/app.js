@@ -1,4 +1,4 @@
-var app = angular.module("outreachApp",["ngRoute","outreachApp.controllers","outreachApp.factories"]);
+var app = angular.module("outreachApp",["ngRoute","outreachApp.controllers","outreachApp.factories","ui.grid", "ui.grid.pagination", "ui.grid.selection", "ui.grid.exporter"]);
 app.config(function($routeProvider){
   $routeProvider
     .when("/manage-oc", {
