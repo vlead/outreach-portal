@@ -217,9 +217,12 @@ app.controller("workshop", function($scope, dataFactory, $http, $routeParams, $l
   });
 
 app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, $location, $route, $q, $window) {
+     $scope.showParticipants = function(){
+         window.open("/participants");
+    };
      $scope.showNcentres = function(){
          window.open("/ncentres");
-     };
+    };
     $scope.showUsage = function(){
         window.open("/usage");
     };

@@ -9,6 +9,10 @@ app.config(function($routeProvider){
       templateUrl : "/static/partials/workshop-list.html",
       controller  : "usage-ctrl"
     })
+    .when("/participants-attended", {
+      templateUrl : "/static/partials/participants-attended.html",
+      controller  : "usage-ctrl"
+    })
     .when("/nodal-centers-list", {
       templateUrl : "/static/partials/nodal-centers-list.html",
       controller  : "nodal-centers-list"

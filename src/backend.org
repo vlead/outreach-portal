@@ -6553,6 +6553,10 @@ def ws_details():
 def ws_details_offline():
     return render_template("ws_details_offline.html")
 
+@api.route("/participants")
+def participants():
+    return render_template("participants.html")
+
 @api.route("/ncentres")
 def ncentres():
     return render_template("ncentres.html")

@@ -76,6 +76,9 @@ img:hover{
     cursor: pointer;
 }
 
+.participants-attended:hover {
+    cursor: pointer;
+}
 
 .analytics-band .upcoming{                                                                                  
         background: #C76135;                                                                                
