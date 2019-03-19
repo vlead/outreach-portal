@@ -143,6 +143,9 @@ app.controller("usage-ctrl", function($scope, dataFactory, $http, $routeParams, 
             { field: 'total_participants_attended' }
         ],
         enableGridMenu: true,
+        exporterMenuPdf: false,
+        exporterMenuExcel: false,
+
         enableSelectAll: true,
         exporterCsvFilename: 'myFile.csv',
         exporterPdfDefaultStyle: {fontSize: 9},
