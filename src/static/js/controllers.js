@@ -134,6 +134,51 @@ app.controller("oc-ctrl", function($scope, $routeParams, dataFactory, $route, $w
 });
 app.controller("usage-ctrl", function($scope, dataFactory, $http, $routeParams, $route, $q, $window) {
     $scope.loading = true;
+    $scope.gridOptions = {
+        paginationPageSizes: [5, 10],
+        paginationPageSize: 2,
+        enableFiltering: true,
+        columnDefs: [
+            { field: 'institute_name' },
+            { field: 'total_participants_attended' }
+        ],
+        enableGridMenu: true,
+        exporterMenuPdf: false,
+        exporterMenuExcel: false,
+
+        enableSelectAll: true,
+        exporterCsvFilename: 'myFile.csv',
+        exporterPdfDefaultStyle: {fontSize: 9},
+        exporterPdfTableStyle: {margin: [30, 30, 30, 30]},
+        exporterPdfTableHeaderStyle: {fontSize: 10, bold: true, italics: true, color: 'red'},
+        exporterPdfHeader: { text: "My Header", style: 'headerStyle' },
+        exporterPdfFooter: function ( currentPage, pageCount ) {
+            return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+        },
+        exporterPdfCustomFormatter: function ( docDefinition ) {
+            docDefinition.styles.headerStyle = { fontSize: 22, bold: true };
+            docDefinition.styles.footerStyle = { fontSize: 10, bold: true };
+            return docDefinition;
+        },
+        exporterPdfOrientation: 'portrait',
+        exporterPdfPageSize: 'LETTER',
+        exporterPdfMaxGridWidth: 500,
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        exporterExcelFilename: 'myFile.xlsx',
+        exporterExcelSheetName: 'Sheet1',
+        onRegisterApi: function (gridApi) {
+            $scope.grid1Api = gridApi;
+        }
+    };
+    dataFactory.fetch("/institute_analytics").success(function(response){
+        $scope.usages = response;
+        $scope.gridOptions.data = $scope.usages;
+        $scope.loading = false;
+    }).error(function(response){console.log("Failed to fetch data");});
+});
+
+app.controller("usage-ctrl", function($scope, dataFactory, $http, $routeParams, $route, $q, $window) {
+    $scope.loading = true;
     dataFactory.fetch("/institute_analytics").success(function(response){
 	$scope.usages = response;
 	$scope.loading = false;
