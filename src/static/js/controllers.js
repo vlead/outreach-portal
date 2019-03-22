@@ -214,6 +214,27 @@ app.controller("one-workshop", function($scope, dataFactory, $http, $routeParams
 });
 
 app.controller("workshop", function($scope, dataFactory, $http, $routeParams, $location, $route, $q, $window) {
+  $scope.gridOptions = {
+    paginationPageSizes: [5, 10, 15],
+    paginationPageSize: 5,
+    enableFiltering: true,                                                                                    columnDefs: [
+            { field: 'user.institute_name'},
+            { field: 'location' },
+            { field: 'version' },
+            { field: 'date'},
+            { field: 'participants_attended'}
+        ],
+    enableGridMenu: true,
+    enableSelectAll: true,
+    exporterMenuPdf: false,
+    exporterMenuExcel: false,
+    exporterCsvFilename: 'myFile.csv',
+    exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+    onRegisterApi: function (gridApi) {
+      $scope.grid1Api = gridApi;
+    }
+
+  };
   $scope.loading = true;
   dataFactory.fetch("/workshops?status_id=3").success(function(response){
     var workshops = response;
@@ -226,6 +247,7 @@ app.controller("workshop", function($scope, dataFactory, $http, $routeParams, $l
         oc_workshops = oc_workshops.concat(nc_workshops);
       }
       $scope.oc_workshops = oc_workshops;
+      $scope.gridOptions.data = $scope.oc_workshops;
       dataFactory.fetch("/workshop_reports").success(function(data,status,headers,config){
         var reports = [];
         for(var i=0;i<$scope.oc_workshops.length;i++){
