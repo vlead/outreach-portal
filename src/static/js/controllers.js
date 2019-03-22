@@ -3,8 +3,7 @@ app.controller("map-ctrl", function ($scope, $http, dataFactory){
       $scope.gridOptions = {
         paginationPageSizes: [5, 10, 15],
         paginationPageSize: 5,
-        // enableFiltering: true,                                                                                                                     
-        columnDefs: [
+        enableFiltering: true,                                                                                columnDefs: [
             { field: 'name' },
             { field: 'date' },
             { field: 'participating_institutes'}
