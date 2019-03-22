@@ -241,3 +241,8 @@ img:hover{
 .centeractive, .centerinactive {font-size:36p !importantx;cursor:pointer;}
 i.centeractive { color: #5cb85c}
 i.centerinactive {color: #d9534f}
+
+.upcomingWorkshopsGrid {
+    width: 700px;
+    height: 300px;
+}
