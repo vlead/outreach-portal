@@ -1,5 +1,25 @@
 var app = angular.module("outreachApp.controllers",[]);
 app.controller("map-ctrl", function ($scope, $http, dataFactory){
+      $scope.gridOptions = {
+        paginationPageSizes: [5, 10, 15],
+        paginationPageSize: 5,
+        // enableFiltering: true,                                                                                                                     
+        columnDefs: [
+            { field: 'name' },
+            { field: 'date' },
+            { field: 'participating_institutes'}
+        ],
+        enableGridMenu: true,
+        enableSelectAll: true,
+        exporterMenuPdf: false,
+        exporterMenuExcel: false,
+        exporterCsvFilename: 'myFile.csv',
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        onRegisterApi: function (gridApi) {
+            $scope.grid1Api = gridApi;
+        }
+
+    };
     var workshopList = [];
     $scope.upcomingLoading = true;
     dataFactory.fetch("/workshops?status_id=1").success(function(workshops){
@@ -15,7 +35,7 @@ app.controller("map-ctrl", function ($scope, $http, dataFactory){
         }
 	$scope.upcomingLoading = false;
         $scope.upcomingWorkshopsList = workshopList;
-
+        $scope.gridOptions.data = $scope.upcomingWorkshopsList;
     });
     
   dataFactory.fetch("/nodal_centres").success(function(nodalCentre){      

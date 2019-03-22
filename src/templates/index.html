@@ -52,26 +52,28 @@
         </div>
       <div class="col-md-8" ng-if="upcoming_workshops.length !=0">
         <h3>Upcoming Workshops</h3>
-        <table class="table table-hover">
-          <thead>
-	    <tr>
-	      <th>S.No</th>
-	      <th>Name</th>
-	      <th>Date</th>
-	      <!-- <th>Location</th> -->
-              <th>Participating Institutes</th>
-            </tr>
-	  </thead>
-	  <tbody>
-	    <tr ng-repeat="workshop in upcomingWorkshopsList">
-	      <td>{{ $index+1 }}</td>
-	      <td>{{ workshop.name }}</td>
-              <td>{{ workshop.date }}</td>
-              <!-- <td>{{ workshop.location }}</td> -->
-              <td>{{ workshop.participating_institutes }}</td>
-	    </tr>
-	  </tbody>
-        </table>
+        <div ui-grid="gridOptions" ui-grid-pagination ui-grid-selection ui-grid-exporter class="myGrid"></div>
+
+        <!-- <table class="table table-hover"> -->
+        <!--   <thead> -->
+	<!--     <tr> -->
+	<!--       <th>S.No</th> -->
+	<!--       <th>Name</th> -->
+	<!--       <th>Date</th> -->
+	<!--       <\!-- <th>Location</th> -\-> -->
+        <!--       <th>Participating Institutes</th> -->
+        <!--     </tr> -->
+	<!--   </thead> -->
+	<!--   <tbody> -->
+	<!--     <tr ng-repeat="workshop in upcomingWorkshopsList"> -->
+	<!--       <td>{{ $index+1 }}</td> -->
+	<!--       <td>{{ workshop.name }}</td> -->
+        <!--       <td>{{ workshop.date }}</td> -->
+        <!--       <\!-- <td>{{ workshop.location }}</td> -\-> -->
+        <!--       <td>{{ workshop.participating_institutes }}</td> -->
+	<!--     </tr> -->
+	<!--   </tbody> -->
+        <!-- </table> -->
       </div>
       <div class="col-md-4">
 	<iframe src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2FVirtual-Labs-IIT-Delhi-301510159983871%2F&amp;tabs=timeline&amp;width=300&amp;height=350&amp;small_header=false&amp;adapt_container_width=true&amp;hide_cover=false&amp;show_facepile=true&amp;appId" style="border:none;overflow:hidden" scrolling="no" allowtransparency="true" allow="encrypted-media" width="350" height="350" frameborder="0"></iframe>
