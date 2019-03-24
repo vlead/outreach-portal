@@ -11,7 +11,7 @@ app.config(function($routeProvider){
     })
     .when("/participants-attended", {
       templateUrl : "/static/partials/participants-attended.html",
-      controller  : "usage-ctrl"
+      controller  : "participants-ctrl"
     })
     .when("/nodal-centers-list", {
       templateUrl : "/static/partials/nodal-centers-list.html",

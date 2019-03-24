@@ -218,7 +218,7 @@ app.controller("usage-ctrl", function($scope, dataFactory, $http, $routeParams, 
     }).error(function(response){console.log("Failed to fetch data");});
 });
 
-app.controller("usage-ctrl", function($scope, dataFactory, $http, $routeParams, $route, $q, $window) {
+app.controller("participants-ctrl", function($scope, dataFactory, $http, $routeParams, $route, $q, $window) {
     $scope.loading = true;
     dataFactory.fetch("/institute_analytics").success(function(response){
 	$scope.usages = response;
