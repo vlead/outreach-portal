@@ -213,27 +213,38 @@ app.controller("one-workshop", function($scope, dataFactory, $http, $routeParams
 });
 
 app.controller("workshop", function($scope, dataFactory, $http, $routeParams, $location, $route, $q, $window) {
-  $scope.gridOptions = {
-    paginationPageSizes: [5, 10, 15],
-    paginationPageSize: 5,
-    enableFiltering: true,                                                                                    columnDefs: [
-            { field: 'user.institute_name'},
+    $scope.view = function(row) {
+        window.location.href = "#/one-workshop/" + row['id'];
+    };
+
+    $scope.gridOptions = {
+        paginationPageSizes: [5, 10, 15],
+        paginationPageSize: 5,
+        enableFiltering: true,
+        columnDefs: [
+            { field: 'user.institute_name', displayName: 'Institute'},
             { field: 'location' },
             { field: 'version' },
             { field: 'date'},
-            { field: 'participants_attended'}
+            { field: 'participants_attended'},
+            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="editBtn" type="button" class="btn btn-small \
+btn-primary" ng-click="grid.appScope.view(row.entity)" >View</button>'}
+            // {name: 'actions', displayName: 'Actions', cellTemplate: '<button id="editBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.edit(row.entity)" >Edit</button><button id="deleteBtn" type="button" class="btn btn-small btn-danger" ng-click="grid.appScope.remove(row.entity)" >Remove</button>'},                                                                                                                      
+            // { field: 'click',                                                                                                                      
+            //   cellTemplate : '<div><button ng-click="grid.appScope.edit(row.entity)">Click Here</button></div>'     
+           // }                                                                                                                                      
         ],
-    enableGridMenu: true,
-    enableSelectAll: true,
-    exporterMenuPdf: false,
-    exporterMenuExcel: false,
-    exporterCsvFilename: 'myFile.csv',
-    exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
-    onRegisterApi: function (gridApi) {
-      $scope.grid1Api = gridApi;
-    }
+        enableGridMenu: true,
+        enableSelectAll: true,
+        exporterMenuPdf: false,
+        exporterMenuExcel: false,
+        exporterCsvFilename: 'myFile.csv',
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        onRegisterApi: function (gridApi) {
+            $scope.grid1Api = gridApi;
+        }
 
-  };
+    };
   $scope.loading = true;
   dataFactory.fetch("/workshops?status_id=3").success(function(response){
     var workshops = response;
@@ -254,21 +265,21 @@ app.controller("workshop", function($scope, dataFactory, $http, $routeParams, $l
           for(var j=0;j<data.length;j++){
             if($scope.oc_workshops[i].id == data[j].workshop.id){
               reports.push({"name" : data[j].name, "path" :  data[j].path});
-              //console.log("true");                                                                                                    
+              //console.log("true");                                                                                                                  
             }
           }
           $scope.oc_workshops[i]["reports"] = reports;
-          
+
         }
 
       }).error(function(data, status, headers, config){
         console.log("Failed2");
-      });  
+      });
     }).error(function(response){console.log("Failed to fetch data");});
   }).error(function(response){console.log("Failed to fetch data");});
 });
 
-  app.controller("workshop-list", function($scope, dataFactory, $http, $routeParams, $location, $route, $q, $window) {
+app.controller("workshop-list", function($scope, dataFactory, $http, $routeParams, $location, $route, $q, $window) {
     $scope.loading = true;
     dataFactory.fetch("/workshops?status_id=3").success(function(response){
       var workshops = response;
