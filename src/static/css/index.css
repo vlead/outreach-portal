@@ -247,7 +247,7 @@ i.centerinactive {color: #d9534f}
     height: 300px;
 }
 
-.workshopGrid{
+.nodalCenterGrid .workshopGrid{
     width: 1100px;
     height: 300px;
 }

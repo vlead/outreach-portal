@@ -115,9 +115,31 @@ app.controller("nodal-centers-list", function($scope, $http, $routeParams, dataF
     });
 
 });
+
 app.controller("nodal-center", function($scope, dataFactory, $http, $routeParams, $location, $route, $q, $window) {
+    $scope.gridOptions = {
+        paginationPageSizes: [5, 10, 15],
+        paginationPageSize: 5,
+        enableFiltering: true,
+        columnDefs: [
+            { field: 'created_by.institute_name', displayName: 'Institute'},
+            { field: 'name' },
+            { field: 'location' }
+        ],
+        enableGridMenu: true,
+        enableSelectAll: true,
+        exporterMenuPdf: false,
+        exporterMenuExcel: false,
+        exporterCsvFilename: 'myFile.csv',
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        onRegisterApi: function (gridApi) {
+            $scope.grid1Api = gridApi;
+        }
+
+    };
     dataFactory.fetch("/nodal_centres?created_by_id="+$routeParams.id).success(function(response){
         $scope.nodalCenter = response;
+        $scope.gridOptions.data = $scope.nodalCenter;
     }).error(function(response){console.log("Failed to fetch data");});
 });
 
