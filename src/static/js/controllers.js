@@ -3,7 +3,8 @@ app.controller("map-ctrl", function ($scope, $http, dataFactory){
       $scope.gridOptions = {
         paginationPageSizes: [5, 10, 15],
         paginationPageSize: 5,
-        enableFiltering: true,                                                                                columnDefs: [
+        enableFiltering: true,
+        columnDefs: [
             { field: 'name' },
             { field: 'date' },
             { field: 'participating_institutes'}
@@ -1558,6 +1559,37 @@ app.controller("oc-doclist", function($scope, $http, $routeParams, dataFactory,$
     };
 });
 app.controller("nc-workshops", function($scope, $http, $routeParams, dataFactory, $window, $route) {
+    $scope.loading = true;
+    $scope.reviewReports = function(row) {
+        window.location.href = "#review-reports/" + row['id'];
+    };
+
+    $scope.gridOptions = {
+        paginationPageSizes: [5, 10, 15],
+        paginationPageSize: 5,
+        enableFiltering: true,
+        columnDefs: [
+            { field: 'user.name', displayName: 'Coordinator Name'},
+            // { field: 'name', displayName: 'Workshop Name' },                                                                                      \
+                                                                                                                                                      
+            { field: 'location' },
+            { field: 'not_approval_reason' },
+            { field: 'date'},
+            { field: 'status.name', displayName:'Status'},
+            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small \
+btn-primary" ng-click="grid.appScope.reviewReports(row.entity)">Review Reports</button>'}
+        ],
+        enableGridMenu: true,
+        enableSelectAll: true,
+        exporterMenuPdf: false,
+        exporterMenuExcel: false,
+        exporterCsvFilename: 'ocWorkshopHistory.csv',
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        onRegisterApi: function (gridApi) {
+            $scope.grid1Api = gridApi;
+        }
+    };
+
   var nc_workshops = [];
     dataFactory.fetch('/nodal_coordinator_details?created_by_id='+ $window.number).success(function(data, status, headers, config){
         for (var i = 0 ; i < data.length; i++ ){
@@ -1577,11 +1609,14 @@ app.controller("nc-workshops", function($scope, $http, $routeParams, dataFactory
     }).error(function(data, status, headers, config){
         console.log("Failed");
     });
-  $scope.workshops = nc_workshops;
-  $scope.sort = function(keyname){
-    $scope.sortKey = keyname;   //set the sortKey to the param passed
-    $scope.reverse = !$scope.reverse; //if true make it false and vice versa
-  };
+    $scope.workshops = nc_workshops;
+    $scope.gridOptions.data = $scope.workshops;
+    $scope.loading = false;
+
+  // $scope.sort = function(keyname){
+  //   $scope.sortKey = keyname;   //set the sortKey to the param passed
+  //   $scope.reverse = !$scope.reverse; //if true make it false and vice versa
+  // };
 
 });
 app.controller("review-reports", function($scope, $http, $routeParams, dataFactory,  $route, $window){
@@ -1727,10 +1762,10 @@ e.uploadReports(row.entity)">Edit</button>'}
   $scope.gridOptions.data = $scope.workshops;
   $scope.loading = false;
   
-  $scope.sort = function(keyname){
-    $scope.sortKey = keyname;   //set the sortKey to the param passed
-    $scope.reverse = !$scope.reverse; //if true make it false and vice versa
-  };
+  // $scope.sort = function(keyname){
+  //   $scope.sortKey = keyname;   //set the sortKey to the param passed
+  //   $scope.reverse = !$scope.reverse; //if true make it false and vice versa
+  // };
 });
 app.controller("upload-reports", function($scope, $http, $routeParams, dataFactory, $route, $window){
     var photos = [];
