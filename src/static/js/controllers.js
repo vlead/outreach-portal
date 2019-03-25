@@ -1650,6 +1650,47 @@ app.controller("review-reports", function($scope, $http, $routeParams, dataFacto
 });
 
 app.controller("oc-workshop-history", function($scope, $http, $routeParams, dataFactory, $window, $route) {
+    $scope.loading = true;
+    $scope.viewReports = function(row) {
+	window.location.href = "#view-reports/" + row['id'];
+    };
+
+    $scope.editWorkshop = function(row) {
+        window.location.href = "#edit-workshop/" + row['id'];
+    };
+
+    $scope.uploadReports = function(row) {
+        window.location.href = "#/oc-upload-reports/" + row['id'];
+    };
+
+    $scope.gridOptions = {
+        paginationPageSizes: [5, 10, 15],
+        paginationPageSize: 5,
+        enableFiltering: true,
+        columnDefs: [
+            { field: 'user.name', displayName: 'Coordinator Name'},
+            // { field: 'name', displayName: 'Workshop Name' },                                                                                       
+            { field: 'location' },
+            { field: 'participants_attended' },
+            { field: 'date'},
+            { field: 'status.name', displayName:'Status'},
+            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small \
+btn-primary" ng-click="grid.appScope.viewReports(row.entity)">View</button><button id="editBtn" type="button" class="btn btn-small btn-primary" ng-cl\
+ick="grid.appScope.editWorkshop(row.entity)" >Edit</button><button id="editBtn" type="button" class="btn btn-smallbtn-primary" ng-click="grid.appScop\
+e.uploadReports(row.entity)">Edit</button>'}   
+        ],
+        enableGridMenu: true,
+        enableSelectAll: true,
+        exporterMenuPdf: false,
+        exporterMenuExcel: false,
+        exporterCsvFilename: 'ocWorkshopHistory.csv',
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        onRegisterApi: function (gridApi) {
+            $scope.grid1Api = gridApi;
+        }
+
+    };
+  
     var workshops = [] ;
     dataFactory.fetch("/nodal_coordinator_details?created_by_id="+ $window.number).
 	success(function(data, status, headers, config){
@@ -1683,6 +1724,9 @@ app.controller("oc-workshop-history", function($scope, $http, $routeParams, data
         console.log(data);
     });
   $scope.workshops = workshops;
+  $scope.gridOptions.data = $scope.workshops;
+  $scope.loading = false;
+  
   $scope.sort = function(keyname){
     $scope.sortKey = keyname;   //set the sortKey to the param passed
     $scope.reverse = !$scope.reverse; //if true make it false and vice versa
