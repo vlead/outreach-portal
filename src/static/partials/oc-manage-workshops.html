@@ -13,52 +13,54 @@
 </div>
 <div class="row">
   <div class="col-md-12">
-    <table class="table table-hover">
-      <thead>
-	<tr>
-          <th>Coordinator Name</th>
-          <th ng-click="sort('name')">Name
-                <span class="glyphicon sort-icon" ng-show="sortKey=='name'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
-            </th>
-            <th ng-click="sort('version')">Version
-                <span class="glyphicon sort-icon" ng-show="sortKey=='version'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
-            </th>
-            <th ng-click="sort('location')">Location
-                <span class="glyphicon sort-icon" ng-show="sortKey=='location'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
-            </th>
-            <th ng-click="sort('no_of_participants_expected')">Expected
-            Participants
-                <span class="glyphicon sort-icon" ng-show="sortKey=='no_of_participants_expected'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
-            </th>
+    <div ui-grid="gridOptions" ui-grid-pagination ui-grid-selection ui-grid-exporter class="ocworkshopGrid" external-scopes="clickHandler"></div>
 
-          <th ng-click="sort('participants_attended')">Actual
-            Participants
-                <span class="glyphicon sort-icon" ng-show="sortKey=='participants_attended'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
-            </th>
-            <th ng-click="sort('date')">Date
-                <span class="glyphicon sort-icon" ng-show="sortKey=='date'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
-            </th>
-          <th>Status</th>
-          <th>Active/Inactive</th>
+    <!-- <table class="table table-hover"> -->
+    <!--   <thead> -->
+    <!--     <tr> -->
+    <!--       <th>Coordinator Name</th> -->
+    <!--       <th ng-click="sort('name')">Name -->
+    <!--             <span class="glyphicon sort-icon" ng-show="sortKey=='name'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> -->
+    <!--         </th> -->
+    <!--         <th ng-click="sort('version')">Version -->
+    <!--             <span class="glyphicon sort-icon" ng-show="sortKey=='version'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> -->
+    <!--         </th> -->
+    <!--         <th ng-click="sort('location')">Location -->
+    <!--             <span class="glyphicon sort-icon" ng-show="sortKey=='location'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> -->
+    <!--         </th> -->
+    <!--         <th ng-click="sort('no_of_participants_expected')">Expected -->
+    <!--         Participants -->
+    <!--             <span class="glyphicon sort-icon" ng-show="sortKey=='no_of_participants_expected'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> -->
+    <!--         </th> -->
 
-	</tr>
-      </thead>
-      <tbody>
-        <tr ng-repeat="workshop in upcoming | filter: workshopName | orderBy:sortKey:reverse">
-          <td>{{ workshop.user.name }}</td> 
-          <td>{{ workshop.name }}</td>
-	  <td>{{ workshop.version }}</td>
-          <td>{{ workshop.location }}</td>
-          <td>{{ workshop.no_of_participants_expected }}</td>
-	  <td>{{ workshop.participants_attended }}</td>
-          <td>{{ workshop.date }}</td>
-          <td>{{ workshop.status.name }}</td>
-          <td>{{ workshop.workshop_status }}</td>
-          <td><button class="btn btn-primary" ng-click="cancel(workshop.id)">Cancel</button></td>
-          <td><a href="#/edit-workshop/{{workshop.id}}" class="btn btn-primary">Edit</a></td>
-          <td ng-if="workshop.status.name == 'Pending for Approval'"><a href="#/oc-upload-reports/{{workshop.id}}" class="btn btn-primary">Upload Reports</a></td>
-        </tr>
-      </tbody>
-    </table>
+    <!--       <th ng-click="sort('participants_attended')">Actual -->
+    <!--         Participants -->
+    <!--             <span class="glyphicon sort-icon" ng-show="sortKey=='participants_attended'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> -->
+    <!--         </th> -->
+    <!--         <th ng-click="sort('date')">Date -->
+    <!--             <span class="glyphicon sort-icon" ng-show="sortKey=='date'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span> -->
+    <!--         </th> -->
+    <!--       <th>Status</th> -->
+    <!--       <th>Active/Inactive</th> -->
+
+    <!--     </tr> -->
+    <!--   </thead> -->
+    <!--   <tbody> -->
+    <!--     <tr ng-repeat="workshop in upcoming | filter: workshopName | orderBy:sortKey:reverse"> -->
+    <!--       <td>{{ workshop.user.name }}</td>  -->
+    <!--       <td>{{ workshop.name }}</td> -->
+    <!--       <td>{{ workshop.version }}</td> -->
+    <!--       <td>{{ workshop.location }}</td> -->
+    <!--       <td>{{ workshop.no_of_participants_expected }}</td> -->
+    <!--       <td>{{ workshop.participants_attended }}</td> -->
+    <!--       <td>{{ workshop.date }}</td> -->
+    <!--       <td>{{ workshop.status.name }}</td> -->
+    <!--       <td>{{ workshop.workshop_status }}</td> -->
+    <!--       <td><button class="btn btn-primary" ng-click="cancel(workshop.id)">Cancel</button></td> -->
+    <!--       <td><a href="#/edit-workshop/{{workshop.id}}" class="btn btn-primary">Edit</a></td> -->
+    <!--       <td ng-if="workshop.status.name == 'Pending for Approval'"><a href="#/oc-upload-reports/{{workshop.id}}" class="btn btn-primary">Upload Reports</a></td> -->
+    <!--     </tr> -->
+    <!--   </tbody> -->
+    <!-- </table> -->
   </div>
 </div>
