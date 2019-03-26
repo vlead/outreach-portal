@@ -1801,11 +1801,12 @@ app.controller("oc-workshop-history", function($scope, $http, $routeParams, data
         enableFiltering: true,
         columnDefs: [
             { field: 'user.name', displayName: 'Coordinator Name'},
-            // { field: 'name', displayName: 'Workshop Name' },                                                                                       
+            // { field: 'name', displayName: 'Workshop Name' },                            
             { field: 'location' },
             { field: 'participants_attended' },
             { field: 'date'},
             { field: 'status.name', displayName:'Status'},
+            { field: 'experiments_conducted', displayName:'Usage'},
             {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small \
 btn-primary" ng-click="grid.appScope.viewReports(row.entity)">View</button><button id="editBtn" type="button" class="btn btn-small btn-primary" ng-cl\
 ick="grid.appScope.editWorkshop(row.entity)" >Edit</button><button id="editBtn" type="button" class="btn btn-smallbtn-primary" ng-click="grid.appScop\
