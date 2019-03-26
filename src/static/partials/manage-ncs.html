@@ -6,31 +6,33 @@
 </div>
 <div class="row">
   <div class="col-md-12">
-    <table class="table table-hover">
-      <thead>
-	<tr>
-          <th>Name</th>
-	  <th>Email</th>
-          <th>Phone</th>
-	  <th>Created On</th>
-          <th>Active/Inactive</th>
-	  <th>Last Active</th>
-	</tr>
-      </thead>
-      <tbody>
-	<tr ng-repeat="coordinator in coordinators">
-          <td>{{ coordinator.name }}</td>
-          <td>{{ coordinator.email }}</td>
-          <td>{{ coordinator.phone }}</td>
-          <td id="number">{{ coordinator.created }}</td>
-          <td>{{coordinator.user_status}}</td>
-	  <td id="number">{{ coordinator.last_active }}</td>
-          <!--<td>{{ coordinator.centre.location }}</td>-->
-          <td><a href="#/edit-nc/{{ coordinator.nc_user_id }}" class="btn btn-primary">Edit</a></td>
-          <td><a class="btn btn-primary" ng-click="del(coordinator.nc_details_id, coordinator.id)">Delete</a></td>
-	</tr>
-      </tbody>
-    </table>
+    <div ui-grid="gridOptions" ui-grid-pagination ui-grid-selection ui-grid-exporter class="ocworkshopGrid" external-scopes="clickHandler"></div>
+
+    <!-- <table class="table table-hover"> -->
+    <!--   <thead> -->
+    <!--     <tr> -->
+    <!--       <th>Name</th> -->
+    <!--       <th>Email</th> -->
+    <!--       <th>Phone</th> -->
+    <!--       <th>Created On</th> -->
+    <!--       <th>Active/Inactive</th> -->
+    <!--       <th>Last Active</th> -->
+    <!--     </tr> -->
+    <!--   </thead> -->
+    <!--   <tbody> -->
+    <!--     <tr ng-repeat="coordinator in coordinators"> -->
+    <!--       <td>{{ coordinator.name }}</td> -->
+    <!--       <td>{{ coordinator.email }}</td> -->
+    <!--       <td>{{ coordinator.phone }}</td> -->
+    <!--       <td id="number">{{ coordinator.created }}</td> -->
+    <!--       <td>{{coordinator.user_status}}</td> -->
+    <!--       <td id="number">{{ coordinator.last_active }}</td> -->
+    <!--       <\!--<td>{{ coordinator.centre.location }}</td>-\-> -->
+    <!--       <td><a href="#/edit-nc/{{ coordinator.nc_user_id }}" class="btn btn-primary">Edit</a></td> -->
+    <!--       <td><a class="btn btn-primary" ng-click="del(coordinator.nc_details_id, coordinator.id)">Delete</a></td> -->
+    <!--     </tr> -->
+    <!--   </tbody> -->
+    <!-- </table> -->
   </div>
 </div>
 

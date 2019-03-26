@@ -1091,6 +1091,37 @@ app.controller("oc-dashboard", function($scope, $http, dataFactory, $routeParams
 });
 
 app.controller("manage-nc", function($scope, $http, $routeParams, dataFactory, $window, $route) {
+    $scope.loading = true;
+    $scope.editNodalCoordinator = function(row) {
+        window.location.href = "#/edit-nc/" + row['id'];
+    };
+
+    $scope.gridOptions = {
+        paginationPageSizes: [5, 10, 15],
+        paginationPageSize: 5,
+	enableFiltering: true,
+        columnDefs: [
+            { field: 'name', displayName: 'Coordinator Name'},
+            // { field: 'name', displayName: 'Workshop Name' },                                                                                       
+            { field: 'email' },
+            { field: 'phone' },
+            { field: 'user_status'},
+            // { field: 'created'},                                                                                                                   
+            { field: 'last_active', displayName:'Last Active'},
+            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small \
+btn-primary" ng-click="grid.appScope.editNodalCoordinator(row.entity)">Edit</button><button id="deleteBtn" type="button" class="btn btn-small btn-dan\
+ger" ng-click="grid.appScope.del(row.entity)" >Remove</button>'}
+        ],
+        enableGridMenu: true,
+        enableSelectAll: true,
+        exporterMenuPdf: false,
+        exporterMenuExcel: false,
+        exporterCsvFilename: 'nodalCoordinators.csv',
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        onRegisterApi: function (gridApi) {
+            $scope.grid1Api = gridApi;
+        }
+    };
     dataFactory.fetch("/nodal_coordinator_details?created_by_id="+ $window.number).success(function(data, status, headers, config){
       var coordinators = [];
         for(var i=0;i<data.length;i++){
@@ -1103,10 +1134,13 @@ app.controller("manage-nc", function($scope, $http, $routeParams, dataFactory, $
             });
         }
         $scope.coordinators=coordinators;
+        $scope.gridOptions.data = $scope.coordinators;
+        $scope.loading = false;
     }).error(function(data, status, headers, config){
         console.log(data);
     });
-    $scope.del =  function(nc_details_id, user_id){
+  // $scope.del =  function(nc_details_id, user_id){
+    $scope.del =  function(row){
         dataFactory.fetch("/workshops?user_id="+user_id).
                 success(function(data, status, headers, config){ 
                     if(data.length == 0)
@@ -1301,8 +1335,38 @@ app.controller("add-nc", function($scope, $http, dataFactory, $routeParams, $win
     
 });
 app.controller("manage-centres", function($scope, $http, dataFactory, $routeParams, $window, $route) {
+    $scope.loading = true;
+    $scope.editCentre = function(row) {
+        window.location.href = "#/edit-centre/" + row['id'];
+    };
+
+    $scope.gridOptions = {
+        paginationPageSizes: [5, 10, 15],
+        paginationPageSize: 5,
+        enableFiltering: true,
+        columnDefs: [
+            { field: 'name', displayName: 'Name'},
+            { field: 'location' },
+            { field: 'pincode' },
+            { field: 'centre_status', displayName:'Status'},
+            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small \
+btn-primary" ng-click="grid.appScope.editCentre(row.entity)">Edit</button><button id="deleteBtn" type="button" class="btn btn-small btn-danger" ng-cl\
+ick="grid.appScope.del_centre(row.entity)" >Remove</button>'}
+        ],
+        enableGridMenu: true,
+        enableSelectAll: true,
+        exporterMenuPdf: false,
+        exporterMenuExcel: false,
+        exporterCsvFilename: 'manageCentres.csv',
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        onRegisterApi: function (gridApi) {
+            $scope.grid1Api = gridApi;
+        }
+    };
     dataFactory.fetch("/nodal_centres?created_by_id="+$window.number).success(function(data, status, headers, config){
-        $scope.centres= data;
+      $scope.centres= data;
+      $scope.gridOptions.data = $scope.centres;
+      $scope.loading = false;
     }).error(function(data, status, headers, config){
         console.log(data);
     });
