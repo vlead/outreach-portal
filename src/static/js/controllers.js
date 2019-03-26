@@ -1464,7 +1464,37 @@ app.controller("edit-centre", function($scope, dataFactory, $http, $routeParams,
   };
 });
 app.controller("oc-manage-workshops", function($scope, $http, $routeParams, dataFactory,$route, $window) {
-  dataFactory.fetch("/users/"+$window.number).
+      $scope.loading = true;
+    $scope.ocUploadReports = function(row) {
+	window.location.href = "#/oc-upload-reports/" + row['id'];
+    };
+
+    $scope.gridOptions = {
+        paginationPageSizes: [5, 10, 15],
+        paginationPageSize: 5,
+        enableFiltering: true,
+        columnDefs: [
+            { field: 'user.name', displayName: 'Coordinator Name'},
+            // { field: 'name', displayName: 'Workshop Name' },                                                                                       
+            { field: 'location' },
+            { field: 'no_of_participants_expected' },
+            { field: 'date'},
+            { field: 'status.name', displayName:'Status'},
+            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small \
+btn-primary" ng-click="grid.appScope.ocUploadReports(row.entity)">Review Reports</button>'}
+        ],
+        enableGridMenu: true,
+        enableSelectAll: true,
+        exporterMenuPdf: false,
+        exporterMenuExcel: false,
+        exporterCsvFilename: 'ocWorkshops.csv',
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        onRegisterApi: function (gridApi) {
+            $scope.grid1Api = gridApi;
+        }
+    };
+
+    dataFactory.fetch("/users/"+$window.number).
     success(function(data, status, headers, config){
       $scope.user = data;
     }).
@@ -1504,6 +1534,9 @@ app.controller("oc-manage-workshops", function($scope, $http, $routeParams, data
           $scope.history = history;
           $scope.pending = pending;
           $scope.upcoming = upcoming;
+          $scope.gridOptions.data = $scope.upcoming;
+          $scope.loading = false;
+          
           $scope.count = count;
           $scope.sort = function(keyname){
             $scope.sortKey = keyname;   //set the sortKey to the param passed
