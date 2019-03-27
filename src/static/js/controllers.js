@@ -337,109 +337,137 @@ app.controller("workshop-list", function($scope, dataFactory, $http, $routeParam
   });
 
 app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, $location, $route, $q, $window) {
-     $scope.showParticipants = function(){
-         window.open("/participants");
-    };
-     $scope.showNcentres = function(){
-         window.open("/ncentres");
-    };
-    $scope.showUsage = function(){
-        window.open("/usage");
-    };
-    $scope.showWorkshops = function(){
-         window.open("/ws_details");
-    };
-    
-   if ($window.number != 0 || $window.number == undefined) {
-     
-     dataFactory.fetch("/users/"+$window.number).success(function(response){
-       $scope.user = response;
-     }).error(function(response){console.log("Failed to fetch data");});
+  $scope.loading = true;
+  $scope.editOC = function(row) {
+    window.location.href = "#/edit-oc/" + row['id'];
+  };
 
-   }
-    dataFactory.fetch("/reference_documents?user_id=1").success(function(response){
-        $scope.documents = response;
+  $scope.gridOptions = {
+    paginationPageSizes: [5, 10, 15],
+    paginationPageSize: 5,
+    enableFiltering: true,
+    columnDefs: [
+      { field: 'name', displayName: 'Coordinator Name'},
+      // { field: 'name', displayName: 'Workshop Name' },
+      { field: 'email' },
+      { field: 'institute_name',displayName:'Institute Name' },
+      { field: 'last_active', displayName:'Last Active'},
+      { field: 'created', displayName:'Created On'},
+      {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.editOC(row.entity)">Edit</button><button id="deleteBtn" type="button" class="btn btn-small btn-danger" ng-click="grid.appScope.delete_oc(row.entity)">Remove</button>'}
+    ],
+    enableGridMenu: true,
+    enableSelectAll: true,
+    exporterMenuPdf: false,
+    exporterMenuExcel: false,
+    exporterCsvFilename: 'ocList.csv',
+    exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+    onRegisterApi: function (gridApi) {
+      $scope.grid1Api = gridApi;
+    }
+  };
+  $scope.showParticipants = function(){
+    window.open("/participants");
+  };
+  $scope.showNcentres = function(){
+    window.open("/ncentres");
+  };
+  $scope.showUsage = function(){
+    window.open("/usage");
+  };
+  $scope.showWorkshops = function(){
+    window.open("/ws_details");
+  };
+    
+  if ($window.number != 0 || $window.number == undefined) {
+    dataFactory.fetch("/users/"+$window.number).success(function(response){
+      $scope.user = response;
     }).error(function(response){console.log("Failed to fetch data");});
 
-    $scope.deldoc =  function(id)
-    {
-        if(confirm("Are you sure!") == true){
-            dataFactory.del("/reference_documents/"+id).success(function(response){
-                $route.reload();
-            }).error(function(data, status){
-                
-            });
-            
-        }
-    };
+  }
+  dataFactory.fetch("/reference_documents?user_id=1").success(function(response){
+    $scope.documents = response;
+  }).error(function(response){console.log("Failed to fetch data");});
+  
+  $scope.deldoc =  function(id)
+  {
+    if(confirm("Are you sure!") == true){
+      dataFactory.del("/reference_documents/"+id).success(function(response){
+        $route.reload();
+      }).error(function(data, status){
+      });
+    }
+  };
     
-    $scope.add_oc = function(isvalid){    
-        if(isvalid){
-            var data = {"name" : $scope.name,"created" : Date(), "email" : $scope.email, "institute_name" : $scope.inst_name, "role" : { "id" : 2 } };
-            dataFactory.post("/users", data).success(function(response){
-                history.back();
-            }).error(function(data, status, headers, config){
-                if(status == 500){
-                    $scope.status = "Duplicate Entry";
-                }
-                else if(status == 400){
-                  $scope.status = "Invalid username";
-                }
-                else{
-                  $scope.status = "Failed";
-                }
-            });
-            
+  $scope.add_oc = function(isvalid){    
+    if(isvalid){
+      var data = {"name" : $scope.name,"created" : Date(), "email" : $scope.email, "institute_name" : $scope.inst_name, "role" : { "id" : 2 } };
+      dataFactory.post("/users", data).success(function(response){
+        history.back();
+      }).error(function(data, status, headers, config){
+        if(status == 500){
+          $scope.status = "Duplicate Entry";
+        }
+        else if(status == 400){
+          $scope.status = "Invalid username";
         }
         else{
-          $scope.status = "Fill Details";
+          $scope.status = "Failed";
         }
-    };
+      });
+            
+    }
+    else{
+      $scope.status = "Fill Details";
+    }
+  };
     
-    $scope.delete_oc =  function(id)
-    {
-        if(confirm("Are you sure!") == true){
-            dataFactory.del("/users/"+id).success(function(response){
-                $route.reload();
-            }).error(function(data, status){
-                alert("You can delete after deleting NC users under him");  
-            });
-        }
-                 
-    };
-    $scope.goToLink = function(id) {
-	window.location.href = "#/nc-user-list/" + id;
-    };
+  $scope.delete_oc =  function(id)
+  {
+    if(confirm("Are you sure!") == true){
+      dataFactory.del("/users/"+id).success(function(response){
+        $route.reload();
+      }).error(function(data, status){
+        alert("You can delete after deleting NC users under him");  
+      });
+    }
+    
+  };
+  $scope.goToLink = function(id) {
+    window.location.href = "#/nc-user-list/" + id;
+  };
 
-    dataFactory.fetch("/users?role_id=2").success(function(response){
-        $scope.totaloc = response.length;
-        $scope.oc_users = response;	
-      var oc_users_with_ncs = [];
-	//start here v2.4.0
-	var count = 0;
-	var count1 = 0;
-	for(var user=0;user<response.length;user++){
-	    dataFactory.fetch("/nodal_coordinator_details?created_by_id="+response[user].id).success(function(data){
-		count = count +1 ;		
-		var temp_dict = [{"institute_name" : "NIT Surathkal" }];
-		if(data.length!=0){
-		  var institute = data[0].created_by.institute_name;
-		  var id = data[0].created_by.id;
-		  var dict = { "id" : id, "institute" : institute, "total_ncs" : data.length };
-		    oc_users_with_ncs.push(dict);
-		}
-		else{
-		  dict = {"id" : response[count].id, "institute" : temp_dict[0].institute_name, "total_ncs" : 0};
-		    console.log(dict);	    
-		}
-		
-	    });
-	    $scope.oc_users_with_ncs = oc_users_with_ncs;
+  dataFactory.fetch("/users?role_id=2").success(function(response){
+    $scope.totaloc = response.length;
+    $scope.oc_users = response;
+    $scope.gridOptions.data = $scope.oc_users;
+    $scope.loading = false;
+
+    var oc_users_with_ncs = [];
+    //start here v2.4.0
+    var count = 0;
+    var count1 = 0;
+    for(var user=0;user<response.length;user++){
+      dataFactory.fetch("/nodal_coordinator_details?created_by_id="+response[user].id).success(function(data){
+	count = count +1 ;		
+	var temp_dict = [{"institute_name" : "NIT Surathkal" }];
+	if(data.length!=0){
+	  var institute = data[0].created_by.institute_name;
+	  var id = data[0].created_by.id;
+	  var dict = { "id" : id, "institute" : institute, "total_ncs" : data.length };
+	  oc_users_with_ncs.push(dict);
 	}
+	else{
+	  dict = {"id" : response[count].id, "institute" : temp_dict[0].institute_name, "total_ncs" : 0};
+	  console.log(dict);	    
+	}
+		
+      });
+      $scope.oc_users_with_ncs = oc_users_with_ncs;
+    }
 
-	//end here
+    //end here
         
-    });
+  });
 
   $scope.nloading = true;
   dataFactory.fetch("/total_ncenters").success(function(response){
@@ -484,86 +512,84 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
     $scope.totalUsage = response.total_value;
   });
 
-    $scope.load_analytics = true;
-    dataFactory.fetch("/workshops?status_id=3").success(function(workshops){
-        var participants_count = 0;
-        var workshopList = [];
-        var labs = 0;
-        var expts_count = 0;
-        for(var workshop=0;workshop<workshops.length;workshop++)
-        {
-            workshopList.push(workshops[workshop]);
-            participants_count = participants_count + workshops[workshop].participants_attended;
-            labs = labs + workshops[workshop].labs_planned;
-            expts_count = expts_count + workshops[workshop].experiments_conducted;
-        }
-      $scope.total_workshops = workshops.length;
-        $scope.total_participants = participants_count;
-        $scope.total_usage = expts_count;
-        $scope.labs = labs;
-        $scope.workshops = workshopList;
-	$scope.load_analytics = false;
-    });
+  $scope.load_analytics = true;
+  dataFactory.fetch("/workshops?status_id=3").success(function(workshops){
+    var participants_count = 0;
+    var workshopList = [];
+    var labs = 0;
+    var expts_count = 0;
+    for(var workshop=0;workshop<workshops.length;workshop++)
+    {
+      workshopList.push(workshops[workshop]);
+      participants_count = participants_count + workshops[workshop].participants_attended;
+      labs = labs + workshops[workshop].labs_planned;
+      expts_count = expts_count + workshops[workshop].experiments_conducted;
+    }
+    $scope.total_workshops = workshops.length;
+    $scope.total_participants = participants_count;
+    $scope.total_usage = expts_count;
+    $scope.labs = labs;
+    $scope.workshops = workshopList;
+    $scope.load_analytics = false;
+  });
    
     /*Institute wise usage*/
-    var usage=0;
-    var nc_usage=[];
-    $scope.usageloading = true;
-    dataFactory.fetch("/users"). success(function(data, status, headers, config) {
-	$scope.users = data;
-    });    
-    dataFactory.fetch("/nodal_coordinator_details"). success(function(data, status, headers, config) {
+  var usage=0;
+  var nc_usage=[];
+  $scope.usageloading = true;
+  dataFactory.fetch("/users"). success(function(data, status, headers, config) {
+    $scope.users = data;
+  });    
+  dataFactory.fetch("/nodal_coordinator_details"). success(function(data, status, headers, config) {
 	
-	for(var i=0;i<data.length;i++){
-	    usage=0;
-	    for(var j=0;j<$scope.workshops.length;j++){
-		if(($scope.workshops[j].user.id == data[i].user.id)){
-		    usage=Number(usage) + Number($scope.workshops[j].experiments_conducted);
-		}
-	    }
-	    nc_usage.push({"nc_user_id" : data[i].user.name , "oc_id" : data[i].created_by.id, "nc_usage" : usage});
+    for(var i=0;i<data.length;i++){
+      usage=0;
+      for(var j=0;j<$scope.workshops.length;j++){
+	if(($scope.workshops[j].user.id == data[i].user.id)){
+	  usage=Number(usage) + Number($scope.workshops[j].experiments_conducted);
 	}
-	$scope.nc_usage = nc_usage;
+      }
+      nc_usage.push({"nc_user_id" : data[i].user.name , "oc_id" : data[i].created_by.id, "nc_usage" : usage});
+    }
+    $scope.nc_usage = nc_usage;
 	
-	var usage1=0;
-	var nc_usage1=[];
-	for(i=0;i<$scope.users.length;i++){
-	    usage1=0;
-	    for(j=0;j<$scope.workshops.length;j++){
+    var usage1=0;
+    var nc_usage1=[];
+    for(i=0;i<$scope.users.length;i++){
+      usage1=0;
+      for(j=0;j<$scope.workshops.length;j++){
 
-		if(($scope.workshops[j].user.id == $scope.users[i].id && $scope.users[i].role.id == 2)){
-		    
-		    usage1=Number(usage1) + Number($scope.workshops[j].experiments_conducted);
-
-		}
-	    }
-	    if($scope.users[i].role.id == 2){
-		nc_usage1.push({"oc_user_name" : $scope.users[i].name ,"oc_usage" : usage1});}
+	if(($scope.workshops[j].user.id == $scope.users[i].id && $scope.users[i].role.id == 2)){
+	  
+	  usage1=Number(usage1) + Number($scope.workshops[j].experiments_conducted);
+          
 	}
-	$scope.ocs_usage = nc_usage1;
+      }
+      if($scope.users[i].role.id == 2){
+	nc_usage1.push({"oc_user_name" : $scope.users[i].name ,"oc_usage" : usage1});}
+    }
+    $scope.ocs_usage = nc_usage1;
 	
-	var oc_usage = 0;
-	var usage_count = [];
-	dataFactory.fetch("/users?role_id=2"). success(function(data, status, headers, config) {
-	    for(i=0;i<data.length;i++){
-		oc_usage = 0;
-		for(j=0;j<$scope.nc_usage.length;j++){
-		    if(data[i].id == $scope.nc_usage[j].oc_id){
-			//oc_usage=Number(oc_usage) + Number($scope.nc_usage[j].nc_usage)+nc_usage1[i].oc_usage;
-			oc_usage=Number(oc_usage) + Number($scope.nc_usage[j].nc_usage);
-		    }
-		}
-		usage_count.push({"oc_centre" : data[i].institute_name , "oc_name" : data[i].name, "oc_email" : data[i].email, "usage" : oc_usage+nc_usage1[i].oc_usage});
-	    }
-	    $scope.oc_usage = usage_count;
-	    $scope.usageloading = false;
-	});
-	
-    }).error(function(data, status, headers, config){
-	console.log(data);
+    var oc_usage = 0;
+    var usage_count = [];
+    dataFactory.fetch("/users?role_id=2"). success(function(data, status, headers, config) {
+      for(i=0;i<data.length;i++){
+	oc_usage = 0;
+	for(j=0;j<$scope.nc_usage.length;j++){
+	  if(data[i].id == $scope.nc_usage[j].oc_id){
+	    //oc_usage=Number(oc_usage) + Number($scope.nc_usage[j].nc_usage)+nc_usage1[i].oc_usage;
+	    oc_usage=Number(oc_usage) + Number($scope.nc_usage[j].nc_usage);
+	  }
+	}
+	usage_count.push({"oc_centre" : data[i].institute_name , "oc_name" : data[i].name, "oc_email" : data[i].email, "usage" : oc_usage+nc_usage1[i].oc_usage});
+      }
+      $scope.oc_usage = usage_count;
+      $scope.usageloading = false;
     });
-   
-    
+	
+  }).error(function(data, status, headers, config){
+    console.log(data);
+  });
 });
 
 app.controller("nc-dashboard", function($scope, $http, dataFactory, $routeParams, $route, $window) {
