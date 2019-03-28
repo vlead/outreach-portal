@@ -7,7 +7,7 @@ app.config(function($routeProvider){
     })
     .when("/workshop-list", {
       templateUrl : "/static/partials/workshop-list.html",
-      controller  : "usage-ctrl"
+      controller  : "ws_details"
     })
     .when("/participants-attended", {
       templateUrl : "/static/partials/participants-attended.html",
