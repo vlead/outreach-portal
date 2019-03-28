@@ -47,7 +47,7 @@ img:hover{
 }
 .analytics-band{
 	text-align: center;
-	background: #196B9E;
+	/* background: #196B9E; */
 	margin: 0;
 	color: #fff;
 }
@@ -149,8 +149,8 @@ img:hover{
     background-color: #eee;
     padding: 0;
     padding-top: 40px;
-    min-height: 600px;
-    height: 780px;
+    min-height: 460px;`
+    /* height: 780px;` */
 }
 .content{
     padding: 40px 40px; 
