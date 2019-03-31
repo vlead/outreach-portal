@@ -87,11 +87,11 @@ app.config(function($routeProvider){
     })
     .when("/manage-workshops/pending-action",{
       templateUrl: "/static/partials/pending-workshops.html",
-      controller  : "manage-workshops"
+      controller  : "pending-workshops"
     })
     .when("/manage-workshops/workshop-history",{
       templateUrl: "/static/partials/workshop-history.html",
-      controller  : "manage-workshops"
+      controller  : "workshop-history"
     })
     .when("/edit-workshop/:id", {
       templateUrl : "/static/partials/edit-workshop.html",

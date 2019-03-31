@@ -660,7 +660,232 @@ app.controller("nc-dashboard", function($scope, $http, dataFactory, $routeParams
         });
     
 });
+app.controller("workshop-history", function($scope, $http, $routeParams, dataFactory,$route, $window) {
+    $scope.gridOptions = {
+        paginationPageSizes: [5, 10, 15],
+        paginationPageSize: 5,
+        enableFiltering: true,
+        columnDefs: [
+            { field: 'user.name', displayName: 'Coordinator Name'},
+            // { field: 'name', displayName: 'Workshop Name' },                                                                                       
+            { field: 'location' },
+            { field: 'participants_attended' },
+            { field: 'date'},
+            { field: 'status.name', displayName:'Status'},
+            { field: 'experiments_conducted', displayName:'Usage'},
+            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.viewReports(row.entity)">View</button><button id="editBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.editWorkshop(row.entity)" >Edit</button><button id="editBtn" type="button" class="btn btn-smallbtn-primary" ng-click="grid.appScope.uploadReports(row.entity)">Edit</button>'}
+        ],
+        enableGridMenu: true,
+        enableSelectAll: true,
+        exporterMenuPdf: false,
+        exporterMenuExcel: false,
+        exporterCsvFilename: 'ocWorkshopHistory.csv',
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        onRegisterApi: function (gridApi) {
+	    $scope.grid1Api = gridApi;
+        }
+
+    };
+
+    dataFactory.fetch("/users/"+$window.number).
+    success(function(data, status, headers, config){
+      $scope.user = data;
+    }).
+    error(function(data, status, headers, config){
+      console.log(data);
+    });
+   dataFactory.fetch("/users/"+$window.number).
+    success(function(data, status, headers, config){
+      $scope.user = data;
+    }).
+    error(function(data, status, headers, config){
+      console.log(data);
+    });
+
+    dataFactory.fetch('/workshops?user_id='+$window.number).success(function(data, status, headers, config){
+        var today = new Date();
+        var count = 0;
+	var upcoming = [];
+        var history = [];
+	var pending = [];
+        for(var i=0;i<data.length;i++){
+            var workshopDate = new Date(data[i].date);
+                var workshopId = data[i].id ;
+            if (((today > workshopDate) & !(today.toDateString() == workshopDate.toDateString())) &
+                (data[i].status.name == "Upcoming")){
+                dataFactory.put('/workshops/'+workshopId.toString(),
+                                {'status': {'id': 2}}).success(function(data, status){
+                                    console.log('Status success'); });
+            }
+            if( (today <= workshopDate) ||(today.getDate() == workshopDate.getDate() &
+                                            (today.getMonth() == workshopDate.getMonth())  &
+                                            (today.getFullYear() == workshopDate.getFullYear()))){
+                if(data[i].cancellation_reason == null){
+                    upcoming.push(data[i]);
+                    count = count + 1;
+                }
+            }
+            else if(data[i].status.name == "Approved"){
+                history.push(data[i]);
+            }
+            else if(data[i].status.name == "Pending for Approval" || data[i].status.id == 4){
+                pending.push(data[i]);
+            }
+        }
+        $scope.history = history;
+        $scope.gridOptions.data = $scope.history;
+        $scope.loading = false;
+        // $scope.pending = pending;                                                                                                                  
+        // $scope.upcoming = upcoming;                                                                                                                
+        // $scope.count = count;                                                                                                                      
+        // $scope.sort = function(keyname){                                                                                                           
+        // $scope.sortKey = keyname;   //set the sortKey to the param passed                                                                          
+        // $scope.reverse = !$scope.reverse; //if true make it false and vice versa                                                                   
+      // };                                                                                                                                           
+
+    }).error(function(data, status, headers, config){
+        console.log(data);
+    });
+    $scope.cancel = function(id){
+        if(confirm("Are you sure!") == true){
+            var reason = prompt("Please enter your reason");
+           if(reason == "" || reason == null){
+                console.log("Failed!");
+            }else{
+                dataFactory.put("/workshops/"+id, {"cancellation_reason" : reason, "status" : {"id": 6} }).success(function(data, status, headers, config) {
+                    $route.reload();
+                }).error(function(data, status, headers, config){
+                    console.log(data);
+		});
+            }
+
+        }
+    };
+});
+              
+app.controller("pending-workshops", function($scope, $http, $routeParams, dataFactory,$route, $window) {
+    $scope.gridOptions = {
+        paginationPageSizes: [5, 10, 15],
+        paginationPageSize: 5,
+        enableFiltering: true,
+        columnDefs: [
+            { field: 'user.name', displayName: 'Coordinator Name'},
+            // { field: 'name', displayName: 'Workshop Name' },                                                                                       
+            { field: 'location' },
+            { field: 'participants_attended' },
+            { field: 'date'},
+            { field: 'status.name', displayName:'Status'},
+            { field: 'experiments_conducted', displayName:'Usage'},
+            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.viewReports(row.entity)">View</button><button id="editBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.editWorkshop(row.entity)" >Edit</button><button id="editBtn" type="button" class="btn btn-smallbtn-primary" ng-click="grid.appScope.uploadReports(row.entity)">Edit</button>'}
+        ],
+        enableGridMenu: true,
+        enableSelectAll: true,
+        exporterMenuPdf: false,
+        exporterMenuExcel: false,
+        exporterCsvFilename: 'ocWorkshopHistory.csv',
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        onRegisterApi: function (gridApi) {
+            $scope.grid1Api = gridApi;
+        }
+
+    };
+      dataFactory.fetch("/users/"+$window.number).
+    success(function(data, status, headers, config){
+      $scope.user = data;
+    }).
+    error(function(data, status, headers, config){
+      console.log(data);
+    });
+
+    dataFactory.fetch('/workshops?user_id='+$window.number).success(function(data, status, headers, config){
+        var today = new Date();
+        var count = 0;
+        var upcoming = [];
+        var history = [];
+	var pending = [];
+        for(var i=0;i<data.length;i++){
+            var workshopDate = new Date(data[i].date);
+                var workshopId = data[i].id ;
+            if (((today > workshopDate) & !(today.toDateString() == workshopDate.toDateString())) &
+                (data[i].status.name == "Upcoming")){
+                dataFactory.put('/workshops/'+workshopId.toString(),
+                                {'status': {'id': 2}}).success(function(data, status){
+                                    console.log('Status success'); });
+            }
+            if( (today <= workshopDate) ||(today.getDate() == workshopDate.getDate() &
+                                            (today.getMonth() == workshopDate.getMonth())  &
+                                            (today.getFullYear() == workshopDate.getFullYear()))){
+                if(data[i].cancellation_reason == null){
+                    upcoming.push(data[i]);
+                    count = count + 1;
+              }
+            }
+            else if(data[i].status.name == "Approved"){
+                history.push(data[i]);
+            }
+            else if(data[i].status.name == "Pending for Approval" || data[i].status.id == 4){
+                pending.push(data[i]);
+            }
+        }
+        // $scope.history = history;                                                                                                                  
+        $scope.pending = pending;
+        $scope.gridOptions.data = $scope.pending;
+        $scope.loading = false;
+        // $scope.upcoming = upcoming;                                                                                                                
+        // $scope.count = count;                                                                                                                      
+        // $scope.sort = function(keyname){                                                                                                           
+        // $scope.sortKey = keyname;   //set the sortKey to the param passed                                                                          
+        // $scope.reverse = !$scope.reverse; //if true make it false and vice versa                                                                   
+      // };                                                                                                                                           
+
+    }).error(function(data, status, headers, config){
+        console.log(data);
+    });
+    $scope.cancel = function(id){
+        if(confirm("Are you sure!") == true){
+            var reason = prompt("Please enter your reason");
+            if(reason == "" || reason == null){
+                console.log("Failed!");
+            }else{
+                dataFactory.put("/workshops/"+id, {"cancellation_reason" : reason, "status" : {"id": 6} }).success(function(data, status, headers, config) {
+                    $route.reload();
+                }).error(function(data, status, headers, config){
+                    console.log(data);
+                });
+            }
+
+        }
+    };
+});
+
+
 app.controller("manage-workshops", function($scope, $http, $routeParams, dataFactory,$route, $window) {
+      $scope.gridOptions = {
+        paginationPageSizes: [5, 10, 15],
+        paginationPageSize: 5,
+        enableFiltering: true,
+        columnDefs: [
+            { field: 'user.name', displayName: 'Coordinator Name'},
+            // { field: 'name', displayName: 'Workshop Name' },                                                                                       
+            { field: 'location' },
+            { field: 'participants_attended' },
+            { field: 'date'},
+            { field: 'status.name', displayName:'Status'},
+            { field: 'experiments_conducted', displayName:'Usage'},
+          {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.viewReports(row.entity)">View</button><button id="editBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.editWorkshop(row.entity)" >Edit</button><button id="editBtn" type="button" class="btn btn-smallbtn-primary" ng-click="grid.appScope.uploadReports(row.entity)">Edit</button>'}
+        ],
+        enableGridMenu: true,
+        enableSelectAll: true,
+        exporterMenuPdf: false,
+        exporterMenuExcel: false,
+        exporterCsvFilename: 'ocWorkshopHistory.csv',
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+       onRegisterApi: function (gridApi) {
+            $scope.grid1Api = gridApi;
+        }
+
+    };
+
 
   dataFactory.fetch("/users/"+$window.number).
     success(function(data, status, headers, config){
@@ -701,13 +926,16 @@ app.controller("manage-workshops", function($scope, $http, $routeParams, dataFac
             }
         }
       $scope.history = history;
-      $scope.pending = pending;
-      $scope.upcoming = upcoming;
-      $scope.count = count;
-      $scope.sort = function(keyname){
-        $scope.sortKey = keyname;   //set the sortKey to the param passed
-        $scope.reverse = !$scope.reverse; //if true make it false and vice versa
-      };
+      $scope.gridOptions.data = $scope.history;
+      $scope.loading = false;
+      
+      // $scope.pending = pending;
+      // $scope.upcoming = upcoming;
+      // $scope.count = count;
+      // $scope.sort = function(keyname){
+      //   $scope.sortKey = keyname;   //set the sortKey to the param passed
+      //   $scope.reverse = !$scope.reverse; //if true make it false and vice versa
+      // };
       
     }).error(function(data, status, headers, config){
 	console.log(data);
