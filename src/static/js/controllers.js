@@ -482,9 +482,9 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
     $scope.total_ncentres = response.length;
   });
 
-  dataFactory.fetch("/workshops?status_id=1").success(function(response){
-    $scope.upcomingWorkshops = response.length;
-  });
+  // dataFactory.fetch("/workshops?status_id=1").success(function(response){
+  //   $scope.upcomingWorkshops = response.length;
+  // });
     
   dataFactory.fetch("/nodal_coordinator_details").success(function(response){
     $scope.totalnc = response.length;
@@ -496,9 +496,9 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
     $scope.totalWorkshops = response.total_value;
   });
 
-  dataFactory.fetch("/analytics/2").success(function(response){
-    $scope.upcomingWorkshops = response.total_value;
-  });
+  // dataFactory.fetch("/analytics/2").success(function(response){
+  //   $scope.upcomingWorkshops = response.total_value;
+  // });
 
   dataFactory.fetch("/analytics/3").success(function(data){
     $scope.totalNodalCentres = data.total_value;
