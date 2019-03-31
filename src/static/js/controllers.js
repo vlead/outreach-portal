@@ -123,9 +123,10 @@ app.controller("nodal-center", function($scope, dataFactory, $http, $routeParams
         paginationPageSize: 5,
         enableFiltering: true,
         columnDefs: [
-            { field: 'created_by.institute_name', displayName: 'Institute'},
-            { field: 'name' },
-            { field: 'location' }
+          { field: 'created_by.institute_name', displayName: 'Institute'},
+          { field: 'name' },
+          { field: 'centre_status', displayName:'Status'},
+          { field: 'location' }
         ],
         enableGridMenu: true,
         enableSelectAll: true,
@@ -496,9 +497,9 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
     $scope.totalWorkshops = response.total_value;
   });
 
-  // dataFactory.fetch("/analytics/2").success(function(response){
-  //   $scope.upcomingWorkshops = response.total_value;
-  // });
+  dataFactory.fetch("/analytics/2").success(function(response){
+    $scope.upcomingWorkshops = response.total_value;
+  });
 
   dataFactory.fetch("/analytics/3").success(function(data){
     $scope.totalNodalCentres = data.total_value;
