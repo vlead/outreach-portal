@@ -27,7 +27,7 @@ app.config(function($routeProvider){
     })
     .when("/usage", {
       templateUrl : "/static/partials/usage-list.html",
-      controller  : "admin-ctrl"
+      controller  : "usage-ctrl"
     })
     .when("/oc-users-list", {
       templateUrl : "/static/partials/oc-users-list.html",

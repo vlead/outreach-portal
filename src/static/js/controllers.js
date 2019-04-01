@@ -183,7 +183,7 @@ app.controller("usage-ctrl", function($scope, dataFactory, $http, $routeParams, 
         enableFiltering: true,
         columnDefs: [
             { field: 'institute_name' },
-            { field: 'total_participants_attended' }
+            { field: 'total_usage' }
         ],
         enableGridMenu: true,
         exporterMenuPdf: false,

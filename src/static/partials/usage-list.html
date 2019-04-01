@@ -8,24 +8,25 @@
 <div align='center' ng-show="usageloading"><img id="mySpinner" src="/static/img/default.gif"></div>
 <div class="row" ng-hide="usageloading">
   <div class="col-md-12">
-    <table class="table table-hover">
-      <thead>
-	<tr>
-	  <th>Outreach Coordinator</th>
-          <th>Email-id</th>
-	  <th>Outrech Centre</th>
-	  <th>Usage (in terms of total experiments performed)</th>
-	</tr>
-      </thead>
-      <tbody ng-repeat="name in oc_usage | orderBy : 'usage'">
-        <tr ng-if="name.oc_centre!='VLEAD-IIITH'">
-          <td>{{ name.oc_name }}</td>
-          <td>{{ name.oc_email }}</td>
-          <td>{{ name.oc_centre }}</td>
-          <td>{{ name.usage }}</td>
-        </tr>
-      </tbody>
-    </table>
+    <div ui-grid="gridOptions" ui-grid-pagination ui-grid-selection ui-grid-exporter class="ocworkshopGrid" external-scopes="clickHandler"></div>
+    <!-- <table class="table table-hover"> -->
+    <!--   <thead> -->
+    <!--     <tr> -->
+    <!--       <th>Outreach Coordinator</th> -->
+    <!--       <th>Email-id</th> -->
+    <!--       <th>Outrech Centre</th> -->
+    <!--       <th>Usage (in terms of total experiments performed)</th> -->
+    <!--     </tr> -->
+    <!--   </thead> -->
+    <!--   <tbody ng-repeat="name in oc_usage | orderBy : 'usage'"> -->
+    <!--     <tr ng-if="name.oc_centre!='VLEAD-IIITH'"> -->
+    <!--       <td>{{ name.oc_name }}</td> -->
+    <!--       <td>{{ name.oc_email }}</td> -->
+    <!--       <td>{{ name.oc_centre }}</td> -->
+    <!--       <td>{{ name.usage }}</td> -->
+    <!--     </tr> -->
+    <!--   </tbody> -->
+    <!-- </table> -->
   </div>
 </div>
 
