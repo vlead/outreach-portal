@@ -23,7 +23,7 @@ app.config(function($routeProvider){
     })
     .when("/nc-users-list", {
       templateUrl : "/static/partials/nc-users-list.html",
-      controller  : "admin-ctrl"
+      controller  : "nc-ctrl"
     })
     .when("/usage", {
       templateUrl : "/static/partials/usage-list.html",

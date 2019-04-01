@@ -337,6 +337,68 @@ app.controller("workshop-list", function($scope, dataFactory, $http, $routeParam
     }).error(function(response){console.log("Failed to fetch data");});
   });
 
+app.controller("nc-ctrl", function($scope, $http, $routeParams, dataFactory,$route, $window) {
+    $scope.viewNC = function(row) {
+        window.location.href = "#/nc-user-list/" + row['id'];
+    };
+
+    $scope.gridOptions = {
+        paginationPageSizes: [5, 10, 15],
+        paginationPageSize: 5,
+        enableFiltering: true,
+        columnDefs: [
+            { field: 'institute', displayName: 'Institute'},
+            { field: 'total_ncs', displayName: 'Total Nodal Coordinators', enableFiltering:false},
+            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small \
+btn-primary" ng-click="grid.appScope.viewNC(row.entity)">View</button>'}
+        ],
+        enableGridMenu: true,
+        enableSelectAll: true,
+        exporterMenuPdf: false,
+        exporterMenuExcel: false,
+        exporterCsvFilename: 'totalNCList.csv',
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        onRegisterApi: function (gridApi) {
+            $scope.grid1Api = gridApi;
+        }
+
+    };
+  dataFactory.fetch("/users?role_id=2").success(function(response){
+    $scope.totaloc = response.length;
+    $scope.oc_users = response;
+   var oc_users_with_ncs = [];
+    //start here v2.4.0                                                                                                                               
+    var count = 0;
+    var count1 = 0;
+    for(var user=0;user<$scope.totaloc;user++){
+      dataFactory.fetch("/nodal_coordinator_details?created_by_id="+response[user].id).success(function(data){
+        count = count +1 ;
+        var temp_dict = [{"institute_name" : "NIT Surathkal" }];
+        if(data.length!=0){
+          var institute = data[0].created_by.institute_name;
+          var id = data[0].created_by.id;
+          var dict = { "id" : id, "institute" : institute, "total_ncs" : data.length };
+          oc_users_with_ncs.push(dict);
+        }
+        else{
+          dict = {"id" : response[count].id, "institute" : temp_dict[0].institute_name, "total_ncs" : 0};
+          console.log(dict);
+        }
+
+      });
+      $scope.oc_users_with_ncs = oc_users_with_ncs;
+    }
+
+    $scope.gridOptions.data = $scope.oc_users_with_ncs;
+    $scope.loading = false;
+    //end here                                                                                                                                        
+  }).error(function(data, status, headers, config){
+      console.log(data);
+  });
+
+});
+
+
 app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, $location, $route, $q, $window) {
   $scope.loading = true;
   $scope.editOC = function(row) {

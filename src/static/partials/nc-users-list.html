@@ -5,53 +5,27 @@
   </div>
 </div>
 <br>
-<!--
 <div class="row">
   <div class="col-md-12">
-    <div class="table-responsive">
-    <table class="table table-stripped">
-      <thead>
-	<tr>
-          <th>S.NO</th>
-	  <th>Name</th>
-	  <th>Email</th>
-          <th>Last Active</th>
-	  <th>Nodal Centre</th>
-	</tr>
-      </thead>
-      <tbody>
-	<tr ng-repeat="nc in nc_users | orderBy : ['user.last_active','nodal_centre.name']">
-          <td>{{ $index+1 }}</td>
-          <td>{{ nc.user.name }}</td>
-          <td>{{ nc.user.email }}</td>
-          <td>{{ nc.user.last_active }}</td>
-          <td>{{ nc.nodal_centre.name }}</td>
-	</tr>
-      </tbody>
-    </table>
-    </div>
-  </div>
-</div>
--->
-<div class="row">
-  <div class="col-md-12">
-    <div class="table-responsive">
-    <table class="table table-hover table-stripped">
-      <thead>
-	<tr>
-          <th>S.NO</th>
-          <th>Institute</th>
-	  <th>No.of Nodal Coordinators</th>
-	</tr>
-      </thead>
-      <tbody>
-	<tr ng-repeat="nc in oc_users_with_ncs | orderBy : '-total_ncs'" ng-click="nc.total_ncs != 0 ? goToLink(nc.id) : angular.noop()" ng-style="{'cursor': (nc.total_ncs != 0) ? 'pointer' : '' }">
-          <td>{{ $index+1 }}</td>
-          <td>{{ nc.institute }}</td>
-          <td>{{ nc.total_ncs }}</td>
-	</tr>
-      </tbody>
-    </table>
+    <div ui-grid="gridOptions" ui-grid-pagination ui-grid-selection ui-grid-exporter class="ocworkshopGrid" external-scopes="clickHandler"></div>
+    
+    <!-- <div class="table-responsive"> -->
+    <!-- <table class="table table-hover table-stripped"> -->
+    <!--   <thead> -->
+    <!--     <tr> -->
+    <!--       <th>S.NO</th> -->
+    <!--       <th>Institute</th> -->
+    <!--       <th>No.of Nodal Coordinators</th> -->
+    <!--     </tr> -->
+    <!--   </thead> -->
+    <!--   <tbody> -->
+    <!--     <tr ng-repeat="nc in oc_users_with_ncs | orderBy : '-total_ncs'" ng-click="nc.total_ncs != 0 ? goToLink(nc.id) : angular.noop()" ng-style="{'cursor': (nc.total_ncs != 0) ? 'pointer' : '' }"> -->
+    <!--       <td>{{ $index+1 }}</td> -->
+    <!--       <td>{{ nc.institute }}</td> -->
+    <!--       <td>{{ nc.total_ncs }}</td> -->
+    <!--     </tr> -->
+    <!--   </tbody> -->
+    <!-- </table> -->
     </div>
   </div>
 </div>
