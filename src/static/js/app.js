@@ -179,7 +179,7 @@ app.config(function($routeProvider){
     })
     .when("/nc-user-list/:id", {
       templateUrl : "/static/partials/nc-user-list.html",
-      controller  : "nc_user_list"
+      controller  : "nc-user-list"
     });
 }
 );

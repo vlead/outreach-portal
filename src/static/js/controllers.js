@@ -2307,14 +2307,35 @@ app.controller("ws_details_offline", function($scope, $http, $routeParams, dataF
 
 });
 
-app.controller("nc_user_list", function($scope, $http, $routeParams, dataFactory, $route, $window){
-    dataFactory.fetch("/nodal_coordinator_details?created_by_id="+ $routeParams.id).
+app.controller("nc-user-list", function($scope, $http, $routeParams, dataFactory, $route, $window){
+   $scope.gridOptions = {
+	paginationPageSizes: [5, 10, 15],
+        paginationPageSize: 5,
+        enableFiltering: true,
+        columnDefs: [
+            { field: 'user.name', displayName: 'Name'},
+            { field: 'user.email', displayName: 'Email'},
+            { field: 'user.last_active', displayName: 'Last Active', enableFiltering:false}  
+        ],
+        enableGridMenu: true,
+        enableSelectAll: true,
+        exporterMenuPdf: false,
+        exporterMenuExcel: false,
+        exporterCsvFilename: 'totalNCList.csv',
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        onRegisterApi: function (gridApi) {
+            $scope.grid1Api = gridApi;
+        }
+
+    };
+  dataFactory.fetch("/nodal_coordinator_details?created_by_id="+ $routeParams.id).
 	success(function(data, status, headers, config){
-	    $scope.nc_user_list = data;
-	  console.log($scope.nc_user_list);
+	  $scope.nc_user_list = data;
+          $scope.gridOptions.data = $scope.nc_user_list;
+          $scope.loading = false;
 	}).
 	error(function(data,status,headers,config){
-	    console.log("Failed");
+	    console.log("Failed to load nodal coordinator details");
 	});
 });
 
