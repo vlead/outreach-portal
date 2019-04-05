@@ -33,9 +33,10 @@ app.controller("map-ctrl", function ($scope, $http, dataFactory){
                 workshopList.push(workshops[i]);
             }
         }
-	$scope.upcomingLoading = false;
-        $scope.upcomingWorkshopsList = workshopList;
-        $scope.gridOptions.data = $scope.upcomingWorkshopsList;
+      $scope.upcomingLoading = false;
+      $scope.totalUpcomingWorkshopsList = workshopList.length;
+      $scope.upcomingWorkshopsList = workshopList;
+      $scope.gridOptions.data = $scope.upcomingWorkshopsList;
     });
     
   dataFactory.fetch("/nodal_centres").success(function(nodalCentre){      
@@ -68,7 +69,7 @@ app.controller("map-ctrl", function ($scope, $http, dataFactory){
     );
   };
   
-    var mapOptions = { zoom: 5, center: new google.maps.LatLng(24,80) };
+    var mapOptions = { zoom: 4, center: new google.maps.LatLng(24,80) };
     $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
     var geocoder = new google.maps.Geocoder();
     
