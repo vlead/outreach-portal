@@ -1,5 +1,6 @@
 var app = angular.module("outreachApp.controllers",[]);
-app.controller("map-ctrl", function ($scope, $http, dataFactory){
+
+app.controller("upcoming-ctrl", function ($scope, $http, dataFactory){
       $scope.gridOptions = {
         paginationPageSizes: [5, 10, 15],
         paginationPageSize: 5,
@@ -38,7 +39,9 @@ app.controller("map-ctrl", function ($scope, $http, dataFactory){
       $scope.upcomingWorkshopsList = workshopList;
       $scope.gridOptions.data = $scope.upcomingWorkshopsList;
     });
-    
+});
+
+app.controller("map-ctrl", function ($scope, $http, dataFactory){  
   dataFactory.fetch("/nodal_centres").success(function(nodalCentre){      
     for(var i=0;i<nodalCentre.length;i++){
       var currentNodalCentre = nodalCentre[i];
