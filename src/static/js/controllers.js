@@ -50,64 +50,75 @@ app.controller("map-ctrl", function ($scope, $http, dataFactory){
     }
   });
   var geocoder1 = new google.maps.Geocoder();
-  var getGeocode1 = function (nodalCentre){
-    var id = nodalCentre.id;
-    var location = nodalCentre.location;
-    geocoder1.geocode(
-      { "address": nodalCentre.location+",india, Asia" }, function(results, status) {
-        if (status === google.maps.GeocoderStatus.OK && results.length > 0){
-          var geoCode = results[0].geometry.location;
-          var lat = geoCode.lat();
-          var lng = geoCode.lng();
-          var data = {"longitude" : lng, "lattitude" : lat };
-          dataFactory.put("/nodal_centres/"+id, data).success(function(response){
-          });
-        }
-	else{
-          $scope.status = "Failed for id "+ id +"error: " + status;
-	}
-      }
-    );
-  };
+  // var getGeocode1 = function (nodalCentre){
+  //   var id = nodalCentre.id;
+  //   var location = nodalCentre.location;
+  //   geocoder1.geocode(
+  //     { "address": nodalCentre.location+",india, Asia" }, function(results, status) {
+  //       if (status === google.maps.GeocoderStatus.OK && results.length > 0){
+  //         var geoCode = results[0].geometry.location;
+  //         var lat = geoCode.lat();
+  //         var lng = geoCode.lng();
+  //         var data = {"longitude" : lng, "lattitude" : lat };
+  //         dataFactory.put("/nodal_centres/"+id, data).success(function(response){
+  //         });
+  //       }
+  //       else{
+  //         $scope.status = "Failed for id "+ id +"error: " + status;
+  //       }
+  //     }
+  //   );
+  // };
   
-    var mapOptions = { zoom: 4, center: new google.maps.LatLng(24,80) };
-    $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
-    var geocoder = new google.maps.Geocoder();
-    
+  var mapOptions = { zoom: 4, center: new google.maps.LatLng(24,80) };
+  $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
+  var geocoder = new google.maps.Geocoder();
+  
   $scope.createMarker = function (label, geoCode,type){
     var nodalCentreInfowindow = new google.maps.InfoWindow({
       content: "<b>Nodal Centre Location : </b>"+label.location+"<br><b>Nodal Centre Name : </b>"+label.name+"<br><b>Outreach Centre Name : </b>"+label.created_by.institute_name
     });
-      var a = 0;
-      if(type === "workshops")
-      {
-	alert("dfd");
-        var marker = new google.maps.Marker({
-          map: $scope.map,
-          animation: google.maps.Animation.DROP,
-          draggable: false,
-          icon: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
-          position: new google.maps.LatLng(geoCode.lattitude, geoCode.longitude),
-          title: "Click here to view the workshop details"
-        });
-        marker.addListener("click", function() {
-            workshop_infowindow.open(map, marker);
-        });
-      }
-      else{
-        marker = new google.maps.Marker({
-	  map: $scope.map,
-	  animation: google.maps.Animation.DROP,
-	  draggable: false,
-	  icon : "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
-	  position: new google.maps.LatLng(geoCode.lattitude, geoCode.longitude),
-	  title: "Click here to view the Nodal Centre details"
-        });
-        marker.addListener("click", function() {
-	  nodalCentreInfowindow.open(map, marker);
-        });
-      }
-  };
+    var marker = new google.maps.Marker({
+      map: $scope.map,
+      animation: google.maps.Animation.DROP,
+      draggable: false,
+      icon : "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
+      position: new google.maps.LatLng(geoCode.lattitude, geoCode.longitude),
+      title: "Click here to view the Nodal Centre details"
+    });
+    marker.addListener("click", function() {
+      nodalCentreInfowindow.open(map, marker);
+    });
+    // var a = 0;
+    //   if(type === "workshops")
+    //   {
+    //     alert("dfd");
+    //     var marker = new google.maps.Marker({
+    //       map: $scope.map,
+    //       animation: google.maps.Animation.DROP,
+    //       draggable: false,
+    //       icon: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
+    //       position: new google.maps.LatLng(geoCode.lattitude, geoCode.longitude),
+    //       title: "Click here to view the workshop details"
+    //     });
+    //     marker.addListener("click", function() {
+    //         workshop_infowindow.open(map, marker);
+    //     });
+    //   }
+    //   else{
+    //     marker = new google.maps.Marker({
+    //       map: $scope.map,
+    //       animation: google.maps.Animation.DROP,
+    //       draggable: false,
+    //       icon : "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
+    //       position: new google.maps.LatLng(geoCode.lattitude, geoCode.longitude),
+    //       title: "Click here to view the Nodal Centre details"
+    //     });
+    //     marker.addListener("click", function() {
+    //       nodalCentreInfowindow.open(map, marker);
+    //     });
+    //   }
+};
 
 });
 
