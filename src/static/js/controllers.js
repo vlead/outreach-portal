@@ -1,5 +1,4 @@
 var app = angular.module("outreachApp.controllers",[]);
-
 app.controller("upcoming-ctrl", function ($scope, $http, dataFactory){
       $scope.gridOptions = {
         paginationPageSizes: [5, 10, 15],
@@ -40,14 +39,13 @@ app.controller("upcoming-ctrl", function ($scope, $http, dataFactory){
       $scope.gridOptions.data = $scope.upcomingWorkshopsList;
     });
 });
-
-app.controller("map-ctrl", function ($scope, $http, dataFactory){  
-  dataFactory.fetch("/nodal_centres").success(function(nodalCentre){      
+app.controller("map-ctrl", function ($scope, $http, dataFactory){
+  dataFactory.fetch("/nodal_centres").success(function(nodalCentre){
     for(var i=0;i<nodalCentre.length;i++){
       var currentNodalCentre = nodalCentre[i];
       if(currentNodalCentre.location !== "null" && currentNodalCentre.longitude !== null){
-	$scope.createMarker(currentNodalCentre, currentNodalCentre, "nodal_centres");
-        // getGeocode1(nodalCentre[i]);
+        $scope.createMarker(currentNodalCentre, currentNodalCentre, "nodal_centres");
+       // getGeocode1(nodalCentre[i]);                                                                                                               
       }
     }
   });
@@ -65,25 +63,26 @@ app.controller("map-ctrl", function ($scope, $http, dataFactory){
           dataFactory.put("/nodal_centres/"+id, data).success(function(response){
           });
         }
-	else{
+        else{
           $scope.status = "Failed for id "+ id +"error: " + status;
-	}
+        }
       }
     );
   };
-  
+
     var mapOptions = { zoom: 4, center: new google.maps.LatLng(24,80) };
     $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
     var geocoder = new google.maps.Geocoder();
-    
-  $scope.createMarker = function (label, geoCode,type){
+
+ $scope.createMarker = function (label, geoCode,type){
     var nodalCentreInfowindow = new google.maps.InfoWindow({
-      content: "<b>Nodal Centre Location : </b>"+label.location+"<br><b>Nodal Centre Name : </b>"+label.name+"<br><b>Outreach Centre Name : </b>"+label.created_by.institute_name
+      content: "<b>Nodal Centre Location : </b>"+label.location+"<br><b>Nodal Centre Name : </b>"+label.name+"<br><b>Outreach Centre Name : </b>"+lab\
+el.created_by.institute_name
     });
       var a = 0;
       if(type === "workshops")
       {
-	alert("dfd");
+        alert("dfd");
         var marker = new google.maps.Marker({
           map: $scope.map,
           animation: google.maps.Animation.DROP,
@@ -98,15 +97,15 @@ app.controller("map-ctrl", function ($scope, $http, dataFactory){
       }
       else{
         marker = new google.maps.Marker({
-	  map: $scope.map,
-	  animation: google.maps.Animation.DROP,
-	  draggable: false,
-	  icon : "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
-	  position: new google.maps.LatLng(geoCode.lattitude, geoCode.longitude),
-	  title: "Click here to view the Nodal Centre details"
+          map: $scope.map,
+          animation: google.maps.Animation.DROP,
+          draggable: false,
+          icon : "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
+          position: new google.maps.LatLng(geoCode.lattitude, geoCode.longitude),
+          title: "Click here to view the Nodal Centre details"
         });
         marker.addListener("click", function() {
-	  nodalCentreInfowindow.open(map, marker);
+          nodalCentreInfowindow.open(map, marker);
         });
       }
   };
