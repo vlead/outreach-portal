@@ -5,46 +5,43 @@
   <div class="analytics-band">
     <div class="container-fluid">
       <div class="row" ng-controller="admin-ctrl">
-        <div class="col-md-3 analytics upcoming" ng-controller="upcoming-ctrl" onclick="scrollWin()">
+	<div class="col-md-3 analytics upcoming" ng-controller="upcoming-ctrl" onclick="scrollWin()">
           UPCOMING WORKSHOPS<br>
           <span class="number">{{ totalUpcomingWorkshopsList.toLocaleString() }}</span>
-          <!-- <span class="number" ng-show="upcoming_loading"><img id="mySpinner" src="/static/img/default1.gif"></span> -->
+	  <!-- <span class="number" ng-show="upcoming_loading"><img id="mySpinner" src="/static/img/default1.gif"></span> -->
         </div>
         <div class="col-md-3 analytics labs-taken participants-attended" ng-click="showParticipants()">
           PARTICIPANTS ATTENDED<br>
           <span class="number">{{ totalParticipants.toLocaleString()  }}</span>
           <!-- <span class="number" ng-show="load_analytics"><img id="mySpinner" src="/static/img/default1.gif"></span> -->
         </div>
-        <div class="col-md-2 analytics nodal-centers" ng-click="showNcentres()">
+	<div class="col-md-2 analytics nodal-centers" ng-click="showNcentres()">
           NODAL CENTRES<br>
           <span class="number">{{ totalNodalCentres.toLocaleString()  }}</span>
-          <!-- <span class="number" ng-show="nloading"><img id="mySpinner" src="/static/img/default1.gif"></span> -->
+	  <!-- <span class="number" ng-show="nloading"><img id="mySpinner" src="/static/img/default1.gif"></span> -->
         </div>
         <div class="col-md-2 analytics workshops-run" ng-click="showWorkshops()">
           WORKSHOPS RUN<br>
-          <!-- <span class="number" ng-show="load_analytics"><img id="mySpinner" src="/static/img/default1.gif"></span> -->
+	  <!-- <span class="number" ng-show="load_analytics"><img id="mySpinner" src="/static/img/default1.gif"></span> -->
           <span class="number">{{ totalWorkshops.toLocaleString() }}</span>
-        </div>
-	<div class="col-md-2 analytics usage" ng-click="showUsage()">
+	</div>
+        <div class="col-md-2 analytics usage" ng-click="showUsage()">
           USAGE<br>
-          <!-- <span class="number" ng-show="load_analytics"><img id="mySpinner" src="/static/img/default1.gif"></span> -->
+	  <!-- <span class="number" ng-show="load_analytics"><img id="mySpinner" src="/static/img/default1.gif"></span> -->
           <span class="number">{{ totalUsage.toLocaleString() }}</span>
-        </div>
+	</div>
       </div>
     </div>
   </div>
   <div class="container-fluid">
     <div ng-controller="map-ctrl">
       <div class="section-one">
-        <div class="row">
-          <div class="col-md-3">
-            <iframe src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2FVirtual-Labs-IIT-Delhi-301510159983871%2F&am\
-p;tabs=timeline&amp;width=300&amp;height=350&amp;small_header=false&amp;adapt_container_width=true&amp;hide_cover=false&amp;show_facepile=true&amp;ap\
-pId" style="border:none;overflow:hidden" scrolling="no" allowtransparency="true" allow="encrypted-media" width="350" height="352" frameborder="0"></i\
-frame>
-</div>
-
-          <!-- <div class="col-md-6"> -->
+	<div class="row">
+	  <div class="col-md-3">
+	    <iframe src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2FVirtual-Labs-IIT-Delhi-301510159983871%2F&amp;tabs=timeline&amp;width=300&amp;height=350&amp;small_header=false&amp;adapt_container_width=true&amp;hide_cover=false&amp;show_facepile=true&amp;appId" style="border:none;overflow:hidden" scrolling="no" allowtransparency="true" allow="encrypted-media" width="350" height="352" frameborder="0"></iframe>
+	  </div>
+          
+	  <!-- <div class="col-md-6"> -->
           <!--   <img id="map" style="height:350px; width:637px;" src="/static/img/google-map-2.png" class="logo-img">             -->
           <!--   <\!-- <div style="height: 800px;" id="map"> -\-> -->
           <!-- </div> -->
@@ -53,17 +50,17 @@ frame>
             <div class="col-md-6">
               <div style="height: 350px; width: 637px;" id="map">
               </div>
-	    </div>
+            </div>
           </div>
-
+          
           <div class="col-md-3">
-            <a class="twitter-timeline" data-width="354"
-              data-height="365"
-              href="https://twitter.com/TheVirtual_Labs?ref_src=twsrc%5Etfw">Tweets
-              by TheVirtual_Labs</a> <script async
-              src="https://platform.twitter.com/widgets.js"
-              charset="utf-8"></script>
-          </div>
+	    <a class="twitter-timeline" data-width="354"
+	      data-height="365"
+	      href="https://twitter.com/TheVirtual_Labs?ref_src=twsrc%5Etfw">Tweets
+	      by TheVirtual_Labs</a> <script async
+	      src="https://platform.twitter.com/widgets.js"
+	      charset="utf-8"></script>
+	  </div>
   </div>
   <div ng-controller="upcoming-ctrl">
     <div class="col-md-12" ng-if="upcomingWorkshopsList.length !=0">
@@ -90,8 +87,8 @@ frame>
 	<!--     </tr> -->
 	<!--   </tbody> -->
         <!-- </table> -->
-          </div>
-        </div>
+	  </div>
+	</div>
       </div>
     </div>
   </div>
@@ -103,4 +100,5 @@ frame>
   }
 </script> 
 {% endblock %}
+  
   
