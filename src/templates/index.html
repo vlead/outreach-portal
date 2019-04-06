@@ -5,31 +5,31 @@
   <div class="analytics-band">
     <div class="container-fluid">
       <div class="row" ng-controller="admin-ctrl">
-	<div class="col-md-3 analytics upcoming" ng-controller="upcoming-ctrl" onclick="scrollWin()">
+        <div class="col-md-3 analytics upcoming" ng-controller="upcoming-ctrl" onclick="scrollWin()">
           UPCOMING WORKSHOPS<br>
-          <span class="number">{{ totalUpcomingWorkshopsList.toLocaleString() }}</span>
-	  <!-- <span class="number" ng-show="upcoming_loading"><img id="mySpinner" src="/static/img/default1.gif"></span> -->
+          <span class="number" ng-show="IsVisible">{{ totalUpcomingWorkshopsList.toLocaleString() }}</span>
+          <span class="number" ng-hide="IsVisible"><img id="mySpinner" src="/static/img/default1.gif"></span>
         </div>
         <div class="col-md-3 analytics labs-taken participants-attended" ng-click="showParticipants()">
           PARTICIPANTS ATTENDED<br>
-          <span class="number">{{ totalParticipants.toLocaleString()  }}</span>
-          <!-- <span class="number" ng-show="load_analytics"><img id="mySpinner" src="/static/img/default1.gif"></span> -->
+          <span class="number" ng-show="IsVisible">{{ totalParticipants.toLocaleString()  }}</span>
+          <span class="number" ng-hide="IsVisible"><img id="mySpinner" src="/static/img/default1.gif"></span>
         </div>
-	<div class="col-md-2 analytics nodal-centers" ng-click="showNcentres()">
+        <div class="col-md-2 analytics nodal-centers" ng-click="showNcentres()">
           NODAL CENTRES<br>
-          <span class="number">{{ totalNodalCentres.toLocaleString()  }}</span>
-	  <!-- <span class="number" ng-show="nloading"><img id="mySpinner" src="/static/img/default1.gif"></span> -->
+          <span class="number" ng-show="IsVisible">{{ totalNodalCentres.toLocaleString()  }}</span>
+          <span class="number" ng-hide="IsVisible"><img id="mySpinner" src="/static/img/default1.gif"></span>
         </div>
         <div class="col-md-2 analytics workshops-run" ng-click="showWorkshops()">
           WORKSHOPS RUN<br>
-	  <!-- <span class="number" ng-show="load_analytics"><img id="mySpinner" src="/static/img/default1.gif"></span> -->
-          <span class="number">{{ totalWorkshops.toLocaleString() }}</span>
-	</div>
+          <span class="number" ng-show="IsVisible">{{ totalWorkshops.toLocaleString() }}</span>
+          <span class="number" ng-hide="IsVisible"><img id="mySpinner" src="/static/img/default1.gif"></span>
+        </div>
         <div class="col-md-2 analytics usage" ng-click="showUsage()">
           USAGE<br>
-	  <!-- <span class="number" ng-show="load_analytics"><img id="mySpinner" src="/static/img/default1.gif"></span> -->
-          <span class="number">{{ totalUsage.toLocaleString() }}</span>
-	</div>
+          <span class="number" ng-show="IsVisible">{{ totalUsage.toLocaleString() }}</span>
+          <span class="number" ng-hide="IsVisible"><img id="mySpinner" src="/static/img/default1.gif"></span>
+        </div>
       </div>
     </div>
   </div>

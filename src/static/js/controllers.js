@@ -21,7 +21,6 @@ app.controller("upcoming-ctrl", function ($scope, $http, dataFactory){
 
     };
     var workshopList = [];
-    $scope.upcomingLoading = true;
     dataFactory.fetch("/workshops?status_id=1").success(function(workshops){
         var today = new Date();
         for(var i=0;i<workshops.length;i++){
@@ -33,8 +32,9 @@ app.controller("upcoming-ctrl", function ($scope, $http, dataFactory){
                 workshopList.push(workshops[i]);
             }
         }
-      $scope.upcomingLoading = false;
+      $scope.IsVisible = false;
       $scope.totalUpcomingWorkshopsList = workshopList.length;
+      $scope.IsVisible = true;
       $scope.upcomingWorkshopsList = workshopList;
       $scope.gridOptions.data = $scope.upcomingWorkshopsList;
     });
@@ -377,7 +377,7 @@ btn-primary" ng-click="grid.appScope.viewNC(row.entity)">View</button>'}
 
     };
   dataFactory.fetch("/users?role_id=2").success(function(response){
-    $scope.totaloc = response.length;
+    // $scope.totaloc = response.length;
     $scope.oc_users = response;
    var oc_users_with_ncs = [];
     //start here v2.4.0                                                                                                                               
@@ -513,7 +513,7 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
   };
 
   dataFactory.fetch("/users?role_id=2").success(function(response){
-    $scope.totaloc = response.length;
+    // $scope.totaloc = response.length;
     $scope.oc_users = response;
     $scope.gridOptions.data = $scope.oc_users;
     $scope.loading = false;
@@ -563,29 +563,51 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
   // });
     
   dataFactory.fetch("/nodal_coordinator_details").success(function(response){
-    $scope.totalnc = response.length;
+    // $scope.totalnc = response.length;
     $scope.nc_users = response;
     
   });
 
   dataFactory.fetch("/analytics/1").success(function(response){
+    $scope.IsVisible = false;
     $scope.totalWorkshops = response.total_value;
+    $scope.IsVisible = true;
   });
 
   dataFactory.fetch("/analytics/2").success(function(response){
+    $scope.IsVisible = false;
     $scope.upcomingWorkshops = response.total_value;
+      $scope.IsVisible = true;
   });
 
   dataFactory.fetch("/analytics/3").success(function(data){
+    $scope.IsVisible = false;
     $scope.totalNodalCentres = data.total_value;
+    $scope.IsVisible = true;
   });
 
   dataFactory.fetch("/analytics/4").success(function(data){
+    $scope.IsVisible = false;
     $scope.totalParticipants = data.total_value;
+    $scope.IsVisible = true;
   });
 
   dataFactory.fetch("/analytics/5").success(function(response){
+    $scope.IsVisible = false;
     $scope.totalUsage = response.total_value;
+    $scope.IsVisible = true;
+  });
+
+  dataFactory.fetch("/analytics/6").success(function(response){
+      $scope.IsVisible = false;
+      $scope.totalOC = response.total_value;
+      $scope.IsVisible = true;
+  });
+
+  dataFactory.fetch("/analytics/7").success(function(response){
+      $scope.IsVisible = false;
+      $scope.totalNC = response.total_value;
+      $scope.IsVisible = true;
   });
 
   $scope.load_analytics = true;
