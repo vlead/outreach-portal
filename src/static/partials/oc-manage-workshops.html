@@ -12,7 +12,7 @@
   <!-- </div> -->
 </div>
 <div class="row">
-  <div class="col-md-12">
+  <div class="col-md-12" ng-if="upcoming.length !=0">     
     <div ui-grid="gridOptions" ui-grid-pagination ui-grid-selection ui-grid-exporter class="ocworkshopGrid" external-scopes="clickHandler"></div>
 
     <!-- <table class="table table-hover"> -->

@@ -754,7 +754,7 @@ app.controller("workshop-history", function($scope, $http, $routeParams, dataFac
         enableSelectAll: true,
         exporterMenuPdf: false,
         exporterMenuExcel: false,
-        exporterCsvFilename: 'ocWorkshopHistory.csv',
+        exporterCsvFilename: 'workshopHistory.csv',
         exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
         onRegisterApi: function (gridApi) {
 	    $scope.grid1Api = gridApi;
@@ -857,7 +857,7 @@ app.controller("pending-workshops", function($scope, $http, $routeParams, dataFa
         enableSelectAll: true,
         exporterMenuPdf: false,
         exporterMenuExcel: false,
-        exporterCsvFilename: 'ocWorkshopHistory.csv',
+        exporterCsvFilename: 'pendingWorkshops.csv',
         exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
         onRegisterApi: function (gridApi) {
             $scope.grid1Api = gridApi;
