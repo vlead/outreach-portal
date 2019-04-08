@@ -377,7 +377,7 @@ btn-primary" ng-click="grid.appScope.viewNC(row.entity)">View</button>'}
 
     };
   dataFactory.fetch("/users?role_id=2").success(function(response){
-    // $scope.totaloc = response.length;
+    $scope.totaloc = response.length;
     $scope.oc_users = response;
    var oc_users_with_ncs = [];
     //start here v2.4.0                                                                                                                               
@@ -403,7 +403,6 @@ btn-primary" ng-click="grid.appScope.viewNC(row.entity)">View</button>'}
     }
 
     $scope.gridOptions.data = $scope.oc_users_with_ncs;
-    $scope.loading = false;
     //end here                                                                                                                                        
   }).error(function(data, status, headers, config){
       console.log(data);

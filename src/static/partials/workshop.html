@@ -2,8 +2,8 @@
   <div align='center' ng-show="loading"><img id="mySpinner" src="/static/img/default.gif"></div>
   <div ng-hide="loading">
     <div class="col-md-8"><h3>Total Workshops :  {{ oc_workshops.length }}</h3></div><br>
-    <div class="col-md-8">
-      <div ui-grid="gridOptions" ui-grid-pagination ui-grid-selection ui-grid-exporter class="workshopGrid" external-scopes="clickHandler"></div>
+    <div class="col-md-12" ng-if="oc_workshops.length !=0">
+      <div ui-grid="gridOptions" ui-grid-pagination ui-grid-selection ui-grid-exporter class="ocworkshopGrid" external-scopes="clickHandler"></div>
     </div>
     <div>
     </div>
