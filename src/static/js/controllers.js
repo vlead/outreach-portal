@@ -13,7 +13,7 @@ app.controller("upcoming-ctrl", function ($scope, $http, dataFactory){
         enableSelectAll: true,
         exporterMenuPdf: false,
         exporterMenuExcel: false,
-        exporterCsvFilename: 'myFile.csv',
+        exporterCsvFilename: 'upcomingWorkshopsList.csv',
         exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
         onRegisterApi: function (gridApi) {
             $scope.grid1Api = gridApi;
@@ -145,7 +145,7 @@ app.controller("nodal-center", function($scope, dataFactory, $http, $routeParams
         enableSelectAll: true,
         exporterMenuPdf: false,
         exporterMenuExcel: false,
-        exporterCsvFilename: 'myFile.csv',
+        exporterCsvFilename: 'nodalCenter.csv',
         exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
         onRegisterApi: function (gridApi) {
             $scope.grid1Api = gridApi;
@@ -192,7 +192,7 @@ app.controller("usage-ctrl", function($scope, dataFactory, $http, $routeParams, 
     $scope.loading = true;
     $scope.gridOptions = {
         paginationPageSizes: [5, 10],
-        paginationPageSize: 2,
+        paginationPageSize: 5,
         enableFiltering: true,
         columnDefs: [
             { field: 'institute_name' },
@@ -203,25 +203,8 @@ app.controller("usage-ctrl", function($scope, dataFactory, $http, $routeParams, 
         exporterMenuExcel: false,
 
         enableSelectAll: true,
-        exporterCsvFilename: 'myFile.csv',
-        exporterPdfDefaultStyle: {fontSize: 9},
-        exporterPdfTableStyle: {margin: [30, 30, 30, 30]},
-        exporterPdfTableHeaderStyle: {fontSize: 10, bold: true, italics: true, color: 'red'},
-        exporterPdfHeader: { text: "My Header", style: 'headerStyle' },
-        exporterPdfFooter: function ( currentPage, pageCount ) {
-            return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
-        },
-        exporterPdfCustomFormatter: function ( docDefinition ) {
-            docDefinition.styles.headerStyle = { fontSize: 22, bold: true };
-            docDefinition.styles.footerStyle = { fontSize: 10, bold: true };
-            return docDefinition;
-        },
-        exporterPdfOrientation: 'portrait',
-        exporterPdfPageSize: 'LETTER',
-        exporterPdfMaxGridWidth: 500,
+        exporterCsvFilename: 'usageList.csv',
         exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
-        exporterExcelFilename: 'myFile.xlsx',
-        exporterExcelSheetName: 'Sheet1',
         onRegisterApi: function (gridApi) {
             $scope.grid1Api = gridApi;
         }
@@ -265,17 +248,13 @@ app.controller("workshop", function($scope, dataFactory, $http, $routeParams, $l
             { field: 'date'},
             { field: 'participants_attended'},
             {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="editBtn" type="button" class="btn btn-small \
-btn-primary" ng-click="grid.appScope.view(row.entity)" >View</button>'}
-            // {name: 'actions', displayName: 'Actions', cellTemplate: '<button id="editBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.edit(row.entity)" >Edit</button><button id="deleteBtn" type="button" class="btn btn-small btn-danger" ng-click="grid.appScope.remove(row.entity)" >Remove</button>'},                                                                                                                      
-            // { field: 'click',                                                                                                                      
-            //   cellTemplate : '<div><button ng-click="grid.appScope.edit(row.entity)">Click Here</button></div>'     
-           // }                                                                                                                                      
+btn-primary" ng-click="grid.appScope.view(row.entity)" >View</button>'}                     
         ],
         enableGridMenu: true,
         enableSelectAll: true,
         exporterMenuPdf: false,
         exporterMenuExcel: false,
-        exporterCsvFilename: 'myFile.csv',
+        exporterCsvFilename: 'workshopList.csv',
         exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
         onRegisterApi: function (gridApi) {
             $scope.grid1Api = gridApi;
