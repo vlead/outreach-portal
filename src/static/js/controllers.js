@@ -610,62 +610,62 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
   });
    
     /*Institute wise usage*/
-  var usage=0;
-  var nc_usage=[];
-  $scope.usageloading = true;
-  dataFactory.fetch("/users"). success(function(data, status, headers, config) {
-    $scope.users = data;
-  });    
-  dataFactory.fetch("/nodal_coordinator_details"). success(function(data, status, headers, config) {
+  // var usage=0;
+  // var nc_usage=[];
+  // $scope.usageloading = true;
+  // dataFactory.fetch("/users"). success(function(data, status, headers, config) {
+  //   $scope.users = data;
+  // });    
+  // dataFactory.fetch("/nodal_coordinator_details"). success(function(data, status, headers, config) {
 	
-    for(var i=0;i<data.length;i++){
-      usage=0;
-      for(var j=0;j<$scope.workshops.length;j++){
-	if(($scope.workshops[j].user.id == data[i].user.id)){
-	  usage=Number(usage) + Number($scope.workshops[j].experiments_conducted);
-	}
-      }
-      nc_usage.push({"nc_user_id" : data[i].user.name , "oc_id" : data[i].created_by.id, "nc_usage" : usage});
-    }
-    $scope.nc_usage = nc_usage;
+  //   for(var i=0;i<data.length;i++){
+  //     usage=0;
+  //     for(var j=0;j<$scope.workshops.length;j++){
+  //       if(($scope.workshops[j].user.id == data[i].user.id)){
+  //         usage=Number(usage) + Number($scope.workshops[j].experiments_conducted);
+  //       }
+  //     }
+  //     nc_usage.push({"nc_user_id" : data[i].user.name , "oc_id" : data[i].created_by.id, "nc_usage" : usage});
+  //   }
+  //   $scope.nc_usage = nc_usage;
 	
-    var usage1=0;
-    var nc_usage1=[];
-    for(i=0;i<$scope.users.length;i++){
-      usage1=0;
-      for(j=0;j<$scope.workshops.length;j++){
+  //   var usage1=0;
+  //   var nc_usage1=[];
+  //   for(i=0;i<$scope.users.length;i++){
+  //     usage1=0;
+  //     for(j=0;j<$scope.workshops.length;j++){
 
-	if(($scope.workshops[j].user.id == $scope.users[i].id && $scope.users[i].role.id == 2)){
+  //       if(($scope.workshops[j].user.id == $scope.users[i].id && $scope.users[i].role.id == 2)){
 	  
-	  usage1=Number(usage1) + Number($scope.workshops[j].experiments_conducted);
+  //         usage1=Number(usage1) + Number($scope.workshops[j].experiments_conducted);
           
-	}
-      }
-      if($scope.users[i].role.id == 2){
-	nc_usage1.push({"oc_user_name" : $scope.users[i].name ,"oc_usage" : usage1});}
-    }
-    $scope.ocs_usage = nc_usage1;
+  //       }
+  //     }
+  //     if($scope.users[i].role.id == 2){
+  //       nc_usage1.push({"oc_user_name" : $scope.users[i].name ,"oc_usage" : usage1});}
+  //   }
+  //   $scope.ocs_usage = nc_usage1;
 	
-    var oc_usage = 0;
-    var usage_count = [];
-    dataFactory.fetch("/users?role_id=2"). success(function(data, status, headers, config) {
-      for(i=0;i<data.length;i++){
-	oc_usage = 0;
-	for(j=0;j<$scope.nc_usage.length;j++){
-	  if(data[i].id == $scope.nc_usage[j].oc_id){
-	    //oc_usage=Number(oc_usage) + Number($scope.nc_usage[j].nc_usage)+nc_usage1[i].oc_usage;
-	    oc_usage=Number(oc_usage) + Number($scope.nc_usage[j].nc_usage);
-	  }
-	}
-	usage_count.push({"oc_centre" : data[i].institute_name , "oc_name" : data[i].name, "oc_email" : data[i].email, "usage" : oc_usage+nc_usage1[i].oc_usage});
-      }
-      $scope.oc_usage = usage_count;
-      $scope.usageloading = false;
-    });
+  //   var oc_usage = 0;
+  //   var usage_count = [];
+  //   dataFactory.fetch("/users?role_id=2"). success(function(data, status, headers, config) {
+  //     for(i=0;i<data.length;i++){
+  //       oc_usage = 0;
+  //       for(j=0;j<$scope.nc_usage.length;j++){
+  //         if(data[i].id == $scope.nc_usage[j].oc_id){
+  //           //oc_usage=Number(oc_usage) + Number($scope.nc_usage[j].nc_usage)+nc_usage1[i].oc_usage;
+  //           oc_usage=Number(oc_usage) + Number($scope.nc_usage[j].nc_usage);
+  //         }
+  //       }
+  //       usage_count.push({"oc_centre" : data[i].institute_name , "oc_name" : data[i].name, "oc_email" : data[i].email, "usage" : oc_usage+nc_usage1[i].oc_usage});
+  //     }
+  //     $scope.oc_usage = usage_count;
+  //     $scope.usageloading = false;
+  //   });
 	
-  }).error(function(data, status, headers, config){
-    console.log(data);
-  });
+  // }).error(function(data, status, headers, config){
+  //   console.log(data);
+  // });
 });
 
 app.controller("nc-dashboard", function($scope, $http, dataFactory, $routeParams, $route, $window) {
