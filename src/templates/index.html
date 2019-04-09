@@ -52,40 +52,37 @@
               </div>
             </div>
           </div>
-          
+
           <div class="col-md-3">
-	    <a class="twitter-timeline" data-width="354"
-	      data-height="365"
-	      href="https://twitter.com/TheVirtual_Labs?ref_src=twsrc%5Etfw">Tweets
-	      by TheVirtual_Labs</a> <script async
-	      src="https://platform.twitter.com/widgets.js"
-	      charset="utf-8"></script>
-	  </div>
+            <a class="twitter-timeline" data-width="354" data-height="365"
+               href="https://twitter.com/TheVirtual_Labs?ref_src=twsrc%5Etfw">Tweets by TheVirtual_Labs</a>
+            <script type="text/javascript" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+          </div>
+          
   </div>
   <div ng-controller="upcoming-ctrl">
     <div class="col-md-12" ng-if="upcomingWorkshopsList.length !=0">
       <h2 style="text-align:center">Upcoming Workshops</h2>
       <div ui-grid="gridOptions" ui-grid-pagination ui-grid-selection ui-grid-exporter class="upcomingWorkshopsGrid"></div>
-
         <!-- <table class="table table-hover"> -->
         <!--   <thead> -->
-	<!--     <tr> -->
-	<!--       <th>S.No</th> -->
-	<!--       <th>Name</th> -->
-	<!--       <th>Date</th> -->
-	<!--       <\!-- <th>Location</th> -\-> -->
+        <!--     <tr> -->
+        <!--       <th>S.No</th> -->
+        <!--       <th>Name</th> -->
+        <!--       <th>Date</th> -->
+        <!--       <th>Location</th> -->
         <!--       <th>Participating Institutes</th> -->
         <!--     </tr> -->
-	<!--   </thead> -->
-	<!--   <tbody> -->
-	<!--     <tr ng-repeat="workshop in upcomingWorkshopsList"> -->
-	<!--       <td>{{ $index+1 }}</td> -->
-	<!--       <td>{{ workshop.name }}</td> -->
+        <!--   </thead> -->
+        <!--   <tbody> -->
+        <!--     <tr ng-repeat="workshop in upcomingWorkshopsList"> -->
+        <!--       <td>{{ $index+1 }}</td> -->
+        <!--       <td>{{ workshop.name }}</td> -->
         <!--       <td>{{ workshop.date }}</td> -->
-        <!--       <\!-- <td>{{ workshop.location }}</td> -\-> -->
+        <!--       <td>{{ workshop.location }}</td> -->
         <!--       <td>{{ workshop.participating_institutes }}</td> -->
-	<!--     </tr> -->
-	<!--   </tbody> -->
+        <!--     </tr> -->
+        <!--   </tbody> -->
         <!-- </table> -->
 	  </div>
 	</div>
