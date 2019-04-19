@@ -407,7 +407,7 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
       { field: 'institute_name',displayName:'Institute Name' },
       { field: 'last_active', displayName:'Last Active'},
       { field: 'created', displayName:'Created On'},
-      {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.editOC(row.entity)">Edit</button><button id="deleteBtn" type="button" class="btn btn-small btn-danger" ng-click="grid.appScope.delete_oc(row.entity)">Remove</button>'}
+      {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.editOC(row.entity)">Edit</button><button id="deleteBtn" type="button" class="btn btn-small btn-danger" ng-click="grid.appScope.deleteOC(row.entity)">Remove</button>'}
     ],
     enableGridMenu: true,
     enableSelectAll: true,
@@ -475,11 +475,11 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
     }
   };
     
-  $scope.delete_oc =  function(id)
+  $scope.deleteOC =  function(row)
   {
     if(confirm("Are you sure!") == true){
-      dataFactory.del("/users/"+id).success(function(response){
-        $route.reload();
+      dataFactory.del("/users/"+row['id']).success(function(response){
+       $route.reload();
       }).error(function(data, status){
         alert("You can delete after deleting NC users under him");  
       });
