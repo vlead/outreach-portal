@@ -736,6 +736,13 @@ app.controller("nc-dashboard", function($scope, $http, dataFactory, $routeParams
     
 });
 app.controller("workshop-history", function($scope, $http, $routeParams, dataFactory,$route, $window) {
+  $scope.editWorkshop = function(row) {
+        window.location.href = "#edit-workshop/" + row['id'];
+    };
+    $scope.view = function(row) {
+        window.location.href = "#/one-workshop/" + row['id'];
+    };
+
     $scope.gridOptions = {
         paginationPageSizes: [5, 10, 15],
         paginationPageSize: 5,
@@ -748,7 +755,7 @@ app.controller("workshop-history", function($scope, $http, $routeParams, dataFac
             { field: 'date'},
             { field: 'status.name', displayName:'Status'},
             { field: 'experiments_conducted', displayName:'Usage'},
-            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.viewReports(row.entity)">View</button><button id="editBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.editWorkshop(row.entity)" >Edit</button><button id="editBtn" type="button" class="btn btn-smallbtn-primary" ng-click="grid.appScope.uploadReports(row.entity)">Edit</button>'}
+            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.view(row.entity)">View</button><button id="editBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.editWorkshop(row.entity)" >Edit</button><button id="editBtn" type="button" class="btn btn-smallbtn-primary" ng-click="grid.appScope.uploadReports(row.entity)">Edit</button>'}
         ],
         enableGridMenu: true,
         enableSelectAll: true,
@@ -761,21 +768,6 @@ app.controller("workshop-history", function($scope, $http, $routeParams, dataFac
         }
 
     };
-
-    dataFactory.fetch("/users/"+$window.number).
-    success(function(data, status, headers, config){
-      $scope.user = data;
-    }).
-    error(function(data, status, headers, config){
-      console.log(data);
-    });
-   dataFactory.fetch("/users/"+$window.number).
-    success(function(data, status, headers, config){
-      $scope.user = data;
-    }).
-    error(function(data, status, headers, config){
-      console.log(data);
-    });
 
     dataFactory.fetch('/workshops?user_id='+$window.number).success(function(data, status, headers, config){
         var today = new Date();
@@ -810,14 +802,6 @@ app.controller("workshop-history", function($scope, $http, $routeParams, dataFac
         $scope.history = history;
         $scope.gridOptions.data = $scope.history;
         $scope.loading = false;
-        // $scope.pending = pending;                                                                                                                  
-        // $scope.upcoming = upcoming;                                                                                                                
-        // $scope.count = count;                                                                                                                      
-        // $scope.sort = function(keyname){                                                                                                           
-        // $scope.sortKey = keyname;   //set the sortKey to the param passed                                                                          
-        // $scope.reverse = !$scope.reverse; //if true make it false and vice versa                                                                   
-      // };                                                                                                                                           
-
     }).error(function(data, status, headers, config){
         console.log(data);
     });
@@ -839,19 +823,25 @@ app.controller("workshop-history", function($scope, $http, $routeParams, dataFac
 });
               
 app.controller("pending-workshops", function($scope, $http, $routeParams, dataFactory,$route, $window) {
+  $scope.editWorkshop = function(row) {
+        window.location.href = "#edit-workshop/" + row['id'];
+    };
+    $scope.view = function(row) {
+        window.location.href = "#/one-workshop/" + row['id'];
+    };
+
     $scope.gridOptions = {
         paginationPageSizes: [5, 10, 15],
         paginationPageSize: 5,
         enableFiltering: true,
         columnDefs: [
-            { field: 'user.name', displayName: 'Coordinator Name'},
-            // { field: 'name', displayName: 'Workshop Name' },                                                                                       
-            { field: 'location' },
-            { field: 'participants_attended' },
-            { field: 'date'},
-            { field: 'status.name', displayName:'Status'},
-            { field: 'experiments_conducted', displayName:'Usage'},
-            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.viewReports(row.entity)">View</button><button id="editBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.editWorkshop(row.entity)" >Edit</button><button id="editBtn" type="button" class="btn btn-smallbtn-primary" ng-click="grid.appScope.uploadReports(row.entity)">Edit</button>'}
+          { field: 'user.name', displayName: 'Coordinator Name'},
+          { field: 'location' },
+          { field: 'participants_attended' },
+          { field: 'date'},
+          { field: 'status.name', displayName:'Status'},
+          { field: 'experiments_conducted', displayName:'Usage'},
+          {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.view(row.entity)">View</button><button id="editBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.editWorkshop(row.entity)" >Edit</button><button id="editBtn" type="button" class="btn btn-smallbtn-primary" ng-click="grid.appScope.uploadReports(row.entity)">Edit</button>'}
         ],
         enableGridMenu: true,
         enableSelectAll: true,
@@ -864,13 +854,6 @@ app.controller("pending-workshops", function($scope, $http, $routeParams, dataFa
         }
 
     };
-      dataFactory.fetch("/users/"+$window.number).
-    success(function(data, status, headers, config){
-      $scope.user = data;
-    }).
-    error(function(data, status, headers, config){
-      console.log(data);
-    });
 
     dataFactory.fetch('/workshops?user_id='+$window.number).success(function(data, status, headers, config){
         var today = new Date();
@@ -902,16 +885,9 @@ app.controller("pending-workshops", function($scope, $http, $routeParams, dataFa
                 pending.push(data[i]);
             }
         }
-        // $scope.history = history;                                                                                                                  
         $scope.pending = pending;
         $scope.gridOptions.data = $scope.pending;
         $scope.loading = false;
-        // $scope.upcoming = upcoming;                                                                                                                
-        // $scope.count = count;                                                                                                                      
-        // $scope.sort = function(keyname){                                                                                                           
-        // $scope.sortKey = keyname;   //set the sortKey to the param passed                                                                          
-        // $scope.reverse = !$scope.reverse; //if true make it false and vice versa                                                                   
-      // };                                                                                                                                           
 
     }).error(function(data, status, headers, config){
         console.log(data);
@@ -935,19 +911,25 @@ app.controller("pending-workshops", function($scope, $http, $routeParams, dataFa
 
 
 app.controller("manage-workshops", function($scope, $http, $routeParams, dataFactory,$route, $window) {
+  $scope.editWorkshop = function(row) {
+        window.location.href = "#edit-workshop/" + row['id'];
+    };
+    $scope.view = function(row) {
+        window.location.href = "#/one-workshop/" + row['id'];
+    };
+
       $scope.gridOptions = {
         paginationPageSizes: [5, 10, 15],
         paginationPageSize: 5,
         enableFiltering: true,
         columnDefs: [
             { field: 'user.name', displayName: 'Coordinator Name'},
-            // { field: 'name', displayName: 'Workshop Name' },                                                                                       
             { field: 'location' },
             { field: 'participants_attended' },
             { field: 'date'},
             { field: 'status.name', displayName:'Status'},
             { field: 'experiments_conducted', displayName:'Usage'},
-          {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.viewReports(row.entity)">View</button><button id="editBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.editWorkshop(row.entity)" >Edit</button><button id="editBtn" type="button" class="btn btn-smallbtn-primary" ng-click="grid.appScope.uploadReports(row.entity)">Edit</button>'}
+          {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.view(row.entity)">View</button><button id="editBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.editWorkshop(row.entity)" >Edit</button>'}
         ],
         enableGridMenu: true,
         enableSelectAll: true,
@@ -1000,18 +982,9 @@ app.controller("manage-workshops", function($scope, $http, $routeParams, dataFac
                 pending.push(data[i]);
             }
         }
-      $scope.history = history;
-      $scope.gridOptions.data = $scope.history;
+      $scope.upcoming = upcoming;
+      $scope.gridOptions.data = $scope.upcoming;
       $scope.loading = false;
-      
-      // $scope.pending = pending;
-      // $scope.upcoming = upcoming;
-      // $scope.count = count;
-      // $scope.sort = function(keyname){
-      //   $scope.sortKey = keyname;   //set the sortKey to the param passed
-      //   $scope.reverse = !$scope.reverse; //if true make it false and vice versa
-      // };
-      
     }).error(function(data, status, headers, config){
 	console.log(data);
     });
@@ -1112,7 +1085,7 @@ dataFactory.fetch("/nodal_centres?created_by_id="+$window.number).success(functi
   {
     if(status == "over")
     {
-      $scope.info1 = "Town/City, State and PINCODE of the workshop location.";
+      $scope.info1 = "Town/City and State of the workshop location.";
     }
     else{$scope.info1="";}
   };
@@ -1880,20 +1853,20 @@ btn-primary" ng-click="grid.appScope.ocUploadReports(row.entity)">Review Reports
         enableSelectAll: true,
         exporterMenuPdf: false,
         exporterMenuExcel: false,
-        exporterCsvFilename: 'ocWorkshops.csv',
+        exporterCsvFilename: 'NCWorkshops.csv',
         exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
         onRegisterApi: function (gridApi) {
             $scope.grid1Api = gridApi;
         }
     };
 
-    dataFactory.fetch("/users/"+$window.number).
-    success(function(data, status, headers, config){
-      $scope.user = data;
-    }).
-    error(function(data, status, headers, config){
-      console.log(data);
-    });
+    // dataFactory.fetch("/users/"+$window.number).
+    // success(function(data, status, headers, config){
+    //   $scope.user = data;
+    // }).
+    // error(function(data, status, headers, config){
+    //   console.log(data);
+    // });
     dataFactory.fetch("/workshops?user_id="+$window.number).
 	success(function(data, status, headers, config) {
             var today = new Date();
@@ -1924,8 +1897,8 @@ btn-primary" ng-click="grid.appScope.ocUploadReports(row.entity)">Review Reports
                     count = count + 1;
                 }
             }
-          $scope.history = history;
-          $scope.pending = pending;
+          // $scope.history = history;
+          // $scope.pending = pending;
           $scope.upcoming = upcoming;
           $scope.gridOptions.data = $scope.upcoming;
           $scope.loading = false;
