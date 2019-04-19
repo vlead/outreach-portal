@@ -1439,8 +1439,7 @@ app.controller("manage-nc", function($scope, $http, $routeParams, dataFactory, $
             // { field: 'created'},                                                                                                                   
             { field: 'last_active', displayName:'Last Active'},
             {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small \
-btn-primary" ng-click="grid.appScope.editNodalCoordinator(row.entity)">Edit</button><button id="deleteBtn" type="button" class="btn btn-small btn-dan\
-ger" ng-click="grid.appScope.del(row.entity)" >Remove</button>'}
+btn-primary" ng-click="grid.appScope.editNodalCoordinator(row.entity)">Edit</button>'}
         ],
         enableGridMenu: true,
         enableSelectAll: true,
@@ -1770,9 +1769,9 @@ ick="grid.appScope.del_centre(row.entity)" >Remove</button>'}
           $scope.status = "Fill Details";
         }
     };
-    $scope.del_centre =  function(id){
+    $scope.del_centre =  function(row){
         if(confirm("Are you sure!") == true){
-            dataFactory.del("/nodal_centres/"+id).
+            dataFactory.del("/nodal_centres/"+row['id']).
                 success(function(data, status, headers, config) {
                     $route.reload();
                 }).
