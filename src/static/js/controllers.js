@@ -402,7 +402,7 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
     enableFiltering: true,
     columnDefs: [
       { field: 'name', displayName: 'Coordinator Name'},
-      // { field: 'name', displayName: 'Workshop Name' },
+      { field: 'name', displayName: 'Workshop Name' },
       { field: 'email' },
       { field: 'institute_name',displayName:'Institute Name' },
       { field: 'last_active', displayName:'Last Active'},
@@ -749,8 +749,7 @@ app.controller("workshop-history", function($scope, $http, $routeParams, dataFac
         enableFiltering: true,
         columnDefs: [
             { field: 'user.name', displayName: 'Coordinator Name'},
-            // { field: 'name', displayName: 'Workshop Name' },                                                                                       
-            { field: 'location' },
+            { field: 'name', displayName: 'Workshop Name' },                                                      { field: 'location' },
             { field: 'participants_attended' },
             { field: 'date'},
             { field: 'status.name', displayName:'Status'},
@@ -1405,8 +1404,7 @@ app.controller("manage-nc", function($scope, $http, $routeParams, dataFactory, $
 	enableFiltering: true,
         columnDefs: [
             { field: 'name', displayName: 'Coordinator Name'},
-            // { field: 'name', displayName: 'Workshop Name' },                                                                                       
-            { field: 'email' },
+            { field: 'name', displayName: 'Workshop Name' },                                                      { field: 'email' },
             { field: 'phone' },
             { field: 'user_status'},
             // { field: 'created'},                                                                                                                   
@@ -1841,8 +1839,7 @@ app.controller("oc-manage-workshops", function($scope, $http, $routeParams, data
         enableFiltering: true,
         columnDefs: [
             { field: 'user.name', displayName: 'Coordinator Name'},
-            // { field: 'name', displayName: 'Workshop Name' },                                                                                       
-            { field: 'location' },
+            { field: 'name', displayName: 'Workshop Name' },                                                      { field: 'location' },
             { field: 'no_of_participants_expected' },
             { field: 'date'},
             { field: 'status.name', displayName:'Status'},
@@ -1969,9 +1966,7 @@ app.controller("nc-workshops", function($scope, $http, $routeParams, dataFactory
         enableFiltering: true,
         columnDefs: [
             { field: 'user.name', displayName: 'Coordinator Name'},
-            // { field: 'name', displayName: 'Workshop Name' },                                                                                      \
-                                                                                                                                                      
-            { field: 'location' },
+            { field: 'name', displayName: 'Workshop Name' },                                                      { field: 'location' },
             { field: 'not_approval_reason' },
             { field: 'date'},
             { field: 'status.name', displayName:'Status'},
@@ -2103,7 +2098,7 @@ app.controller("oc-workshop-history", function($scope, $http, $routeParams, data
         enableFiltering: true,
         columnDefs: [
             { field: 'user.name', displayName: 'Coordinator Name'},
-            // { field: 'name', displayName: 'Workshop Name' },                            
+            { field: 'name', displayName: 'Workshop Name' },                            
             { field: 'location' },
             { field: 'participants_attended' },
             { field: 'date'},
