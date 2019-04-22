@@ -29,7 +29,8 @@ se">
           <a class="navbar-brand" href="https://vlabs.ac.in" target="_blank" onclick="dashboard()"><img src="/static/img/logo.png" alt="logo" class="\
 logo-img"></a>
         </div><br>
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+
+     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-form navbar-right">
             {% if session.email %}
             <li>
@@ -51,7 +52,7 @@ n'">Log In</button>
 <div id="footer">
   {% include 'footer.html' %}
 </div>
-   <script type="text/javascript" src="/static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.min.js"></script>
     <script type="text/javascript" src="/static/js/jquery-ui.js"></script>
     <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="/static/js/angular.min.js"></script>
@@ -73,7 +74,7 @@ n'">Log In</button>
       {% if session.email %}
       var number  = '{{ session.id }}';
       var email  = '{{ session.email }}';
-     var key  = '{{ session.key }}';
+      var key  = '{{ session.key }}';
       var token  = '{{ session.token }}';
       {% else %}
       var number = 0
@@ -83,6 +84,8 @@ n'">Log In</button>
     </script>
   </body>
 </html>
+
+
 
 
 
