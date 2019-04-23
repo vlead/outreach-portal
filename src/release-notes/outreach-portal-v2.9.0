@@ -4,11 +4,11 @@
 
 * Introduction
   This document describes the release notes of =Outreach Portal=
-  version =v2.9.0=.
+  version =v2.9.0=
 
 * Landing Page :
 
-  - Added commas to the numbers displayed on analytics band. 
+  - Map loading issue was resolved. Performance is also increased. 
 
   - By clicking on =UPCOMING WORKSHOPS= tab, all upcoming
     workshops list displayed at the bottom of the page along
