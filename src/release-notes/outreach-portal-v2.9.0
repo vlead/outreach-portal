@@ -1,0 +1,65 @@
+#+TITLE: Outreach Portal Version V2.9.0
+#+AUTHOR: VLEAD
+#+DATE: [2019-04-22 Mon]
+
+* Introduction
+  This document describes the release notes of =Outreach Portal=
+  version =v2.9.0=.
+
+* Landing Page :
+
+  - Added commas to the numbers displayed on analytics band. 
+
+  - By clicking on =UPCOMING WORKSHOPS= tab, all upcoming
+    workshops list displayed at the bottom of the page along
+    with pagination.
+
+    *Note* : It will not show this table if upcoming
+    workshops are zero.
+    
+  - Add materialized views for 'Participants Attended' tab
+    in analytics to increase the performance
+
+  - Added Pagination, Filtering, Searching, Sorting and
+    Export to all the data. (without login)
+  
+  - Relocated facebook and twitter sections to the left and right of map.
+
+  - Removed Map image and replaced with google map with location pins.
+
+  - Updated Footer. (removed all unncessesary links)
+
+
+* Admin Account:
+
+  - Added Pagination, Filtering, Searching, Sorting and
+    Export to all the data.
+
+* Outreach and Nodal Coordinator Accounts:
+
+  - Added Pagination, Filtering, Searching, Sorting and
+    Export to all the data available in OC and NC accounts.
+
+  - Removed gif, doc and docx file formats as they prone to
+    security threat. Also, converted the existing files and
+    related links from doc, docx and gif to pdf.
+
+  - Restricted the size of each file to 2 MB while uploading files
+    into outreach portal.
+  
+  - NC can see his/her college name non-editable while adding workshop
+
+* Resolved issues
+   +  https://github.com/vlead/outreach-portal/issues/329
+   +  https://github.com/vlead/outreach-portal/issues/330
+   +  https://github.com/vlead/outreach-portal/issues/336
+   +  https://github.com/vlead/outreach-portal/issues/356
+   +  https://github.com/vlead/outreach-portal/issues/387
+   +  https://github.com/vlead/outreach-portal/issues/389
+   +  https://github.com/vlead/outreach-portal/issues/390
+   +  https://github.com/vlead/outreach-portal/issues/391
+   +  https://github.com/vlead/outreach-portal/issues/392
+   +  https://github.com/vlead/outreach-portal/issues/393
+   +  https://github.com/vlead/outreach-portal/issues/394
+   +  https://github.com/vlead/outreach-portal/issues/395
+   +  https://github.com/vlead/outreach-portal/issues/396
