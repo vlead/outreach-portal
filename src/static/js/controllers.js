@@ -296,6 +296,70 @@ btn-primary" ng-click="grid.appScope.view(row.entity)" >View</button>'}
   }).error(function(response){console.log("Failed to fetch data");});
 });
 
+app.controller("admin-workshop", function($scope, dataFactory, $http, $routeParams, $location, $route, $q, $window) {
+    $scope.view = function(row) {
+        window.location.href = "#/one-workshop/" + row['id'];
+    };
+
+    $scope.gridOptions = {
+        paginationPageSizes: [5, 10, 15],
+        paginationPageSize: 5,
+        enableFiltering: true,
+        columnDefs: [
+            { field: 'user.institute_name', displayName: 'Institute'},
+            { field: 'location' },
+            { field: 'version' },
+            { field: 'date'},
+            { field: 'participants_attended'},
+            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="editBtn" type="button" class="btn btn-small \
+btn-primary" ng-click="grid.appScope.view(row.entity)" >View</button>'}                     
+        ],
+        enableGridMenu: true,
+        enableSelectAll: true,
+        exporterMenuPdf: false,
+        exporterMenuExcel: false,
+        exporterCsvFilename: 'workshopList.csv',
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        onRegisterApi: function (gridApi) {
+            $scope.grid1Api = gridApi;
+        }
+
+    };
+  $scope.loading = true;
+  dataFactory.fetch("/workshops?status_id=3").success(function(response){
+    var workshops = response;
+    $scope.loading = false;
+    var oc_workshops = workshops.filter(workshop => workshop.user.id == $routeParams.id);
+    dataFactory.fetch("/nodal_coordinator_details?created_by_id="+$routeParams.id).success(function(response){
+      var ncs = response;
+      for(var nc_user=0;nc_user<ncs.length;nc_user++){
+        var nc_workshops = workshops.filter(workshop => workshop.user.id == ncs[nc_user].user.id);
+        oc_workshops = oc_workshops.concat(nc_workshops);
+      }
+      $scope.oc_workshops = oc_workshops;
+      $scope.gridOptions.data = $scope.oc_workshops;
+      dataFactory.fetch("/workshop_reports").success(function(data,status,headers,config){
+        var reports = [];
+        for(var i=0;i<$scope.oc_workshops.length;i++){
+          reports = [];
+          for(var j=0;j<data.length;j++){
+            if($scope.oc_workshops[i].id == data[j].workshop.id){
+              reports.push({"name" : data[j].name, "path" :  data[j].path});
+              //console.log("true");                                                                                                                  
+            }
+          }
+          $scope.oc_workshops[i]["reports"] = reports;
+
+        }
+
+      }).error(function(data, status, headers, config){
+        console.log("Failed2");
+      });
+    }).error(function(response){console.log("Failed to fetch data");});
+  }).error(function(response){console.log("Failed to fetch data");});
+});
+
+
 app.controller("workshop-list", function($scope, dataFactory, $http, $routeParams, $location, $route, $q, $window) {
     $scope.loading = true;
     dataFactory.fetch("/workshops?status_id=3").success(function(response){
@@ -1833,6 +1897,10 @@ app.controller("oc-manage-workshops", function($scope, $http, $routeParams, data
     $scope.ocUploadReports = function(row) {
 	window.location.href = "#/oc-upload-reports/" + row['id'];
     };
+    $scope.editWorkshop = function(row) {
+        window.location.href = "#edit-workshop/" + row['id'];
+    };
+
 
     $scope.gridOptions = {
         paginationPageSizes: [5, 10, 15],
@@ -1840,12 +1908,13 @@ app.controller("oc-manage-workshops", function($scope, $http, $routeParams, data
         enableFiltering: true,
         columnDefs: [
             { field: 'user.name', displayName: 'Coordinator Name'},
-            { field: 'name', displayName: 'Workshop Name' },                                                      { field: 'location' },
+            { field: 'location' },
             { field: 'no_of_participants_expected' },
             { field: 'date'},
             { field: 'status.name', displayName:'Status'},
-            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small \
-btn-primary" ng-click="grid.appScope.ocUploadReports(row.entity)">Review Reports</button>'}
+            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="editBtn" type="button" class="btn btn-small \
+btn-primary" ng-click="grid.appScope.editWorkshop(row.entity)" >Edit</button><button id="viewBtn" type="button" class="btn btn-small btn-primary" ng-\
+click="grid.appScope.ocUploadReports(row.entity)" >Upload</button>'}
         ],
         enableGridMenu: true,
         enableSelectAll: true,
@@ -2108,7 +2177,7 @@ app.controller("oc-workshop-history", function($scope, $http, $routeParams, data
             {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small \
 btn-primary" ng-click="grid.appScope.viewReports(row.entity)">View</button><button id="editBtn" type="button" class="btn btn-small btn-primary" ng-cl\
 ick="grid.appScope.editWorkshop(row.entity)" >Edit</button><button id="editBtn" type="button" class="btn btn-smallbtn-primary" ng-click="grid.appScop\
-e.uploadReports(row.entity)">Edit</button>'}   
+e.uploadReports(row.entity)">UploadReports</button>'}   
         ],
         enableGridMenu: true,
         enableSelectAll: true,

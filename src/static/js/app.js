@@ -157,6 +157,10 @@ app.config(function($routeProvider){
       templateUrl : "/static/partials/ws_details.html",
       controller  : "ws_details"
     })
+    .when("/admin-workshop/:id", {
+      templateUrl : "/static/partials/admin-workshop.html",
+      controller  : "admin-workshop"
+    })
     .when("/workshop/:id", {
       templateUrl : "/static/partials/workshop.html",
       controller  : "workshop"

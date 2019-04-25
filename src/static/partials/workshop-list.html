@@ -16,7 +16,7 @@
             <tbody ng-repeat="usage in usages">
               <tr ng-if="usage.institute_name!='VLEAD'">
                 <td>{{ $index+1 }}</td>
-                <td><a href="admin#/workshop/{{usage.user_id}}">{{ usage.institute_name }}</a></td>
+                <td><a href="admin#/admin-workshop/{{usage.user_id}}">{{ usage.institute_name }}</a></td>
                 <td>{{ usage.total_workshops }}</td>
               </tr>
             </tbody>
