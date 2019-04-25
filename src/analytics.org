@@ -17,8 +17,8 @@ CREATE VIEW approved_workshops AS SELECT * from workshops where status_id=3 and 
 #+END_SRC
 ** Create table to list institute wise analytics to capture total_workshops, total_usage and total participants attended
 #+BEGIN_SRC 
-CREATE TABLE institute_analytics ( id INT PRIMARY KEY
-AUTO_INCREMENT, institute_name VARCHAR(128) NOT NULL,
+CREATE TABLE institute_analytics ( id INT PRIMARY KEY AUTO_INCREMENT, 
+    institute_name VARCHAR(128) NOT NULL,
     user_id INT,
     total_workshops INT  NOT NULL,
     total_usage INT  NOT NULL,
@@ -28,8 +28,7 @@ AUTO_INCREMENT, institute_name VARCHAR(128) NOT NULL,
 #+BEGIN_SRC 
 INSERT INTO institute_analytics SELECT 1, "Amrita University", 353,
 COUNT(*), SUM(experiments_conducted),
-SUM(participants_attended) from approved_workshops where
-user_id=353 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=353));
+SUM(participants_attended) from approved_workshops where user_id=353 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=353));
 
 INSERT INTO institute_analytics SELECT 2, "COEP", 33,
 COUNT(*), SUM(experiments_conducted),
@@ -53,36 +52,43 @@ user_id=12 or (user_id in (select user_id from nodal_coordinator_details where c
 
 INSERT INTO institute_analytics SELECT 6, "IIT Delhi", 70,
 COUNT(*), SUM(experiments_conducted),
+COUNT(*) from nodal_centres where created_by_id=12 and centre_status='Active',
 SUM(participants_attended) from approved_workshops where
 user_id=70 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=70));
 
 INSERT INTO institute_analytics SELECT 7, "IIT Guwahati", 34,
 COUNT(*), SUM(experiments_conducted),
+COUNT(*) from nodal_centres where created_by_id=34 and centre_status='Active',
 SUM(participants_attended) from approved_workshops where
 user_id=34 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=34));
 
 INSERT INTO institute_analytics SELECT 8, "IIT Kanpur", 11,
 COUNT(*), SUM(experiments_conducted),
+COUNT(*) from nodal_centres where created_by_id=11 and centre_status='Active',
 SUM(participants_attended) from approved_workshops where
 user_id=11 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=11));
 
 INSERT INTO institute_analytics SELECT 9, "IIT Kharagpur", 285,
 COUNT(*), SUM(experiments_conducted),
+COUNT(*) from nodal_centres where created_by_id=285 and centre_status='Active',
 SUM(participants_attended) from approved_workshops where
 user_id=285 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=285));
 
 INSERT INTO institute_analytics SELECT 10, "IIT Roorkee", 21,
 COUNT(*), SUM(experiments_conducted),
+COUNT(*) from nodal_centres where created_by_id=21 and centre_status='Active',
 SUM(participants_attended) from approved_workshops where
 user_id=21 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=21));
 
 INSERT INTO institute_analytics SELECT 11, "NITK Surathkal", 334,
 COUNT(*), SUM(experiments_conducted),
+COUNT(*) from nodal_centres where created_by_id=334 and centre_status='Active',
 SUM(participants_attended) from approved_workshops where
 user_id=334 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=334));
 
 INSERT INTO institute_analytics SELECT 12, "VLEAD", 546,
 COUNT(*), SUM(experiments_conducted),
+COUNT(*) from nodal_centres where created_by_id=546 and centre_status='Active',
 SUM(participants_attended) from approved_workshops where
 user_id=546 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=546));
 #+END_SRC
@@ -101,61 +107,73 @@ BEGIN
 
   INSERT INTO institute_analytics SELECT 1, "Amrita University", 353,
   COUNT(*), SUM(experiments_conducted),
+  COUNT(*) from nodal_centres where created_by_id=353 and centre_status='Active',
   SUM(participants_attended) from approved_workshops where
   user_id=353 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=353));
 
   INSERT INTO institute_analytics SELECT 2, "COEP", 33,
   COUNT(*), SUM(experiments_conducted),
+  COUNT(*) from nodal_centres where created_by_id=33 and centre_status='Active',
   SUM(participants_attended) from approved_workshops where
   user_id=33 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=33));
 
   INSERT INTO institute_analytics SELECT 3, "DEI Dayalbagh", 20,
   COUNT(*), SUM(experiments_conducted),
+  COUNT(*) from nodal_centres where created_by_id=20 and centre_status='Active',
   SUM(participants_attended) from approved_workshops where
   user_id=20 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=20));
 
   INSERT INTO institute_analytics SELECT 4, "IIIT Hyderabad", 5,
   COUNT(*), SUM(experiments_conducted),
+  COUNT(*) from nodal_centres where created_by_id=5 and centre_status='Active',
   SUM(participants_attended) from approved_workshops where
   user_id=5 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=5));
 
   INSERT INTO institute_analytics SELECT 5, "IIT Bombay", 12,
   COUNT(*), SUM(experiments_conducted),
+  COUNT(*) from nodal_centres where created_by_id=12 and centre_status='Active',
   SUM(participants_attended) from approved_workshops where
   user_id=12 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=12));
  
   INSERT INTO institute_analytics SELECT 6, "IIT Delhi", 70,
   COUNT(*), SUM(experiments_conducted),
+  COUNT(*) from nodal_centres where created_by_id=70 and centre_status='Active',
   SUM(participants_attended) from approved_workshops where
   user_id=70 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=70));
 
   INSERT INTO institute_analytics SELECT 7, "IIT Guwahati", 34,
   COUNT(*), SUM(experiments_conducted),
+  COUNT(*) from nodal_centres where created_by_id=34 and centre_status='Active',
   SUM(participants_attended) from approved_workshops where
   user_id=34 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=34));
 
   INSERT INTO institute_analytics SELECT 8, "IIT Kanpur", 11,
   COUNT(*), SUM(experiments_conducted),
+  COUNT(*) from nodal_centres where created_by_id=11 and centre_status='Active',
   SUM(participants_attended) from approved_workshops where
   user_id=11 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=11));
 
   INSERT INTO institute_analytics SELECT 9, "IIT Kharagpur", 285,
   COUNT(*), SUM(experiments_conducted),
+  COUNT(*) from nodal_centres where created_by_id=285 and centre_status='Active',
   SUM(participants_attended) from approved_workshops where
   user_id=285 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=285));
 
   INSERT INTO institute_analytics SELECT 10, "IIT Roorkee", 21,
   COUNT(*), SUM(experiments_conducted),
+  COUNT(*) from nodal_centres where created_by_id=21 and centre_status='Active',
   SUM(participants_attended) from approved_workshops where
   user_id=21 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=21));
   
   INSERT INTO institute_analytics SELECT 11, "NITK Surathkal", 334,
   COUNT(*), SUM(experiments_conducted),
+  COUNT(*) from nodal_centres where created_by_id=334 and centre_status='Active',
   SUM(participants_attended) from approved_workshops where
   user_id=334 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=334));
 
   INSERT INTO institute_analytics SELECT 12, "VLEAD", 546,
   COUNT(*), SUM(experiments_conducted),
+  COUNT(*) from nodal_centres where created_by_id=546 and centre_status='Active',
   SUM(participants_attended) from approved_workshops where
   user_id=546 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=546));
 
@@ -192,6 +210,7 @@ select * from institute_analytics;
 #+BEGIN_EXAMPLE
 
 #+END_EXAMPLE
+
 * Total Analytics
 ** Drop table analytics
 #+BEGIN_SRC 
@@ -260,6 +279,134 @@ select * from analytics;
 |  4 | PARTICIPANTS ATTENDED |      552463 |
 |  5 | USAGE                 |     2702603 |
 |----+-----------------------+-------------|
+
+* Nodal Centre analytics
+** Create table to list institute wise analytics to capture total_nodal_centres
+#+BEGIN_SRC 
+CREATE TABLE nodal_centre_analytics ( id INT PRIMARY KEY AUTO_INCREMENT, 
+    institute_name VARCHAR(128) NOT NULL,
+    user_id INT,
+    total_nodal_centres INT  NOT NULL);
+#+END_SRC
+** Insert the analytics of each nodal centre into nodal_centre_analyitcs table.
+#+BEGIN_SRC 
+INSERT INTO nodal_centre_analytics SELECT 1, "Amrita University", 353,
+COUNT(*) from nodal_centres where created_by_id=353 and centre_status='Active';
+
+INSERT INTO nodal_centre_analytics SELECT 2, "COEP", 33,
+COUNT(*) from nodal_centres where created_by_id=33 and centre_status='Active';
+
+INSERT INTO nodal_centre_analytics SELECT 3, "DEI Dayalbagh", 20, 
+COUNT(*) from nodal_centres where created_by_id=20 and centre_status='Active';
+
+INSERT INTO nodal_centre_analytics SELECT 4, "IIIT Hyderabad", 5,
+COUNT(*) from nodal_centres where created_by_id=5 and centre_status='Active';
+
+INSERT INTO nodal_centre_analytics SELECT 5, "IIT Bombay", 12,
+COUNT(*) from nodal_centres where created_by_id=12 and centre_status='Active';
+
+INSERT INTO nodal_centre_analytics SELECT 6, "IIT Delhi", 70,
+COUNT(*) from nodal_centres where created_by_id=70 and centre_status='Active';
+
+INSERT INTO nodal_centre_analytics SELECT 7, "IIT Guwahati", 34,
+COUNT(*) from nodal_centres where created_by_id=34 and centre_status='Active';
+
+INSERT INTO nodal_centre_analytics SELECT 8, "IIT Kanpur", 11,
+COUNT(*) from nodal_centres where created_by_id=11 and centre_status='Active';
+
+INSERT INTO nodal_centre_analytics SELECT 9, "IIT Kharagpur", 285,
+COUNT(*) from nodal_centres where created_by_id=285 and centre_status='Active';
+
+INSERT INTO nodal_centre_analytics SELECT 10, "IIT Roorkee", 21,
+COUNT(*) from nodal_centres where created_by_id=21 and centre_status='Active';
+
+INSERT INTO nodal_centre_analytics SELECT 11, "NITK Surathkal", 334,
+COUNT(*) from nodal_centres where created_by_id=334 and centre_status='Active';
+
+INSERT INTO nodal_centre_analytics SELECT 12, "VLEAD", 546,
+COUNT(*) from nodal_centres where created_by_id=546 and centre_status='Active';
+
+#+END_SRC
+** Define the procedure to update the institute wise nodal centre analytics
+#+BEGIN_SRC 
+DROP PROCEDURE refresh_nodal_centre_analytics_now;
+
+DELIMITER $$
+
+CREATE PROCEDURE refresh_nodal_centre_analytics_now (
+    OUT rc INT
+)
+BEGIN
+
+  TRUNCATE TABLE ;
+
+  INSERT INTO nodal_centre_analytics SELECT 1, "Amrita University", 353,
+  COUNT(*) from nodal_centres where created_by_id=353 and centre_status='Active';
+
+  INSERT INTO nodal_centre_analytics SELECT 2, "COEP", 33,
+  COUNT(*) from nodal_centres where created_by_id=33 and centre_status='Active';
+
+  INSERT INTO nodal_centre_analytics SELECT 3, "DEI Dayalbagh", 20, 
+  COUNT(*) from nodal_centres where created_by_id=20 and centre_status='Active';
+  
+  INSERT INTO nodal_centre_analytics SELECT 4, "IIIT Hyderabad", 5,
+  COUNT(*) from nodal_centres where created_by_id=5 and centre_status='Active';
+
+  INSERT INTO nodal_centre_analytics SELECT 5, "IIT Bombay", 12,
+  COUNT(*) from nodal_centres where created_by_id=12 and centre_status='Active';
+
+  INSERT INTO nodal_centre_analytics SELECT 6, "IIT Delhi", 70,
+  COUNT(*) from nodal_centres where created_by_id=70 and centre_status='Active';
+
+  INSERT INTO nodal_centre_analytics SELECT 7, "IIT Guwahati", 34,
+  COUNT(*) from nodal_centres where created_by_id=34 and centre_status='Active';
+
+  INSERT INTO nodal_centre_analytics SELECT 8, "IIT Kanpur", 11,
+  COUNT(*) from nodal_centres where created_by_id=11 and centre_status='Active';
+
+  INSERT INTO nodal_centre_analytics SELECT 9, "IIT Kharagpur", 285,
+  COUNT(*) from nodal_centres where created_by_id=285 and centre_status='Active';
+
+  INSERT INTO nodal_centre_analytics SELECT 10, "IIT Roorkee", 21,
+  COUNT(*) from nodal_centres where created_by_id=21 and centre_status='Active';
+
+  INSERT INTO nodal_centre_analytics SELECT 11, "NITK Surathkal", 334,
+  COUNT(*) from nodal_centres where created_by_id=334 and centre_status='Active';
+
+  INSERT INTO nodal_centre_analytics SELECT 12, "VLEAD", 546,
+  COUNT(*) from nodal_centres where created_by_id=546 and centre_status='Active';
+
+  SET rc = 0;
+END;
+$$
+
+DELIMITER ;
+#+END_SRC
+** Call the procedure on demand 
+#+BEGIN_SRC 
+CALL refresh_nodal_centre_analytics_now;
+#+END_SRC
+** sample table
+#+BEGIN_EXAMPLE
+select * from nodal_centre_analytics;
+|----+-------------------+---------+---------------------|
+| id | institute_name    | user_id | total_nodal_centres |
+|----+-------------------+---------+---------------------|
+|  1 | Amrita University |     353 |                 122 |
+|  2 | COEP              |      33 |                  48 |
+|  3 | DEI Dayalbagh     |      20 |                  11 |
+|  4 | IIIT Hyderabad    |       5 |                   5 |
+|  5 | IIT Bombay        |      12 |                 100 |
+|  6 | IIT Delhi         |      70 |                 145 |
+|  7 | IIT Guwahati      |      34 |                  37 |
+|  8 | IIT Kanpur        |      11 |                  57 |
+|  9 | IIT Kharagpur     |     285 |                  34 |
+| 10 | IIT Roorkee       |      21 |                  60 |
+| 11 | NITK Surathkal    |     334 |                  49 |
+| 12 | VLEAD             |     546 |                   1 |
+|----+-------------------+---------+---------------------|
+
+#+END_EXAMPLE
 
 * Remove workshops with zero participants
 #+BEGIN_EXAMPLE
