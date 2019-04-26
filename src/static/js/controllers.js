@@ -905,7 +905,7 @@ app.controller("pending-workshops", function($scope, $http, $routeParams, dataFa
           { field: 'date'},
           { field: 'status.name', displayName:'Status'},
           { field: 'experiments_conducted', displayName:'Usage'},
-          {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.view(row.entity)">View</button><button id="editBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.editWorkshop(row.entity)" >Edit</button><button id="editBtn" type="button" class="btn btn-smallbtn-primary" ng-click="grid.appScope.uploadReports(row.entity)">Edit</button>'}
+          {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.view(row.entity)">View</button><button id="editBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.editWorkshop(row.entity)" >Edit</button><button id="editBtn" type="button" class="btn btn-smallbtn-primary" ng-click="grid.appScope.uploadReports(row.entity)">Upload</button>'}
         ],
         enableGridMenu: true,
         enableSelectAll: true,
@@ -2174,7 +2174,7 @@ app.controller("oc-workshop-history", function($scope, $http, $routeParams, data
             { field: 'date'},
             { field: 'status.name', displayName:'Status'},
             { field: 'experiments_conducted', displayName:'Usage'},
-            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small \
+          {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small \
 btn-primary" ng-click="grid.appScope.viewReports(row.entity)">View</button><button id="editBtn" type="button" class="btn btn-small btn-primary" ng-cl\
 ick="grid.appScope.editWorkshop(row.entity)" >Edit</button><button id="editBtn" type="button" class="btn btn-smallbtn-primary" ng-click="grid.appScop\
 e.uploadReports(row.entity)">UploadReports</button>'}   

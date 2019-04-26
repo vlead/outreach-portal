@@ -424,3 +424,7 @@ update nodal_centres set lattitude='21.218560' where id=812;
 update nodal_centres set longitude='81.308198' where id=812;
 
 
+* Commands to update edit, delete and view buttons
+#+BEGIN_SRC 
+<span class="glyphicon glyphicon-eye-open"></span>
+#+END_SRC
