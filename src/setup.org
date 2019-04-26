@@ -674,7 +674,7 @@ if __name__ == "__main__":
    #+BEGIN_SRC sh :tangle update_analytics.sh :eval no
    #!/bin/bash                                                                                                                                           
 
-   mysql --user="root" --password="root" --database="outreach" --execute="CALL refresh_institute_analytics_now(@rc);CALL refresh_analytics_now(@rc);"
+   mysql --user="root" --password="root" --database="outreach" --execute="CALL refresh_institute_analytics_now(@rc);CALL refresh_analytics_now(@rc);CALL refresh_nc_analytics_now;"
 
    #+END_SRC
 ** crontab

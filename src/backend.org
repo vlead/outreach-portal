@@ -1416,6 +1416,77 @@ class InstituteAnalytics(Entity):
 
 #+END_SRC
 
+*** Nodal Centre Analytics
+**** Immutable data
+     + Id
+
+**** Mutable data
+     + Institute Name
+     + Total Nodal Centre
+**** Definition
+#+BEGIN_SRC python :tangle src/db.py :eval no
+class NodalCentreAnalytics(Entity):
+
+    __tablename__ = 'nc_analytics'
+
+    id = db.Column(db.Integer, primary_key=True)
+    institute_name = db.Column(db.String(128), nullable=False, unique=True)
+    user_id = db.Column(db.Integer)
+    total_nodal_centres = db.Column(db.Integer)
+        
+#+END_SRC
+
+**** Constructor
+#+BEGIN_EXAMPLE
+    status = Status(name=<instance of class Name>)
+                    
+#+END_EXAMPLE
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def __init__(self, **kwargs):
+        if 'institute_name' not in kwargs:
+            raise AttributeRequired("mandatory attribute `institute_name` is missing")
+        self.set_institute_name(kwargs['institute_name'])
+
+#+END_SRC
+
+**** Functions that operate on the Analytics domain
+***** getStatus: Id --> Analytics
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @staticmethod
+    def get_by_id(id):
+        current_app.logger.debug("get by NodalCentreAnalytics Analytics id: %s"  % id)
+        return NodalCentreAnalytics.query.get(id)
+
+#+END_SRC
+
+***** getAll: Nil --> set[Status]
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @staticmethod
+    def get_all():
+        current_app.logger.debug("get all rows of NodalCentreAnalytics Analytics entity")
+
+        return NodalCentreAnalytics.query.all()
+#+END_SRC
+
+***** setName: Status, Name --> Void
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    @typecheck(institute_name=str)
+    def set_institute_name(self, institute_name):
+        self.institute_name = institute_name.value
+#+END_SRC
+
+***** to_client
+#+BEGIN_SRC python :tangle src/db.py :eval no
+    def to_client(self):
+        return {
+            'id': self.id,
+            'institute_name': self.institute_name,
+            'user_id': self.user_id,
+            'total_nodal_centres': self.total_nodal_centres
+        }
+
+#+END_SRC
+
 *** Analytics
 **** Immutable data
      + Id
@@ -6099,6 +6170,23 @@ institute_analytics = {'entity_class': InstituteAnalytics,
 
              ]}
 
+nc_analytics = {'entity_class': NodalCentreAnalytics,
+	     'attributes': [
+                 {'name': 'id',
+                  'class': None,
+	          'relationship': 'one'},
+                 {'name': 'institute_name',
+                  'class': None,
+                  'relationship': 'one'},
+                 {'name': 'total_nodal_centres',
+                  'class': None,
+                  'relationship': 'one'},
+                 {'name': 'user_id',
+                  'class': None,
+                  'relationship': 'one'}
+             ]}
+
+
 analytics = {'entity_class': Analytics,
 	     'attributes': [
                  {'name': 'id',
@@ -6271,6 +6359,7 @@ nodal_coordinator_details = nodal_coordinator_detail
 nodal_centres = nodal_centre
 workshop_reports = workshop_report
 institute_analytics = institute_analytics
+nc_analytics = nc_analytics
 analytics= analytics
 
 entity_pairs = {
@@ -6283,6 +6372,7 @@ entity_pairs = {
     'nodal_centres': nodal_centre,
     'workshop_reports': workshop_report,
     'institute_analytics': institute_analytics,
+    'nc_analytics': nc_analytics,
     'analytics': analytics
 }
                    
@@ -7062,14 +7152,23 @@ entity_map_types = {
             'name': Name
         }
     },
-    'institute_analytics': {
+   'institute_analytics': {
         'entity': InstituteAnalytics,
         'types': {
-            'institute_name': str,
+	    'institute_name': str,
             'total_workshops': int,
             'total_usage': int,
             'total_participants_attended': int,
             'user_id': int
+        }
+    },
+
+    'nc_analytics': {
+        'entity': NodalCentreAnalytics,
+        'types': {
+            'institute_name': str,
+            'user_id': int,
+            'total_nodal_centres': int
         }
     },
     'analytics': {

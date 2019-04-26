@@ -234,6 +234,7 @@ INSERT INTO analytics SELECT 4, "PARTICIPANTS ATTENDED", SUM(total_participants_
 INSERT INTO analytics SELECT 5, "USAGE", SUM(total_usage) FROM institute_analytics;
 INSERT INTO analytics SELECT 6, "OC", COUNT(*) FROM users where role_id=2 and user_status='Active';
 INSERT INTO analytics SELECT 7, "NC", COUNT(*) FROM users where role_id=3 and user_status='Active';
+
 #+END_SRC
 ** Define the procedure to update the analytics
 #+BEGIN_SRC 
@@ -283,100 +284,78 @@ select * from analytics;
 * Nodal Centre analytics
 ** Create table to list institute wise analytics to capture total_nodal_centres
 #+BEGIN_SRC 
-CREATE TABLE nodal_centre_analytics ( id INT PRIMARY KEY AUTO_INCREMENT, 
+CREATE TABLE nc_analytics ( id INT PRIMARY KEY AUTO_INCREMENT, 
     institute_name VARCHAR(128) NOT NULL,
     user_id INT,
     total_nodal_centres INT  NOT NULL);
 #+END_SRC
 ** Insert the analytics of each nodal centre into nodal_centre_analyitcs table.
 #+BEGIN_SRC 
-INSERT INTO nodal_centre_analytics SELECT 1, "Amrita University", 353,
+INSERT INTO nc_analytics SELECT 1, "Amrita University", 353,
 COUNT(*) from nodal_centres where created_by_id=353 and centre_status='Active';
 
-INSERT INTO nodal_centre_analytics SELECT 2, "COEP", 33,
+INSERT INTO nc_analytics SELECT 2, "COEP", 33,
 COUNT(*) from nodal_centres where created_by_id=33 and centre_status='Active';
 
-INSERT INTO nodal_centre_analytics SELECT 3, "DEI Dayalbagh", 20, 
+INSERT INTO nc_analytics SELECT 3, "DEI Dayalbagh", 20, 
 COUNT(*) from nodal_centres where created_by_id=20 and centre_status='Active';
 
-INSERT INTO nodal_centre_analytics SELECT 4, "IIIT Hyderabad", 5,
+INSERT INTO nc_analytics SELECT 4, "IIIT Hyderabad", 5,
 COUNT(*) from nodal_centres where created_by_id=5 and centre_status='Active';
 
-INSERT INTO nodal_centre_analytics SELECT 5, "IIT Bombay", 12,
+INSERT INTO nc_analytics SELECT 5, "IIT Bombay", 12,
 COUNT(*) from nodal_centres where created_by_id=12 and centre_status='Active';
 
-INSERT INTO nodal_centre_analytics SELECT 6, "IIT Delhi", 70,
+INSERT INTO nc_analytics SELECT 6, "IIT Delhi", 70,
 COUNT(*) from nodal_centres where created_by_id=70 and centre_status='Active';
 
-INSERT INTO nodal_centre_analytics SELECT 7, "IIT Guwahati", 34,
+INSERT INTO nc_analytics SELECT 7, "IIT Guwahati", 34,
 COUNT(*) from nodal_centres where created_by_id=34 and centre_status='Active';
 
-INSERT INTO nodal_centre_analytics SELECT 8, "IIT Kanpur", 11,
+INSERT INTO nc_analytics SELECT 8, "IIT Kanpur", 11,
 COUNT(*) from nodal_centres where created_by_id=11 and centre_status='Active';
 
-INSERT INTO nodal_centre_analytics SELECT 9, "IIT Kharagpur", 285,
+INSERT INTO nc_analytics SELECT 9, "IIT Kharagpur", 285,
 COUNT(*) from nodal_centres where created_by_id=285 and centre_status='Active';
 
-INSERT INTO nodal_centre_analytics SELECT 10, "IIT Roorkee", 21,
+INSERT INTO nc_analytics SELECT 10, "IIT Roorkee", 21,
 COUNT(*) from nodal_centres where created_by_id=21 and centre_status='Active';
 
-INSERT INTO nodal_centre_analytics SELECT 11, "NITK Surathkal", 334,
+INSERT INTO nc_analytics SELECT 11, "NITK Surathkal", 334,
 COUNT(*) from nodal_centres where created_by_id=334 and centre_status='Active';
 
-INSERT INTO nodal_centre_analytics SELECT 12, "VLEAD", 546,
+INSERT INTO nc_analytics SELECT 12, "VLEAD", 546,
 COUNT(*) from nodal_centres where created_by_id=546 and centre_status='Active';
 
 #+END_SRC
 ** Define the procedure to update the institute wise nodal centre analytics
 #+BEGIN_SRC 
-DROP PROCEDURE refresh_nodal_centre_analytics_now;
+DROP PROCEDURE refresh_nc_analytics_now;
 
 DELIMITER $$
 
-CREATE PROCEDURE refresh_nodal_centre_analytics_now (
+CREATE PROCEDURE refresh_nc_analytics_now (
     OUT rc INT
 )
 BEGIN
 
-  TRUNCATE TABLE ;
+  TRUNCATE TABLE nc_analytics;
 
-  INSERT INTO nodal_centre_analytics SELECT 1, "Amrita University", 353,
-  COUNT(*) from nodal_centres where created_by_id=353 and centre_status='Active';
-
-  INSERT INTO nodal_centre_analytics SELECT 2, "COEP", 33,
-  COUNT(*) from nodal_centres where created_by_id=33 and centre_status='Active';
-
-  INSERT INTO nodal_centre_analytics SELECT 3, "DEI Dayalbagh", 20, 
-  COUNT(*) from nodal_centres where created_by_id=20 and centre_status='Active';
-  
-  INSERT INTO nodal_centre_analytics SELECT 4, "IIIT Hyderabad", 5,
-  COUNT(*) from nodal_centres where created_by_id=5 and centre_status='Active';
-
-  INSERT INTO nodal_centre_analytics SELECT 5, "IIT Bombay", 12,
-  COUNT(*) from nodal_centres where created_by_id=12 and centre_status='Active';
-
-  INSERT INTO nodal_centre_analytics SELECT 6, "IIT Delhi", 70,
-  COUNT(*) from nodal_centres where created_by_id=70 and centre_status='Active';
-
-  INSERT INTO nodal_centre_analytics SELECT 7, "IIT Guwahati", 34,
-  COUNT(*) from nodal_centres where created_by_id=34 and centre_status='Active';
-
-  INSERT INTO nodal_centre_analytics SELECT 8, "IIT Kanpur", 11,
-  COUNT(*) from nodal_centres where created_by_id=11 and centre_status='Active';
-
-  INSERT INTO nodal_centre_analytics SELECT 9, "IIT Kharagpur", 285,
-  COUNT(*) from nodal_centres where created_by_id=285 and centre_status='Active';
-
-  INSERT INTO nodal_centre_analytics SELECT 10, "IIT Roorkee", 21,
-  COUNT(*) from nodal_centres where created_by_id=21 and centre_status='Active';
-
-  INSERT INTO nodal_centre_analytics SELECT 11, "NITK Surathkal", 334,
-  COUNT(*) from nodal_centres where created_by_id=334 and centre_status='Active';
-
-  INSERT INTO nodal_centre_analytics SELECT 12, "VLEAD", 546,
-  COUNT(*) from nodal_centres where created_by_id=546 and centre_status='Active';
+  INSERT INTO nc_analytics SELECT 1, "Amrita University", 353, COUNT(*) from nodal_centres where created_by_id=353 and centre_status='Active';
+  INSERT INTO nc_analytics SELECT 2, "COEP", 33, COUNT(*) from nodal_centres where created_by_id=33 and centre_status='Active';
+  INSERT INTO nc_analytics SELECT 3, "DEI Dayalbagh", 20, COUNT(*) from nodal_centres where created_by_id=20 and centre_status='Active';
+  INSERT INTO nc_analytics SELECT 4, "IIIT Hyderabad", 5, COUNT(*) from nodal_centres where created_by_id=5 and centre_status='Active';
+  INSERT INTO nc_analytics SELECT 5, "IIT Bombay", 12, COUNT(*) from nodal_centres where created_by_id=12 and centre_status='Active';
+  INSERT INTO nc_analytics SELECT 6, "IIT Delhi", 70, COUNT(*) from nodal_centres where created_by_id=70 and centre_status='Active';
+  INSERT INTO nc_analytics SELECT 7, "IIT Guwahati", 34, COUNT(*) from nodal_centres where created_by_id=34 and centre_status='Active';
+  INSERT INTO nc_analytics SELECT 8, "IIT Kanpur", 11, COUNT(*) from nodal_centres where created_by_id=11 and centre_status='Active';
+  INSERT INTO nc_analytics SELECT 9, "IIT Kharagpur", 285, COUNT(*) from nodal_centres where created_by_id=285 and centre_status='Active';
+  INSERT INTO nc_analytics SELECT 10, "IIT Roorkee", 21, COUNT(*) from nodal_centres where created_by_id=21 and centre_status='Active';
+  INSERT INTO nc_analytics SELECT 11, "NITK Surathkal", 334, COUNT(*) from nodal_centres where created_by_id=334 and centre_status='Active';
+  INSERT INTO nc_analytics SELECT 12, "VLEAD", 546, COUNT(*) from nodal_centres where created_by_id=546 and centre_status='Active';
 
   SET rc = 0;
+
 END;
 $$
 
@@ -384,11 +363,11 @@ DELIMITER ;
 #+END_SRC
 ** Call the procedure on demand 
 #+BEGIN_SRC 
-CALL refresh_nodal_centre_analytics_now;
+CALL refresh_nc_analytics_now;
 #+END_SRC
 ** sample table
 #+BEGIN_EXAMPLE
-select * from nodal_centre_analytics;
+select * from nc_analytics;
 |----+-------------------+---------+---------------------|
 | id | institute_name    | user_id | total_nodal_centres |
 |----+-------------------+---------+---------------------|
@@ -432,3 +411,16 @@ update workshops set workshop_status="Active";
 #+BEGIN_EXAMPLE
 update workshops set status_id=4 where id=3107;
 #+END_EXAMPLE
+* Commands to update map with pins
+#+BEGIN_EXAMPLE
+select * from nodal_centres where lattitude=0 and centre_status='Active';
+update nodal_centres set lattitude='28.625913' where id=77;
+update nodal_centres set longitude='76.741944' where id=77;
+
+#+END_EXAMPLE
+select * from nodal_centres where lattitude=0 and created_by_id=34;
+;
+update nodal_centres set lattitude='21.218560' where id=812;
+update nodal_centres set longitude='81.308198' where id=812;
+
+

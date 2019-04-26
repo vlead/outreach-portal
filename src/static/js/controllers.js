@@ -297,8 +297,8 @@ btn-primary" ng-click="grid.appScope.view(row.entity)" >View</button>'}
 });
 
 app.controller("admin-workshop", function($scope, dataFactory, $http, $routeParams, $location, $route, $q, $window) {
-    $scope.view = function(row) {
-        window.location.href = "#/one-workshop/" + row['id'];
+      $scope.viewReports = function(row) {
+        window.location.href = "#view-reports/" + row['id'];
     };
 
     $scope.gridOptions = {
@@ -310,9 +310,9 @@ app.controller("admin-workshop", function($scope, dataFactory, $http, $routePara
             { field: 'location' },
             { field: 'version' },
             { field: 'date'},
-            { field: 'participants_attended'},
-            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="editBtn" type="button" class="btn btn-small \
-btn-primary" ng-click="grid.appScope.view(row.entity)" >View</button>'}                     
+          { field: 'participants_attended'},
+          {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="editBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.viewReports(row.entity)">View</button>'}
+
         ],
         enableGridMenu: true,
         enableSelectAll: true,
