@@ -2,26 +2,26 @@
   <div class="col-md-3">
     <div class="box1" onclick="location.href='#/oc-manage-workshops/oc-workshop-history'">
       Workshops<br/><br/>
-      {{ workshops + ocworkshops }}
+      {{ (workshops + ocworkshops).toLocaleString() }}
     </div>
   </div>
   <div class="col-md-3">
     <div class="box1" onclick="location.href='#/oc-manage-workshops/oc-workshop-history'">
       Usage<br/><br/>
-      {{ experiments + ocexperiments }}
+      {{ (experiments + ocexperiments).toLocaleString() }}
     </div>
   </div>
   <div class="col-md-3">
     <div class="box1" onclick="location.href='#/oc-manage-workshops/oc-workshop-history'">
       Participants
       <br/><br/>
-      {{ participants + ocparticipants }}
+      {{ (participants + ocparticipants).toLocaleString() }}
     </div>
   </div>
   <div class="col-md-3">
     <div class="box1" onclick="location.href='#/manage-centres'">
       Nodal Centers<br/><br/>
-      {{ ncentres }}
+      {{ (ncentres).toLocaleString() }}
     </div>
   </div>
 </div>
