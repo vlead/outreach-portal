@@ -122,12 +122,13 @@ app.controller("map-ctrl", function ($scope, $http, dataFactory){
 
 });
 
+
 app.controller("nodal-centers-list", function($scope, $http, $routeParams, dataFactory, $route, $window){
-    dataFactory.fetch("/total_ncenters").success(function(data,status,headers,config){
-      $scope.ncenters = data;
-      $scope.total_ncenters = ($scope.ncenters.length)-1;
+    dataFactory.fetch("/nc_analytics").success(function(data,status,headers,config){
+        $scope.nc_analytics = data;
+        $scope.total_ncenters = ($scope.nc_analytics.length)-1;
     }).error(function(response){console.log("Failed to fetch total ncenters");
-    });
+   });
 
 });
 
