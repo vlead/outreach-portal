@@ -5,58 +5,32 @@
   </div>
 </div>
 <br>
-<!--
 <div class="row">
-  <div class="col-md-12">
-    <div class="table-responsive">
-    <table class="table table-stripped">
-      <thead>
-	<tr>
-          <th>S.NO</th>
-	  <th>Name</th>
-	  <th>Email</th>
-          <th>Last Active</th>
-	  <th>Nodal Centre</th>
-	</tr>
-      </thead>
-      <tbody>
-	<tr ng-repeat="nc in nc_users | orderBy : ['user.last_active','nodal_centre.name']">
-          <td>{{ $index+1 }}</td>
-          <td>{{ nc.user.name }}</td>
-          <td>{{ nc.user.email }}</td>
-          <td>{{ nc.user.last_active }}</td>
-          <td>{{ nc.nodal_centre.name }}</td>
-	</tr>
-      </tbody>
-    </table>
-    </div>
-  </div>
-</div>
--->
-<div class="row">
-  <div class="col-md-12">
-    <div class="table-responsive">
-    <table class="table table-stripped">
-      <thead>
-	<tr>
-          <th>S.NO</th>
-          <th>Name</th>
-	  <th>Email ID</th>
-	  <th>Last Active</th>
-	  <th>Institute Name</th>
-	</tr>
-      </thead>
-      <tbody>
+  <div class="col-md-12" ng-if="nc_user_list.length !=0">      
+    <div ui-grid="gridOptions" ui-grid-pagination ui-grid-selection ui-grid-exporter class="ocworkshopGrid" external-scopes="clickHandler"></div>
+
+    <!-- <div class="table-responsive"> -->
+    <!-- <table class="table table-stripped"> -->
+    <!--   <thead> -->
+    <!--     <tr> -->
+    <!--       <th>S.NO</th> -->
+    <!--       <th>Name</th> -->
+    <!--       <th>Email ID</th> -->
+    <!--       <th>Last Active</th> -->
+    <!--       <th>Institute Name</th> -->
+    <!--     </tr> -->
+    <!--   </thead> -->
+    <!--   <tbody> -->
 	
-	<tr ng-repeat="nc in nc_user_list">
-          <td>{{ $index+1 }}</td>
-	  <td>{{ nc.user.name }}</td>
-          <td>{{ nc.user.email }}</td>
-          <td>{{ nc.user.last_active }}</td>
-	  <td>{{ nc.user.institute_name }}</td>
-	</tr>
-      </tbody>
-    </table>
+    <!--     <tr ng-repeat="nc in nc_user_list"> -->
+    <!--       <td>{{ $index+1 }}</td> -->
+    <!--       <td>{{ nc.user.name }}</td> -->
+    <!--       <td>{{ nc.user.email }}</td> -->
+    <!--       <td>{{ nc.user.last_active }}</td> -->
+    <!--       <td>{{ nc.user.institute_name }}</td> -->
+    <!--     </tr> -->
+    <!--   </tbody> -->
+    <!-- </table> -->
     </div>
   </div>
 </div>

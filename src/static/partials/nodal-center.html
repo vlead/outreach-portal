@@ -1,28 +1,41 @@
-<div ng-controller="ws_details">
-  <div class="col-md-11"><h3>Total Nodal Centers :  {{ nodalCenter.length }}</h3></div>
-  <div class="col-md-1">
-    <br><br>
-    <a onclick="history.back();" role="button" class="btn btn-success btn-large">Back</a>
-  </div>
-  <br><br><br><br>
+<div ng-controller="nodal-center">
   <div align='center' ng-show="loading"><img id="mySpinner" src="/static/img/default.gif"></div>
   <div ng-hide="loading">
-    <table class="table table-hover">
-      <thead>
-        <tr>
-          <th>S.No</th>
-	  <th>Nodal Center Name/Participating College Name</th>
-          <th>Location</th>
-        </tr>
-      </thead>
-        <tbody ng-repeat="center in nodalCenter | orderBy : 'name'">
-          <tr>
-            <td>{{ $index+1 }}</td>
-	    <!-- <td>{{ center.created_by.institute_name }}</td> -->
-            <td>{{ center.name }}</td>
-            <td>{{ center.location }}</td>
-          </tr>
-        </tbody>
-    </table>
+    <div class="col-md-8"><h3>Total Nodal Centers :  {{ nodalCenter.length }}</div><br>
+    <div class="col-md-12">
+      <div ui-grid="gridOptions" ui-grid-pagination ui-grid-selection ui-grid-exporter class="nodalCenterGrid" external-scopes="clickHandler"></div>
+    </div>
+    <div>
+    </div>
   </div>
 </div>
+
+
+<!-- <div ng-controller="ws_details"> -->
+<!--   <div class="col-md-11"><h3>Total Nodal Centers :  {{ nodalCenter.length }}</h3></div> -->
+<!--   <div class="col-md-1"> -->
+<!--     <br><br> -->
+<!--     <a onclick="history.back();" role="button" class="btn btn-success btn-large">Back</a> -->
+<!--   </div> -->
+<!--   <br><br><br><br> -->
+<!--   <div align='center' ng-show="loading"><img id="mySpinner" src="/static/img/default.gif"></div> -->
+<!--   <div ng-hide="loading"> -->
+<!--     <table class="table table-hover"> -->
+<!--       <thead> -->
+<!--         <tr> -->
+<!--           <th>S.No</th> -->
+<!-- 	  <th>Nodal Center Name/Participating College Name</th> -->
+<!--           <th>Location</th> -->
+<!--         </tr> -->
+<!--       </thead> -->
+<!--         <tbody ng-repeat="center in nodalCenter | orderBy : 'name'"> -->
+<!--           <tr> -->
+<!--             <td>{{ $index+1 }}</td> -->
+<!-- 	    <\!-- <td>{{ center.created_by.institute_name }}</td> -\-> -->
+<!--             <td>{{ center.name }}</td> -->
+<!--             <td>{{ center.location }}</td> -->
+<!--           </tr> -->
+<!--         </tbody> -->
+<!--     </table> -->
+<!--   </div> -->
+<!-- </div> -->

@@ -1,5 +1,5 @@
 <div ng-controller="ws_details">
-  <h3>Total Institutes :  {{ ncenters.length }}</h3><br>
+  <h3>Total Institutes :  {{ total_ncenters }}</h3><br>
   <div align='center' ng-show="nloading"><img id="mySpinner" src="/static/img/default.gif"></div>
   <div ng-hide="nloading">
     <table class="table table-hover" >
@@ -7,16 +7,16 @@
         <tr>
           <th>S.No</th>
           <th>Institute Name</th>
-          <th>Total Nodal Centers</th>
+          <th>Total Active Nodal Centers</th>
         </tr>
       </thead>
-        <tbody ng-repeat="center in ncenters | orderBy : 'nodal_center'">
-          <tr ng-if="center.nodal_center!='VLEAD'">
-            <td>{{ $index+1 }}</td>
-            <td><a href="/ncentres#/nodal-center/{{center.created_by_id}}">{{ center.nodal_center }}</a></td>
-            <td>{{ center.count }}</td>
-          </tr>
-        </tbody>
+      <tbody ng-repeat="center in nc_analytics">
+        <tr ng-if="center.institute_name!='VLEAD'">
+          <td>{{ $index+1 }}</td>
+          <td><a href="/ncentres#/nodal-center/{{center.user_id}}">{{ center.institute_name }}</a></td>
+          <td>{{ center.total_nodal_centres }}</td>
+        </tr>
+      </tbody>
     </table>
   </div>
 </div>

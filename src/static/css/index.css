@@ -47,7 +47,7 @@ img:hover{
 }
 .analytics-band{
 	text-align: center;
-	background: #196B9E;
+	/* background: #196B9E; */
 	margin: 0;
 	color: #fff;
 }
@@ -76,6 +76,9 @@ img:hover{
     cursor: pointer;
 }
 
+.participants-attended:hover {
+    cursor: pointer;
+}
 
 .analytics-band .upcoming{                                                                                  
         background: #C76135;                                                                                
@@ -146,8 +149,8 @@ img:hover{
     background-color: #eee;
     padding: 0;
     padding-top: 40px;
-    min-height: 600px;
-    height: 780px;
+    min-height: 460px;`
+    /* height: 780px;` */
 }
 .content{
     padding: 40px 40px; 
@@ -238,3 +241,21 @@ img:hover{
 .centeractive, .centerinactive {font-size:36p !importantx;cursor:pointer;}
 i.centeractive { color: #5cb85c}
 i.centerinactive {color: #d9534f}
+
+.upcomingWorkshopsGrid {
+    width: 1024px;
+    height: 300px;
+}
+
+.nodalCenterGrid .workshopGrid{
+    width: 1024px;
+    height: 300px;
+}
+
+.ocworkshopGrid {
+    width: 1024px;
+    height: 300px;
+
+}
+
+      

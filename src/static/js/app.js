@@ -1,4 +1,4 @@
-var app = angular.module("outreachApp",["ngRoute","outreachApp.controllers","outreachApp.factories"]);
+var app = angular.module("outreachApp",["ngRoute","outreachApp.controllers","outreachApp.factories","ui.grid", "ui.grid.pagination", "ui.grid.selection", "ui.grid.exporter"]);
 app.config(function($routeProvider){
   $routeProvider
     .when("/manage-oc", {
@@ -7,7 +7,11 @@ app.config(function($routeProvider){
     })
     .when("/workshop-list", {
       templateUrl : "/static/partials/workshop-list.html",
-      controller  : "workshop"
+      controller  : "ws_details"
+    })
+    .when("/participants-attended", {
+      templateUrl : "/static/partials/participants-attended.html",
+      controller  : "participants-ctrl"
     })
     .when("/nodal-centers-list", {
       templateUrl : "/static/partials/nodal-centers-list.html",
@@ -19,11 +23,11 @@ app.config(function($routeProvider){
     })
     .when("/nc-users-list", {
       templateUrl : "/static/partials/nc-users-list.html",
-      controller  : "admin-ctrl"
+      controller  : "nc-ctrl"
     })
     .when("/usage", {
       templateUrl : "/static/partials/usage-list.html",
-      controller  : "admin-ctrl"
+      controller  : "usage-ctrl"
     })
     .when("/oc-users-list", {
       templateUrl : "/static/partials/oc-users-list.html",
@@ -83,11 +87,11 @@ app.config(function($routeProvider){
     })
     .when("/manage-workshops/pending-action",{
       templateUrl: "/static/partials/pending-workshops.html",
-      controller  : "manage-workshops"
+      controller  : "pending-workshops"
     })
     .when("/manage-workshops/workshop-history",{
       templateUrl: "/static/partials/workshop-history.html",
-      controller  : "manage-workshops"
+      controller  : "workshop-history"
     })
     .when("/edit-workshop/:id", {
       templateUrl : "/static/partials/edit-workshop.html",
@@ -153,6 +157,10 @@ app.config(function($routeProvider){
       templateUrl : "/static/partials/ws_details.html",
       controller  : "ws_details"
     })
+    .when("/admin-workshop/:id", {
+      templateUrl : "/static/partials/admin-workshop.html",
+      controller  : "admin-workshop"
+    })
     .when("/workshop/:id", {
       templateUrl : "/static/partials/workshop.html",
       controller  : "workshop"
@@ -175,7 +183,7 @@ app.config(function($routeProvider){
     })
     .when("/nc-user-list/:id", {
       templateUrl : "/static/partials/nc-user-list.html",
-      controller  : "nc_user_list"
+      controller  : "nc-user-list"
     });
 }
 );

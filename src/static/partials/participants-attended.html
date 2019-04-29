@@ -1,10 +1,7 @@
-{% extends "layout.html" %}
-{% block content %}
-{% raw %}
 <div ng-app="outreachApp">
   <div class="container">
-    <div ng-controller="usage-ctrl">
-      <h3>Institute wise Usage </h3><br>
+    <div ng-controller="participants-ctrl">
+      <h3>Institute wise Total Participants Attended </h3><br>
       <div align='center' ng-show="loading"><img id="mySpinner" src="/static/img/default.gif"></div>
       <div class="row" ng-hide="loading">
         <div class="col-md-12">
@@ -13,21 +10,21 @@
               <tr>
                 <th>S.NO</th>
                 <th>Institute Name</th>
-                <th>Total Usage</th>
+                <th>Participants Attended</th>
               </tr>
             </thead>
-            <tbody ng-repeat="usage in usages | orderBy : '-total_usage'">
+            <tbody ng-repeat="usage in usages">
               <tr ng-if="usage.institute_name!='VLEAD'">
-		<td>{{ $index+1 }}</td>
-		<td>{{ usage.institute_name }}</td>
-		<td>{{ usage.total_usage.toLocaleString() }}</td>
+                <td>{{ $index+1 }}</td>
+                <td>{{ usage.institute_name }}</td>
+                <td>{{ usage.total_participants_attended.toLocaleString() }}</td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
+      </div>
     </div>
   </div>
 </div>
-{% endraw %}
-{% endblock %}
+

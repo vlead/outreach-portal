@@ -1,7 +1,26 @@
 var app = angular.module("outreachApp.controllers",[]);
-app.controller("map-ctrl", function ($scope, $http, dataFactory){
+app.controller("upcoming-ctrl", function ($scope, $http, dataFactory){
+      $scope.gridOptions = {
+        paginationPageSizes: [5, 10, 15],
+        paginationPageSize: 5,
+        enableFiltering: true,
+        columnDefs: [
+            { field: 'name' },
+            { field: 'date' },
+            { field: 'participating_institutes'}
+        ],
+        enableGridMenu: true,
+        enableSelectAll: true,
+        exporterMenuPdf: false,
+        exporterMenuExcel: false,
+        exporterCsvFilename: 'upcomingWorkshopsList.csv',
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        onRegisterApi: function (gridApi) {
+            $scope.grid1Api = gridApi;
+        }
+
+    };
     var workshopList = [];
-    $scope.upcomingLoading = true;
     dataFactory.fetch("/workshops?status_id=1").success(function(workshops){
         var today = new Date();
         for(var i=0;i<workshops.length;i++){
@@ -13,11 +32,14 @@ app.controller("map-ctrl", function ($scope, $http, dataFactory){
                 workshopList.push(workshops[i]);
             }
         }
-	$scope.upcomingLoading = false;
-        $scope.upcomingWorkshopsList = workshopList;
-
+      $scope.IsVisible = false;
+      $scope.totalUpcomingWorkshopsList = workshopList.length;
+      $scope.IsVisible = true;
+      $scope.upcomingWorkshopsList = workshopList;
+      $scope.gridOptions.data = $scope.upcomingWorkshopsList;
     });
-    
+});
+app.controller("map-ctrl", function ($scope, $http, dataFactory){
   dataFactory.fetch("/nodal_centres").success(function(nodalCentre){      
     for(var i=0;i<nodalCentre.length;i++){
       var currentNodalCentre = nodalCentre[i];
@@ -28,77 +50,113 @@ app.controller("map-ctrl", function ($scope, $http, dataFactory){
     }
   });
   var geocoder1 = new google.maps.Geocoder();
-  var getGeocode1 = function (nodalCentre){
-    var id = nodalCentre.id;
-    var location = nodalCentre.location;
-    geocoder1.geocode(
-      { "address": nodalCentre.location+",india, Asia" }, function(results, status) {
-        if (status === google.maps.GeocoderStatus.OK && results.length > 0){
-          var geoCode = results[0].geometry.location;
-          var lat = geoCode.lat();
-          var lng = geoCode.lng();
-          var data = {"longitude" : lng, "lattitude" : lat };
-          dataFactory.put("/nodal_centres/"+id, data).success(function(response){
-          });
-        }
-	else{
-          $scope.status = "Failed for id "+ id +"error: " + status;
-	}
-      }
-    );
-  };
+  // var getGeocode1 = function (nodalCentre){
+  //   var id = nodalCentre.id;
+  //   var location = nodalCentre.location;
+  //   geocoder1.geocode(
+  //     { "address": nodalCentre.location+",india, Asia" }, function(results, status) {
+  //       if (status === google.maps.GeocoderStatus.OK && results.length > 0){
+  //         var geoCode = results[0].geometry.location;
+  //         var lat = geoCode.lat();
+  //         var lng = geoCode.lng();
+  //         var data = {"longitude" : lng, "lattitude" : lat };
+  //         dataFactory.put("/nodal_centres/"+id, data).success(function(response){
+  //         });
+  //       }
+  //       else{
+  //         $scope.status = "Failed for id "+ id +"error: " + status;
+  //       }
+  //     }
+  //   );
+  // };
   
-    var mapOptions = { zoom: 5, center: new google.maps.LatLng(24,80) };
-    $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
-    var geocoder = new google.maps.Geocoder();
-    
+  var mapOptions = { zoom: 4, center: new google.maps.LatLng(24,80) };
+  $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
+  var geocoder = new google.maps.Geocoder();
+  
   $scope.createMarker = function (label, geoCode,type){
     var nodalCentreInfowindow = new google.maps.InfoWindow({
       content: "<b>Nodal Centre Location : </b>"+label.location+"<br><b>Nodal Centre Name : </b>"+label.name+"<br><b>Outreach Centre Name : </b>"+label.created_by.institute_name
     });
-      var a = 0;
-      if(type === "workshops")
-      {
-	alert("dfd");
-        var marker = new google.maps.Marker({
-          map: $scope.map,
-          animation: google.maps.Animation.DROP,
-          draggable: false,
-          icon: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
-          position: new google.maps.LatLng(geoCode.lattitude, geoCode.longitude),
-          title: "Click here to view the workshop details"
-        });
-        marker.addListener("click", function() {
-            workshop_infowindow.open(map, marker);
-        });
-      }
-      else{
-        marker = new google.maps.Marker({
-	  map: $scope.map,
-	  animation: google.maps.Animation.DROP,
-	  draggable: false,
-	  icon : "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
-	  position: new google.maps.LatLng(geoCode.lattitude, geoCode.longitude),
-	  title: "Click here to view the Nodal Centre details"
-        });
-        marker.addListener("click", function() {
-	  nodalCentreInfowindow.open(map, marker);
-        });
-      }
-  };
+    var marker = new google.maps.Marker({
+      map: $scope.map,
+      animation: google.maps.Animation.DROP,
+      draggable: false,
+      icon : "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
+      position: new google.maps.LatLng(geoCode.lattitude, geoCode.longitude),
+      title: "Click here to view the Nodal Centre details"
+    });
+    marker.addListener("click", function() {
+      nodalCentreInfowindow.open(map, marker);
+    });
+    // var a = 0;
+    //   if(type === "workshops")
+    //   {
+    //     alert("dfd");
+    //     var marker = new google.maps.Marker({
+    //       map: $scope.map,
+    //       animation: google.maps.Animation.DROP,
+    //       draggable: false,
+    //       icon: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
+    //       position: new google.maps.LatLng(geoCode.lattitude, geoCode.longitude),
+    //       title: "Click here to view the workshop details"
+    //     });
+    //     marker.addListener("click", function() {
+    //         workshop_infowindow.open(map, marker);
+    //     });
+    //   }
+    //   else{
+    //     marker = new google.maps.Marker({
+    //       map: $scope.map,
+    //       animation: google.maps.Animation.DROP,
+    //       draggable: false,
+    //       icon : "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
+    //       position: new google.maps.LatLng(geoCode.lattitude, geoCode.longitude),
+    //       title: "Click here to view the Nodal Centre details"
+    //     });
+    //     marker.addListener("click", function() {
+    //       nodalCentreInfowindow.open(map, marker);
+    //     });
+    //   }
+};
 
 });
+
 
 app.controller("nodal-centers-list", function($scope, $http, $routeParams, dataFactory, $route, $window){
-    dataFactory.fetch("/total_ncenters").success(function(data,status,headers,config){
-	$scope.ncenters = data;
+    dataFactory.fetch("/nc_analytics").success(function(data,status,headers,config){
+        $scope.nc_analytics = data;
+        $scope.total_ncenters = ($scope.nc_analytics.length)-1;
     }).error(function(response){console.log("Failed to fetch total ncenters");
-    });
+   });
 
 });
+
 app.controller("nodal-center", function($scope, dataFactory, $http, $routeParams, $location, $route, $q, $window) {
+    $scope.gridOptions = {
+        paginationPageSizes: [5, 10, 15],
+        paginationPageSize: 5,
+        enableFiltering: true,
+        columnDefs: [
+          { field: 'created_by.institute_name', displayName: 'Institute'},
+          { field: 'name' },
+          { field: 'centre_status', displayName:'Status'},
+          { field: 'location' }
+        ],
+        enableGridMenu: true,
+        enableSelectAll: true,
+        exporterMenuPdf: false,
+        exporterMenuExcel: false,
+        exporterCsvFilename: 'nodalCenter.csv',
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        onRegisterApi: function (gridApi) {
+            $scope.grid1Api = gridApi;
+        }
+
+    };
     dataFactory.fetch("/nodal_centres?created_by_id="+$routeParams.id).success(function(response){
         $scope.nodalCenter = response;
+        $scope.gridOptions.data = $scope.nodalCenter;
     }).error(function(response){console.log("Failed to fetch data");});
 });
 
@@ -134,6 +192,34 @@ app.controller("oc-ctrl", function($scope, $routeParams, dataFactory, $route, $w
 });
 app.controller("usage-ctrl", function($scope, dataFactory, $http, $routeParams, $route, $q, $window) {
     $scope.loading = true;
+    $scope.gridOptions = {
+        paginationPageSizes: [5, 10],
+        paginationPageSize: 5,
+        enableFiltering: true,
+        columnDefs: [
+          { field: 'institute_name' },
+          { field: 'total_usage.toLocaleString()' }
+        ],
+        enableGridMenu: true,
+        exporterMenuPdf: false,
+        exporterMenuExcel: false,
+
+        enableSelectAll: true,
+        exporterCsvFilename: 'usageList.csv',
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        onRegisterApi: function (gridApi) {
+            $scope.grid1Api = gridApi;
+        }
+    };
+    dataFactory.fetch("/institute_analytics").success(function(response){
+        $scope.usages = response;
+        $scope.gridOptions.data = $scope.usages;
+        $scope.loading = false;
+    }).error(function(response){console.log("Failed to fetch data");});
+});
+
+app.controller("participants-ctrl", function($scope, dataFactory, $http, $routeParams, $route, $q, $window) {
+    $scope.loading = true;
     dataFactory.fetch("/institute_analytics").success(function(response){
 	$scope.usages = response;
 	$scope.loading = false;
@@ -149,6 +235,34 @@ app.controller("one-workshop", function($scope, dataFactory, $http, $routeParams
 });
 
 app.controller("workshop", function($scope, dataFactory, $http, $routeParams, $location, $route, $q, $window) {
+    $scope.view = function(row) {
+        window.location.href = "#/one-workshop/" + row['id'];
+    };
+
+    $scope.gridOptions = {
+        paginationPageSizes: [5, 10, 15],
+        paginationPageSize: 5,
+        enableFiltering: true,
+        columnDefs: [
+            { field: 'user.institute_name', displayName: 'Institute'},
+            { field: 'location' },
+            { field: 'version' },
+            { field: 'date'},
+            { field: 'participants_attended'},
+            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="editBtn" type="button" class="btn btn-small \
+btn-primary" ng-click="grid.appScope.view(row.entity)" >View</button>'}                     
+        ],
+        enableGridMenu: true,
+        enableSelectAll: true,
+        exporterMenuPdf: false,
+        exporterMenuExcel: false,
+        exporterCsvFilename: 'workshopList.csv',
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        onRegisterApi: function (gridApi) {
+            $scope.grid1Api = gridApi;
+        }
+
+    };
   $scope.loading = true;
   dataFactory.fetch("/workshops?status_id=3").success(function(response){
     var workshops = response;
@@ -161,6 +275,7 @@ app.controller("workshop", function($scope, dataFactory, $http, $routeParams, $l
         oc_workshops = oc_workshops.concat(nc_workshops);
       }
       $scope.oc_workshops = oc_workshops;
+      $scope.gridOptions.data = $scope.oc_workshops;
       dataFactory.fetch("/workshop_reports").success(function(data,status,headers,config){
         var reports = [];
         for(var i=0;i<$scope.oc_workshops.length;i++){
@@ -168,21 +283,85 @@ app.controller("workshop", function($scope, dataFactory, $http, $routeParams, $l
           for(var j=0;j<data.length;j++){
             if($scope.oc_workshops[i].id == data[j].workshop.id){
               reports.push({"name" : data[j].name, "path" :  data[j].path});
-              //console.log("true");                                                                                                    
+              //console.log("true");                                                                                                                  
             }
           }
           $scope.oc_workshops[i]["reports"] = reports;
-          
+
         }
 
       }).error(function(data, status, headers, config){
         console.log("Failed2");
-      });  
+      });
     }).error(function(response){console.log("Failed to fetch data");});
   }).error(function(response){console.log("Failed to fetch data");});
 });
 
-  app.controller("workshop-list", function($scope, dataFactory, $http, $routeParams, $location, $route, $q, $window) {
+app.controller("admin-workshop", function($scope, dataFactory, $http, $routeParams, $location, $route, $q, $window) {
+      $scope.viewReports = function(row) {
+        window.location.href = "#view-reports/" + row['id'];
+    };
+
+    $scope.gridOptions = {
+        paginationPageSizes: [5, 10, 15],
+        paginationPageSize: 5,
+        enableFiltering: true,
+        columnDefs: [
+            { field: 'user.institute_name', displayName: 'Institute'},
+            { field: 'location' },
+            { field: 'version' },
+            { field: 'date'},
+          { field: 'participants_attended'},
+          {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="editBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.viewReports(row.entity)">View</button>'}
+
+        ],
+        enableGridMenu: true,
+        enableSelectAll: true,
+        exporterMenuPdf: false,
+        exporterMenuExcel: false,
+        exporterCsvFilename: 'workshopList.csv',
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        onRegisterApi: function (gridApi) {
+            $scope.grid1Api = gridApi;
+        }
+
+    };
+  $scope.loading = true;
+  dataFactory.fetch("/workshops?status_id=3").success(function(response){
+    var workshops = response;
+    $scope.loading = false;
+    var oc_workshops = workshops.filter(workshop => workshop.user.id == $routeParams.id);
+    dataFactory.fetch("/nodal_coordinator_details?created_by_id="+$routeParams.id).success(function(response){
+      var ncs = response;
+      for(var nc_user=0;nc_user<ncs.length;nc_user++){
+        var nc_workshops = workshops.filter(workshop => workshop.user.id == ncs[nc_user].user.id);
+        oc_workshops = oc_workshops.concat(nc_workshops);
+      }
+      $scope.oc_workshops = oc_workshops;
+      $scope.gridOptions.data = $scope.oc_workshops;
+      dataFactory.fetch("/workshop_reports").success(function(data,status,headers,config){
+        var reports = [];
+        for(var i=0;i<$scope.oc_workshops.length;i++){
+          reports = [];
+          for(var j=0;j<data.length;j++){
+            if($scope.oc_workshops[i].id == data[j].workshop.id){
+              reports.push({"name" : data[j].name, "path" :  data[j].path});
+              //console.log("true");                                                                                                                  
+            }
+          }
+          $scope.oc_workshops[i]["reports"] = reports;
+
+        }
+
+      }).error(function(data, status, headers, config){
+        console.log("Failed2");
+      });
+    }).error(function(response){console.log("Failed to fetch data");});
+  }).error(function(response){console.log("Failed to fetch data");});
+});
+
+
+app.controller("workshop-list", function($scope, dataFactory, $http, $routeParams, $location, $route, $q, $window) {
     $scope.loading = true;
     dataFactory.fetch("/workshops?status_id=3").success(function(response){
       var workshops = response;
@@ -216,107 +395,199 @@ app.controller("workshop", function($scope, dataFactory, $http, $routeParams, $l
     }).error(function(response){console.log("Failed to fetch data");});
   });
 
-app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, $location, $route, $q, $window) {
-     $scope.showNcentres = function(){
-         window.open("/ncentres");
-     };
-    $scope.showUsage = function(){
-        window.open("/usage");
+app.controller("nc-ctrl", function($scope, $http, $routeParams, dataFactory,$route, $window) {
+    $scope.viewNC = function(row) {
+        window.location.href = "#/nc-user-list/" + row['id'];
     };
-    $scope.showWorkshops = function(){
-         window.open("/ws_details");
-    };
-    
-   if ($window.number != 0 || $window.number == undefined) {
-     
-     dataFactory.fetch("/users/"+$window.number).success(function(response){
-       $scope.user = response;
-     }).error(function(response){console.log("Failed to fetch data");});
 
-   }
-    dataFactory.fetch("/reference_documents?user_id=1").success(function(response){
-        $scope.documents = response;
-    }).error(function(response){console.log("Failed to fetch data");});
-
-    $scope.deldoc =  function(id)
-    {
-        if(confirm("Are you sure!") == true){
-            dataFactory.del("/reference_documents/"+id).success(function(response){
-                $route.reload();
-            }).error(function(data, status){
-                
-            });
-            
+    $scope.gridOptions = {
+        paginationPageSizes: [5, 10, 15],
+        paginationPageSize: 5,
+        enableFiltering: true,
+        columnDefs: [
+            { field: 'institute', displayName: 'Institute'},
+            { field: 'total_ncs', displayName: 'Total Nodal Coordinators', enableFiltering:false},
+            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small \
+btn-primary" ng-click="grid.appScope.viewNC(row.entity)">View</button>'}
+        ],
+        enableGridMenu: true,
+        enableSelectAll: true,
+        exporterMenuPdf: false,
+        exporterMenuExcel: false,
+        exporterCsvFilename: 'totalNCList.csv',
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        onRegisterApi: function (gridApi) {
+            $scope.grid1Api = gridApi;
         }
+
     };
-    
-    $scope.add_oc = function(isvalid){    
-        if(isvalid){
-            var data = {"name" : $scope.name,"created" : Date(), "email" : $scope.email, "institute_name" : $scope.inst_name, "role" : { "id" : 2 } };
-            dataFactory.post("/users", data).success(function(response){
-                history.back();
-            }).error(function(data, status, headers, config){
-                if(status == 500){
-                    $scope.status = "Duplicate Entry";
-                }
-                else if(status == 400){
-                  $scope.status = "Invalid username";
-                }
-                else{
-                  $scope.status = "Failed";
-                }
-            });
-            
+  dataFactory.fetch("/users?role_id=2").success(function(response){
+    $scope.totaloc = response.length;
+    $scope.oc_users = response;
+   var oc_users_with_ncs = [];
+    //start here v2.4.0                                                                                                                               
+    var count = 0;
+    var count1 = 0;
+    for(var user=0;user<$scope.totaloc;user++){
+      dataFactory.fetch("/nodal_coordinator_details?created_by_id="+response[user].id).success(function(data){
+        count = count +1 ;
+        var temp_dict = [{"institute_name" : "NIT Surathkal" }];
+        if(data.length!=0){
+          var institute = data[0].created_by.institute_name;
+          var id = data[0].created_by.id;
+          var dict = { "id" : id, "institute" : institute, "total_ncs" : data.length };
+          oc_users_with_ncs.push(dict);
         }
         else{
-          $scope.status = "Fill Details";
+          dict = {"id" : response[count].id, "institute" : temp_dict[0].institute_name, "total_ncs" : 0};
+          console.log(dict);
         }
-    };
+
+      });
+      $scope.oc_users_with_ncs = oc_users_with_ncs;
+    }
+
+    $scope.gridOptions.data = $scope.oc_users_with_ncs;
+    //end here                                                                                                                                        
+  }).error(function(data, status, headers, config){
+      console.log(data);
+  });
+
+});
+
+
+app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, $location, $route, $q, $window) {
+  $scope.loading = true;
+  $scope.editOC = function(row) {
+    window.location.href = "#/edit-oc/" + row['id'];
+  };
+
+  $scope.gridOptions = {
+    paginationPageSizes: [5, 10, 15],
+    paginationPageSize: 5,
+    enableFiltering: true,
+    columnDefs: [
+      { field: 'name', displayName: 'Coordinator Name'},
+      { field: 'name', displayName: 'Workshop Name' },
+      { field: 'email' },
+      { field: 'institute_name',displayName:'Institute Name' },
+      { field: 'last_active', displayName:'Last Active'},
+      { field: 'created', displayName:'Created On'},
+      {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.editOC(row.entity)">Edit</button><button id="deleteBtn" type="button" class="btn btn-small btn-danger" ng-click="grid.appScope.deleteOC(row.entity)">Remove</button>'}
+    ],
+    enableGridMenu: true,
+    enableSelectAll: true,
+    exporterMenuPdf: false,
+    exporterMenuExcel: false,
+    exporterCsvFilename: 'ocList.csv',
+    exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+    onRegisterApi: function (gridApi) {
+      $scope.grid1Api = gridApi;
+    }
+  };
+  $scope.showParticipants = function(){
+    window.open("/participants");
+  };
+  $scope.showNcentres = function(){
+    window.open("/ncentres");
+  };
+  $scope.showUsage = function(){
+    window.open("/usage");
+  };
+  $scope.showWorkshops = function(){
+    window.open("/ws_details");
+  };
     
-    $scope.delete_oc =  function(id)
-    {
-        if(confirm("Are you sure!") == true){
-            dataFactory.del("/users/"+id).success(function(response){
-                $route.reload();
-            }).error(function(data, status){
-                alert("You can delete after deleting NC users under him");  
-            });
+  if ($window.number != 0 || $window.number == undefined) {
+    dataFactory.fetch("/users/"+$window.number).success(function(response){
+      $scope.user = response;
+    }).error(function(response){console.log("Failed to fetch data");});
+
+  }
+  dataFactory.fetch("/reference_documents?user_id=1").success(function(response){
+    $scope.documents = response;
+  }).error(function(response){console.log("Failed to fetch data");});
+  
+  $scope.deldoc =  function(id)
+  {
+    if(confirm("Are you sure!") == true){
+      dataFactory.del("/reference_documents/"+id).success(function(response){
+        $route.reload();
+      }).error(function(data, status){
+      });
+    }
+  };
+    
+  $scope.add_oc = function(isvalid){    
+    if(isvalid){
+      var data = {"name" : $scope.name,"created" : Date(), "email" : $scope.email, "institute_name" : $scope.inst_name, "role" : { "id" : 2 } };
+      dataFactory.post("/users", data).success(function(response){
+        history.back();
+      }).error(function(data, status, headers, config){
+        if(status == 500){
+          $scope.status = "Duplicate Entry";
         }
-                 
-    };
-    $scope.goToLink = function(id) {
-	window.location.href = "#/nc-user-list/" + id;
-    };
+        else if(status == 400){
+          $scope.status = "Invalid username";
+        }
+        else{
+          $scope.status = "Failed";
+        }
+      });
+            
+    }
+    else{
+      $scope.status = "Fill Details";
+    }
+  };
+    
+  $scope.deleteOC =  function(row)
+  {
+    if(confirm("Are you sure!") == true){
+      dataFactory.del("/users/"+row['id']).success(function(response){
+       $route.reload();
+      }).error(function(data, status){
+        alert("You can delete after deleting NC users under him");  
+      });
+    }
+    
+  };
+  $scope.goToLink = function(id) {
+    window.location.href = "#/nc-user-list/" + id;
+  };
 
-    dataFactory.fetch("/users?role_id=2").success(function(response){
-        $scope.totaloc = response.length;
-        $scope.oc_users = response;	
-      var oc_users_with_ncs = [];
-	//start here v2.4.0
-	var count = 0;
-	var count1 = 0;
-	for(var user=0;user<response.length;user++){
-	    dataFactory.fetch("/nodal_coordinator_details?created_by_id="+response[user].id).success(function(data){
-		count = count +1 ;		
-		var temp_dict = [{"institute_name" : "NIT Surathkal" }];
-		if(data.length!=0){
-		  var institute = data[0].created_by.institute_name;
-		  var id = data[0].created_by.id;
-		  var dict = { "id" : id, "institute" : institute, "total_ncs" : data.length };
-		    oc_users_with_ncs.push(dict);
-		}
-		else{
-		  dict = {"id" : response[count].id, "institute" : temp_dict[0].institute_name, "total_ncs" : 0};
-		    console.log(dict);	    
-		}
-		
-	    });
-	    $scope.oc_users_with_ncs = oc_users_with_ncs;
+  dataFactory.fetch("/users?role_id=2").success(function(response){
+    // $scope.totaloc = response.length;
+    $scope.oc_users = response;
+    $scope.gridOptions.data = $scope.oc_users;
+    $scope.loading = false;
+
+    var oc_users_with_ncs = [];
+    //start here v2.4.0
+    var count = 0;
+    var count1 = 0;
+    for(var user=0;user<response.length;user++){
+      dataFactory.fetch("/nodal_coordinator_details?created_by_id="+response[user].id).success(function(data){
+	count = count +1 ;		
+	var temp_dict = [{"institute_name" : "NIT Surathkal" }];
+	if(data.length!=0){
+	  var institute = data[0].created_by.institute_name;
+	  var id = data[0].created_by.id;
+	  var dict = { "id" : id, "institute" : institute, "total_ncs" : data.length };
+	  oc_users_with_ncs.push(dict);
 	}
+	else{
+	  dict = {"id" : response[count].id, "institute" : temp_dict[0].institute_name, "total_ncs" : 0};
+	  console.log(dict);	    
+	}
+		
+      });
+      $scope.oc_users_with_ncs = oc_users_with_ncs;
+    }
 
-	//end here
+    //end here
         
-    });
+  });
 
   $scope.nloading = true;
   dataFactory.fetch("/total_ncenters").success(function(response){
@@ -331,116 +602,136 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
     $scope.total_ncentres = response.length;
   });
 
-  dataFactory.fetch("/workshops?status_id=1").success(function(response){
-    $scope.upcomingWorkshops = response.length;
-  });
+  // dataFactory.fetch("/workshops?status_id=1").success(function(response){
+  //   $scope.upcomingWorkshops = response.length;
+  // });
     
   dataFactory.fetch("/nodal_coordinator_details").success(function(response){
-    $scope.totalnc = response.length;
+    // $scope.totalnc = response.length;
     $scope.nc_users = response;
     
   });
 
   dataFactory.fetch("/analytics/1").success(function(response){
+    $scope.IsVisible = false;
     $scope.totalWorkshops = response.total_value;
+    $scope.IsVisible = true;
   });
 
   dataFactory.fetch("/analytics/2").success(function(response){
+    $scope.IsVisible = false;
     $scope.upcomingWorkshops = response.total_value;
+      $scope.IsVisible = true;
   });
 
   dataFactory.fetch("/analytics/3").success(function(data){
+    $scope.IsVisible = false;
     $scope.totalNodalCentres = data.total_value;
+    $scope.IsVisible = true;
   });
 
   dataFactory.fetch("/analytics/4").success(function(data){
+    $scope.IsVisible = false;
     $scope.totalParticipants = data.total_value;
+    $scope.IsVisible = true;
   });
 
   dataFactory.fetch("/analytics/5").success(function(response){
+    $scope.IsVisible = false;
     $scope.totalUsage = response.total_value;
+    $scope.IsVisible = true;
   });
 
-    $scope.load_analytics = true;
-    dataFactory.fetch("/workshops?status_id=3").success(function(workshops){
-        var participants_count = 0;
-        var workshopList = [];
-        var labs = 0;
-        var expts_count = 0;
-        for(var workshop=0;workshop<workshops.length;workshop++)
-        {
-            workshopList.push(workshops[workshop]);
-            participants_count = participants_count + workshops[workshop].participants_attended;
-            labs = labs + workshops[workshop].labs_planned;
-            expts_count = expts_count + workshops[workshop].experiments_conducted;
-        }
-      $scope.total_workshops = workshops.length;
-        $scope.total_participants = participants_count;
-        $scope.total_usage = expts_count;
-        $scope.labs = labs;
-        $scope.workshops = workshopList;
-	$scope.load_analytics = false;
-    });
+  dataFactory.fetch("/analytics/6").success(function(response){
+      $scope.IsVisible = false;
+      $scope.totalOC = response.total_value;
+      $scope.IsVisible = true;
+  });
+
+  dataFactory.fetch("/analytics/7").success(function(response){
+      $scope.IsVisible = false;
+      $scope.totalNC = response.total_value;
+      $scope.IsVisible = true;
+  });
+
+  $scope.load_analytics = true;
+  dataFactory.fetch("/workshops?status_id=3").success(function(workshops){
+    var participants_count = 0;
+    var workshopList = [];
+    var labs = 0;
+    var expts_count = 0;
+    for(var workshop=0;workshop<workshops.length;workshop++)
+    {
+      workshopList.push(workshops[workshop]);
+      participants_count = participants_count + workshops[workshop].participants_attended;
+      labs = labs + workshops[workshop].labs_planned;
+      expts_count = expts_count + workshops[workshop].experiments_conducted;
+    }
+    $scope.total_workshops = workshops.length;
+    $scope.total_participants = participants_count;
+    $scope.total_usage = expts_count;
+    $scope.labs = labs;
+    $scope.workshops = workshopList;
+    $scope.load_analytics = false;
+  });
    
     /*Institute wise usage*/
-    var usage=0;
-    var nc_usage=[];
-    $scope.usageloading = true;
-    dataFactory.fetch("/users"). success(function(data, status, headers, config) {
-	$scope.users = data;
-    });    
-    dataFactory.fetch("/nodal_coordinator_details"). success(function(data, status, headers, config) {
+  // var usage=0;
+  // var nc_usage=[];
+  // $scope.usageloading = true;
+  // dataFactory.fetch("/users"). success(function(data, status, headers, config) {
+  //   $scope.users = data;
+  // });    
+  // dataFactory.fetch("/nodal_coordinator_details"). success(function(data, status, headers, config) {
 	
-	for(var i=0;i<data.length;i++){
-	    usage=0;
-	    for(var j=0;j<$scope.workshops.length;j++){
-		if(($scope.workshops[j].user.id == data[i].user.id)){
-		    usage=Number(usage) + Number($scope.workshops[j].experiments_conducted);
-		}
-	    }
-	    nc_usage.push({"nc_user_id" : data[i].user.name , "oc_id" : data[i].created_by.id, "nc_usage" : usage});
-	}
-	$scope.nc_usage = nc_usage;
+  //   for(var i=0;i<data.length;i++){
+  //     usage=0;
+  //     for(var j=0;j<$scope.workshops.length;j++){
+  //       if(($scope.workshops[j].user.id == data[i].user.id)){
+  //         usage=Number(usage) + Number($scope.workshops[j].experiments_conducted);
+  //       }
+  //     }
+  //     nc_usage.push({"nc_user_id" : data[i].user.name , "oc_id" : data[i].created_by.id, "nc_usage" : usage});
+  //   }
+  //   $scope.nc_usage = nc_usage;
 	
-	var usage1=0;
-	var nc_usage1=[];
-	for(i=0;i<$scope.users.length;i++){
-	    usage1=0;
-	    for(j=0;j<$scope.workshops.length;j++){
+  //   var usage1=0;
+  //   var nc_usage1=[];
+  //   for(i=0;i<$scope.users.length;i++){
+  //     usage1=0;
+  //     for(j=0;j<$scope.workshops.length;j++){
 
-		if(($scope.workshops[j].user.id == $scope.users[i].id && $scope.users[i].role.id == 2)){
-		    
-		    usage1=Number(usage1) + Number($scope.workshops[j].experiments_conducted);
-
-		}
-	    }
-	    if($scope.users[i].role.id == 2){
-		nc_usage1.push({"oc_user_name" : $scope.users[i].name ,"oc_usage" : usage1});}
-	}
-	$scope.ocs_usage = nc_usage1;
+  //       if(($scope.workshops[j].user.id == $scope.users[i].id && $scope.users[i].role.id == 2)){
+	  
+  //         usage1=Number(usage1) + Number($scope.workshops[j].experiments_conducted);
+          
+  //       }
+  //     }
+  //     if($scope.users[i].role.id == 2){
+  //       nc_usage1.push({"oc_user_name" : $scope.users[i].name ,"oc_usage" : usage1});}
+  //   }
+  //   $scope.ocs_usage = nc_usage1;
 	
-	var oc_usage = 0;
-	var usage_count = [];
-	dataFactory.fetch("/users?role_id=2"). success(function(data, status, headers, config) {
-	    for(i=0;i<data.length;i++){
-		oc_usage = 0;
-		for(j=0;j<$scope.nc_usage.length;j++){
-		    if(data[i].id == $scope.nc_usage[j].oc_id){
-			//oc_usage=Number(oc_usage) + Number($scope.nc_usage[j].nc_usage)+nc_usage1[i].oc_usage;
-			oc_usage=Number(oc_usage) + Number($scope.nc_usage[j].nc_usage);
-		    }
-		}
-		usage_count.push({"oc_centre" : data[i].institute_name , "oc_name" : data[i].name, "oc_email" : data[i].email, "usage" : oc_usage+nc_usage1[i].oc_usage});
-	    }
-	    $scope.oc_usage = usage_count;
-	    $scope.usageloading = false;
-	});
+  //   var oc_usage = 0;
+  //   var usage_count = [];
+  //   dataFactory.fetch("/users?role_id=2"). success(function(data, status, headers, config) {
+  //     for(i=0;i<data.length;i++){
+  //       oc_usage = 0;
+  //       for(j=0;j<$scope.nc_usage.length;j++){
+  //         if(data[i].id == $scope.nc_usage[j].oc_id){
+  //           //oc_usage=Number(oc_usage) + Number($scope.nc_usage[j].nc_usage)+nc_usage1[i].oc_usage;
+  //           oc_usage=Number(oc_usage) + Number($scope.nc_usage[j].nc_usage);
+  //         }
+  //       }
+  //       usage_count.push({"oc_centre" : data[i].institute_name , "oc_name" : data[i].name, "oc_email" : data[i].email, "usage" : oc_usage+nc_usage1[i].oc_usage});
+  //     }
+  //     $scope.oc_usage = usage_count;
+  //     $scope.usageloading = false;
+  //   });
 	
-    }).error(function(data, status, headers, config){
-	console.log(data);
-    });
-   
-    
+  // }).error(function(data, status, headers, config){
+  //   console.log(data);
+  // });
 });
 
 app.controller("nc-dashboard", function($scope, $http, dataFactory, $routeParams, $route, $window) {
@@ -510,8 +801,222 @@ app.controller("nc-dashboard", function($scope, $http, dataFactory, $routeParams
         });
     
 });
-app.controller("manage-workshops", function($scope, $http, $routeParams, dataFactory,$route, $window) {
+app.controller("workshop-history", function($scope, $http, $routeParams, dataFactory,$route, $window) {
+  $scope.editWorkshop = function(row) {
+        window.location.href = "#edit-workshop/" + row['id'];
+    };
+    $scope.view = function(row) {
+        window.location.href = "#/one-workshop/" + row['id'];
+    };
 
+    $scope.gridOptions = {
+        paginationPageSizes: [5, 10, 15],
+        paginationPageSize: 5,
+        enableFiltering: true,
+        columnDefs: [
+            { field: 'user.name', displayName: 'Coordinator Name'},
+            { field: 'name', displayName: 'Workshop Name' },                                                      { field: 'location' },
+            { field: 'participants_attended' },
+            { field: 'date'},
+            { field: 'status.name', displayName:'Status'},
+            { field: 'experiments_conducted', displayName:'Usage'},
+            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.view(row.entity)">View</button><button id="editBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.editWorkshop(row.entity)" >Edit</button><button id="editBtn" type="button" class="btn btn-smallbtn-primary" ng-click="grid.appScope.uploadReports(row.entity)">Edit</button>'}
+        ],
+        enableGridMenu: true,
+        enableSelectAll: true,
+        exporterMenuPdf: false,
+        exporterMenuExcel: false,
+        exporterCsvFilename: 'workshopHistory.csv',
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        onRegisterApi: function (gridApi) {
+	    $scope.grid1Api = gridApi;
+        }
+
+    };
+
+    dataFactory.fetch('/workshops?user_id='+$window.number).success(function(data, status, headers, config){
+        var today = new Date();
+        var count = 0;
+	var upcoming = [];
+        var history = [];
+	var pending = [];
+        for(var i=0;i<data.length;i++){
+            var workshopDate = new Date(data[i].date);
+                var workshopId = data[i].id ;
+            if (((today > workshopDate) & !(today.toDateString() == workshopDate.toDateString())) &
+                (data[i].status.name == "Upcoming")){
+                dataFactory.put('/workshops/'+workshopId.toString(),
+                                {'status': {'id': 2}}).success(function(data, status){
+                                    console.log('Status success'); });
+            }
+            if( (today <= workshopDate) ||(today.getDate() == workshopDate.getDate() &
+                                            (today.getMonth() == workshopDate.getMonth())  &
+                                            (today.getFullYear() == workshopDate.getFullYear()))){
+                if(data[i].cancellation_reason == null){
+                    upcoming.push(data[i]);
+                    count = count + 1;
+                }
+            }
+            else if(data[i].status.name == "Approved"){
+                history.push(data[i]);
+            }
+            else if(data[i].status.name == "Pending for Approval" || data[i].status.id == 4){
+                pending.push(data[i]);
+            }
+        }
+        $scope.history = history;
+        $scope.gridOptions.data = $scope.history;
+        $scope.loading = false;
+    }).error(function(data, status, headers, config){
+        console.log(data);
+    });
+    $scope.cancel = function(id){
+        if(confirm("Are you sure!") == true){
+            var reason = prompt("Please enter your reason");
+           if(reason == "" || reason == null){
+                console.log("Failed!");
+            }else{
+                dataFactory.put("/workshops/"+id, {"cancellation_reason" : reason, "status" : {"id": 6} }).success(function(data, status, headers, config) {
+                    $route.reload();
+                }).error(function(data, status, headers, config){
+                    console.log(data);
+		});
+            }
+
+        }
+    };
+});
+              
+app.controller("pending-workshops", function($scope, $http, $routeParams, dataFactory,$route, $window) {
+  $scope.editWorkshop = function(row) {
+        window.location.href = "#edit-workshop/" + row['id'];
+    };
+    $scope.view = function(row) {
+        window.location.href = "#/one-workshop/" + row['id'];
+    };
+
+    $scope.gridOptions = {
+        paginationPageSizes: [5, 10, 15],
+        paginationPageSize: 5,
+        enableFiltering: true,
+        columnDefs: [
+          { field: 'user.name', displayName: 'Coordinator Name'},
+          { field: 'location' },
+          { field: 'participants_attended' },
+          { field: 'date'},
+          { field: 'status.name', displayName:'Status'},
+          { field: 'experiments_conducted', displayName:'Usage'},
+          {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.view(row.entity)">View</button><button id="editBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.editWorkshop(row.entity)" >Edit</button><button id="editBtn" type="button" class="btn btn-smallbtn-primary" ng-click="grid.appScope.uploadReports(row.entity)">Upload</button>'}
+        ],
+        enableGridMenu: true,
+        enableSelectAll: true,
+        exporterMenuPdf: false,
+        exporterMenuExcel: false,
+        exporterCsvFilename: 'pendingWorkshops.csv',
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        onRegisterApi: function (gridApi) {
+            $scope.grid1Api = gridApi;
+        }
+
+    };
+
+    dataFactory.fetch('/workshops?user_id='+$window.number).success(function(data, status, headers, config){
+        var today = new Date();
+        var count = 0;
+        var upcoming = [];
+        var history = [];
+	var pending = [];
+        for(var i=0;i<data.length;i++){
+            var workshopDate = new Date(data[i].date);
+                var workshopId = data[i].id ;
+            if (((today > workshopDate) & !(today.toDateString() == workshopDate.toDateString())) &
+                (data[i].status.name == "Upcoming")){
+                dataFactory.put('/workshops/'+workshopId.toString(),
+                                {'status': {'id': 2}}).success(function(data, status){
+                                    console.log('Status success'); });
+            }
+            if( (today <= workshopDate) ||(today.getDate() == workshopDate.getDate() &
+                                            (today.getMonth() == workshopDate.getMonth())  &
+                                            (today.getFullYear() == workshopDate.getFullYear()))){
+                if(data[i].cancellation_reason == null){
+                    upcoming.push(data[i]);
+                    count = count + 1;
+              }
+            }
+            else if(data[i].status.name == "Approved"){
+                history.push(data[i]);
+            }
+            else if(data[i].status.name == "Pending for Approval" || data[i].status.id == 4){
+                pending.push(data[i]);
+            }
+        }
+        $scope.pending = pending;
+        $scope.gridOptions.data = $scope.pending;
+        $scope.loading = false;
+
+    }).error(function(data, status, headers, config){
+        console.log(data);
+    });
+    $scope.cancel = function(id){
+        if(confirm("Are you sure!") == true){
+            var reason = prompt("Please enter your reason");
+            if(reason == "" || reason == null){
+                console.log("Failed!");
+            }else{
+                dataFactory.put("/workshops/"+id, {"cancellation_reason" : reason, "status" : {"id": 6} }).success(function(data, status, headers, config) {
+                    $route.reload();
+                }).error(function(data, status, headers, config){
+                    console.log(data);
+                });
+            }
+
+        }
+    };
+});
+
+
+app.controller("manage-workshops", function($scope, $http, $routeParams, dataFactory,$route, $window) {
+  $scope.editWorkshop = function(row) {
+        window.location.href = "#edit-workshop/" + row['id'];
+    };
+    $scope.view = function(row) {
+        window.location.href = "#/one-workshop/" + row['id'];
+    };
+
+      $scope.gridOptions = {
+        paginationPageSizes: [5, 10, 15],
+        paginationPageSize: 5,
+        enableFiltering: true,
+        columnDefs: [
+            { field: 'user.name', displayName: 'Coordinator Name'},
+            { field: 'location' },
+            { field: 'participants_attended' },
+            { field: 'date'},
+            { field: 'status.name', displayName:'Status'},
+            { field: 'experiments_conducted', displayName:'Usage'},
+          {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.view(row.entity)">View</button><button id="editBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.editWorkshop(row.entity)" >Edit</button>'}
+        ],
+        enableGridMenu: true,
+        enableSelectAll: true,
+        exporterMenuPdf: false,
+        exporterMenuExcel: false,
+        exporterCsvFilename: 'ocWorkshopHistory.csv',
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+       onRegisterApi: function (gridApi) {
+            $scope.grid1Api = gridApi;
+        }
+
+    };
+
+
+  dataFactory.fetch("/users/"+$window.number).
+    success(function(data, status, headers, config){
+      $scope.user = data;
+    }).
+    error(function(data, status, headers, config){
+      console.log(data);
+    });
+  
     dataFactory.fetch('/workshops?user_id='+$window.number).success(function(data, status, headers, config){
         var today = new Date();
         var count = 0;
@@ -542,15 +1047,9 @@ app.controller("manage-workshops", function($scope, $http, $routeParams, dataFac
                 pending.push(data[i]);
             }
         }
-      $scope.history = history;
-      $scope.pending = pending;
       $scope.upcoming = upcoming;
-      $scope.count = count;
-      $scope.sort = function(keyname){
-        $scope.sortKey = keyname;   //set the sortKey to the param passed
-        $scope.reverse = !$scope.reverse; //if true make it false and vice versa
-      };
-      
+      $scope.gridOptions.data = $scope.upcoming;
+      $scope.loading = false;
     }).error(function(data, status, headers, config){
 	console.log(data);
     });
@@ -623,7 +1122,15 @@ app.controller("add-workshop", function($scope, $location, $http, dataFactory,$r
 
 //added mouse over functionality to the fields of Workshop Name,
 //Location of Workshop, Workshop College Name and No of Expected
-//Participants. 
+//Participants.
+  dataFactory.fetch("/users/"+$window.number).
+    success(function(data, status, headers, config){
+      $scope.user = data;
+    }).
+    error(function(data, status, headers, config){    
+      console.log(data);
+    });
+  
     
 dataFactory.fetch("/nodal_centres?created_by_id="+$window.number).success(function(data, status, headers, config){
         $scope.ncentres = data;
@@ -643,7 +1150,7 @@ dataFactory.fetch("/nodal_centres?created_by_id="+$window.number).success(functi
   {
     if(status == "over")
     {
-      $scope.info1 = "Town/City, State and PINCODE of the workshop location.";
+      $scope.info1 = "Town/City and State of the workshop location.";
     }
     else{$scope.info1="";}
   };
@@ -952,6 +1459,35 @@ app.controller("oc-dashboard", function($scope, $http, dataFactory, $routeParams
 });
 
 app.controller("manage-nc", function($scope, $http, $routeParams, dataFactory, $window, $route) {
+    $scope.loading = true;
+    $scope.editNodalCoordinator = function(row) {
+        window.location.href = "#/edit-nc/" + row['id'];
+    };
+
+    $scope.gridOptions = {
+        paginationPageSizes: [5, 10, 15],
+        paginationPageSize: 5,
+	enableFiltering: true,
+        columnDefs: [
+            { field: 'name', displayName: 'Coordinator Name'},
+            { field: 'name', displayName: 'Workshop Name' },                                                      { field: 'email' },
+            { field: 'phone' },
+            { field: 'user_status'},
+            // { field: 'created'},                                                                                                                   
+            { field: 'last_active', displayName:'Last Active'},
+            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small \
+btn-primary" ng-click="grid.appScope.editNodalCoordinator(row.entity)">Edit</button>'}
+        ],
+        enableGridMenu: true,
+        enableSelectAll: true,
+        exporterMenuPdf: false,
+        exporterMenuExcel: false,
+        exporterCsvFilename: 'nodalCoordinators.csv',
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        onRegisterApi: function (gridApi) {
+            $scope.grid1Api = gridApi;
+        }
+    };
     dataFactory.fetch("/nodal_coordinator_details?created_by_id="+ $window.number).success(function(data, status, headers, config){
       var coordinators = [];
         for(var i=0;i<data.length;i++){
@@ -964,10 +1500,13 @@ app.controller("manage-nc", function($scope, $http, $routeParams, dataFactory, $
             });
         }
         $scope.coordinators=coordinators;
+        $scope.gridOptions.data = $scope.coordinators;
+        $scope.loading = false;
     }).error(function(data, status, headers, config){
         console.log(data);
     });
-    $scope.del =  function(nc_details_id, user_id){
+  // $scope.del =  function(nc_details_id, user_id){
+    $scope.del =  function(row){
         dataFactory.fetch("/workshops?user_id="+user_id).
                 success(function(data, status, headers, config){ 
                     if(data.length == 0)
@@ -1162,8 +1701,38 @@ app.controller("add-nc", function($scope, $http, dataFactory, $routeParams, $win
     
 });
 app.controller("manage-centres", function($scope, $http, dataFactory, $routeParams, $window, $route) {
+    $scope.loading = true;
+    $scope.editCentre = function(row) {
+        window.location.href = "#/edit-centre/" + row['id'];
+    };
+
+    $scope.gridOptions = {
+        paginationPageSizes: [5, 10, 15],
+        paginationPageSize: 5,
+        enableFiltering: true,
+        columnDefs: [
+            { field: 'name', displayName: 'Name'},
+            { field: 'location' },
+            { field: 'pincode' },
+            { field: 'centre_status', displayName:'Status'},
+            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small \
+btn-primary" ng-click="grid.appScope.editCentre(row.entity)">Edit</button><button id="deleteBtn" type="button" class="btn btn-small btn-danger" ng-cl\
+ick="grid.appScope.del_centre(row.entity)" >Remove</button>'}
+        ],
+        enableGridMenu: true,
+        enableSelectAll: true,
+        exporterMenuPdf: false,
+        exporterMenuExcel: false,
+        exporterCsvFilename: 'manageCentres.csv',
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        onRegisterApi: function (gridApi) {
+            $scope.grid1Api = gridApi;
+        }
+    };
     dataFactory.fetch("/nodal_centres?created_by_id="+$window.number).success(function(data, status, headers, config){
-        $scope.centres= data;
+      $scope.centres= data;
+      $scope.gridOptions.data = $scope.centres;
+      $scope.loading = false;
     }).error(function(data, status, headers, config){
         console.log(data);
     });
@@ -1237,9 +1806,9 @@ app.controller("manage-centres", function($scope, $http, dataFactory, $routePara
           $scope.status = "Fill Details";
         }
     };
-    $scope.del_centre =  function(id){
+    $scope.del_centre =  function(row){
         if(confirm("Are you sure!") == true){
-            dataFactory.del("/nodal_centres/"+id).
+            dataFactory.del("/nodal_centres/"+row['id']).
                 success(function(data, status, headers, config) {
                     $route.reload();
                 }).
@@ -1325,6 +1894,47 @@ app.controller("edit-centre", function($scope, dataFactory, $http, $routeParams,
   };
 });
 app.controller("oc-manage-workshops", function($scope, $http, $routeParams, dataFactory,$route, $window) {
+      $scope.loading = true;
+    $scope.ocUploadReports = function(row) {
+	window.location.href = "#/oc-upload-reports/" + row['id'];
+    };
+    $scope.editWorkshop = function(row) {
+        window.location.href = "#edit-workshop/" + row['id'];
+    };
+
+
+    $scope.gridOptions = {
+        paginationPageSizes: [5, 10, 15],
+        paginationPageSize: 5,
+        enableFiltering: true,
+        columnDefs: [
+            { field: 'user.name', displayName: 'Coordinator Name'},
+            { field: 'location' },
+            { field: 'no_of_participants_expected' },
+            { field: 'date'},
+            { field: 'status.name', displayName:'Status'},
+            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="editBtn" type="button" class="btn btn-small \
+btn-primary" ng-click="grid.appScope.editWorkshop(row.entity)" >Edit</button><button id="viewBtn" type="button" class="btn btn-small btn-primary" ng-\
+click="grid.appScope.ocUploadReports(row.entity)" >Upload</button>'}
+        ],
+        enableGridMenu: true,
+        enableSelectAll: true,
+        exporterMenuPdf: false,
+        exporterMenuExcel: false,
+        exporterCsvFilename: 'NCWorkshops.csv',
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        onRegisterApi: function (gridApi) {
+            $scope.grid1Api = gridApi;
+        }
+    };
+
+    // dataFactory.fetch("/users/"+$window.number).
+    // success(function(data, status, headers, config){
+    //   $scope.user = data;
+    // }).
+    // error(function(data, status, headers, config){
+    //   console.log(data);
+    // });
     dataFactory.fetch("/workshops?user_id="+$window.number).
 	success(function(data, status, headers, config) {
             var today = new Date();
@@ -1355,9 +1965,12 @@ app.controller("oc-manage-workshops", function($scope, $http, $routeParams, data
                     count = count + 1;
                 }
             }
-          $scope.history = history;
-          $scope.pending = pending;
+          // $scope.history = history;
+          // $scope.pending = pending;
           $scope.upcoming = upcoming;
+          $scope.gridOptions.data = $scope.upcoming;
+          $scope.loading = false;
+          
           $scope.count = count;
           $scope.sort = function(keyname){
             $scope.sortKey = keyname;   //set the sortKey to the param passed
@@ -1413,6 +2026,35 @@ app.controller("oc-doclist", function($scope, $http, $routeParams, dataFactory,$
     };
 });
 app.controller("nc-workshops", function($scope, $http, $routeParams, dataFactory, $window, $route) {
+    $scope.loading = true;
+    $scope.reviewReports = function(row) {
+        window.location.href = "#review-reports/" + row['id'];
+    };
+
+    $scope.gridOptions = {
+        paginationPageSizes: [5, 10, 15],
+        paginationPageSize: 5,
+        enableFiltering: true,
+        columnDefs: [
+            { field: 'user.name', displayName: 'Coordinator Name'},
+            { field: 'name', displayName: 'Workshop Name' },                                                      { field: 'location' },
+            { field: 'not_approval_reason' },
+            { field: 'date'},
+            { field: 'status.name', displayName:'Status'},
+            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small \
+btn-primary" ng-click="grid.appScope.reviewReports(row.entity)">Review Reports</button>'}
+        ],
+        enableGridMenu: true,
+        enableSelectAll: true,
+        exporterMenuPdf: false,
+        exporterMenuExcel: false,
+        exporterCsvFilename: 'ocWorkshopHistory.csv',
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        onRegisterApi: function (gridApi) {
+            $scope.grid1Api = gridApi;
+        }
+    };
+
   var nc_workshops = [];
     dataFactory.fetch('/nodal_coordinator_details?created_by_id='+ $window.number).success(function(data, status, headers, config){
         for (var i = 0 ; i < data.length; i++ ){
@@ -1432,11 +2074,14 @@ app.controller("nc-workshops", function($scope, $http, $routeParams, dataFactory
     }).error(function(data, status, headers, config){
         console.log("Failed");
     });
-  $scope.workshops = nc_workshops;
-  $scope.sort = function(keyname){
-    $scope.sortKey = keyname;   //set the sortKey to the param passed
-    $scope.reverse = !$scope.reverse; //if true make it false and vice versa
-  };
+    $scope.workshops = nc_workshops;
+    $scope.gridOptions.data = $scope.workshops;
+    $scope.loading = false;
+
+  // $scope.sort = function(keyname){
+  //   $scope.sortKey = keyname;   //set the sortKey to the param passed
+  //   $scope.reverse = !$scope.reverse; //if true make it false and vice versa
+  // };
 
 });
 app.controller("review-reports", function($scope, $http, $routeParams, dataFactory,  $route, $window){
@@ -1505,6 +2150,48 @@ app.controller("review-reports", function($scope, $http, $routeParams, dataFacto
 });
 
 app.controller("oc-workshop-history", function($scope, $http, $routeParams, dataFactory, $window, $route) {
+    $scope.loading = true;
+    $scope.viewReports = function(row) {
+	window.location.href = "#view-reports/" + row['id'];
+    };
+
+    $scope.editWorkshop = function(row) {
+        window.location.href = "#edit-workshop/" + row['id'];
+    };
+
+    $scope.uploadReports = function(row) {
+        window.location.href = "#/oc-upload-reports/" + row['id'];
+    };
+
+    $scope.gridOptions = {
+        paginationPageSizes: [5, 10, 15],
+        paginationPageSize: 5,
+        enableFiltering: true,
+        columnDefs: [
+            { field: 'user.name', displayName: 'Coordinator Name'},
+            { field: 'name', displayName: 'Workshop Name' },                            
+            { field: 'location' },
+            { field: 'participants_attended' },
+            { field: 'date'},
+            { field: 'status.name', displayName:'Status'},
+            { field: 'experiments_conducted', displayName:'Usage'},
+          {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small \
+btn-primary" ng-click="grid.appScope.viewReports(row.entity)">View</button><button id="editBtn" type="button" class="btn btn-small btn-primary" ng-cl\
+ick="grid.appScope.editWorkshop(row.entity)" >Edit</button><button id="editBtn" type="button" class="btn btn-smallbtn-primary" ng-click="grid.appScop\
+e.uploadReports(row.entity)">UploadReports</button>'}   
+        ],
+        enableGridMenu: true,
+        enableSelectAll: true,
+        exporterMenuPdf: false,
+        exporterMenuExcel: false,
+        exporterCsvFilename: 'ocWorkshopHistory.csv',
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        onRegisterApi: function (gridApi) {
+            $scope.grid1Api = gridApi;
+        }
+
+    };
+  
     var workshops = [] ;
     dataFactory.fetch("/nodal_coordinator_details?created_by_id="+ $window.number).
 	success(function(data, status, headers, config){
@@ -1538,10 +2225,13 @@ app.controller("oc-workshop-history", function($scope, $http, $routeParams, data
         console.log(data);
     });
   $scope.workshops = workshops;
-  $scope.sort = function(keyname){
-    $scope.sortKey = keyname;   //set the sortKey to the param passed
-    $scope.reverse = !$scope.reverse; //if true make it false and vice versa
-  };
+  $scope.gridOptions.data = $scope.workshops;
+  $scope.loading = false;
+  
+  // $scope.sort = function(keyname){
+  //   $scope.sortKey = keyname;   //set the sortKey to the param passed
+  //   $scope.reverse = !$scope.reverse; //if true make it false and vice versa
+  // };
 });
 app.controller("upload-reports", function($scope, $http, $routeParams, dataFactory, $route, $window){
     var photos = [];
@@ -1668,14 +2358,35 @@ app.controller("ws_details_offline", function($scope, $http, $routeParams, dataF
 
 });
 
-app.controller("nc_user_list", function($scope, $http, $routeParams, dataFactory, $route, $window){
-    dataFactory.fetch("/nodal_coordinator_details?created_by_id="+ $routeParams.id).
+app.controller("nc-user-list", function($scope, $http, $routeParams, dataFactory, $route, $window){
+   $scope.gridOptions = {
+	paginationPageSizes: [5, 10, 15],
+        paginationPageSize: 5,
+        enableFiltering: true,
+        columnDefs: [
+            { field: 'user.name', displayName: 'Name'},
+            { field: 'user.email', displayName: 'Email'},
+            { field: 'user.last_active', displayName: 'Last Active', enableFiltering:false}  
+        ],
+        enableGridMenu: true,
+        enableSelectAll: true,
+        exporterMenuPdf: false,
+        exporterMenuExcel: false,
+        exporterCsvFilename: 'totalNCList.csv',
+        exporterCsvLinkElement: angular.element(document.querySelectorAll(".custom-csv-link-location")),
+        onRegisterApi: function (gridApi) {
+            $scope.grid1Api = gridApi;
+        }
+
+    };
+  dataFactory.fetch("/nodal_coordinator_details?created_by_id="+ $routeParams.id).
 	success(function(data, status, headers, config){
-	    $scope.nc_user_list = data;
-	  console.log($scope.nc_user_list);
+	  $scope.nc_user_list = data;
+          $scope.gridOptions.data = $scope.nc_user_list;
+          $scope.loading = false;
 	}).
 	error(function(data,status,headers,config){
-	    console.log("Failed");
+	    console.log("Failed to load nodal coordinator details");
 	});
 });
 
