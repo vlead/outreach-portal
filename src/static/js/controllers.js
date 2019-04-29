@@ -197,8 +197,8 @@ app.controller("usage-ctrl", function($scope, dataFactory, $http, $routeParams, 
         paginationPageSize: 5,
         enableFiltering: true,
         columnDefs: [
-            { field: 'institute_name' },
-            { field: 'total_usage' }
+          { field: 'institute_name' },
+          { field: 'total_usage.toLocaleString()' }
         ],
         enableGridMenu: true,
         exporterMenuPdf: false,
