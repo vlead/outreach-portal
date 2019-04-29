@@ -20,6 +20,9 @@
   - Add materialized views for 'Participants Attended' tab
     in analytics to increase the performance
 
+  - Nodal Centres should list only active centre count
+    instead of total count
+  
   - Added Pagination, Filtering, Searching, Sorting and
     Export to all the data. (without login)
   
@@ -34,6 +37,8 @@
 
   - Added Pagination, Filtering, Searching, Sorting and
     Export to all the data.
+    
+  - Add View Reports option for all workshops in admin dashboard
 
 * Outreach and Nodal Coordinator Accounts:
 
@@ -49,7 +54,12 @@
   
   - NC can see his/her college name non-editable while adding workshop
 
-* Resolved issues
+  - Add 'Edit' and 'Upload' button for 'My Workshops' tab in OC dashboard
+
+  - Add 'Edit' and 'Upload' button for 'Workshop History' tab in OC dashboard
+
+* Resolved issues and other bug fixes
+
    +  https://github.com/vlead/outreach-portal/issues/329
    +  https://github.com/vlead/outreach-portal/issues/330
    +  https://github.com/vlead/outreach-portal/issues/336
@@ -71,4 +81,13 @@
    +  https://github.com/vlead/outreach-portal/issues/402
    +  https://github.com/vlead/outreach-portal/issues/403
    +  https://github.com/vlead/outreach-portal/issues/404
+   +  https://github.com/vlead/outreach-portal/issues/411
+   +  https://github.com/vlead/outreach-portal/issues/412
+   +  https://github.com/vlead/outreach-portal/issues/415
+   +  https://github.com/vlead/outreach-portal/issues/416
+   +  https://github.com/vlead/outreach-portal/issues/417
+   +  https://github.com/vlead/outreach-portal/issues/418
+   +  https://github.com/vlead/outreach-portal/issues/419
+   +  https://github.com/vlead/outreach-portal/issues/420
+   +  https://github.com/vlead/outreach-portal/issues/421
    
