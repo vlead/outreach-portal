@@ -895,6 +895,10 @@ app.controller("pending-workshops", function($scope, $http, $routeParams, dataFa
         window.location.href = "#/one-workshop/" + row['id'];
     };
 
+    $scope.uploadReports = function(row) {
+        window.location.href = "#/upload-reports/" + row['id'];
+    };
+  
     $scope.gridOptions = {
         paginationPageSizes: [5, 10, 15],
         paginationPageSize: 5,
@@ -906,7 +910,7 @@ app.controller("pending-workshops", function($scope, $http, $routeParams, dataFa
           { field: 'date'},
           { field: 'status.name', displayName:'Status'},
           { field: 'experiments_conducted', displayName:'Usage'},
-          {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.view(row.entity)">View</button><button id="editBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.editWorkshop(row.entity)" >Edit</button><button id="editBtn" type="button" class="btn btn-smallbtn-primary" ng-click="grid.appScope.uploadReports(row.entity)">Upload</button>'}
+          {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="editBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.editWorkshop(row.entity)" >Edit</button><button id="editBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.uploadReports(row.entity)">Upload</button><button id="viewBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.view(row.entity)">View</button>'}
         ],
         enableGridMenu: true,
         enableSelectAll: true,
