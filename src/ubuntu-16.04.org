@@ -1,0 +1,90 @@
+#+TITLE: Outreach OS migration
+#+Author: VLEAD
+#+Date: [2019-05-02 Thu]
+#+PROPERTY: results output
+#+PROPERTY: exports code
+#+SETUPFILE: ./org-templates/level-0.org
+#+options: ^:nil
+
+* Introduction
+  This document provides the details of outreach portal
+  OS migration from Ubuntu 14.04 to Ubuntu 16.04 
+
+* Migration OS from Ubuntu 14.04 to Ubuntu 16.04
+** Create container with ubuntu 16.04 template
+#+BEGIN_EXAMPLE
+ vzctl create 29419 --ostemplate ubuntu-16.04-custom-x86_64 --ipadd 10.4.12.230 --diskspace 5G:10.0G --hostname outreach-ubuntu.vlabs.ac.in
+#+END_EXAMPLE
+** GIT 
+   Ubuntu 16.04 comes with pre installed version of git. If
+not use the following command to install. Installed git
+version 2.7.4
+#+BEGIN_EXAMPLE
+sudo apt-get -y install git
+#+END_EXAMPLE
+** Emacs
+   Installed Emacs version 24.5.1 using following command
+#+BEGIN_EXAMPLE
+sudo apt-get -y install emacs 
+#+END_EXAMPLE
+** Mysql Server
+   Installed Mysql Server version 5.7 using following command
+#+BEGIN_EXAMPLE
+sudo apt-get install mysql-server
+#+END_EXAMPLE
+** Pre-requisites
+Install pre-requsite dependencies: python-dev, mysqld-dev, setuptools, apache, mod_wsgi etc.
+#+BEGIN_EXAMPLE
+sudo apt-get install -y python-dev libmysqld-dev python-setuptools apache2 libapache2-mod-wsgi python-mysqldb
+#+END_EXAMPLE
+** Our SQL
+#+BEGIN_EXAMPLE
+apt-get install libmysqlclient-dev 
+mkdir -p build/oursql
+cd build/oursql
+wget https://pypi.python.org/packages/8c/88/9f53a314a2af6f56c0a1249c5673ee384b85dc791bac5c1228772ced3502/oursql-0.9.3.2.tar.gz#md5=ade5959a6571b1626966d47f3ab2d315
+tar xvf oursql-0.9.3.2.tar.gz
+cd oursql-0.9.3.2
+python setup.py install
+#+END_EXAMPLE
+** Python Pip
+#+BEGIN_EXAMPLE
+apt-get install python-pip
+which pip
+#+END_EXAMPLE
+** Flask dependencies
+#+BEGIN_EXAMPLE
+pip install Flask Flask-SQLAlchemy oursql requests flask-cors flask-testing Flask-OAuthlib
+#+END_EXAMPLE
+
+** Update the apache config to server via WSGI
+   Open apache default configuration file=/etc/apache2/sites-available/000-default.conf= file and
+   add the following wsgi alias line in virtual hosts.
+virtual hosts.
+#+BEGIN_EXAMPLE
+emacs /etc/apache2/sites-available/000-default.conf
+WSGIScriptAlias / /var/www/outreach.wsgi
+#+END_EXAMPLE
+** Apache restart
+#+BEGIN_EXAMPLE
+cd /root/labs/outreach-portal/scripts
+rsync -avz apache2.conf /etc/apache2/,
+rsync -avz security.conf /etc/apache2/conf-available/security.conf,
+apt-get install libapache2-modsecurity -y,
+a2enmod headers,
+a2enmod rewrite,
+service apache2 restart
+#+END_EXAMPLE
+** Update the config.py file with appropriate values
+   Update config file with database username, password,
+   host, dbname, client_id, client_secret and app_url.
+** Database backup file
+   Take the latest dump from production and add it using the
+   following command
+#+BEGIN_EXAMPLE
+mysql -u root -p outreach < outreach.sql
+#+END_EXAMPLE
+
+** Files backup
+   Copy the files from production server and place them in
+   =/var/www/src/static/uploads= repositoy.
