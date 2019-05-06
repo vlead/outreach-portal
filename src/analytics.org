@@ -363,7 +363,7 @@ DELIMITER ;
 #+END_SRC
 ** Call the procedure on demand 
 #+BEGIN_SRC 
-CALL refresh_nc_analytics_now;
+CALL refresh_nc_analytics_now(@rc);
 #+END_SRC
 ** sample table
 #+BEGIN_EXAMPLE
@@ -422,7 +422,6 @@ select * from nodal_centres where lattitude=0 and created_by_id=34;
 ;
 update nodal_centres set lattitude='21.218560' where id=812;
 update nodal_centres set longitude='81.308198' where id=812;
-
 
 * Commands to update edit, delete and view buttons
 #+BEGIN_SRC 
