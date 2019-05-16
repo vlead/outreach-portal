@@ -1,26 +1,29 @@
 <div class="row">
   <div class="col-md-3">
-    <div class="box1" onclick="location.href='#/oc-manage-workshops/oc-workshop-history'">
-      Workshops<br/><br/>
-      {{ (workshops + ocworkshops).toLocaleString() }}
+    <div class="box1" style="background-color:#f4274c;" onclick="location.href='#/oc-manage-workshops/oc-workshop-history'">
+      <i class="fa fa-calendar fa-8x circle-icon" style="background: #fd3258;color: #ffffff;"></i>
+      <p style="font-weight:600;">Workshops</p>
+      <p>{{ (workshops + ocworkshops).toLocaleString() }}</p>
     </div>
   </div>
   <div class="col-md-3">
-    <div class="box1" onclick="location.href='#/oc-manage-workshops/oc-workshop-history'">
-      Usage<br/><br/>
+    <div class="box1" style="background-color:#00bbbf;" onclick="location.href='#/oc-manage-workshops/oc-workshop-history'">
+      <i class="fa fa-bar-chart fa-8x circle-icon" style="background: #24d5d8;color: #ffffff;"></i>
+      <p style="font-weight:600;">Usage</p>
       {{ (experiments + ocexperiments).toLocaleString() }}
     </div>
   </div>
   <div class="col-md-3">
-    <div class="box1" onclick="location.href='#/oc-manage-workshops/oc-workshop-history'">
-      Participants
-      <br/><br/>
+    <div class="box1" style="background-color:#21B420;" onclick="location.href='#/oc-manage-workshops/oc-workshop-history'">
+      <i class="fa fa-users fa-8x circle-icon" style="background: #33c92e;color: #ffffff;"></i>
+      <p style="font-weight:600;">Participants</p>
       {{ (participants + ocparticipants).toLocaleString() }}
     </div>
   </div>
   <div class="col-md-3">
-    <div class="box1" onclick="location.href='#/manage-centres'">
-      Nodal Centers<br/><br/>
+    <div class="box1" style="background-color:#f34995;" onclick="location.href='#/manage-centres'">
+      <i class="fa fa-location-arrow fa-8x circle-icon" style="background: #f574ae;color: #ffffff;"></i>
+      <p style="font-weight:600;">Nodal Centers</p>
       {{ (ncentres).toLocaleString() }}
     </div>
   </div>

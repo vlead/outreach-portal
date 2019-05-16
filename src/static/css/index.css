@@ -1,4 +1,4 @@
-1;4601;0c@import url(https://fonts.googleapis.com/css?family=Raleway:400,300);
+@import url(https://fonts.googleapis.com/css?family=Raleway:400,300);
 @import url(https://fonts.googleapis.com/css?family=Lato:400,300);
 @import url(https://fonts.googleapis.com/css?family=Open+Sans);
 
@@ -19,8 +19,8 @@ label {
 
 .navbar {
     background: #ffffff;
+    margin-bottom: 0px !important;
 }
-
 
 img:hover{
    cursor: pointer;
@@ -132,21 +132,38 @@ img:hover{
 /* admin.html Styles */
 
 .nav-pills > li.active > a,.nav-pills > li.active > a:focus,.nav-pills > li.active > a:hover{
-    border-radius: 0px;
     padding-left: 40px;
+    background-color: #474e5d;
+
 }
 .nav-pills > li > a, .nav-pills > li > a:focus, .nav-pills > li > a:hover{
-    border-radius: 0;
     padding-left: 40px;
+    color: #818181;
+    /* background-color: #474e5d; */ !
+} 
+
+/* .sidebar a:hover { */
+nav > li > a:focus, .nav > li > a:hover {
+			text-decoration: none;
+			background-color: #474e5d;
+			background-color: ;
+		    }
+/*     color: #474e5d; */
+/* } */
+
+.sidebar .nav .nav-item {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    font-weight: 500;
 }
+
 .admin{
     margin: 0;
 }							   
 .side-pane{
-    background-color: #eee;
+    background-color: #363535;
     padding: 0;
     padding-top: 40px;
-    min-height: 460px;`
+    min-height: 460px;
     /* height: 780px;` */
 }
 .content{
@@ -156,8 +173,6 @@ img:hover{
 
 /* Sub-tabs in admin  */
 .box{
-    background: #3799FA;
-   
     border-radius: 5px;
     height: 100px;
     font-size: 16px;
@@ -172,9 +187,8 @@ img:hover{
 }
 .box1{
     background: #3799FA;
-    width: 150px;
-    border-radius: 5px;
-    height: 100px;
+    width: 250px;
+    height: 170px;
     font-size: 18px;
     margin: 0 10px 10px 10px;
     text-align: center;
@@ -256,6 +270,9 @@ i.centerinactive {color: #d9534f}
 }
 
 .fa {
+    padding: 13px;
+    font-size: 27px;
+    width: 60px;
     text-align: center;
     text-decoration: none;
     margin: 5px 2px;
@@ -270,33 +287,21 @@ i.centerinactive {color: #d9534f}
 .fa-facebook {
     background: #3B5998;
     color: white;
-    font-size: 27px;
-    width: 60px;
-    padding: 13px;    
 }
 
 .fa-twitter {
     background: #55ACEE;
     color: white;
-    font-size: 27px;
-    width: 60px;
-    padding: 13px;
 }
 
 .fa-linkedin {
     background: #007bb5;
     color: white;
-    font-size: 27px;
-    width: 60px;
-    padding: 13px;
 }
 
 .fa-youtube {
     background: #bb0000;
     color: white;
-    font-size: 27px;
-    width: 60px;
-    padding: 13px;
 }
 
 .circle-icon {
@@ -327,4 +332,5 @@ i.centerinactive {color: #d9534f}
     padding-left: 30px;
     margin-right: auto;!important;
     margin-left: auto;
+    padding-bottom: 19px;
 }
