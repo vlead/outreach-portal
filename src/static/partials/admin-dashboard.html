@@ -1,32 +1,40 @@
 <div class="row">
-  <div class="col-md-3">
-    <div class="box" onclick="location.href='#/workshop-list'">Workshops Run
-      <br/><br/>
-      <span class="number" ng-show="IsVisible">{{ totalWorkshops.toLocaleString() }}</span>
-      <span class="number" ng-hide="IsVisible"><img id="mySpinner" src="/static/img/default1.gif"></span>
+  <div class="col-md-3">  
+    <div class="box1" style="background-color:#f4274c;" onclick="location.href='#/workshop-list'">
+      <i class="fa fa-calendar fa-8x circle-icon" style="background: #fd3258;color: #ffffff;"></i>
+      <p style="font-weight:600;">Workshops Run</p>
+      <p>{{ totalWorkshops.toLocaleString() }}</p>
     </div>
   </div>
   <div class="col-md-3">
-    <div class="box" onclick="location.href='#/oc-users-list'">Outreach Coordinators
-      <br/><br/>
-      <span class="number" ng-show="IsVisible">{{ totalOC.toLocaleString() }}</span>
-      <span class="number" ng-hide="IsVisible"><img id="mySpinner" src="/static/img/default1.gif"></span>
+    <div class="box1" style="background-color:#00bbbf;" onclick="location.href='#/oc-users-list'">
+      <i class="fa fa-users fa-8x circle-icon" style="background: #24d5d8;color: #ffffff;"></i>
+      <p style="font-weight:600;">Outreach Coordinators</p>
+      {{ totalOC.toLocaleString() }}
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="box1" style="background-color:#21B420;" onclick="location.href='#/oc-users-list'">
+      <i class="fa fa-users fa-8x circle-icon" style="background: #33c92e;color: #ffffff;"></i>
+      <p style="font-weight:600;">Nodal Coordinators</p>
+      {{ totalNC.toLocaleString() }}
     </div>
   </div>
   <div class="col-md-3">
-    <div class="box" onclick="location.href='#/nc-users-list'">Nodal Coordinators
-      <br/><br/>
-      <span class="number" ng-show="IsVisible">{{ totalNC.toLocaleString() }}</span>
-      <span class="number" ng-hide="IsVisible"><img id="mySpinner" src="/static/img/default1.gif"></span>
+    <div class="box1" style="background-color:#00bbbf;" onclick="location.href='#/usage'">
+      <i class="fa fa-bar-chart fa-8x circle-icon" style="background: #24d5d8;color: #ffffff;"></i>
+      <p style="font-weight:600;">Usage</p>
+      {{ totalUsage.toLocaleString()}}
     </div>
   </div>
-  <div class="col-md-3" onclick="location.href='#/usage'">
-    <div class="box">Usage
-      <br/><br/>
-      <span class="number" ng-show="IsVisible">{{ totalUsage.toLocaleString() }}</span>
-      <span class="number" ng-hide="IsVisible"><img id="mySpinner" src="/static/img/default1.gif"></span>
-    </div>
-  </div>
+  <!-- <div class="col-md-3" onclick="location.href='#/usage'"> -->
+  <!--   <div class="box">Usage -->
+  <!--     <br/><br/> -->
+  <!--     <span class="number" ng-show="IsVisible">{{ totalUsage.toLocaleString() }}</span> -->
+  <!--     <span class="number" ng-hide="IsVisible"><img id="mySpinner" src="/static/img/default1.gif"></span> -->
+  <!--   </div> -->
+  <!-- </div> -->
 </div>
 <script type="text/javascript">
   var dashboard = function(){
