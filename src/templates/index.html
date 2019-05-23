@@ -33,13 +33,21 @@
           <span class="number" ng-hide="IsVisible"><img alt="mySpinner" src="/static/img/default1.gif"></span><br><p style="color: #aab2bd;">WORKSHOPS RUN</p>
           </div>
 	</div>
-        <div class="col-md-3 analytics usage" ng-click="showUsage()">
-          <i class="fa fa-bar-chart fa-8x circle-icon" style="background: #24d5d8;color: #ffffff;"></i>
-	  <div>
-          <span class="number" ng-show="IsVisible">{{ totalUsage.toLocaleString() }}</span>
-          <span class="number" ng-hide="IsVisible"><img alt="mySpinner" src="/static/img/default1.gif"></span><br><p style="color: #aab2bd;">USAGE</p>
+	<div class="col-md-3">
+	  <div class="box" style="background-color:#00bbbf;" onclick="showUsage()">
+	    <i class="fa fa-bar-chart fa-8x circle-icon" style="background: #24d5d8;color: #ffffff;"></i>
+	    <p style="font-weight:600;">Usage</p>
+	    {{ totalUsage.toLocaleString()}}
 	  </div>
-        </div>
+	</div>
+
+        <!-- <div class="col-md-3 analytics usage" ng-click="showUsage()"> -->
+        <!--   <i class="fa fa-bar-chart fa-8x circle-icon" style="background: #24d5d8;color: #ffffff;"></i> -->
+	<!--   <div> -->
+        <!--   <span class="number" ng-show="IsVisible">{{ totalUsage.toLocaleString() }}</span> -->
+        <!--   <span class="number" ng-hide="IsVisible"><img alt="mySpinner" src="/static/img/default1.gif"></span><br><p style="color: #aab2bd;">USAGE</p> -->
+	<!--   </div> -->
+        <!-- </div> -->
       </div>
     </div>
   </div>
