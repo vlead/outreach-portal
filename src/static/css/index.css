@@ -174,11 +174,9 @@ nav > li > a:focus, .nav > li > a:hover {
 /* Sub-tabs in admin  */
 .box{
     border-radius: 0px;
-    height: 160px;
+    height: 170px;
     font-size: 16px;
-    margin-left:20px;
-    margin-right:20px;
-    margin-top:20px;
+    margin: 20px 20px 20px 20px;    
     text-align: center;
     padding: 10px 10px 10px 10px;
     color: #fff;
@@ -375,6 +373,18 @@ i.centerinactive {color: #d9534f}
 }
 #uploadBtn{
     background-color: DodgerBlue;
+    border: none;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    width: 50px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    margin-left: 2px;
+    margin-right: 2px;
+}
+#deleteBtn{
+    background-color: #dc3545;
     border: none;
     color: white;
     font-size: 16px;
