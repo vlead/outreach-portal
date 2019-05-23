@@ -1917,9 +1917,7 @@ app.controller("oc-manage-workshops", function($scope, $http, $routeParams, data
             { field: 'no_of_participants_expected' },
             { field: 'date'},
             { field: 'status.name', displayName:'Status'},
-            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="editBtn" type="button" class="btn btn-small \
-btn-primary" ng-click="grid.appScope.editWorkshop(row.entity)" >Edit</button><button id="viewBtn" type="button" class="btn btn-small btn-primary" ng-\
-click="grid.appScope.ocUploadReports(row.entity)" >Upload</button>'}
+            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="editBtn" type="button" class="btn" ng-click="grid.appScope.editWorkshop(row.entity)"><i class="fa fa-edit"></i></button><button id="viewBtn" type="button" class="btn" ng-click="grid.appScope.ocUploadReports(row.entity)"><i class="fa fa-upload"></i></button>'}
         ],
         enableGridMenu: true,
         enableSelectAll: true,
@@ -2045,8 +2043,7 @@ app.controller("nc-workshops", function($scope, $http, $routeParams, dataFactory
             { field: 'not_approval_reason' },
             { field: 'date'},
             { field: 'status.name', displayName:'Status'},
-            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small \
-btn-primary" ng-click="grid.appScope.reviewReports(row.entity)">Review Reports</button>'}
+            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn" ng-click="grid.appScope.reviewReports(row.entity)"><i class="fa fa-eye"></button>'}
         ],
         enableGridMenu: true,
         enableSelectAll: true,
@@ -2179,7 +2176,7 @@ app.controller("oc-workshop-history", function($scope, $http, $routeParams, data
             { field: 'date'},
             { field: 'status.name', displayName:'Status'},
             { field: 'experiments_conducted', displayName:'Usage'},
-            {name: 'actions', enableFiltering: false, displayName: 'Actions', width:200, cellTemplate: '<button id="viewBtn" type="button" class="btn" ng-click="grid.appScope.viewReports(row.entity)"><i class="fa fa-eye"></i></button><button id="editBtn" type="button" class="btn" ng-click="grid.appScope.editWorkshop(row.entity)" ><i class="fa fa-edit"></i></button><button id="uploadBtn" type="button" class="btn" ng-click="grid.appScope.uploadReports(row.entity)"><i class="fa fa-upload"></i></button>'}   
+            {name: 'actions', enableFiltering: false, displayName: 'Actions', width:200, cellTemplate: '<button id="viewBtn" type="button" class="btn" ng-click="grid.appScope.viewReports(row.entity)"><i class="fa fa-eye"></i></button><button id="editBtn" type="button" class="btn" ng-click="grid.appScope.editWorkshop(row.entity)"><i class="fa fa-edit"></i></button><button id="uploadBtn" type="button" class="btn" ng-click="grid.appScope.uploadReports(row.entity)"><i class="fa fa-upload"></i></button>'}   
         ],
         enableGridMenu: true,
         enableSelectAll: true,
