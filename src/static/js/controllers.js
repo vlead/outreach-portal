@@ -815,12 +815,13 @@ app.controller("workshop-history", function($scope, $http, $routeParams, dataFac
         enableFiltering: true,
         columnDefs: [
             { field: 'user.name', displayName: 'Coordinator Name'},
-            { field: 'name', displayName: 'Workshop Name' },                                                      { field: 'location' },
+            { field: 'name', displayName: 'Workshop Name' },
+	    { field: 'location' },
             { field: 'participants_attended' },
             { field: 'date'},
             { field: 'status.name', displayName:'Status'},
             { field: 'experiments_conducted', displayName:'Usage'},
-            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.view(row.entity)">View</button><button id="editBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.editWorkshop(row.entity)" >Edit</button><button id="editBtn" type="button" class="btn btn-smallbtn-primary" ng-click="grid.appScope.uploadReports(row.entity)">Edit</button>'}
+            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn" ng-click="grid.appScope.view(row.entity)"><i class="fa fa-eye"></i></button><button id="editBtn" type="button" class="btn" ng-click="grid.appScope.editWorkshop(row.entity)"><i class="fa fa-edit"></i></button>'}
         ],
         enableGridMenu: true,
         enableSelectAll: true,
@@ -910,7 +911,7 @@ app.controller("pending-workshops", function($scope, $http, $routeParams, dataFa
           { field: 'date'},
           { field: 'status.name', displayName:'Status'},
           { field: 'experiments_conducted', displayName:'Usage'},
-          {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="editBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.editWorkshop(row.entity)" >Edit</button><button id="editBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.uploadReports(row.entity)">Upload</button><button id="viewBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.view(row.entity)">View</button>'}
+            {name: 'actions', enableFiltering: false, displayName: 'Actions', width:250, cellTemplate: '<button id="editBtn" type="button" class="btn" ng-click="grid.appScope.view(row.entity)"><i class="fa fa-eye"></i></button><button id="editBtn" type="button" class="btn" ng-click="grid.appScope.editWorkshop(row.entity)"><i class="fa fa-edit"></i></button><button id="viewBtn" type="button" class="btn" ng-click="grid.appScope.uploadReports(row.entity)"><i class="fa fa-upload"></i></button>'}
         ],
         enableGridMenu: true,
         enableSelectAll: true,
@@ -998,7 +999,7 @@ app.controller("manage-workshops", function($scope, $http, $routeParams, dataFac
             { field: 'date'},
             { field: 'status.name', displayName:'Status'},
             { field: 'experiments_conducted', displayName:'Usage'},
-          {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.view(row.entity)">View</button><button id="editBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.editWorkshop(row.entity)" >Edit</button>'}
+          {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn" ng-click="grid.appScope.view(row.entity)"><i class="fa fa-eye"></i></button><button id="editBtn" type="button" class="btn" ng-click="grid.appScope.editWorkshop(row.entity)"><i class="fa fa-edit"></i></button>'}
         ],
         enableGridMenu: true,
         enableSelectAll: true,
