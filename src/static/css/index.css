@@ -272,7 +272,6 @@ i.centerinactive {color: #d9534f}
 }
 
 .fa {
-    padding: 13px;
     font-size: 27px;
     width: 60px;
     text-align: center;
@@ -287,21 +286,25 @@ i.centerinactive {color: #d9534f}
 }
                                                                                                                                                       
 .fa-facebook {
+    padding: 13px;
     background: #3B5998;
     color: white;
 }
 
 .fa-twitter {
+    padding: 13px;    
     background: #55ACEE;
     color: white;
 }
 
 .fa-linkedin {
+    padding: 13px;    
     background: #007bb5;
     color: white;
 }
 
 .fa-youtube {
+    padding: 13px;    
     background: #bb0000;
     color: white;
 }
