@@ -312,7 +312,7 @@ app.controller("admin-workshop", function($scope, dataFactory, $http, $routePara
             { field: 'version' },
             { field: 'date'},
           { field: 'participants_attended'},
-          {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="editBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.viewReports(row.entity)">View</button>'}
+          {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="editBtn" type="button" class="btn" ng-click="grid.appScope.viewReports(row.entity)"><i class="fa fa-eye"></i></button>'}
 
         ],
         enableGridMenu: true,
@@ -473,7 +473,7 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
       { field: 'institute_name',displayName:'Institute Name' },
       { field: 'last_active', displayName:'Last Active'},
       { field: 'created', displayName:'Created On'},
-      {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small btn-primary" ng-click="grid.appScope.editOC(row.entity)">Edit</button><button id="deleteBtn" type="button" class="btn btn-small btn-danger" ng-click="grid.appScope.deleteOC(row.entity)">Remove</button>'}
+      {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn" ng-click="grid.appScope.editOC(row.entity)"><i class="fa fa-edit"></i></button><button id="deleteBtn" type="button" class="btn btn-small btn-danger" ng-click="grid.appScope.deleteOC(row.entity)"><i class="fa fa-trash"></i></button>'}
     ],
     enableGridMenu: true,
     enableSelectAll: true,
