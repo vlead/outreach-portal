@@ -71,10 +71,10 @@ app.controller("map-ctrl", function ($scope, $http, dataFactory){
   // };
   
   var mapOptions = { zoom: 4, center: new google.maps.LatLng(24,80) };
-  $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
-  var geocoder = new google.maps.Geocoder();
+    $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
+    var geocoder = new google.maps.Geocoder();
   
-  $scope.createMarker = function (label, geoCode,type){
+    $scope.createMarker = function (label, geoCode,type){
     var nodalCentreInfowindow = new google.maps.InfoWindow({
       content: "<b>Nodal Centre Location : </b>"+label.location+"<br><b>Nodal Centre Name : </b>"+label.name+"<br><b>Outreach Centre Name : </b>"+label.created_by.institute_name
     });
@@ -2179,10 +2179,7 @@ app.controller("oc-workshop-history", function($scope, $http, $routeParams, data
             { field: 'date'},
             { field: 'status.name', displayName:'Status'},
             { field: 'experiments_conducted', displayName:'Usage'},
-          {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small \
-btn-primary" ng-click="grid.appScope.viewReports(row.entity)">View</button><button id="editBtn" type="button" class="btn btn-small btn-primary" ng-cl\
-ick="grid.appScope.editWorkshop(row.entity)" >Edit</button><button id="editBtn" type="button" class="btn btn-smallbtn-primary" ng-click="grid.appScop\
-e.uploadReports(row.entity)">UploadReports</button>'}   
+            {name: 'actions', enableFiltering: false, displayName: 'Actions', width:200, cellTemplate: '<button id="viewBtn" type="button" class="btn" ng-click="grid.appScope.viewReports(row.entity)"><i class="fa fa-eye"></i></button><button id="editBtn" type="button" class="btn" ng-click="grid.appScope.editWorkshop(row.entity)" ><i class="fa fa-edit"></i></button><button id="uploadBtn" type="button" class="btn" ng-click="grid.appScope.uploadReports(row.entity)"><i class="fa fa-upload"></i></button>'}   
         ],
         enableGridMenu: true,
         enableSelectAll: true,
