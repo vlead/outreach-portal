@@ -1719,9 +1719,7 @@ app.controller("manage-centres", function($scope, $http, dataFactory, $routePara
             { field: 'location' },
             { field: 'pincode' },
             { field: 'centre_status', displayName:'Status'},
-            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small \
-btn-primary" ng-click="grid.appScope.editCentre(row.entity)">Edit</button><button id="deleteBtn" type="button" class="btn btn-small btn-danger" ng-cl\
-ick="grid.appScope.del_centre(row.entity)" >Remove</button>'}
+            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn" ng-click="grid.appScope.editCentre(row.entity)"><i class="fa fa-edit"></i></button><button id="deleteBtn" type="button" class="btn" ng-click="grid.appScope.del_centre(row.entity)"><i class="fa fa-trash"></i></button>'}
         ],
         enableGridMenu: true,
         enableSelectAll: true,
