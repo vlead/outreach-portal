@@ -1,20 +1,23 @@
 <div class="row">
   <div class="col-md-3">
-    <div class="box1" onclick="location.href='#/manage-workshops/workshop-history'">
-      Workshops<br/><br/>
-      {{ count }}/{{ target_workshops }}
+    <div class="box1" style="background-color:#f4274c;" onclick="location.href='#/manage-workshops/workshop-history'">
+      <i class="fa fa-calendar fa-8x circle-icon" style="background: #fd3258;color: #ffffff;"></i>
+      <p style="font-weight:600;">Workshops</p>
+      <p>{{ (count).toLocaleString() }}/{{ (target_workshops).toLocaleString() }}</p>
     </div>
   </div>
   <div class="col-md-3">
-    <div class="box1" onclick="location.href='#/manage-workshops/workshop-history'">
-      Usage<br/><br/>
-      {{ experiments }}/{{ target_experiments }}
+    <div class="box1" style="background-color:#00bbbf;" onclick="location.href='#/manage-workshops/workshop-history'">
+      <i class="fa fa-bar-chart fa-8x circle-icon" style="background: #24d5d8;color: #ffffff;"></i>
+      <p style="font-weight:600;">Usage</p>
+      {{ (experiments).toLocaleString() }}/{{ (target_experiments).toLocaleString() }}
     </div>
   </div>
   <div class="col-md-3">
-    <div class="box1" onclick="location.href='#/manage-workshops/workshop-history'">
-      Participants <br/><br/>
-      {{ participants }}/{{ target_participants }}
+    <div class="box1" style="background-color:#21B420;" onclick="location.href='#/manage-workshops/workshop-history'">
+      <i class="fa fa-users fa-8x circle-icon" style="background: #33c92e;color: #ffffff;"></i>
+      <p style="font-weight:600;">Participants</p>
+      {{ (participants).toLocaleString() }}/{{ (target_participants).toLocaleString() }}
     </div>
   </div>
 </div>
