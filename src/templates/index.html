@@ -5,49 +5,42 @@
   <div class="analytics-band">
     <div style="margin-left:20px;">
       <div class="row" ng-controller="admin-ctrl">
-        <div class="col-md-2 analytics upcoming col d-flex flex-row justify-content-center align-items-center" ng-controller="upcoming-ctrl" onclick="scrollWin()">
-          <i class="fa fa-calendar fa-8x circle-icon" style="background: #ef4075;color: #ffffff;"></i>
+
+        <div class="col-md-2 analytics upcoming col d-flex flex-row justify-content-center align-items-center box" style="background-color:#f34995;color: #ffffff;"  ng-controller="upcoming-ctrl" onclick="scrollWin()">
+          <i class="fa fa-calendar fa-8x circle-icon" style="background: #f574ae;color: #ffffff;"></i>
 	  <div>
           <span class="number" ng-show="IsVisible">{{ totalUpcomingWorkshopsList.toLocaleString() }}</span>
-          <span class="number" ng-hide="IsVisible"><img alt="mySpinner" src="/static/img/default1.gif"></span><br><p style="color: #aab2bd;">UPCOMING WORKSHOPS</p>
+          <span class="number" ng-hide="IsVisible"><img alt="mySpinner" src="/static/img/default1.gif"></span><br><p style="color: #ffffff;">UPCOMING WORKSHOPS</p>
 	  </div>
         </div>
-        <div class="col-md-3 analytics labs-taken participants-attended" ng-click="showParticipants()">
+        <div class="col-md-2 analytics labs-taken participants-attended box" style="background-color:#21B420;color: #ffffff;" ng-click="showParticipants()">
           <i class="fa fa-users fa-8x circle-icon" style="background: #33c92e;color: #ffffff;"></i>
 	  <div>
           <span class="number" ng-show="IsVisible">{{ totalParticipants.toLocaleString()  }}</span>
-          <span class="number" ng-hide="IsVisible"><img alt="mySpinner" src="/static/img/default1.gif"></span><br><p style="color: #aab2bd;">PARTICIPANTS ATTENDED</p>
+          <span class="number" ng-hide="IsVisible"><img alt="mySpinner" src="/static/img/default1.gif"></span><br><p style="color: #ffffff;">PARTICIPANTS ATTENDED</p>
 	  </div>
         </div>
-        <div class="col-md-2 analytics nodal-centers" ng-click="showNcentres()">
+        <div class="col-md-2 analytics nodal-centers box" style="background-color:#f4274c;color: #ffffff;" ng-click="showNcentres()">
           <i class="fa fa-location-arrow fa-8x circle-icon" style="background: #fd3258;color: #ffffff;"></i>
 	  <div>
           <span class="number" ng-show="IsVisible">{{ totalNodalCentres.toLocaleString()  }}</span>
-          <span class="number" ng-hide="IsVisible"><img alt="mySpinner" src="/static/img/default1.gif"></span><br><p style="color: #aab2bd;">NODAL CENTRES</p>
+          <span class="number" ng-hide="IsVisible"><img alt="mySpinner" src="/static/img/default1.gif"></span><br><p style="color: #ffffff;">NODAL CENTRES</p>
 	  </div>
         </div>
-        <div class="col-md-2 analytics workshops-run" ng-click="showWorkshops()">
-          <i class="fa fa-cogs fa-8x circle-icon" style="background: #fed961;color: #ffffff;"></i>
+        <div class="col-md-2 analytics workshops-run box" ng-click="showWorkshops()" style="background-color:#ffbb02;color: #ffffff;">
+          <i class="fa fa-cogs fa-8x circle-icon" style="background: #f9d239;color: #ffffff;"></i>
 	  <div>
           <span class="number" ng-show="IsVisible">{{ totalWorkshops.toLocaleString() }}</span>
-          <span class="number" ng-hide="IsVisible"><img alt="mySpinner" src="/static/img/default1.gif"></span><br><p style="color: #aab2bd;">WORKSHOPS RUN</p>
+          <span class="number" ng-hide="IsVisible"><img alt="mySpinner" src="/static/img/default1.gif"></span><br><p style="color: #ffffff;">WORKSHOPS RUN</p>
           </div>
 	</div>
-	<div class="col-md-3">
-	  <div class="box" style="background-color:#00bbbf;" onclick="showUsage()">
-	    <i class="fa fa-bar-chart fa-8x circle-icon" style="background: #24d5d8;color: #ffffff;"></i>
-	    <p style="font-weight:600;">Usage</p>
-	    {{ totalUsage.toLocaleString()}}
+        <div class="col-md-2 analytics usage box" style="background-color:#00bbbf;color: #ffffff;" ng-click="showUsage()">
+          <i class="fa fa-bar-chart fa-8x circle-icon" style="background: #24d5d8;color: #ffffff;"></i>
+	  <div>
+          <span class="number" ng-show="IsVisible">{{ totalUsage.toLocaleString() }}</span>
+          <span class="number" ng-hide="IsVisible"><img alt="mySpinner" src="/static/img/default1.gif"></span><br><p style="color: #ffffff;">USAGE</p>
 	  </div>
-	</div>
-
-        <!-- <div class="col-md-3 analytics usage" ng-click="showUsage()"> -->
-        <!--   <i class="fa fa-bar-chart fa-8x circle-icon" style="background: #24d5d8;color: #ffffff;"></i> -->
-	<!--   <div> -->
-        <!--   <span class="number" ng-show="IsVisible">{{ totalUsage.toLocaleString() }}</span> -->
-        <!--   <span class="number" ng-hide="IsVisible"><img alt="mySpinner" src="/static/img/default1.gif"></span><br><p style="color: #aab2bd;">USAGE</p> -->
-	<!--   </div> -->
-        <!-- </div> -->
+        </div>
       </div>
     </div>
   </div>
