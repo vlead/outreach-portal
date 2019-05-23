@@ -1477,10 +1477,8 @@ app.controller("manage-nc", function($scope, $http, $routeParams, dataFactory, $
             { field: 'name', displayName: 'Workshop Name' },                                                      { field: 'email' },
             { field: 'phone' },
             { field: 'user_status'},
-            // { field: 'created'},                                                                                                                   
             { field: 'last_active', displayName:'Last Active'},
-            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small \
-btn-primary" ng-click="grid.appScope.editNodalCoordinator(row.entity)">Edit</button>'}
+            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn" ng-click="grid.appScope.editNodalCoordinator(row.entity)"><i class="fa fa-edit"></i></button>'}
         ],
         enableGridMenu: true,
         enableSelectAll: true,
