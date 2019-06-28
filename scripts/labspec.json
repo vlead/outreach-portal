@@ -101,12 +101,13 @@
             "cd ../;make build"
           ],
           "post_build": [
-            "cp -R build/code/* /var/www/",
-            "chmod -R 755 /var/www",
-            "mkdir /var/www/logs",
-            "chmod -R 777 /var/www/logs",
-	    "mkdir /var/www/src/static/uploads",
-            "chmod -R 777 /var/www/src/static/uploads"
+              "cp -R build/code/* /var/www/",
+              "chmod -R 755 /var/www",
+              "mkdir /var/www/logs",
+              "chmod -R 777 /var/www/logs",
+	      "mkdir /var/www/src/static/uploads",
+              "chmod -R 777 /var/www/src/static/uploads",
+	      "s3fs outreachuploads /var/www/src/static/uploads/ -o passwd_file=/etc/passwd-s3fs -o uid=0,gid=0,allow_other,umask=0000"
           ],
           "status": []
         }
