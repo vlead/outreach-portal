@@ -819,6 +819,7 @@ app.controller("workshop-history", function($scope, $http, $routeParams, dataFac
 	    { field: 'location' },
             { field: 'participants_attended' },
             { field: 'date'},
+            { field: 'workshop_status', displayName:'Workshop Status'},
             { field: 'status.name', displayName:'Status'},
             { field: 'experiments_conducted', displayName:'Usage'},
             {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn" ng-click="grid.appScope.view(row.entity)"><i class="fa fa-eye"></i></button><button id="editBtn" type="button" class="btn" ng-click="grid.appScope.editWorkshop(row.entity)"><i class="fa fa-edit"></i></button>'}
@@ -909,6 +910,7 @@ app.controller("pending-workshops", function($scope, $http, $routeParams, dataFa
           { field: 'location' },
           { field: 'participants_attended' },
           { field: 'date'},
+          { field: 'workshop_status', displayName:'Workshop Status'},          
           { field: 'status.name', displayName:'Status'},
           { field: 'experiments_conducted', displayName:'Usage'},
             {name: 'actions', enableFiltering: false, displayName: 'Actions', width:250, cellTemplate: '<button id="editBtn" type="button" class="btn" ng-click="grid.appScope.view(row.entity)"><i class="fa fa-eye"></i></button><button id="editBtn" type="button" class="btn" ng-click="grid.appScope.editWorkshop(row.entity)"><i class="fa fa-edit"></i></button><button id="viewBtn" type="button" class="btn" ng-click="grid.appScope.uploadReports(row.entity)"><i class="fa fa-upload"></i></button>'}
@@ -997,6 +999,7 @@ app.controller("manage-workshops", function($scope, $http, $routeParams, dataFac
             { field: 'location' },
             { field: 'participants_attended' },
             { field: 'date'},
+            { field: 'workshop_status', displayName:'Workshop Status'},
             { field: 'status.name', displayName:'Status'},
             { field: 'experiments_conducted', displayName:'Usage'},
           {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn" ng-click="grid.appScope.view(row.entity)"><i class="fa fa-eye"></i></button><button id="editBtn" type="button" class="btn" ng-click="grid.appScope.editWorkshop(row.entity)"><i class="fa fa-edit"></i></button>'}
@@ -1374,8 +1377,9 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
 			      "status" : {"id": status_id},  "date" : $scope.message.date,
 			      "experiments_conducted": $scope.message.experiments_conducted}).
 		success(function(data, status, headers, config){
-                    $scope.status = "Success";
-                    history.back();
+                  $scope.status = "Success";
+                  window.location.href = "#/oc-manage-workshops/oc-workshop-history";
+                    // history.back();
 		}).
                 error(function(data, status, headers, config){
                     if(status == 500){
@@ -1913,6 +1917,7 @@ app.controller("oc-manage-workshops", function($scope, $http, $routeParams, data
             { field: 'location' },
             { field: 'no_of_participants_expected' },
             { field: 'date'},
+            { field: 'workshop_status', displayName:'Workshop Status'},
             { field: 'status.name', displayName:'Status'},
             {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="editBtn" type="button" class="btn" ng-click="grid.appScope.editWorkshop(row.entity)"><i class="fa fa-edit"></i></button><button id="viewBtn" type="button" class="btn" ng-click="grid.appScope.ocUploadReports(row.entity)"><i class="fa fa-upload"></i></button>'}
         ],
@@ -2039,6 +2044,7 @@ app.controller("nc-workshops", function($scope, $http, $routeParams, dataFactory
             { field: 'name', displayName: 'Workshop Name' },                                                      { field: 'location' },
             { field: 'not_approval_reason' },
             { field: 'date'},
+            { field: 'workshop_status', displayName:'Workshop Status'},
             { field: 'status.name', displayName:'Status'},
             {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn" ng-click="grid.appScope.reviewReports(row.entity)"><i class="fa fa-eye"></button>'}
         ],
@@ -2171,6 +2177,7 @@ app.controller("oc-workshop-history", function($scope, $http, $routeParams, data
             { field: 'location' },
             { field: 'participants_attended' },
             { field: 'date'},
+            { field: 'workshop_status', displayName:'Workshop Status'},
             { field: 'status.name', displayName:'Status'},
             { field: 'experiments_conducted', displayName:'Usage'},
             {name: 'actions', enableFiltering: false, displayName: 'Actions', width:200, cellTemplate: '<button id="viewBtn" type="button" class="btn" ng-click="grid.appScope.viewReports(row.entity)"><i class="fa fa-eye"></i></button><button id="editBtn" type="button" class="btn" ng-click="grid.appScope.editWorkshop(row.entity)"><i class="fa fa-edit"></i></button><button id="uploadBtn" type="button" class="btn" ng-click="grid.appScope.uploadReports(row.entity)"><i class="fa fa-upload"></i></button>'}   
