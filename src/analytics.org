@@ -52,43 +52,36 @@ user_id=12 or (user_id in (select user_id from nodal_coordinator_details where c
 
 INSERT INTO institute_analytics SELECT 6, "IIT Delhi", 70,
 COUNT(*), SUM(experiments_conducted),
-COUNT(*) from nodal_centres where created_by_id=12 and centre_status='Active',
 SUM(participants_attended) from approved_workshops where
 user_id=70 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=70));
 
 INSERT INTO institute_analytics SELECT 7, "IIT Guwahati", 34,
 COUNT(*), SUM(experiments_conducted),
-COUNT(*) from nodal_centres where created_by_id=34 and centre_status='Active',
 SUM(participants_attended) from approved_workshops where
 user_id=34 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=34));
 
 INSERT INTO institute_analytics SELECT 8, "IIT Kanpur", 11,
 COUNT(*), SUM(experiments_conducted),
-COUNT(*) from nodal_centres where created_by_id=11 and centre_status='Active',
 SUM(participants_attended) from approved_workshops where
 user_id=11 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=11));
 
 INSERT INTO institute_analytics SELECT 9, "IIT Kharagpur", 285,
 COUNT(*), SUM(experiments_conducted),
-COUNT(*) from nodal_centres where created_by_id=285 and centre_status='Active',
 SUM(participants_attended) from approved_workshops where
 user_id=285 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=285));
 
 INSERT INTO institute_analytics SELECT 10, "IIT Roorkee", 21,
 COUNT(*), SUM(experiments_conducted),
-COUNT(*) from nodal_centres where created_by_id=21 and centre_status='Active',
 SUM(participants_attended) from approved_workshops where
 user_id=21 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=21));
 
 INSERT INTO institute_analytics SELECT 11, "NITK Surathkal", 334,
 COUNT(*), SUM(experiments_conducted),
-COUNT(*) from nodal_centres where created_by_id=334 and centre_status='Active',
 SUM(participants_attended) from approved_workshops where
 user_id=334 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=334));
 
 INSERT INTO institute_analytics SELECT 12, "VLEAD", 546,
 COUNT(*), SUM(experiments_conducted),
-COUNT(*) from nodal_centres where created_by_id=546 and centre_status='Active',
 SUM(participants_attended) from approved_workshops where
 user_id=546 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=546));
 #+END_SRC
