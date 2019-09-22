@@ -7,7 +7,7 @@ app.controller("upcoming-ctrl", function ($scope, $http, dataFactory){
         columnDefs: [
             { field: 'name' },
             { field: 'date' },
-            { field: 'participating_institutes'}
+            { field: "participating_institutes"}
         ],
         enableGridMenu: true,
         enableSelectAll: true,
@@ -197,8 +197,8 @@ app.controller("usage-ctrl", function($scope, dataFactory, $http, $routeParams, 
         paginationPageSize: 5,
         enableFiltering: true,
         columnDefs: [
-          { field: 'institute_name' },
-          { field: 'total_usage.toLocaleString()' }
+          { field: 'institute_name', displayName:'Institute Name' },
+          { field: 'total_usage.toLocaleString()', displayName: 'Total Usage' }
         ],
         enableGridMenu: true,
         exporterMenuPdf: false,

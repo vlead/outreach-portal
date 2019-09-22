@@ -917,3 +917,58 @@ update workshop_reports set path='%.pdf' where path like'%.docx';
 update reference_documents set path='%.pdf' where path like '%.doc';
 update reference_documents set path='%.pdf' where path like '%.docx';
 #+END_EXAMPLE
+* Manual installation and configuration of outreach portal on Ubuntu 16
+** Installations
+#+BEGIN_SRC 
+sudo apt-get intall apache2
+sudo apt-get install make
+sudo apt-get install emacs
+git clone https://github.com/vlead/outreach-portal.git
+cd outreach-portal/scripts
+rsync -avz apache2.conf /etc/apache2/
+rsync -avz security.conf /etc/apache2/conf-available/security.conf
+apt-get install libapache2-modsecurity -y
+a2enmod headers
+a2enmod rewrite
+service apache2 restart
+apt-get install -y python-dev libmysqld-dev python-setuptools apache2 libapache2-mod-wsgi python-mysqldb
+sudo apt-get install python-pip
+pip install Flask Flask-SQLAlchemy oursql requests flask-cors flask-testing Flask-OAuthlib
+sudo apt-get install mysql-server
+cd ..
+make
+cp -R build/code/* /var/www/
+chmod -R 755 /var/www
+mkdir /var/www/logs
+chmod -R 777 /var/www/logs
+mkdir /var/www/src/static/uploads
+chmod -R 777 /var/www/src/static/uploads
+
+#+END_SRC
+** Setup WSGI
+#+BEGIN_SRC 
+emacs /etc/apache2/sites-available/000-default.conf 
+search for virtual host and add below line
+WSGIScriptAlias / /var/www/outreach.wsgi
+</VirtualHost>
+Also update the document root if
+/var/www/html to /var/www
+
+#+END_SRC
+** Update config file
+#+BEGIN_SRC 
+cd /var/www/src/
+vim config.py
+take a copy of config 
+cp config.py ../../
+
+#+END_SRC
+** Add the Database and files backup 
+#+BEGIN_SRC 
+mysql -u root -proot
+create database outreach;
+mysql -u root -proot outreach < outreach-25-02-2019.sql
+
+#+END_SRC
+
+
