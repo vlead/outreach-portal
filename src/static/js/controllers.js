@@ -2179,7 +2179,7 @@ app.controller("oc-workshop-history", function($scope, $http, $routeParams, data
             { field: 'date'},
             { field: 'workshop_status', displayName:'Workshop Status'},
             { field: 'status.name', displayName:'Status'},
-            { field: 'experiments_conducted', displayName:'Usage'},
+          { field: 'experiments_conducted', displayName:'Usage', sort:'asc'},
             {name: 'actions', enableFiltering: false, displayName: 'Actions', width:200, cellTemplate: '<button id="viewBtn" type="button" class="btn" ng-click="grid.appScope.viewReports(row.entity)"><i class="fa fa-eye"></i></button><button id="editBtn" type="button" class="btn" ng-click="grid.appScope.editWorkshop(row.entity)"><i class="fa fa-edit"></i></button><button id="uploadBtn" type="button" class="btn" ng-click="grid.appScope.uploadReports(row.entity)"><i class="fa fa-upload"></i></button>'}   
         ],
         enableGridMenu: true,
@@ -2366,9 +2366,10 @@ app.controller("nc-user-list", function($scope, $http, $routeParams, dataFactory
         paginationPageSize: 5,
         enableFiltering: true,
         columnDefs: [
-            { field: 'user.name', displayName: 'Name'},
-            { field: 'user.email', displayName: 'Email'},
-            { field: 'user.last_active', displayName: 'Last Active', enableFiltering:false}  
+          { field: 'user.name', displayName: 'Name'},
+          { field: 'user.email', displayName: 'Email'},
+          { field: 'nodal_centre.name', displayName: 'Nodal Centre'},
+          { field: 'user.last_active', displayName: 'Last Active', enableFiltering:false}  
         ],
         enableGridMenu: true,
         enableSelectAll: true,
