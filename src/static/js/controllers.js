@@ -1,11 +1,11 @@
 var app = angular.module("outreachApp.controllers",[]);
-app.controller("upcoming-ctrl", function ($scope, $http, dataFactory){
+app.controller("upcoming-ctrl", function ($scope, $http, dataFactory,uiGridConstants){
       $scope.gridOptions = {
         paginationPageSizes: [5, 10, 15],
         paginationPageSize: 5,
         enableFiltering: true,
         columnDefs: [
-            { field: 'name' },
+            { field: 'name', sort: { direction: uiGridConstants.ASC, priority: 1 }},
             { field: 'date' },
             { field: "participating_institutes"}
         ],
@@ -132,14 +132,14 @@ app.controller("nodal-centers-list", function($scope, $http, $routeParams, dataF
 
 });
 
-app.controller("nodal-center", function($scope, dataFactory, $http, $routeParams, $location, $route, $q, $window) {
+app.controller("nodal-center", function($scope, dataFactory, $http, $routeParams, $location, $route, $q, $window, uiGridConstants) {
     $scope.gridOptions = {
         paginationPageSizes: [5, 10, 15],
         paginationPageSize: 5,
         enableFiltering: true,
         columnDefs: [
           { field: 'created_by.institute_name', displayName: 'Institute'},
-          { field: 'name' },
+          { field: 'name', sort: { direction: uiGridConstants.ASC, priority: 1 } },
           { field: 'centre_status', displayName:'Status'},
           { field: 'location' }
         ],
@@ -190,14 +190,14 @@ app.controller("oc-ctrl", function($scope, $routeParams, dataFactory, $route, $w
     };
 
 });
-app.controller("usage-ctrl", function($scope, dataFactory, $http, $routeParams, $route, $q, $window) {
+app.controller("usage-ctrl", function($scope, dataFactory, $http, $routeParams, $route, $q, $window,uiGridConstants) {
     $scope.loading = true;
     $scope.gridOptions = {
         paginationPageSizes: [5, 10],
         paginationPageSize: 5,
         enableFiltering: true,
         columnDefs: [
-          { field: 'institute_name', displayName:'Institute Name' },
+          { field: 'institute_name', displayName:'Institute Name', sort: { direction: uiGridConstants.ASC, priority: 1 } },
           { field: 'total_usage.toLocaleString()', displayName: 'Total Usage' }
         ],
         enableGridMenu: true,
@@ -234,7 +234,7 @@ app.controller("one-workshop", function($scope, dataFactory, $http, $routeParams
   }).error(function(response){console.log("Failed to fetch data");});
 });
 
-app.controller("workshop", function($scope, dataFactory, $http, $routeParams, $location, $route, $q, $window) {
+app.controller("workshop", function($scope, dataFactory, $http, $routeParams, $location, $route, $q, $window, uiGridConstants) {
     $scope.view = function(row) {
         window.location.href = "#/one-workshop/" + row['id'];
     };
@@ -244,7 +244,7 @@ app.controller("workshop", function($scope, dataFactory, $http, $routeParams, $l
         paginationPageSize: 5,
         enableFiltering: true,
         columnDefs: [
-            { field: 'user.institute_name', displayName: 'Institute'},
+          { field: 'user.institute_name', displayName: 'Institute', sort: { direction: uiGridConstants.ASC, priority: 1 }},
             { field: 'location' },
             { field: 'version' },
             { field: 'date'},
@@ -307,7 +307,7 @@ app.controller("admin-workshop", function($scope, dataFactory, $http, $routePara
         paginationPageSize: 5,
         enableFiltering: true,
         columnDefs: [
-            { field: 'user.institute_name', displayName: 'Institute'},
+            { field: 'user.institute_name', displayName: 'Institute', sort: { direction: uiGridConstants.ASC, priority: 1 }},
             { field: 'location' },
             { field: 'version' },
             { field: 'date'},
@@ -395,7 +395,7 @@ app.controller("workshop-list", function($scope, dataFactory, $http, $routeParam
     }).error(function(response){console.log("Failed to fetch data");});
   });
 
-app.controller("nc-ctrl", function($scope, $http, $routeParams, dataFactory,$route, $window) {
+app.controller("nc-ctrl", function($scope, $http, $routeParams, dataFactory,$route, $window, uiGridConstants) {
     $scope.viewNC = function(row) {
         window.location.href = "#/nc-user-list/" + row['id'];
     };
@@ -405,7 +405,7 @@ app.controller("nc-ctrl", function($scope, $http, $routeParams, dataFactory,$rou
         paginationPageSize: 5,
         enableFiltering: true,
         columnDefs: [
-            { field: 'institute', displayName: 'Institute'},
+            { field: 'institute', displayName: 'Institute', sort: { direction: uiGridConstants.ASC, priority: 1 }},
             { field: 'total_ncs', displayName: 'Total Nodal Coordinators', enableFiltering:false},
             {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small \
 btn-primary" ng-click="grid.appScope.viewNC(row.entity)">View</button>'}
@@ -456,7 +456,7 @@ btn-primary" ng-click="grid.appScope.viewNC(row.entity)">View</button>'}
 });
 
 
-app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, $location, $route, $q, $window) {
+app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, $location, $route, $q, $window, uiGridConstants) {
   $scope.loading = true;
   $scope.editOC = function(row) {
     window.location.href = "#/edit-oc/" + row['id'];
@@ -467,7 +467,7 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
     paginationPageSize: 5,
     enableFiltering: true,
     columnDefs: [
-      { field: 'name', displayName: 'Coordinator Name'},
+      { field: 'name', displayName: 'Coordinator Name', sort: { direction: uiGridConstants.ASC, priority: 1 }},
       { field: 'name', displayName: 'Workshop Name' },
       { field: 'email' },
       { field: 'institute_name',displayName:'Institute Name' },
@@ -801,7 +801,7 @@ app.controller("nc-dashboard", function($scope, $http, dataFactory, $routeParams
         });
     
 });
-app.controller("workshop-history", function($scope, $http, $routeParams, dataFactory,$route, $window) {
+app.controller("workshop-history", function($scope, $http, $routeParams, dataFactory,$route, $window, uiGridConstants) {
   $scope.editWorkshop = function(row) {
         window.location.href = "#edit-workshop/" + row['id'];
     };
@@ -815,7 +815,7 @@ app.controller("workshop-history", function($scope, $http, $routeParams, dataFac
         enableFiltering: true,
         columnDefs: [
             { field: 'user.name', displayName: 'Coordinator Name'},
-            { field: 'name', displayName: 'Workshop Name' },
+            { field: 'name', displayName: 'Workshop Name', sort: { direction: uiGridConstants.ASC, priority: 1 } },
 	    { field: 'location' },
             { field: 'participants_attended' },
             { field: 'date'},
@@ -889,7 +889,7 @@ app.controller("workshop-history", function($scope, $http, $routeParams, dataFac
     };
 });
               
-app.controller("pending-workshops", function($scope, $http, $routeParams, dataFactory,$route, $window) {
+app.controller("pending-workshops", function($scope, $http, $routeParams, dataFactory,$route, $window, uiGridConstants) {
   $scope.editWorkshop = function(row) {
         window.location.href = "#edit-workshop/" + row['id'];
     };
@@ -906,7 +906,7 @@ app.controller("pending-workshops", function($scope, $http, $routeParams, dataFa
         paginationPageSize: 5,
         enableFiltering: true,
         columnDefs: [
-          { field: 'user.name', displayName: 'Coordinator Name'},
+          { field: 'user.name', displayName: 'Coordinator Name', sort: { direction: uiGridConstants.ASC, priority: 1 }},
           { field: 'location' },
           { field: 'participants_attended' },
           { field: 'date'},
@@ -982,7 +982,7 @@ app.controller("pending-workshops", function($scope, $http, $routeParams, dataFa
 });
 
 
-app.controller("manage-workshops", function($scope, $http, $routeParams, dataFactory,$route, $window) {
+app.controller("manage-workshops", function($scope, $http, $routeParams, dataFactory,$route, $window, uiGridConstants) {
   $scope.editWorkshop = function(row) {
         window.location.href = "#edit-workshop/" + row['id'];
     };
@@ -995,7 +995,7 @@ app.controller("manage-workshops", function($scope, $http, $routeParams, dataFac
         paginationPageSize: 5,
         enableFiltering: true,
         columnDefs: [
-            { field: 'user.name', displayName: 'Coordinator Name'},
+            { field: 'user.name', displayName: 'Coordinator Name', sort: { direction: uiGridConstants.ASC, priority: 1 }},
             { field: 'location' },
             { field: 'participants_attended' },
             { field: 'date'},
@@ -1467,7 +1467,7 @@ app.controller("oc-dashboard", function($scope, $http, dataFactory, $routeParams
   
 });
 
-app.controller("manage-nc", function($scope, $http, $routeParams, dataFactory, $window, $route) {
+app.controller("manage-nc", function($scope, $http, $routeParams, dataFactory, $window, $route, uiGridConstants) {
     $scope.loading = true;
     $scope.editNodalCoordinator = function(row) {
         window.location.href = "#/edit-nc/" + row['id'];
@@ -1478,7 +1478,7 @@ app.controller("manage-nc", function($scope, $http, $routeParams, dataFactory, $
         paginationPageSize: 5,
 	enableFiltering: true,
         columnDefs: [
-            { field: 'name', displayName: 'Coordinator Name'},
+            { field: 'name', displayName: 'Coordinator Name', sort: { direction: uiGridConstants.ASC, priority: 1 }},
             { field: 'name', displayName: 'Workshop Name' },                                                      { field: 'email' },
             { field: 'phone' },
             { field: 'user_status'},
@@ -1707,7 +1707,7 @@ app.controller("add-nc", function($scope, $http, dataFactory, $routeParams, $win
     };
     
 });
-app.controller("manage-centres", function($scope, $http, dataFactory, $routeParams, $window, $route) {
+app.controller("manage-centres", function($scope, $http, dataFactory, $routeParams, $window, $route, uiGridConstants) {
     $scope.loading = true;
     $scope.editCentre = function(row) {
         window.location.href = "#/edit-centre/" + row['id'];
@@ -1718,7 +1718,7 @@ app.controller("manage-centres", function($scope, $http, dataFactory, $routePara
         paginationPageSize: 5,
         enableFiltering: true,
         columnDefs: [
-            { field: 'name', displayName: 'Name'},
+            { field: 'name', displayName: 'Name', sort: { direction: uiGridConstants.ASC, priority: 1 }},
             { field: 'location' },
             { field: 'pincode' },
             { field: 'centre_status', displayName:'Status'},
@@ -1898,7 +1898,7 @@ app.controller("edit-centre", function($scope, dataFactory, $http, $routeParams,
     }
   };
 });
-app.controller("oc-manage-workshops", function($scope, $http, $routeParams, dataFactory,$route, $window) {
+app.controller("oc-manage-workshops", function($scope, $http, $routeParams, dataFactory,$route, $window, uiGridConstants) {
       $scope.loading = true;
     $scope.ocUploadReports = function(row) {
 	window.location.href = "#/oc-upload-reports/" + row['id'];
@@ -1913,7 +1913,7 @@ app.controller("oc-manage-workshops", function($scope, $http, $routeParams, data
         paginationPageSize: 5,
         enableFiltering: true,
         columnDefs: [
-            { field: 'user.name', displayName: 'Coordinator Name'},
+            { field: 'user.name', displayName: 'Coordinator Name', sort: { direction: uiGridConstants.ASC, priority: 1 }},
             { field: 'location' },
             { field: 'no_of_participants_expected' },
             { field: 'date'},
@@ -2029,7 +2029,7 @@ app.controller("oc-doclist", function($scope, $http, $routeParams, dataFactory,$
             });
     };
 });
-app.controller("nc-workshops", function($scope, $http, $routeParams, dataFactory, $window, $route) {
+app.controller("nc-workshops", function($scope, $http, $routeParams, dataFactory, $window, $route, uiGridConstants) {
     $scope.loading = true;
     $scope.reviewReports = function(row) {
         window.location.href = "#review-reports/" + row['id'];
@@ -2041,7 +2041,7 @@ app.controller("nc-workshops", function($scope, $http, $routeParams, dataFactory
         enableFiltering: true,
         columnDefs: [
             { field: 'user.name', displayName: 'Coordinator Name'},
-            { field: 'name', displayName: 'Workshop Name' },                                                      { field: 'location' },
+            { field: 'name', displayName: 'Workshop Name', sort: { direction: uiGridConstants.ASC, priority: 1 } },                                                      { field: 'location' },
             { field: 'not_approval_reason' },
             { field: 'date'},
             { field: 'workshop_status', displayName:'Workshop Status'},
@@ -2153,7 +2153,7 @@ app.controller("review-reports", function($scope, $http, $routeParams, dataFacto
     });
 });
 
-app.controller("oc-workshop-history", function($scope, $http, $routeParams, dataFactory, $window, $route) {
+app.controller("oc-workshop-history", function($scope, $http, $routeParams, dataFactory, $window, $route, uiGridConstants) {
     $scope.loading = true;
     $scope.viewReports = function(row) {
 	window.location.href = "#view-reports/" + row['id'];
@@ -2173,7 +2173,7 @@ app.controller("oc-workshop-history", function($scope, $http, $routeParams, data
         enableFiltering: true,
         columnDefs: [
             { field: 'user.name', displayName: 'Coordinator Name'},
-            { field: 'name', displayName: 'Workshop Name' },                            
+            { field: 'name', displayName: 'Workshop Name', sort: { direction: uiGridConstants.ASC, priority: 1 }},                            
             { field: 'location' },
             { field: 'participants_attended' },
             { field: 'date'},
@@ -2360,13 +2360,13 @@ app.controller("ws_details_offline", function($scope, $http, $routeParams, dataF
 
 });
 
-app.controller("nc-user-list", function($scope, $http, $routeParams, dataFactory, $route, $window){
+app.controller("nc-user-list", function($scope, $http, $routeParams, dataFactory, $route, $window, uiGridConstants){
    $scope.gridOptions = {
 	paginationPageSizes: [5, 10, 15],
         paginationPageSize: 5,
         enableFiltering: true,
         columnDefs: [
-          { field: 'user.name', displayName: 'Name'},
+          { field: 'user.name', displayName: 'Name', sort: { direction: uiGridConstants.ASC, priority: 1 }},
           { field: 'user.email', displayName: 'Email'},
           { field: 'nodal_centre.name', displayName: 'Nodal Centre'},
           { field: 'user.last_active', displayName: 'Last Active', enableFiltering:false}  

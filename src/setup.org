@@ -920,10 +920,10 @@ update reference_documents set path='%.pdf' where path like '%.docx';
 * Manual installation and configuration of outreach portal on Ubuntu 16
 ** Installations
 #+BEGIN_SRC 
-sudo apt-get intall apache2
-sudo apt-get install make
-sudo apt-get install emacs
-git clone https://github.com/vlead/outreach-portal.git
+sudo apt-get intall apache2 -Done
+sudo apt-get install make -Done
+sudo apt-get install emacs - Done
+git clone https://github.com/vlead/outreach-portal.git - Done
 cd outreach-portal/scripts
 rsync -avz apache2.conf /etc/apache2/
 rsync -avz security.conf /etc/apache2/conf-available/security.conf
@@ -932,9 +932,9 @@ a2enmod headers
 a2enmod rewrite
 service apache2 restart
 apt-get install -y python-dev libmysqld-dev python-setuptools apache2 libapache2-mod-wsgi python-mysqldb
-sudo apt-get install python-pip
-pip install Flask Flask-SQLAlchemy oursql requests flask-cors flask-testing Flask-OAuthlib
-sudo apt-get install mysql-server
+sudo apt-get install python-pip -Done
+pip install Flask Flask-SQLAlchemy oursql requests flask-cors flask-testing Flask-OAuthlib - Done
+sudo apt-get install mysql-server 
 cd ..
 make
 cp -R build/code/* /var/www/
@@ -972,7 +972,7 @@ mysql -u root -proot outreach < outreach-25-02-2019.sql
 #+END_SRC
 
 ** set up Cron tab
-#+BEGIN_SRC 
+#+BEGIN_SRC crontab.sh
 # Edit this file to introduce tasks to be run by cron.
 #
 # Each task to run has to be defined through a single line
@@ -995,7 +995,7 @@ mysql -u root -proot outreach < outreach-25-02-2019.sql
 # For more information see the manual pages of crontab(5) and cron(8)
 #
 # m h  dom mon dow   command
-* */6 * * * sh /root/labs/outreach-portal/scripts/backup
+ * */6 * * * sh /root/labs/outreach-portal/scripts/backup
 #*/5 * * * * service mysql restart
 #*/1 * * * * sh /root/mysqlfix.sh
 
@@ -1003,6 +1003,7 @@ mysql -u root -proot outreach < outreach-25-02-2019.sql
 */30 * * * * sh /var/www/update_analytics.sh
 #
 #*/1 * * * * /var/www/update_analytics.sh
-* */12 * * * sh /root/disk-space.sh
+ * */12 * * * sh /root/disk-space.sh
+
 
 #+END_SRC
