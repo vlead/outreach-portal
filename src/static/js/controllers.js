@@ -297,7 +297,7 @@ btn-primary" ng-click="grid.appScope.view(row.entity)" >View</button>'}
   }).error(function(response){console.log("Failed to fetch data");});
 });
 
-app.controller("admin-workshop", function($scope, dataFactory, $http, $routeParams, $location, $route, $q, $window) {
+app.controller("admin-workshop", function($scope, dataFactory, $http, $routeParams, $location, $route, $q, $window, uiGridConstants) {
       $scope.viewReports = function(row) {
         window.location.href = "#view-reports/" + row['id'];
     };
@@ -307,8 +307,8 @@ app.controller("admin-workshop", function($scope, dataFactory, $http, $routePara
         paginationPageSize: 5,
         enableFiltering: true,
         columnDefs: [
-            { field: 'user.institute_name', displayName: 'Institute', sort: { direction: uiGridConstants.ASC, priority: 1 }},
-            { field: 'location' },
+            { field: 'user.institute_name', displayName: 'Institute'},
+            { field: 'location', sort: { direction: uiGridConstants.ASC, priority: 1 } },
             { field: 'version' },
             { field: 'date'},
           { field: 'participants_attended'},
