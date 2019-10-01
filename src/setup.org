@@ -996,15 +996,10 @@ mysql -u root -proot outreach < outreach-25-02-2019.sql
 #
 # m h  dom mon dow   command
  * */6 * * * sh /root/labs/outreach-portal/scripts/backup
-#*/5 * * * * service mysql restart
-#*/1 * * * * sh /root/mysqlfix.sh
+ */30 * * * * sh /var/www/update_analytics.sh
 
-#*/4 * * * * sh /var/www/analytics.sh
-*/30 * * * * sh /var/www/update_analytics.sh
-#
-#*/1 * * * * /var/www/update_analytics.sh
  * */12 * * * sh /root/disk-space.sh
-
+ * */4  * * * aws s3 sync /var/www/src/static/uploads s3://outreachuploads/
 
 #+END_SRC
 * Ubuntu 16.04 - Default MySQL 5.7 Configuration
@@ -1150,3 +1145,46 @@ max_binlog_size   = 100M
 
 
 #+END_SRC
+* Moving Data Between S3 and EC2 Instances
+** Copying data from EC2 to S3
+1. Install awscli
+#+BEGIN_SRC 
+    sudo apt-get install awscli
+#+END_SRC
+2. Copy IAM user credentials who has read-write access to s3
+   bucket.
+#+BEGIN_SRC 
+Access Key Id	Secret Access Key
+<key id>	<secret key>
+#+END_SRC
+3. configure AWS credentials as follows 
+#+BEGIN_SRC 
+emacs ~/.aws/credentials
+#+END_SRC 
+copy the below content
+#+BEGIN_SRC 
+[default]
+aws_access_key_id=AKIAIOSFODNN7EXAMPLE
+aws_secret_access_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+#+END_SRC
+4. configure AWS config as follows
+#+BEGIN_SRC 
+~/.aws/config
+#+END_SRC
+#+BEGIN_SRC 
+[default]
+region=us-west-2
+output=json
+#+END_SRC
+
+5. Run =aws configure= and enter above credentials. For
+   region, use ='us-east-1¡¯=.
+
+6. Check that you have access to s3 bucket with =aws s3 ls=.
+
+7. Copy entire directory. Recommend using =sync= rather than
+   =cp=. 
+#+BEGIN_SRC 
+ aws s3 sync /var/www/src/static/uploads s3://outreachuploads/
+#+END_SRC
+
