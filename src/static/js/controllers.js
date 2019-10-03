@@ -1414,14 +1414,13 @@ app.controller("oc-dashboard", function($scope, $http, dataFactory, $routeParams
 		dataFactory.fetch('/workshops?user_id='+data[i].user.id).success(function(data,status,headers,config){
                     for (i=0; i<data.length; i++){
 			if (data[i].status.name == "Approved"){
-			    console.log(workshops);
+			    // console.log(workshops);
 			    workshops = workshops + 1;
-			    console.log(experiments);
+			    // console.log(experiments);
                             participants = participants + data[i].participants_attended ;
 			    experiments = experiments + data[i].experiments_conducted ;
-			    
-			}else{
-                            console.log(data[i].name);
+			// }else{
+                        //     console.log(data[i].name);
 			}
                     }
                     $scope.workshops = workshops;
@@ -1443,12 +1442,11 @@ app.controller("oc-dashboard", function($scope, $http, dataFactory, $routeParams
         for(var i=0;i<data.length;i++){
             if(data[i].status.name == "Approved"){
 		ocworkshops = ocworkshops + 1 ;
-	      console.log(experiments);
+	      // console.log(experiments);
                 ocparticipants = ocparticipants +  data[i].participants_attended ;
 		ocexperiments = ocexperiments + data[i].experiments_conducted ;
-	        
-            }else{
-                console.log(data[i].name);
+            // }else{
+            //     console.log(data[i].name);
             }
         }
         $scope.ocworkshops =  ocworkshops;
