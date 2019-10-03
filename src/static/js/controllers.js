@@ -440,7 +440,7 @@ btn-primary" ng-click="grid.appScope.viewNC(row.entity)">View</button>'}
         }
         else{
           dict = {"id" : response[count].id, "institute" : temp_dict[0].institute_name, "total_ncs" : 0};
-          console.log(dict);
+          // console.log(dict);
         }
 
       });
@@ -578,7 +578,7 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
 	}
 	else{
 	  dict = {"id" : response[count].id, "institute" : temp_dict[0].institute_name, "total_ncs" : 0};
-	  console.log(dict);	    
+	  // console.log(dict);	    
 	}
 		
       });
