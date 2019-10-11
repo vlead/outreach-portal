@@ -2111,20 +2111,16 @@ app.controller("review-reports", function($scope, $http, $routeParams, dataFacto
       var url = "http://fp-edx-demo.vlabs.ac.in/usage_from_feedback?gateway_ip="+$scope.data.gateway_ip+"&date="+new_date+"&key=defaultkey";
 	//url = "http://fp-edx-demo.vlabs.ac.in/usage_from_feedback?gateway_ip=10.4.20.103&date=28-09-2016&key=defaultkey"
 	//url = "http://fp-edx-demo.vlabs.ac.in/usage_from_feedback?gateway_ip="+$scope.message.gateway_ip+"&date=28-09-2016&key=defaultkey"
-	
-	console.log(url);
+	// console.log(url);
 	$http.get(url).
         success(function(data, status, headers, config){
 	    //$scope.usage = data.usage;
 	    $scope.usage_from_online = data.usage;
-	    console.log(data.usage);
-	    
+	    // console.log(data.usage);
         }).
             error(function(data, status, headers, config){
 		$scope.usage_from_online = 10;
-		console.log(data);
-
-	    
+		// console.log(data);
         });
 	
 	
