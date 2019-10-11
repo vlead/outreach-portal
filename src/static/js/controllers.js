@@ -1289,14 +1289,14 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
     {
       console.log($scope.message.mac_addr);
 	var url = "http://outreach.base1.vlabs.ac.in/get_usage";
-	console.log($scope.message.date);
+	// console.log($scope.message.date);
       var data = {"date": $scope.message.date, "version" : $scope.message.version, "mac_addr" : $scope.message.mac_addr };
 	$http.post(url, data, {headers: {'Content-Type': 'application/json'}}).
             success(function(data, status, headers, config){
 		$scope.online_usage = data.usage;
 		$scope.flag = true;
 		$scope.message.experiments_conducted = data.usage;
-		console.log(data.usage);
+		// console.log(data.usage);
             }).
             error(function(data, status, headers, config){
             });
@@ -1313,14 +1313,14 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
       var url = "http://feedback.vlabs.ac.in/usage_from_feedback?gateway_ip="+$scope.message.gateway_ip+"&date="+new_date+"&key=defaultkey";
 	//url = "http://fp-edx-demo.vlabs.ac.in/usage_from_feedback?gateway_ip=10.4.20.103&date=28-09-2016&key=defaultkey"
 	//url = "http://fp-edx-demo.vlabs.ac.in/usage_from_feedback?gateway_ip="+$scope.message.gateway_ip+"&date=28-09-2016&key=defaultkey"
-	console.log(url);
+	// console.log(url);
 	$http.get(url).
         success(function(data, status, headers, config){
 	    $scope.online_usage = data.usage;
             $scope.flag = true;
             //$scope.usage = data.usage; 
 	    $scope.message.experiments_conducted = data.usage;
-            console.log(data.usage);
+            // console.log(data.usage);
 	    
         }).
             error(function(data, status, headers, config){
@@ -1361,7 +1361,7 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
               status_id = 1;
             }
 
-	  console.log($scope.usage);
+	  // console.log($scope.usage);
 	  dataFactory.put("/workshops/"+$routeParams.id,
 			    { "name" : $scope.message.name,
 			      "location" : $scope.message.location,
@@ -1792,7 +1792,7 @@ app.controller("manage-centres", function($scope, $http, dataFactory, $routePara
                   var geoCode = results[0].geometry.location;
                   var lat = geoCode.lat();
                   var lng = geoCode.lng();
-		  console.log("lat="+lat+"lng="+lng);
+		  // console.log("lat="+lat+"lng="+lng);
                   add(lat, lng);
               }
               else{
@@ -2065,8 +2065,8 @@ app.controller("nc-workshops", function($scope, $http, $routeParams, dataFactory
                     //if (data[i].status.id == 2 || data[i].status.id == 4){
 		    if (data[i].status.id == 2 || data[i].status.id == 4){
                         nc_workshops.push(data[i]);
-                    }else{
-                        console.log(data[i].name);
+                    // }else{
+                    //     console.log(data[i].name);
                     }
                 }
             }).error(function(data,status,headers,config){
@@ -2196,8 +2196,8 @@ app.controller("oc-workshop-history", function($scope, $http, $routeParams, data
                     for (i=0; i<data.length; i++){
 			if (data[i].status.id == 3){
                             workshops.push(data[i]);
-			}else{
-                            console.log(data[i].name);
+			// }else{
+                        //     console.log(data[i].name);
 			}
                     }
 		}).
@@ -2213,8 +2213,8 @@ app.controller("oc-workshop-history", function($scope, $http, $routeParams, data
         for(var i=0;i<data.length;i++){
             if(data[i].status.id == 3){
                 workshops.push(data[i]);
-            }else{
-                console.log(data[i].name);
+            // }else{
+            //     console.log(data[i].name);
             }
         }
     }).error(function(data, status, headers, config){
@@ -2291,7 +2291,7 @@ app.controller("ws_reports", function($scope, $http, $routeParams, dataFactory, 
     dataFactory.fetch("/workshop_reports?workshop_id="+$routeParams.id).success(function(reports,status,headers,config){
 
 	$scope.reports = reports;
-	console.log(reports);
+	// console.log(reports);
 	/*
 	for(workshop=0;workshop<workshops.length;workshop++){
 	    if(workshops[workshop].id == $routeParams.id){
