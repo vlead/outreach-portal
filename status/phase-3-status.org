@@ -1,0 +1,13 @@
+* Introduction
+  This document captures the Phase 3 status of outreach portal as on October 31, 2019.
+* Enhancements List
+| S.no | Enhancemensts | Status |
+|------+---------------+--------|
+|      |               |        |
+
+* Bugs List
+| S.no | Version | Resolved Issues               | Release Date |
+|------+---------+-------------------------------+--------------|
+|    1 | v3.1.0  | [[https://github.com/vlead/outreach-portal/issues/452][#452]] , [[https://github.com/vlead/outreach-portal/issues/453][#453]], [[https://github.com/vlead/outreach-portal/issues/455][#455]], [[https://github.com/vlead/outreach-portal/issues/456][#456]], [[https://github.com/vlead/outreach-portal/issues/457][#457]] | Oct 17, 2019 |
+|------+---------+-------------------------------+--------------|
+|      |         |                               |              |
