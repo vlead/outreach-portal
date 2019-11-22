@@ -26,4 +26,3 @@
 |    7 | v2.5.0  | [[https://github.com/vlead/outreach-portal/issues/263][#263]], [[https://github.com/vlead/outreach-portal/issues/267][#267]], [[https://github.com/vlead/outreach-portal/issues/268][#268]], [[https://github.com/vlead/outreach-portal/issues/273][#273]]        | [[https://github.com/vlead/outreach-portal/issues/264][#264]],  [[https://github.com/vlead/outreach-portal/issues/271][#271]]                   |                  4 |          2 | May 16, 2018 |
 |------+---------+-------------------------------+-------------------------------+--------------------+------------+--------------|
 
->>>>>>> b1cf45808634f2286ed947b5e29339758e583898
