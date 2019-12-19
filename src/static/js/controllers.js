@@ -309,7 +309,8 @@ app.controller("admin-workshop", function($scope, dataFactory, $http, $routePara
         columnDefs: [
             { field: 'user.institute_name', displayName: 'Institute'},
             { field: 'location', sort: { direction: uiGridConstants.ASC, priority: 1 } },
-            { field: 'version' },
+            { field: 'labs_planned', displayName: 'Labs Planned'  },
+            { field: 'experiments_conducted', displayName: 'Usage'  },
             { field: 'date'},
           { field: 'participants_attended'},
           {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="editBtn" type="button" class="btn" ng-click="grid.appScope.viewReports(row.entity)"><i class="fa fa-eye"></i></button>'}
