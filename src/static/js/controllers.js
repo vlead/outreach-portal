@@ -823,7 +823,8 @@ app.controller("workshop-history", function($scope, $http, $routeParams, dataFac
             { field: 'workshop_status', displayName:'Workshop Status'},
             { field: 'status.name', displayName:'Status'},
             { field: 'experiments_conducted', displayName:'Usage'},
-            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn" ng-click="grid.appScope.view(row.entity)"><i class="fa fa-eye"></i></button><button id="editBtn" type="button" class="btn" ng-click="grid.appScope.editWorkshop(row.entity)"><i class="fa fa-edit"></i></button>'}
+            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn" ng-click="grid.appScope.view(row.entity)"><i class="fa fa-eye"></i></button><button id="editBtn" type="button" class="btn" ng-click="grid.appScope.editWorkshop(row.entity)"><i class="fa fa-edit"></i></button><button id="uploadBtn" style="width\
+:33px;" type="button" class="btn" ng-click="grid.appScope.uploadReports(row.entity)"><i class="fa fa-upload"></i></button>'}
         ],
         enableGridMenu: true,
         enableSelectAll: true,
