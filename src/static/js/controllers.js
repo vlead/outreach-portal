@@ -1365,6 +1365,7 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
 		    console.log($scope.photos.length);
                     status_id = 3;
 		}
+		else{status_id=2;}
             }else{
 		status_id = 1;
             }
