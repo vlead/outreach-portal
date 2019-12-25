@@ -43,7 +43,7 @@ app.controller("map-ctrl", function ($scope, $http, dataFactory){
   dataFactory.fetch("/nodal_centres").success(function(nodalCentre){      
     for(var i=0;i<nodalCentre.length;i++){
       var currentNodalCentre = nodalCentre[i];
-      if(currentNodalCentre.location !== "null" && currentNodalCentre.longitude !== null){
+      if(currentNodalCentre.location !== null && currentNodalCentre.longitude !== null){
 	$scope.createMarker(currentNodalCentre, currentNodalCentre, "nodal_centres");
         // getGeocode1(nodalCentre[i]);
       }
@@ -864,7 +864,7 @@ app.controller("workshop-history", function($scope, $http, $routeParams, dataFac
             else if(data[i].status.name == "Approved"){
                 history.push(data[i]);
             }
-            else if(data[i].status.name == "Pending for Approval" || data[i].status.id == 4){
+            else if(data[i].status.name == "Pending for Approval" || data[i].status.id == "Pending for Updates"){
                 pending.push(data[i]);
             }
         }
@@ -941,21 +941,10 @@ app.controller("pending-workshops", function($scope, $http, $routeParams, dataFa
             if (((today > workshopDate) & !(today.toDateString() == workshopDate.toDateString())) &
                 (data[i].status.name == "Upcoming")){
                 dataFactory.put('/workshops/'+workshopId.toString(),
-                                {'status': {'id': 2}}).success(function(data, status){
+                                {'status': {'id': 5}}).success(function(data, status){
                                     console.log('Status success'); });
             }
-            if( (today <= workshopDate) ||(today.getDate() == workshopDate.getDate() &
-                                            (today.getMonth() == workshopDate.getMonth())  &
-                                            (today.getFullYear() == workshopDate.getFullYear()))){
-                if(data[i].cancellation_reason == null){
-                    upcoming.push(data[i]);
-                    count = count + 1;
-              }
-            }
-            else if(data[i].status.name == "Approved"){
-                history.push(data[i]);
-            }
-            else if(data[i].status.name == "Pending for Approval" || data[i].status.id == 4){
+            if(data[i].status.name == "Pending for Approval" || data[i].status.name == "Pending for Updates"){
                 pending.push(data[i]);
             }
         }
@@ -1190,7 +1179,7 @@ $scope.submit = function(isvalid){
             var workshopDate = new Date($scope.date);
             var status_id = 1;
             if((today > workshopDate) & !(today.toDateString() == workshopDate.toDateString())){
-              status_id = 2;
+              status_id = 5;
             }
             dataFactory.post("/workshops", { "name" : $scope.name,
 					     "duration_of_sessions" : $scope.session,
@@ -1342,6 +1331,28 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
             console.log(data);
         });
 
+    
+    dataFactory.fetch("/workshop_reports?workshop_id="+$routeParams.id).success(function(data,status,headers,config){
+        var photos = [];
+	var attendance = [];
+	var reports = [];
+	
+	for(var i=0; i < data.length; i++){
+	    if(data[i].name == "Photos"){
+		photos.push(data[i]);
+	    }else if(data[i].name == "Attendance"){
+		attendance.push(data[i]);
+	    }else{
+		reports.push(data[i]);
+	    }
+	}
+	$scope.photos = photos;
+	$scope.attendance = attendance;
+        $scope.reports = reports;
+    }).error(function(data, status, headers, config){
+        console.log("Failed");
+    });
+    
     $scope.submit = function(isvalid){
       if(isvalid){
 	  
@@ -1349,18 +1360,13 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
             var workshopDate = new Date($scope.message.date);
             var status_id = $scope.message.status.id;
             if((today > workshopDate) & !(today.toDateString() == workshopDate.toDateString())){
-              if(status_id == 3){
-                status_id = 3;
-              }else{
-		  if($scope.message.user.role.id == 2){
-		      status_id = 3;
-		      }
-		  else{
-                      status_id = 2;
-		  }
-              }
+		if($scope.message.user.role.id == 2 & $scope.photos.length != 0){
+		    console.log("========================");
+		    console.log($scope.photos.length);
+                    status_id = 3;
+		}
             }else{
-              status_id = 1;
+		status_id = 1;
             }
 
 	  // console.log($scope.usage);
@@ -2231,6 +2237,7 @@ app.controller("oc-workshop-history", function($scope, $http, $routeParams, data
   //   $scope.reverse = !$scope.reverse; //if true make it false and vice versa
   // };
 });
+
 app.controller("upload-reports", function($scope, $http, $routeParams, dataFactory, $route, $window){
     var photos = [];
     var attendance = [];
@@ -2262,7 +2269,25 @@ app.controller("upload-reports", function($scope, $http, $routeParams, dataFacto
     $scope.photos = photos;
     $scope.attendance = attendance;
     $scope.reports = reports;
+//    if($scope.photos.length !== 0 || $scope.attendance.length !== 0 || $scope.reports.length !== 0){
+//	dataFactory.fetch('/workshops/'+$routeParams.id).
+//            success(function(data, status, headers, config){
+//		$scope.message= data;
+//		if ($scope.message.participants_attended.length == null & $scope.message.experiments_conducted == null){
+//		    $scope.status_id = $scope.message.status.id;
+//		}
+//		else if($scope.message.user.role.id == 2){
+//		    $scope.status_id =3;
+//		}else {$scope.status_id=2;}
+//	    });
+//   }
+//
+//   dataFactory.put('/workshops/'+$routeParams.id,
+//                   {'status': {'id': $scope.status_id}}).success(function(data, status){
+//                       console.log('Status success');
+//		    });
 });
+
 app.controller("ws_details", function($scope, $http, $routeParams, dataFactory, $route, $window){
     dataFactory.fetch("/workshops?version=online&status_id=3").success(function(data,status,headers,config){
 	$scope.workshops = data;
