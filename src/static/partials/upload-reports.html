@@ -149,24 +149,40 @@ $(function() {
             async: false,
             success: function(data) {
               $('#upload-status').html("<b> Uploading " + key + " File  </b>");
-              $('#total-files').html("<b>" + fileups[key].files[i].name + "</b>");
-              var url = '/workshops/'+workshop_id;
-              $.ajax({
-                url: url,
-                type: 'PUT',
-                async:false,
-                contentType: 'application/json',
-                data: JSON.stringify({status: {id: 2}}),headers: {'email' : window.email, 'key' : window.key,'token' : window.token },
-                success: function (data){
-                  count = i; i = i+count;console.log(i+1);
-                }
-              });
-
+	      $('#total-files').html("<b>" + fileups[key].files[i].name + "</b>");
+			    console.log('Success');
             },
             error: function(){
               $('#not-upload-status').html("<b> Files Not Uploaded  </b>");
               $('#not-upload-file').append("<font color='red'>(" + (i+1) + ") </font>" + fileups[key].files[i].name + "<br>");}
-          });
+	    });
+	    if(total_photos !=0 || total_atndnc_reports != 0 || total_reports != 0){
+	    $.ajax({
+	    type: 'GET',
+	    url: '/workshops/'+ workshop_id,
+	    async:false
+	    sucess: function(data){
+	    if (data.participants_attended == null & data.experiments_conducted==null){
+	    status_id=5;
+	    }
+	    else if(data.user.role_id == 2){status_id = 3;}
+	    else{status_id=2;}
+              $.ajax({
+                url: '/workshops/'+ workshop_id,
+                type: 'PUT',
+                async:false,
+                contentType: 'application/json',
+                data: JSON.stringify({status: {id: status_id}}),headers: {'email' : window.email, 'key' : window.key,'token' : window.token },
+                success: function (data){
+                  console.log(data);
+                }
+              });
+
+	    }
+	    });
+			    
+	    }
+
         }
       }
     }

@@ -85,7 +85,7 @@ app.config(function($routeProvider){
       templateUrl : "/static/partials/add-workshop.html",
       controller  : "add-workshop"
     })
-    .when("/manage-workshops/pending-action",{
+    .when("/oc-manage-workshops/pending-workshops",{
       templateUrl: "/static/partials/pending-workshops.html",
       controller  : "pending-workshops"
     })
