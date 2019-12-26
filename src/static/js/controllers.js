@@ -1361,11 +1361,11 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
             var status_id = $scope.message.status.id;
             if((today > workshopDate) & !(today.toDateString() == workshopDate.toDateString())){
 		if($scope.message.user.role.id == 2 & $scope.photos.length != 0){
-		    console.log("========================");
-		    console.log($scope.photos.length);
                     status_id = 3;
 		}
-		else{status_id=2;}
+		else if($scope.message.user.role.id == 3 & $scope.photos.length != 0){
+		    status_id=2;
+		}
             }else{
 		status_id = 1;
             }
@@ -1386,9 +1386,9 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
 			      "status" : {"id": status_id},  "date" : $scope.message.date,
 			      "experiments_conducted": $scope.message.experiments_conducted}).
 		success(function(data, status, headers, config){
-                  $scope.status = "Success";
-                  window.location.href = "#/oc-manage-workshops/oc-workshop-history";
-                    // history.back();
+                    $scope.status = "Success";
+		    window.location.href = "#/manage-workshops";
+                  //history.back();
 		}).
                 error(function(data, status, headers, config){
                     if(status == 500){
@@ -2270,7 +2270,8 @@ app.controller("upload-reports", function($scope, $http, $routeParams, dataFacto
     $scope.photos = photos;
     $scope.attendance = attendance;
     $scope.reports = reports;
-//    if($scope.photos.length !== 0 || $scope.attendance.length !== 0 || $scope.reports.length !== 0){
+});
+    //    if($scope.photos.length !== 0 || $scope.attendance.length !== 0 || $scope.reports.length !== 0){
 //	dataFactory.fetch('/workshops/'+$routeParams.id).
 //            success(function(data, status, headers, config){
 //		$scope.message= data;
@@ -2287,7 +2288,7 @@ app.controller("upload-reports", function($scope, $http, $routeParams, dataFacto
 //                   {'status': {'id': $scope.status_id}}).success(function(data, status){
 //                       console.log('Status success');
 //		    });
-});
+
 
 app.controller("ws_details", function($scope, $http, $routeParams, dataFactory, $route, $window){
     dataFactory.fetch("/workshops?version=online&status_id=3").success(function(data,status,headers,config){

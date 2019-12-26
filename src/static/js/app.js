@@ -65,10 +65,6 @@ app.config(function($routeProvider){
       templateUrl : "/static/partials/edit-nc.html",
       controller  : "edit-nc"
     })
-    .when("/manage-workshops", {
-      templateUrl : "/static/partials/manage-workshops.html",
-      controller  : "manage-workshops"
-    })
     .when("/contact-oc", {
       templateUrl : "/static/partials/contact-oc.html",
       controller  : "contact-oc"
@@ -81,11 +77,15 @@ app.config(function($routeProvider){
       templateUrl : "/static/partials/nodal-centres.html",
       controller  : "nodal-centers"
     })
-    .when("/add-workshop", {
+    .when("/manage-workshops", {
+      templateUrl : "/static/partials/upcoming-workshops.html",
+      controller  : "manage-workshops"
+    })
+    .when("/manage-workshops/add-workshop", {
       templateUrl : "/static/partials/add-workshop.html",
       controller  : "add-workshop"
     })
-    .when("/oc-manage-workshops/pending-workshops",{
+    .when("/manage-workshops/pending-workshops",{
       templateUrl: "/static/partials/pending-workshops.html",
       controller  : "pending-workshops"
     })
@@ -96,6 +96,10 @@ app.config(function($routeProvider){
     .when("/edit-workshop/:id", {
       templateUrl : "/static/partials/edit-workshop.html",
       controller  : "edit-workshop"
+    })
+    .when("/oc-manage-workshops/oc-pending-workshops",{
+      templateUrl: "/static/partials/oc-pending-workshops.html",
+      controller  : "pending-workshops"
     })
     .when("/upload-reports/:id", {
       templateUrl : "/static/partials/upload-reports.html",
@@ -130,8 +134,12 @@ app.config(function($routeProvider){
       controller  : "edit-centre"
     })
     .when("/oc-manage-workshops", {
-      templateUrl : "/static/partials/oc-manage-workshops.html",
-      controller  : "oc-manage-workshops"
+      templateUrl : "/static/partials/oc-upcoming-workshops.html",
+      controller  : "manage-workshops"
+    })
+    .when("/oc-manage-workshops/oc-add-workshop", {
+      templateUrl : "/static/partials/add-workshop.html",
+      controller  : "add-workshop"
     })
     .when("/oc-documents", {
       templateUrl : "/static/partials/oc-docs.html",

@@ -1,12 +1,12 @@
 <ul class="nav nav-tabs">
-  <li><a style="color:#ffffff;" data-toggle="tab" href="#oc-manage-workshops">Upcoming Workshops</a></li>
+  <li class="active"><a  data-toggle="tab" href="#oc-manage-workshops">Upcoming Workshops</a></li>
   <li><a style="color:#ffffff;" data-toggle="tab" href="#oc-manage-workshops/oc-pending-workshops">Pending Workshops</a></li>
   <li><a style="color:#ffffff;" data-toggle="tab" href="#oc-manage-workshops/nc-workshops">Nodal Coordinator Workshops</a></li>
-  <li class="active"><a data-toggle="tab" href="#oc-manage-workshops/oc-workshop-history">Workshop History</a></li>
-  <li><a style="color:#ffffff;" data-toggle="tab" href="#oc-manage-workshops/oc-add-workshop" role="button">ADD WORKSHOP</a></li>
+  <li><a style="color:#ffffff;" data-toggle="tab" href="#oc-manage-workshops/oc-workshop-history">Workshop History</a></li>
+  <li><a style="color:#ffffff;" data-toggle="tab" href="#oc-manage-workshops/oc-add-workshop">ADD WORKSHOP</a></li>
 </ul>
 <div class="row" style="margin-top: 30px">
-  <div class="col-md-12">
+  <div class="col-md-12" ng-if="pending.length !=0">  
     <div ui-grid="gridOptions" ui-grid-pagination ui-grid-selection ui-grid-exporter class="ocworkshopGrid" external-scopes="clickHandler"></div>
   </div>
 </div>
