@@ -1386,9 +1386,8 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
 			      "status" : {"id": status_id},  "date" : $scope.message.date,
 			      "experiments_conducted": $scope.message.experiments_conducted}).
 		success(function(data, status, headers, config){
-                    $scope.status = "Success";
-		    window.location.href = "#/manage-workshops";
-                  //history.back();
+                    $scope.status = "Success";		    
+                    history.back();
 		}).
                 error(function(data, status, headers, config){
                     if(status == 500){
@@ -2270,6 +2269,16 @@ app.controller("upload-reports", function($scope, $http, $routeParams, dataFacto
     $scope.photos = photos;
     $scope.attendance = attendance;
     $scope.reports = reports;
+    // if($scope.message.user.role.id == 3 & $scope.photos.length != 0){
+    // 	status_id=2;
+    // }
+    // if($scope.message.user.role.id == 2 & $scope.photos.length != 0){
+    //     status_id = 3;
+    // }
+    // else if($scope.message.user.role.id == 3 & $scope.photos.length != 0){
+    // 	status_id=2;
+    // }
+
 });
     //    if($scope.photos.length !== 0 || $scope.attendance.length !== 0 || $scope.reports.length !== 0){
 //	dataFactory.fetch('/workshops/'+$routeParams.id).
