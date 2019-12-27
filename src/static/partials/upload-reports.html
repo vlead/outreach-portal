@@ -161,7 +161,7 @@ $(function() {
       $('#total-files').html("<b> Successfully uploaded</b>");
       $('#wait-status').html("<b> Done </b>");
       var workshop_id = location.href.split("/").pop();
-      var url = 'http://outreach-backup.vlabs.ac.in/workshops/'+ workshop_id;
+      var url = 'http://outreach.vlabs.ac.in/workshops/'+ workshop_id;
       console.log(url);
           $.ajax({
             type: 'GET',
@@ -180,7 +180,7 @@ $(function() {
 			    }
 			    else{status_id=5;console.log(status_id);}
 			    $.ajax({
-			    url: 'http://outreach-backup.vlabs.ac.in/workshops/'+ workshop_id,
+			    url: 'http://outreach.vlabs.ac.in/workshops/'+ workshop_id,
 			    type: 'PUT',
 			    async:false,
 			    contentType: 'application/json',
@@ -201,7 +201,7 @@ $(function() {
 			    console.log("error");
 			    }
 	});		    
-       console.log("fasdfasdfdsfadfsadf");
+       console.log("Done");
 });
 });
 
