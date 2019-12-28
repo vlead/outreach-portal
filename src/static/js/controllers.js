@@ -249,7 +249,7 @@ app.controller("workshop", function($scope, dataFactory, $http, $routeParams, $l
             { field: 'version' },
             { field: 'date'},
             { field: 'participants_attended'},
-            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="editBtn" type="button" class="btn btn-small \
+            {name: 'actions', enableFiltering: false, displayName: 'Actions', width:122, cellTemplate: '<button id="editBtn" type="button" class="btn btn-small \
 btn-primary" ng-click="grid.appScope.view(row.entity)" >View</button>'}                     
         ],
         enableGridMenu: true,
@@ -313,7 +313,7 @@ app.controller("admin-workshop", function($scope, dataFactory, $http, $routePara
             { field: 'experiments_conducted', displayName: 'Usage'  },
             { field: 'date'},
           { field: 'participants_attended'},
-          {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="editBtn" type="button" class="btn" ng-click="grid.appScope.viewReports(row.entity)"><i class="fa fa-eye"></i></button>'}
+          {name: 'actions', enableFiltering: false, displayName: 'Actions', width:122, cellTemplate: '<button id="editBtn" type="button" class="btn" ng-click="grid.appScope.viewReports(row.entity)"><i class="fa fa-eye"></i></button>'}
 
         ],
         enableGridMenu: true,
@@ -408,7 +408,7 @@ app.controller("nc-ctrl", function($scope, $http, $routeParams, dataFactory,$rou
         columnDefs: [
             { field: 'institute', displayName: 'Institute', sort: { direction: uiGridConstants.ASC, priority: 1 }},
             { field: 'total_ncs', displayName: 'Total Nodal Coordinators', enableFiltering:false},
-            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small \
+            {name: 'actions', enableFiltering: false, displayName: 'Actions', width:122, cellTemplate: '<button id="viewBtn" type="button" class="btn btn-small \
 btn-primary" ng-click="grid.appScope.viewNC(row.entity)">View</button>'}
         ],
         enableGridMenu: true,
@@ -474,7 +474,7 @@ app.controller("admin-ctrl", function($scope, dataFactory, $http, $routeParams, 
       { field: 'institute_name',displayName:'Institute Name' },
       { field: 'last_active', displayName:'Last Active'},
       { field: 'created', displayName:'Created On'},
-      {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn" ng-click="grid.appScope.editOC(row.entity)"><i class="fa fa-edit"></i></button><button id="deleteBtn" type="button" class="btn btn-small btn-danger" ng-click="grid.appScope.deleteOC(row.entity)"><i class="fa fa-trash"></i></button>'}
+      {name: 'actions', enableFiltering: false, displayName: 'Actions', width:122, cellTemplate: '<button id="viewBtn" type="button" class="btn" ng-click="grid.appScope.editOC(row.entity)"><i class="fa fa-edit"></i></button><button id="deleteBtn" type="button" class="btn btn-small btn-danger" ng-click="grid.appScope.deleteOC(row.entity)"><i class="fa fa-trash"></i></button>'}
     ],
     enableGridMenu: true,
     enableSelectAll: true,
@@ -821,9 +821,9 @@ app.controller("workshop-history", function($scope, $http, $routeParams, dataFac
             { field: 'participants_attended' },
             { field: 'date'},
             { field: 'workshop_status', displayName:'Workshop Status'},
-            { field: 'status.name', displayName:'Status'},
+            { field: 'status.name', displayName:'Status', width:170},
             { field: 'experiments_conducted', displayName:'Usage'},
-            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn" ng-click="grid.appScope.view(row.entity)"><i class="fa fa-eye"></i></button><button id="editBtn" type="button" class="btn" ng-click="grid.appScope.editWorkshop(row.entity)"><i class="fa fa-edit"></i></button><button id="uploadBtn" style="width\
+            {name: 'actions', enableFiltering: false, displayName: 'Actions', width:122, cellTemplate: '<button id="viewBtn" type="button" class="btn" ng-click="grid.appScope.view(row.entity)"><i class="fa fa-eye"></i></button><button id="editBtn" type="button" class="btn" ng-click="grid.appScope.editWorkshop(row.entity)"><i class="fa fa-edit"></i></button><button id="uploadBtn" style="width\
 :33px;" type="button" class="btn" ng-click="grid.appScope.uploadReports(row.entity)"><i class="fa fa-upload"></i></button>'}
         ],
         enableGridMenu: true,
@@ -913,9 +913,9 @@ app.controller("pending-workshops", function($scope, $http, $routeParams, dataFa
           { field: 'participants_attended' },
           { field: 'date'},
           { field: 'workshop_status', displayName:'Workshop Status'},          
-          { field: 'status.name', displayName:'Status'},
+            { field: 'status.name', displayName:'Status', width:170},
           { field: 'experiments_conducted', displayName:'Usage'},
-            {name: 'actions', enableFiltering: false, displayName: 'Actions', width:250, cellTemplate: '<button id="editBtn" type="button" class="btn" ng-click="grid.appScope.view(row.entity)"><i class="fa fa-eye"></i></button><button id="editBtn" type="button" class="btn" ng-click="grid.appScope.editWorkshop(row.entity)"><i class="fa fa-edit"></i></button><button id="viewBtn" type="button" class="btn" ng-click="grid.appScope.uploadReports(row.entity)"><i class="fa fa-upload"></i></button>'}
+            {name: 'actions', enableFiltering: false, displayName: 'Actions', width:122, cellTemplate: '<button id="editBtn" type="button" class="btn" ng-click="grid.appScope.view(row.entity)"><i class="fa fa-eye"></i></button><button id="editBtn" type="button" class="btn" ng-click="grid.appScope.editWorkshop(row.entity)"><i class="fa fa-edit"></i></button><button id="viewBtn" type="button" class="btn" ng-click="grid.appScope.uploadReports(row.entity)"><i class="fa fa-upload"></i></button>'}
         ],
         enableGridMenu: true,
         enableSelectAll: true,
@@ -991,9 +991,9 @@ app.controller("manage-workshops", function($scope, $http, $routeParams, dataFac
             { field: 'participants_attended' },
             { field: 'date'},
             { field: 'workshop_status', displayName:'Workshop Status'},
-            { field: 'status.name', displayName:'Status'},
+            { field: 'status.name', displayName:'Status', width:170},
             { field: 'experiments_conducted', displayName:'Usage'},
-          {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn" ng-click="grid.appScope.view(row.entity)"><i class="fa fa-eye"></i></button><button id="editBtn" type="button" class="btn" ng-click="grid.appScope.editWorkshop(row.entity)"><i class="fa fa-edit"></i></button>'}
+          {name: 'actions', enableFiltering: false, displayName: 'Actions', width:122, cellTemplate: '<button id="viewBtn" type="button" class="btn" ng-click="grid.appScope.view(row.entity)"><i class="fa fa-eye"></i></button><button id="editBtn" type="button" class="btn" ng-click="grid.appScope.editWorkshop(row.entity)"><i class="fa fa-edit"></i></button>'}
         ],
         enableGridMenu: true,
         enableSelectAll: true,
@@ -1361,11 +1361,11 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
             var status_id = $scope.message.status.id;
             if((today > workshopDate) & !(today.toDateString() == workshopDate.toDateString())){
 		if($scope.message.user.role.id == 2 & $scope.photos.length != 0){
-		    console.log("========================");
-		    console.log($scope.photos.length);
                     status_id = 3;
 		}
-		else{status_id=2;}
+		else if($scope.message.user.role.id == 3 & $scope.photos.length != 0){
+		    status_id=2;
+		}
             }else{
 		status_id = 1;
             }
@@ -1386,9 +1386,8 @@ app.controller("edit-workshop", function($scope, dataFactory, $http, $routeParam
 			      "status" : {"id": status_id},  "date" : $scope.message.date,
 			      "experiments_conducted": $scope.message.experiments_conducted}).
 		success(function(data, status, headers, config){
-                  $scope.status = "Success";
-                  window.location.href = "#/oc-manage-workshops/oc-workshop-history";
-                    // history.back();
+                    $scope.status = "Success";		    
+                    history.back();
 		}).
                 error(function(data, status, headers, config){
                     if(status == 500){
@@ -1490,7 +1489,7 @@ app.controller("manage-nc", function($scope, $http, $routeParams, dataFactory, $
             { field: 'phone' },
             { field: 'user_status'},
             { field: 'last_active', displayName:'Last Active'},
-            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn" ng-click="grid.appScope.editNodalCoordinator(row.entity)"><i class="fa fa-edit"></i></button>'}
+            {name: 'actions', enableFiltering: false, displayName: 'Actions', width:122, cellTemplate: '<button id="viewBtn" type="button" class="btn" ng-click="grid.appScope.editNodalCoordinator(row.entity)"><i class="fa fa-edit"></i></button>'}
         ],
         enableGridMenu: true,
         enableSelectAll: true,
@@ -1729,7 +1728,7 @@ app.controller("manage-centres", function($scope, $http, dataFactory, $routePara
             { field: 'location' },
             { field: 'pincode' },
             { field: 'centre_status', displayName:'Status'},
-            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn" ng-click="grid.appScope.editCentre(row.entity)"><i class="fa fa-edit"></i></button><button id="deleteBtn" type="button" class="btn" ng-click="grid.appScope.del_centre(row.entity)"><i class="fa fa-trash"></i></button>'}
+            {name: 'actions', enableFiltering: false, displayName: 'Actions', width:122, cellTemplate: '<button id="viewBtn" type="button" class="btn" ng-click="grid.appScope.editCentre(row.entity)"><i class="fa fa-edit"></i></button><button id="deleteBtn" type="button" class="btn" ng-click="grid.appScope.del_centre(row.entity)"><i class="fa fa-trash"></i></button>'}
         ],
         enableGridMenu: true,
         enableSelectAll: true,
@@ -1925,8 +1924,8 @@ app.controller("oc-manage-workshops", function($scope, $http, $routeParams, data
             { field: 'no_of_participants_expected' },
             { field: 'date'},
             { field: 'workshop_status', displayName:'Workshop Status'},
-            { field: 'status.name', displayName:'Status'},
-            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="editBtn" type="button" class="btn" ng-click="grid.appScope.editWorkshop(row.entity)"><i class="fa fa-edit"></i></button><button id="viewBtn" type="button" class="btn" ng-click="grid.appScope.ocUploadReports(row.entity)"><i class="fa fa-upload"></i></button>'}
+            { field: 'status.name', displayName:'Status', width:122},
+            {name: 'actions', enableFiltering: false, displayName: 'Actions', width:122, cellTemplate: '<button id="editBtn" type="button" class="btn" ng-click="grid.appScope.editWorkshop(row.entity)"><i class="fa fa-edit"></i></button><button id="viewBtn" type="button" class="btn" ng-click="grid.appScope.ocUploadReports(row.entity)"><i class="fa fa-upload"></i></button>'}
         ],
         enableGridMenu: true,
         enableSelectAll: true,
@@ -2052,8 +2051,8 @@ app.controller("nc-workshops", function($scope, $http, $routeParams, dataFactory
             { field: 'not_approval_reason' },
             { field: 'date'},
             { field: 'workshop_status', displayName:'Workshop Status'},
-            { field: 'status.name', displayName:'Status'},
-            {name: 'actions', enableFiltering: false, displayName: 'Actions', cellTemplate: '<button id="viewBtn" type="button" class="btn" ng-click="grid.appScope.reviewReports(row.entity)"><i class="fa fa-eye"></button>'}
+            { field: 'status.name', displayName:'Status', width:122},
+            {name: 'actions', enableFiltering: false, displayName: 'Actions', width:122, cellTemplate: '<button id="viewBtn" type="button" class="btn" ng-click="grid.appScope.reviewReports(row.entity)"><i class="fa fa-eye"></button>'}
         ],
         enableGridMenu: true,
         enableSelectAll: true,
@@ -2181,9 +2180,9 @@ app.controller("oc-workshop-history", function($scope, $http, $routeParams, data
             { field: 'participants_attended' },
             { field: 'date'},
             { field: 'workshop_status', displayName:'Workshop Status'},
-            { field: 'status.name', displayName:'Status'},
+            { field: 'status.name', displayName:'Status', width:122},
           { field: 'experiments_conducted', displayName:'Usage', sort:'asc'},
-            {name: 'actions', enableFiltering: false, displayName: 'Actions', width:200, cellTemplate: '<button id="viewBtn" type="button" class="btn" ng-click="grid.appScope.viewReports(row.entity)"><i class="fa fa-eye"></i></button><button id="editBtn" type="button" class="btn" ng-click="grid.appScope.editWorkshop(row.entity)"><i class="fa fa-edit"></i></button><button id="uploadBtn" type="button" class="btn" ng-click="grid.appScope.uploadReports(row.entity)"><i class="fa fa-upload"></i></button>'}   
+            {name: 'actions', enableFiltering: false, displayName: 'Actions', width:122, cellTemplate: '<button id="viewBtn" type="button" class="btn" ng-click="grid.appScope.viewReports(row.entity)"><i class="fa fa-eye"></i></button><button id="editBtn" type="button" class="btn" ng-click="grid.appScope.editWorkshop(row.entity)"><i class="fa fa-edit"></i></button><button id="uploadBtn" type="button" class="btn" ng-click="grid.appScope.uploadReports(row.entity)"><i class="fa fa-upload"></i></button>'}   
         ],
         enableGridMenu: true,
         enableSelectAll: true,
@@ -2270,7 +2269,18 @@ app.controller("upload-reports", function($scope, $http, $routeParams, dataFacto
     $scope.photos = photos;
     $scope.attendance = attendance;
     $scope.reports = reports;
-//    if($scope.photos.length !== 0 || $scope.attendance.length !== 0 || $scope.reports.length !== 0){
+    // if($scope.message.user.role.id == 3 & $scope.photos.length != 0){
+    // 	status_id=2;
+    // }
+    // if($scope.message.user.role.id == 2 & $scope.photos.length != 0){
+    //     status_id = 3;
+    // }
+    // else if($scope.message.user.role.id == 3 & $scope.photos.length != 0){
+    // 	status_id=2;
+    // }
+
+});
+    //    if($scope.photos.length !== 0 || $scope.attendance.length !== 0 || $scope.reports.length !== 0){
 //	dataFactory.fetch('/workshops/'+$routeParams.id).
 //            success(function(data, status, headers, config){
 //		$scope.message= data;
@@ -2287,7 +2297,7 @@ app.controller("upload-reports", function($scope, $http, $routeParams, dataFacto
 //                   {'status': {'id': $scope.status_id}}).success(function(data, status){
 //                       console.log('Status success');
 //		    });
-});
+
 
 app.controller("ws_details", function($scope, $http, $routeParams, dataFactory, $route, $window){
     dataFactory.fetch("/workshops?version=online&status_id=3").success(function(data,status,headers,config){

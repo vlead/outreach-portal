@@ -135,11 +135,9 @@ $(function() {
 
           var documentId = JSON.parse(jqxhr).id;
           var form_data = new FormData();
-
           form_data.append('file', fileups[key].files[i], fileups[key].files[i].name);
           var url = '/upload_workshop_reports/' + documentId ;
           var count = 0;
-
           $.ajax({
             type: 'POST',
             url: url,
@@ -151,29 +149,60 @@ $(function() {
             success: function(data) {
               $('#upload-status').html("<b> Uploading " + key + " File  </b>");
               $('#total-files').html("<b>" + fileups[key].files[i].name + "</b>");
-              var url = '/workshops/'+workshop_id;
-              $.ajax({
-                url: url,
-                type: 'PUT',
-                async:false,
-                contentType: 'application/json',
-                data: JSON.stringify({status: {id: 2}}),headers: {'email' : window.email, 'key' : window.key,'token' : window.token },
-                success: function (data){
-                  count = i; i = i+count;console.log(i+1);
-                }
-              });
-
             },
             error: function(){
               $('#not-upload-status').html("<b> Files Not Uploaded  </b>");
               $('#not-upload-file').append("<font color='red'>(" + (i+1) + ") </font>" + fileups[key].files[i].name + "<br>");}
-          });
-        }
+	 });			    
+			    }
+
       }
     }
-      $('#total-files').html("<b> Successfully uploaded all the files  </b>");
+      $('#total-files').html("<b> Successfully uploaded</b>");
       $('#wait-status').html("<b> Done </b>");
-  });
+      var workshop_id = location.href.split("/").pop();
+      var url = 'http://outreach.vlabs.ac.in/workshops/'+ workshop_id;
+      console.log(url);
+          $.ajax({
+            type: 'GET',
+	    url: url,
+	    async: false,
+	    headers: {'email' : 'admin@vlabs.ac.in', 'key' : 'dummykey', 'token' : 'dummytoken' },
+			    success: function(data) {
+			    var status_id = data.status.id;
+			    console.log(status_id);
+			    if(data.participants_attended !== null & data.experiments_conducted !== null & (data.user.role.id) === 2){
+			    status_id = 3;
+			    console.log(status_id);
+			    }
+			    else if(data.participants_attended !== null & data.experiments_conducted !== null & (data.user.role.id) === 3){
+			    status_id = 2;console.log(status_id);
+			    }
+			    else{status_id=5;console.log(status_id);}
+			    $.ajax({
+			    url: 'http://outreach.vlabs.ac.in/workshops/'+ workshop_id,
+			    type: 'PUT',
+			    async:false,
+			    contentType: 'application/json',
+			    data: JSON.stringify({status: {id: status_id}}),
+			    headers: {'email' : window.email, 'key' : window.key,'token' : window.token },
+			    success: function(data){
+			    console.log(data);
+			    },
+			    error: function(){
+			    console.log("error");
+			    console.log(status_id);
+			    
+			    }
+			    });
+			    
+			    },
+			    error: function(){
+			    console.log("error");
+			    }
+	});		    
+       console.log("Done");
+});
 });
 
  </script>
