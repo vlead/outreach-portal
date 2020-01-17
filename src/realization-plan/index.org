@@ -12,13 +12,16 @@
     implementing the Outreach portal driven by data.
 
 * Milestones Snapshot
-  |------+-------+---------+------------------------------+------+------------+---------+---------+--------|
-  | S.No | Mi.no | Req Map | Milestone                    | Plan | Status     | Est hrs | Act hrs | Issues |
-  |------+-------+---------+------------------------------+------+------------+---------+---------+--------|
-  |   1. |       |         | [[https://github.com/vlead/outreach-portal/issues?q=is%3Aopen+is%3Aissue+milestone%3A%22Outreach+Portal+Enhancements%22][Outreach Portal Enhancements]] |      | Inprogress |     312 |         |      8 |
-  |------+-------+---------+------------------------------+------+------------+---------+---------+--------|
-  |   2. |       |         | [[https://gitlab.com/vlead-systems/vlead-security-audit/milestones/9][C-DAC Phase II]]               |      | Done       |     240 |      32 |      5 |
-  |------+-------+---------+------------------------------+------+------------+---------+---------+--------|
+  |------+-------+---------+------------------------------+------+-------------+---------+---------+--------|
+  | S.No | Mi.no | Req Map | Milestone                    | Plan | Status      | Est hrs | Act hrs | Issues |
+  |------+-------+---------+------------------------------+------+-------------+---------+---------+--------|
+  |   1. |       |         | [[https://github.com/vlead/outreach-portal/milestone/6][Allow]] NC to view approved    |      | In Progress |      48 |         |        |
+  |      |       |         | workshops                    |      |             |         |         |        |
+  |------+-------+---------+------------------------------+------+-------------+---------+---------+--------|
+  |   1. |       |         | [[https://github.com/vlead/outreach-portal/issues?q=is%3Aopen+is%3Aissue+milestone%3A%22Outreach+Portal+Enhancements%22][Outreach Portal Enhancements]] |      | In Progress |     312 |         |      8 |
+  |------+-------+---------+------------------------------+------+-------------+---------+---------+--------|
+  |   2. |       |         | [[https://gitlab.com/vlead-systems/vlead-security-audit/milestones/9][C-DAC Phase II]]               |      | Done        |     240 |      32 |      5 |
+  |------+-------+---------+------------------------------+------+-------------+---------+---------+--------|
 
   #+TBLFM: $est=vsum(@II+1..@-1)
   #+TBLFM: $act=vsum(@II+1..@-1)
