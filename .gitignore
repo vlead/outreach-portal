@@ -12,6 +12,7 @@ Thumbs.db
 *.sw[p|o]
 \#*\#
 .\#*\#
+.\#*
 venv/
 config.py
 outreach-portal.egg-info/
@@ -30,3 +31,4 @@ src/sitemap.org
 elisp
 *.tex
 config.org
+src/scripts/cronjobs

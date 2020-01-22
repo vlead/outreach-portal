@@ -134,10 +134,10 @@
           "a2enmod headers",
           "a2enmod rewrite",
           "service apache2 restart",
-          "bash /var/www/setup.sh",
-          "python /var/www/setup.py install",
-          "bash /var/www/configure.sh",
-          "python /var/www/db_setup.py"
+          "bash /var/www/scripts/setup.sh",
+          "python /var/www/scripts/setup.py install",
+          "bash /var/www/scripts/configure.sh",
+          "python /var/www/scripts/db_setup.py"
         ],
         "lab_actions": {
           "init"    : [],

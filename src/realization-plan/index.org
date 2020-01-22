@@ -162,3 +162,43 @@
 |-------+-----------------------+--------+----------+---------+------------+-------------+------------+----------|
 #+TBLFM: $est=vsum(@II+1..@-1)
 #+TBLFM: $act=vsum(@II+1..@-1)
+
+* Tasks
+** [2020-01-22 Wed]
+   1. Thirumal to update the Data Model of the Outreach Portal
+   2. Thirumal to share link to Outreach Portal Requirements
+      and Scenarios document with Prof. Venkatesh after
+      updating it.  This needs to shared with Sanjeet.
+   3. Thirumal to share the plan, target and efforts
+      estimate for Outreach Portal.
+
+
+* Estimates
+|------+---------------------------------+----------+---+---|
+| S.No | Task                            | Estimate |   |   |
+|      |                                 |  (person |   |   |
+|      |                                 |    days) |   |   |
+|------+---------------------------------+----------+---+---|
+|   1. | Set up the test machine         |       10 |   |   |
+|      | and implement, test the         |          |   |   |
+|      | back up scripts.                |          |   |   |
+|------+---------------------------------+----------+---+---|
+|   2. | Update the data model           |        7 |   |   |
+|      | and work on the scenarios       |          |   |   |
+|      | document                        |          |   |   |
+|------+---------------------------------+----------+---+---|
+|   3. | Allow NC to view approved       |       10 |   |   |
+|      | workshops                       |          |   |   |
+|------+---------------------------------+----------+---+---|
+|   4. | Workshops created by            |       15 |   |   |
+|      | NC are not seen by OC           |          |   |   |
+|------+---------------------------------+----------+---+---|
+|   5. | Multiple workshops              |       15 |   |   |
+|      | getting created                 |          |   |   |
+|------+---------------------------------+----------+---+---|
+|   7. | Re Design and re implementation |       90 |   |   |
+|      | of the portal                   |          |   |   |
+|------+---------------------------------+----------+---+---|
+|   6. | Support                         |          |   |   |
+|------+---------------------------------+----------+---+---|
+

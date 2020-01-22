@@ -2,6 +2,8 @@
 
 DB_NAME="outreach"
 DB_PASS="root"
+DUMP_DIR="/root/db_dump/"
+
 DATE_AND_TIME=`date +%F'!'%H'!'%M`
 DATE=`echo $DATE_AND_TIME | cut -d '!' -f1`
 HOUR=`echo $DATE_AND_TIME | cut -d '!' -f2`
@@ -10,21 +12,17 @@ OUT_FILE_NAME="outreach-db-backup-"${DATE}"-"${HOUR}"-"${MINUTE}
 VERSION="v3.2.0"
 OUT_FILE="$OUT_FILE_NAME-$VERSION.tar"
 
-
 # take the dump
-mkdir -p /root/db_bk/
-mkdir -p /root/db_curr/
-rm -rf /root/db_bk/*
-mv /root/db_curr/*.tar /root/db_bk/
-rm -rf /root/db_curr/*
-mysqldump -u root -p$DB_PASS $DB_NAME > /root/db_curr/$DB_NAME.sql
+mkdir -p ${DUMP_DIR}
+rm -rf ${DUMP_DIR}/*
+mysqldump -u root -p$DB_PASS $DB_NAME > ${DUMP_DIR}/$DB_NAME.sql
 if [ $? -ne 0 ]; then
   echo "Error: Something went wrong while taking db dump."
   echo "Aborting backup."
   exit 1;
 fi
 
-tar -cvf /root/db_curr/$OUT_FILE /root/db_curr/$DB_NAME.sql
+tar -cvf ${DUMP_DIR}/$OUT_FILE ${DUMP_DIR}/$DB_NAME.sql
 
 echo "Backup successful."
 exit 0;

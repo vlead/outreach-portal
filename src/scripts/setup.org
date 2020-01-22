@@ -681,11 +681,11 @@ if __name__ == "__main__":
    The following commands will set the cronjob for updating
    analytics for every 4 hours.
    #+BEGIN_EXAMPLE
-   cd /var/www/
+   cd /var/www/scripts
    chmod 755 update_analytics.sh
    crontab -l
    crontab -e
-   * */4 * * * /var/www/update_analytics.sh
+   * */4 * * * /var/www/scripts/update_analytics.sh
 
    #+END_EXAMPLE
 

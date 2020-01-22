@@ -1,0 +1,77 @@
+#+TITLE: Backup database and files
+#+AUTHOR: VLEAD
+#+DATE: [2020-01-20 Mon]
+#+SETUPFILE: ./org-templates/level-0.org
+#+TAGS: boilerplate(b)
+#+EXCLUDE_TAGS: boilerplate
+#+OPTIONS: ^:nil
+
+* Introduction
+This document implements the backing up of files and the
+database dump.
+
+* Design
+Files are uploaded through outreach portal.  These files are
+from the workshop.  These are copied to another machine.  A
+cron job is configured to copy the files every one hour. 
+
+Similarly, the database dump is taken every day.  This dump
+file is also copied to the backup machine through another
+cron job.
+
+* Implementation
+** Copy Files
+#+NAME: copy-files
+#+BEGIN_SRC sh
+#!/bin/bash
+BACKUP_MACHINE="10.100.1.68"
+FILES_DIR="/var/www/src/static/uploads"
+rsync -avz --progress ${FILES_DIR}/ root@${BACKUP_MACHINE}:${FILES_DIR}/
+
+#+END_SRC
+
+** Copy Dump File
+#+NAME: copy-dumpfile
+#+BEGIN_SRC sh
+#!/bin/bash
+BACKUP_MACHINE="10.100.1.68"
+HOST_DUMP_DIR="/root/db_dump"
+REMOTE_DUMP_DIR="/root/db_dump"
+
+rsync -avz --progress ${HOST_DUMP_DIR}/*.tar root@${BACKUP_MACHINE}:${REMOTE_DUMP_DIR}/
+
+#+END_SRC
+
+** Disk Space Alert
+This will raise an alert when the disk space on the machine
+reaches a threshold.
+
+#+NAME: disk-space-alert
+#+BEGIN_SRC sh
+#!/bin/bash
+CURRENT=$(df / | grep / | awk '{ print $5}' | sed 's/%//g')
+THRESHOLD=80
+
+if [ "$CURRENT" -gt "$THRESHOLD" ] ; then
+    mail -s 'Disk Space Alert for outreach'  vlead-employees@vlabs.ac.in << EOF
+Your root partition remaining free space is critically low. Used: $CURRENT%
+EOF
+fi
+
+#+END_SRC
+
+
+* Tangle
+** Copy Files
+#+BEGIN_SRC sh :tangle copy-files.sh :eval no :noweb yes
+<<copy-files>>
+#+END_SRC
+** Copy DB Dump
+#+BEGIN_SRC sh :tangle copy-dump.sh :eval no :noweb yes
+<<copy-dumpfile>>
+#+END_SRC
+
+** Disk space Alert
+#+BEGIN_SRC sh :tangle disk-space.sh :eval no :noweb yes
+<<disk-space-alert>>
+#+END_SRC

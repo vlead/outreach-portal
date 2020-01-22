@@ -1,0 +1,59 @@
+#+TITLE: Setting up the Cron Jobs
+#+AUTHOR: VLEAD
+#+DATE: [2020-01-20 Mon]
+#+SETUPFILE: ./org-templates/level-0.org
+#+TAGS: boilerplate(b)
+#+EXCLUDE_TAGS: boilerplate
+#+OPTIONS: ^:nil
+
+* Introduction
+This document implements setting up cron jobs.
+
+
+* Cron Jobs
+** Create the database dump
+The dump of the database is taken every day at 1 minute past
+midnight
+#+NAME: create-dump
+#+BEGIN_SRC sh
+1 0 * * * sh /root/labs/outreach-portal/scripts/backup
+#+END_SRC
+
+** Update Analytics
+Run a stored procedure to update the analytics every 30
+minutes.
+#+NAME: analytics
+#+BEGIN_SRC sh
+*/30 * * * * sh /var/www/scripts/update_analytics.sh
+#+END_SRC
+
+** Disk Space Alert
+Run the alert generator every eight hours
+#+NAME: alert
+#+BEGIN_SRC sh
+1 */8 * * * sh /var/www/scripts/disk-space.sh
+#+END_SRC
+
+
+** Copy the files
+Copy the outreach files to the backup server every 4 hours
+#+NAME: copy-files
+#+BEGIN_SRC sh
+1 */4 * * * sh /var/www/scripts/copy-files.sh
+#+END_SRC
+
+** Copy Dump
+#+NAME: copy-dump
+#+BEGIN_SRC sh
+10 0 * * * sh /var/www/scripts/copy-dump.sh
+#+END_SRC
+
+
+* Tangle
+#+BEGIN_SRC sh :tangle cronjobs :eval no :noweb yes
+<<create-dump>>
+<<analytics>>
+<<alert>>
+<<copy-dump>>
+<<copy-files>>
+#+END_SRC
