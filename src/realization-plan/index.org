@@ -174,31 +174,32 @@
 
 
 * Estimates
-|------+---------------------------------+----------+---+---|
-| S.No | Task                            | Estimate |   |   |
-|      |                                 |  (person |   |   |
-|      |                                 |    days) |   |   |
-|------+---------------------------------+----------+---+---|
-|   1. | Set up the test machine         |       10 |   |   |
-|      | and implement, test the         |          |   |   |
-|      | back up scripts.                |          |   |   |
-|------+---------------------------------+----------+---+---|
-|   2. | Update the data model           |        7 |   |   |
-|      | and work on the scenarios       |          |   |   |
-|      | document                        |          |   |   |
-|------+---------------------------------+----------+---+---|
-|   3. | Allow NC to view approved       |       10 |   |   |
-|      | workshops                       |          |   |   |
-|------+---------------------------------+----------+---+---|
-|   4. | Workshops created by            |       15 |   |   |
-|      | NC are not seen by OC           |          |   |   |
-|------+---------------------------------+----------+---+---|
-|   5. | Multiple workshops              |       15 |   |   |
-|      | getting created                 |          |   |   |
-|------+---------------------------------+----------+---+---|
-|   7. | Re Design and re implementation |       90 |   |   |
-|      | of the portal                   |          |   |   |
-|------+---------------------------------+----------+---+---|
-|   6. | Support                         |          |   |   |
-|------+---------------------------------+----------+---+---|
+|------+-------------------------------+----------+---+---|
+| S.No | Task                          | Estimate |   |   |
+|      |                               |  (person |   |   |
+|      |                               |    days) |   |   |
+|------+-------------------------------+----------+---+---|
+|   1. | [[https://github.com/vlead/outreach-portal/milestone/7][Set up]] the test machine       |       10 |   |   |
+|      | and implement, test the       |          |   |   |
+|      | back up scripts.              |          |   |   |
+|------+-------------------------------+----------+---+---|
+|   2. | [[https://github.com/vlead/outreach-portal/milestone/8][Update]] the data model         |        7 |   |   |
+|      | and work on the scenarios     |          |   |   |
+|      | document                      |          |   |   |
+|------+-------------------------------+----------+---+---|
+|   3. | [[https://github.com/vlead/outreach-portal/milestone/6][Allow]] NC to view approved     |       10 |   |   |
+|      | workshops                     |          |   |   |
+|------+-------------------------------+----------+---+---|
+|   4. | [[https://github.com/vlead/outreach-portal/milestone/11][Show]] the Workshops created by |       15 |   |   |
+|      | NC to the OC                  |          |   |   |
+|------+-------------------------------+----------+---+---|
+|   5. | [[https://github.com/vlead/outreach-portal/milestone/10][Disallow]] creation multiple    |       15 |   |   |
+|      | workshops when one single     |          |   |   |
+|      | workshop is created           |          |   |   |
+|------+-------------------------------+----------+---+---|
+|   7. | [[https://github.com/vlead/outreach-portal/milestone/12][Re design]] and re implement    |       90 |   |   |
+|      | the portal                    |          |   |   |
+|------+-------------------------------+----------+---+---|
+|   6. | Support                       |          |   |   |
+|------+-------------------------------+----------+---+---|
 
