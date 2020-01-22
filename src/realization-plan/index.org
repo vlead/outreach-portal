@@ -197,7 +197,7 @@
 |      | workshops when one single     |          |   |   |
 |      | workshop is created           |          |   |   |
 |------+-------------------------------+----------+---+---|
-|   7. | [[https://github.com/vlead/outreach-portal/milestone/12][Re design]] and re implement    |       90 |   |   |
+|   7. | [[https://github.com/vlead/outreach-portal/milestone/12][Re design]] and re implement    |      120 |   |   |
 |      | the portal                    |          |   |   |
 |------+-------------------------------+----------+---+---|
 |   6. | Support                       |          |   |   |
