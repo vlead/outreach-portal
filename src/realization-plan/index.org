@@ -193,7 +193,7 @@
 |   4. | [[https://github.com/vlead/outreach-portal/milestone/11][Show]] the Workshops created by |       15 |   |   |
 |      | NC to the OC                  |          |   |   |
 |------+-------------------------------+----------+---+---|
-|   5. | [[https://github.com/vlead/outreach-portal/milestone/10][Disallow]] creation multiple    |       15 |   |   |
+|   5. | [[https://github.com/vlead/outreach-portal/milestone/10][Disallow]] creation of multiple |       15 |   |   |
 |      | workshops when one single     |          |   |   |
 |      | workshop is created           |          |   |   |
 |------+-------------------------------+----------+---+---|
