@@ -11,12 +11,12 @@
   This document has analytics related to outreach portal.
 * Institute wise Analytics
 ** Create view to list only approved workshops
-#+BEGIN_SRC 
+#+BEGIN_SRC sql :tangle procedures.sql 
 drop view approved_workshops;
 CREATE VIEW approved_workshops AS SELECT * from workshops where status_id=3 and workshop_status="Active";
 #+END_SRC
 ** Create table to list institute wise analytics to capture total_workshops, total_usage and total participants attended
-#+BEGIN_SRC 
+#+BEGIN_SRC sql :tangle procedures.sql 
 CREATE TABLE institute_analytics ( id INT PRIMARY KEY AUTO_INCREMENT, 
     institute_name VARCHAR(128) NOT NULL,
     user_id INT,
@@ -25,7 +25,7 @@ CREATE TABLE institute_analytics ( id INT PRIMARY KEY AUTO_INCREMENT,
     total_participants_attended INT  NOT NULL);
 #+END_SRC
 ** Insert the analytics of each institute into institute_analyitcs table.
-#+BEGIN_SRC 
+#+BEGIN_SRC sql :tangle procedures.sql
 INSERT INTO institute_analytics SELECT 1, "Amrita University", 353,
 COUNT(*), SUM(experiments_conducted),
 SUM(participants_attended) from approved_workshops where user_id=353 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=353));
@@ -80,13 +80,9 @@ COUNT(*), SUM(experiments_conducted),
 SUM(participants_attended) from approved_workshops where
 user_id=334 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=334));
 
-INSERT INTO institute_analytics SELECT 12, "VLEAD", 546,
-COUNT(*), SUM(experiments_conducted),
-SUM(participants_attended) from approved_workshops where
-user_id=546 or (user_id in (select user_id from nodal_coordinator_details where created_by_id=546));
 #+END_SRC
 ** Define the procedure to update the institute wise analytics
-#+BEGIN_SRC 
+#+BEGIN_SRC sql :tangle procedures.sql 
 DROP PROCEDURE refresh_institute_analytics_now;
 
 DELIMITER $$
@@ -160,7 +156,7 @@ $$
 DELIMITER ;
 #+END_SRC
 ** Call the procedure on demand 
-#+BEGIN_SRC 
+#+BEGIN_SRC sql :tangle procedures.sql 
 CALL refresh_institute_analytics_now(@rc);
 #+END_SRC
 ** sample table
@@ -188,11 +184,11 @@ select * from institute_analytics;
 
 * Total Analytics
 ** Drop table analytics
-#+BEGIN_SRC 
+#+BEGIN_SRC sql :tangle procedures.sql 
 drop table analytics;
 #+END_SRC
 ** Create table analytics
-#+BEGIN_SRC 
+#+BEGIN_SRC sql :tangle procedures.sql 
 CREATE TABLE analytics (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(128) NOT NULL,
@@ -201,7 +197,7 @@ CREATE TABLE analytics (
 
 #+END_SRC
 ** Insert the total analytics into analytics table
-#+BEGIN_SRC 
+#+BEGIN_SRC sql :tangle procedures.sql 
 INSERT INTO analytics SELECT 1, "WORKSHOPS RUN", SUM(total_workshops) FROM institute_analytics where ;
 INSERT INTO analytics SELECT 2, "UPCOMING WORKSHOPS", COUNT(*) FROM workshops where status_id=1;
 INSERT INTO analytics SELECT 3, "NODAL CENTRES", COUNT(*) FROM nodal_centres where centre_status="Active";
@@ -212,7 +208,7 @@ INSERT INTO analytics SELECT 7, "NC", COUNT(*) FROM users where role_id=3 and us
 
 #+END_SRC
 ** Define the procedure to update the analytics
-#+BEGIN_SRC 
+#+BEGIN_SRC sql :tangle procedures.sql 
 DROP PROCEDURE refresh_analytics_now;
 
 DELIMITER $$
@@ -241,7 +237,7 @@ DELIMITER ;
 
 #+END_SRC
 ** Call the procedure on demand 
-#+BEGIN_SRC 
+#+BEGIN_SRC sql :tangle procedures.sql 
 CALL refresh_analytics_now(@rc);
 #+END_SRC
 ** sample table
@@ -258,14 +254,14 @@ select * from analytics;
 
 * Nodal Centre analytics
 ** Create table to list institute wise analytics to capture total_nodal_centres
-#+BEGIN_SRC 
+#+BEGIN_SRC sql :tangle procedures.sql 
 CREATE TABLE nc_analytics ( id INT PRIMARY KEY AUTO_INCREMENT, 
     institute_name VARCHAR(128) NOT NULL,
     user_id INT,
     total_nodal_centres INT  NOT NULL);
 #+END_SRC
 ** Insert the analytics of each nodal centre into nodal_centre_analyitcs table.
-#+BEGIN_SRC 
+#+BEGIN_SRC sql :tangle procedures.sql 
 INSERT INTO nc_analytics SELECT 1, "Amrita University", 353,
 COUNT(*) from nodal_centres where created_by_id=353 and centre_status='Active';
 
@@ -299,12 +295,9 @@ COUNT(*) from nodal_centres where created_by_id=21 and centre_status='Active';
 INSERT INTO nc_analytics SELECT 11, "NITK Surathkal", 334,
 COUNT(*) from nodal_centres where created_by_id=334 and centre_status='Active';
 
-INSERT INTO nc_analytics SELECT 12, "VLEAD", 546,
-COUNT(*) from nodal_centres where created_by_id=546 and centre_status='Active';
-
 #+END_SRC
 ** Define the procedure to update the institute wise nodal centre analytics
-#+BEGIN_SRC 
+#+BEGIN_SRC sql :tangle procedures.sql 
 DROP PROCEDURE refresh_nc_analytics_now;
 
 DELIMITER $$
@@ -336,7 +329,7 @@ $$
 DELIMITER ;
 #+END_SRC
 ** Call the procedure on demand 
-#+BEGIN_SRC 
+#+BEGIN_SRC sql :tangle procedures.sql 
 CALL refresh_nc_analytics_now(@rc);
 #+END_SRC
 ** sample table
@@ -398,6 +391,6 @@ update nodal_centres set lattitude='21.218560' where id=812;
 update nodal_centres set longitude='81.308198' where id=812;
 
 * Commands to update edit, delete and view buttons
-#+BEGIN_SRC 
+#+BEGIN_SRC
 <span class="glyphicon glyphicon-eye-open"></span>
 #+END_SRC
