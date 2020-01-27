@@ -805,11 +805,15 @@ app.controller("nc-dashboard", function($scope, $http, dataFactory, $routeParams
 app.controller("workshop-history", function($scope, $http, $routeParams, dataFactory,$route, $window, uiGridConstants) {
   $scope.editWorkshop = function(row) {
         window.location.href = "#edit-workshop/" + row['id'];
+  };
+   $scope.viewReports = function(row) {
+        window.location.href = "#view-reports/" + row['id'];
     };
-    $scope.view = function(row) {
-        window.location.href = "#/one-workshop/" + row['id'];
+    
+    $scope.uploadReports = function(row) {
+        window.location.href = "#/upload-reports/" + row['id'];
     };
-
+    
     $scope.gridOptions = {
         paginationPageSizes: [5, 10, 15],
         paginationPageSize: 5,
@@ -823,8 +827,12 @@ app.controller("workshop-history", function($scope, $http, $routeParams, dataFac
             { field: 'workshop_status', displayName:'Workshop Status'},
             { field: 'status.name', displayName:'Status', width:170},
             { field: 'experiments_conducted', displayName:'Usage'},
-            {name: 'actions', enableFiltering: false, displayName: 'Actions', width:122, cellTemplate: '<button id="viewBtn" type="button" class="btn" ng-click="grid.appScope.view(row.entity)"><i class="fa fa-eye"></i></button><button id="editBtn" type="button" class="btn" ng-click="grid.appScope.editWorkshop(row.entity)"><i class="fa fa-edit"></i></button><button id="uploadBtn" style="width\
-:33px;" type="button" class="btn" ng-click="grid.appScope.uploadReports(row.entity)"><i class="fa fa-upload"></i></button>'}
+            {name: 'actions', enableFiltering: false, displayName: 'Actions', width:122, cellTemplate: '<button id="viewBtn" type="button" cl\
+ass="btn" ng-click="grid.appScope.viewReports(row.entity)"><i class="fa fa-eye"></i></button><button id="editBtn" type="button" class="btn" n\
+g-click="grid.appScope.editWorkshop(row.entity)"><i class="fa fa-edit"></i></button><button id="uploadBtn" type="button" class="btn" ng-click\
+="grid.appScope.uploadReports(row.entity)"><i class="fa fa-upload"></i></button>'}
+
+
         ],
         enableGridMenu: true,
         enableSelectAll: true,
