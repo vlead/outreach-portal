@@ -805,11 +805,11 @@ app.controller("nc-dashboard", function($scope, $http, dataFactory, $routeParams
 app.controller("workshop-history", function($scope, $http, $routeParams, dataFactory,$route, $window, uiGridConstants) {
   $scope.editWorkshop = function(row) {
         window.location.href = "#edit-workshop/" + row['id'];
+  };
+   $scope.viewReports = function(row) {
+        window.location.href = "#view-reports/" + row['id'];
     };
-    $scope.view = function(row) {
-        window.location.href = "#/one-workshop/" + row['id'];
-    };
-
+    
     $scope.uploadReports = function(row) {
         window.location.href = "#/upload-reports/" + row['id'];
     };
