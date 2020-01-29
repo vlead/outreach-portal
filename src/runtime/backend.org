@@ -165,7 +165,7 @@ config = {
 
 ** The Data Model
 *** ER Diagram
-    [[./diagrams/model-diagram.jpg][schema diagram]] 
+    [[../img/model-diagram.jpg][schema diagram]] 
 *** Name
      
     Name is an alphabetical string.
@@ -5975,7 +5975,10 @@ application = create_app(config)
     The model-diagram can be found below. This gives an overview of the
     relationships between different entities.
 
-    [[https://github.com/vlead/outreach-portal/blob/develop/src/diagrams/outreach-model-diagram.jpg][Model-diagram]] 
+    [[../img
+
+
+/model-diagram.jpg][Model-Diagram]] 
 
 ** REST APIs to read and query data
    These are the set of REST APIs for read operations.

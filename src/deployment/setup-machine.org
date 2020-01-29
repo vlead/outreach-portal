@@ -1,0 +1,101 @@
+#+TITLE: Set up the Machine
+#+AUTHOR: VLEAD
+#+DATE: [2020-01-23 Thu]
+#+SETUPFILE: ./org-templates/level-0.org
+#+TAGS: boilerplate(b)
+#+EXCLUDE_TAGS: boilerplate
+#+OPTIONS: ^:nil
+
+* Introduction
+This document implements the setting up of the machine with
+all the dependencies and later installs the outreach
+application.
+
+* Design
+Ansible is used to configure the machine.  The configuration
+is split into different steps:
+1. dependencies like make, git are installed.
+2. application dependencies like mysql, flask etc are
+   installed.
+3. the application is configured, like setting the web
+   server, google oauth tokens etc.
+
+* Code Layout
+  - site.yaml
+    - roles
+      - common-vars
+      - install-build-dependencies
+        - tasks
+          - main.yaml
+        - templates
+          - 
+        - meta
+          - main.yaml
+      - install-application-dependencies
+      - configure-application
+
+* Build Dependencies
+[[https://askubuntu.com/questions/297170/how-to-install-emacs-24-3-on-ubuntu][emacs]] is used to build the application.  The application
+code is version controlled using [[https://askubuntu.com/questions/571549/git-1-7-9-5-upgrade-to-current-release-of-git-2-x-on-ubuntu-12-04][git]].
+
+#+NAME: install-build-dependencies
+#+BEGIN_SRC yaml
+---
+- name: installs emacs 
+  yum:
+    name: emacs
+    state: present
+
+- name: installs git
+  yum:
+    name: git
+    state: present
+
+- name: installs make
+  yum:
+    name: make
+    state: present
+
+#+END_SRC
+
+* Application Dependencies
+The application is built using =python=.  It uses =mysql=
+database.  =apache= web server serves the application.
+
+** Install mysql server
+   =mysql= server with the version =5.5= is installed. 
+* Hosts
+#+NAME: hosts
+#+BEGIN_SRC yaml
+[base_machine]
+localhost
+
+#+END_SRC
+
+* Driver
+#+NAME: driver
+#+BEGIN_SRC yaml
+---
+
+- hosts: base_machine
+  roles:
+  - role: install-build-dependencies
+
+
+#+END_SRC
+
+* Tangle
+** Build Dependecies
+#+BEGIN_SRC yaml :tangle roles/tasks/install-build-dependencies.yaml :noweb yes :eval no
+<<install-build-dependencies>>
+#+END_SRC
+
+** Hosts
+#+BEGIN_SRC yaml :tangle hosts :noweb yes :eval no
+<<hosts>>
+#+END_SRC
+
+** Driver
+#+BEGIN_SRC yaml :tangle site.yaml :noweb yes :eval no
+<<driver>>
+#+END_SRC

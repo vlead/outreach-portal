@@ -1,5 +1,6 @@
 * Introduction
-  This document captures the Phase 3 status of outreach portal as on October 31, 2019.
+  This document captures the Phase 3 status of outreach
+  portal as on October 31, 2019.
 * Enhancements and Bugs List
 |------+---------+-------------------------------+-------------------------------+--------------------+------------+--------------|
 | S.no | Version | Enhancements                  | Bugs                          | No of Enhancements | No of Bugs | Release Date |

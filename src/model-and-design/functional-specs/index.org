@@ -12,10 +12,10 @@ This document enlists the detail functional specifications
 of the outreach portal enhancements.
 
 * Purpose
-The Functional Specification Document is a document that
-provides detailed information on how the application/system
-should work on implementation of the requirements. This
-document is created based on the high-level requirements.
+Functional Specifications provide detailed information on
+how the application/system should work on implementation of
+the requirements. This document is created based on the
+high-level requirements.
  
 * Functional Specifications
 ** Specification 1 (Adding Nodal Coordinators contact details)
@@ -26,10 +26,10 @@ be able to add contact details of the Nodal coordinator.
 *** Existing Feature for Reference
 At present this is the form used by OC's(Outreach
 Coordinators) to create a NC(Nodal Coordinator)
-[[images/nodal-coordinators-form.png]]
+[[img/nodal-coordinators-form.png]]
 
 This is the how the NC details on the page looks
-[[images/nodal-coordinators-details.png]]
+[[img/nodal-coordinators-details.png]]
 
 *** User Interface Requirements 
 - Login as OC(Outreach Coordinator) the application should
@@ -98,7 +98,7 @@ Data to be shown in specific user dashboard is given below:
 - Overall Outreach Coordinator: All applicable for PIC + PIC wise usage
 
 *** Existing Feature for Reference
-[[images/oc-dashboard.png]]
+[[img/oc-dashboard.png]]
 
 *** User Interface Requirements
 - User logged in as NC/OC/admin should be able to view the
@@ -132,7 +132,7 @@ view with the features like filtering, sorting, exporting,
 pagination etc.,
 
 *** Existing feature for Reference
-[[images/workshops-data.png]]
+[[img/workshops-data.png]]
 
 *** User Interface Requirements
 - This feature should be implemented on with and without
