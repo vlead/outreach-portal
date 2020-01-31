@@ -12,7 +12,7 @@ mkdir -p /root/tmp/installation-scripts
 make -k build
 mkdir -p /root/tmp/installation-scripts
 rsync -a build/code/runtime /root/tmp/installation-scripts/
-rsync -a build/code/deployment/scripts /root/tmp/installation-scripts/
+rsync -a build/code/deployment /root/tmp/installation-scripts/
 (cd build/code/deployment; ansible-playbook -i hosts site.yaml)
 
 
