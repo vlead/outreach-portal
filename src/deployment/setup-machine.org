@@ -1,4 +1,4 @@
-#+TITLE: Set up the Machine
+#+TITLE: Set up the Machine to run Outreach Portal
 #+AUTHOR: VLEAD
 #+DATE: [2020-01-23 Thu]
 #+SETUPFILE: ./org-templates/level-0.org
@@ -7,7 +7,7 @@
 #+OPTIONS: ^:nil
 
 * Introduction
-This document implements the setting up of the machine with
+This document implements the setting up of a machine with
 all the dependencies and later installs the outreach
 application.
 
@@ -18,22 +18,96 @@ is split into different steps:
 2. application dependencies like mysql, flask etc are
    installed.
 3. the application is configured, like setting the web
-   server, google oauth tokens etc.
+   server, google oauth tokens etc are set up.
 
+* Initialization
+  These are the initial steps executed on the machine to
+  bootstrap the machine for installing and configuring the
+  outreach portal application.
+
+  1. Create [[https://stackoverflow.com/questions/10767488/automate-ssh-keygen-t-rsa-so-it-does-not-ask-for-a-passphrase][ssh keys]]
+  2. Copy the public key to the authorized_keys
+  3. Install Ansible
+  4. Create a directory to save the installation scripts
+
+#+NAME: init
+#+BEGIN_SRC sh
+ssh-keygen -f /root/.ssh/id_rsa -t rsa -N ''
+cat /root/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys
+
+apt-add-repository -y ppa:ansible/ansible
+apt-get -y update
+apt-get -y install ansible
+mkdir -p /root/tmp/installation-scripts
+
+#+END_SRC
+
+* Get the code
+#+BEGIN_SRC sh :tangle ../get.sh
+#!/bin/bash
+BUILD_MACHINE_IP=10.200.118.1
+CODE_PATH=/home/travula/projects/vlead-projects/github/outreach-portal/build/code
+USER_NAME=travula
+
+rm -rf runtime
+rm -rf deployment
+rsync -a --progress $USER_NAME@${BUILD_MACHINE_IP}:${CODE_PATH}/ .
+
+#+END_SRC
 * Code Layout
   - site.yaml
     - roles
       - common-vars
       - install-build-dependencies
-        - tasks
-          - main.yaml
-        - templates
-          - 
-        - meta
-          - main.yaml
       - install-application-dependencies
       - configure-application
 
+* Common Vars
+  All configuration variables are defined here.
+#+NAME: common-vars
+#+BEGIN_SRC yaml
+---
+mysql_user: "root"
+mysql_password: "root"
+mysql_server_name: "localhost"
+mysql_db_name: "outreach"
+
+db_dump_dir: "/root/db_dump"
+alerts_email_id: "alerts@vlabs.ac.in"
+workshop_files_dir: "/var/www/runtime/static/uploads"
+backup_machine: "10.200.118.1"
+
+git_repo: "ppa:git-core/ppa"
+emacs24_repo: "ppa:cassou/emacs"
+
+installation_scripts_loc: "/root/tmp/installation-scripts"
+app_config_file: "/var/www/runtime/config.py"
+
+runtime_loc: '{{ installation_scripts_loc }}/runtime'
+scripts_loc: '{{ installation_scripts_loc }}/deployment/scripts'
+
+build_dependency_pkgs:
+  - emacs24
+  - emacs24-el
+  - emacs24-common-non-dfsg
+  - git
+  - make
+
+ubuntu_mysql_pkgs:
+  - mysql-server
+  - mysql-client
+  - python-mysqldb
+  - libmysqlclient-dev
+
+application_dependencies:
+  - python-dev
+  - libmysqld-dev
+  - python-setuptools
+  - apache2
+  - libapache2-mod-wsgi
+  - libapache2-modsecurity
+
+#+END_SRC
 * Build Dependencies
 [[https://askubuntu.com/questions/297170/how-to-install-emacs-24-3-on-ubuntu][emacs]] is used to build the application.  The application
 code is version controlled using [[https://askubuntu.com/questions/571549/git-1-7-9-5-upgrade-to-current-release-of-git-2-x-on-ubuntu-12-04][git]].
@@ -41,29 +115,773 @@ code is version controlled using [[https://askubuntu.com/questions/571549/git-1-
 #+NAME: install-build-dependencies
 #+BEGIN_SRC yaml
 ---
-- name: installs emacs 
-  yum:
-    name: emacs
-    state: present
 
-- name: installs git
-  yum:
-    name: git
-    state: present
+- name: install a source repo for git
+  apt_repository:
+    repo: "{{ git_repo }}"
 
-- name: installs make
-  yum:
-    name: make
-    state: present
+- name: install a source repo for emacs 24
+  apt_repository:
+    repo: "{{ emacs24_repo }}"
+
+- name: update
+  apt:
+    update_cache: yes
+
+- name: Installs all the dependencies requires for build
+  apt: name={{ item }} state=present
+  loop: "{{ build_dependency_pkgs }}"
 
 #+END_SRC
 
 * Application Dependencies
 The application is built using =python=.  It uses =mysql=
 database.  =apache= web server serves the application.
+** Install and configure Mysql
+   =mysql= is installed, password is set and anonymous users
+   and redundant databases are removed. [[https://github.com/arbabnazar/ansible-roles/blob/master/LEMP/tasks/mysql.yml][ref-1]], [[https://docs.ansible.com/ansible/latest/modules/mysql_user_module.html][ref-2]]
+*** Install Mysql
+#+NAME: install-mysql
+#+BEGIN_SRC yaml
+- name: Install  MySQL packages
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ ubuntu_mysql_pkgs }}"
 
-** Install mysql server
-   =mysql= server with the version =5.5= is installed. 
+#+END_SRC
+
+*** Set the [[https://www.techrepublic.com/article/how-to-set-change-and-recover-a-mysql-root-password/][password]] for the database.  
+    The password is set by executing a [[https://docs.ansible.com/ansible/latest/modules/shell_module.html][shell]] command.
+#+NAME: mysql-set-password
+#+BEGIN_SRC yaml
+- name: Update MySQL password for the root user
+  shell: mysqladmin -u root password "{{ mysql_password }}"
+
+#+END_SRC
+
+*** Copy the password to a config file
+ Copying the user and password to =/root/my.cnf= will allow
+ executing mysql commands [[https://easyengine.io/tutorials/mysql/mycnf-preference/][without]] providing user and password
+ with =-u= and =-p= options.
+
+#+NAME: save-mysql-pass
+#+BEGIN_SRC yaml
+- name: Copy the templates to their respestive destination
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root 
+    group: root 
+    mode: "{{ item.mode }}"
+  loop:
+    - { src: 'root.cnf.j2', dest: '/root/.my.cnf', mode: '600' }
+  notify:
+    - Restart MySQL
+
+#+END_SRC
+*** Remove anonymous users and test database
+#+NAME: remove-anonymous-users
+#+BEGIN_SRC yaml
+- name: Ensure Anonymous user(s) are not in the database
+  mysql_user:
+    name: ''
+    host_all: yes
+    state: absent
+ 
+- name: Remove the test database
+  mysql_db:
+    name: test
+    state: absent
+  notify:
+    - Restart MySQL 
+
+#+END_SRC
+*** Create the root password template
+    This template is set up for copying the right values when
+    it is copied to =~/.my.cnf=
+#+NAME: mysql-pass-template
+#+BEGIN_SRC yaml
+[client]
+user=root
+password={{ mysql_password }}
+
+#+END_SRC
+*** Handler to restart mysql
+#+NAME: restart-mysql
+#+BEGIN_SRC yaml
+- name: Restart MySQL
+  service:
+    name: mysql
+    state: restarted
+
+#+END_SRC
+** Install Pip
+   Pip is package installer for python.  Pip is installed
+   from a tar file to install a specific version - =9.0.1=.
+*** Install pip from a tar file
+#+NAME: install-pip-template
+#+BEGIN_SRC sh
+echo "Installing PIP"
+apt-get remove -y python-pip
+apt-get purge python-pip
+mkdir -p /root/tmp/pip
+cd /root/tmp/pip
+wget https://pypi.python.org/packages/11/b6/abcb525026a4be042b486df43905d6893fb04f05aac21c32c638e939e447/pip-9.0.1.tar.gz
+tar xvf pip-9.0.1.tar.gz
+cd pip-9.0.1
+python setup.py install
+
+if [ $? -ne 0 ]; then
+  echo "FATAL: PIP installation failed!"
+  exit 1;
+fi
+
+rm -rf /root/tmp/pip
+
+hash -r
+#+END_SRC
+
+*** Copy the template to a location
+    Copy the installation script before it is executed. 
+#+NAME: copy-pip-script
+#+BEGIN_SRC yaml
+- name: Copy the pip installation script
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root 
+    group: root 
+    mode: "{{ item.mode }}"
+  loop:
+    - { src: 'install-pip.sh', dest: '{{ installation_scripts_loc }}/install-pip.sh', mode: '755' }
+
+#+END_SRC
+
+*** Execute the pip installation script
+#+NAME: execute-pip-script
+#+BEGIN_SRC yaml
+- name: Install Pip
+  shell: ./install-pip.sh
+  args:
+    chdir: "{{ installation_scripts_loc }}"
+
+#+END_SRC
+nstall apache and other dependencies
+*** Install the packages
+   Apache server, apache mod wsgi, python setup tools,
+   mysql-dev libraries and python dev packages are
+   installed.
+#+NAME: install-apache-and-other-dependencies
+#+BEGIN_SRC yaml
+- name: Install app dependency packages
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ application_dependencies }}"
+
+#+END_SRC
+
+** Install oursql database connectivity driver
+*** Installation script
+#+NAME: oursql-install-script
+#+BEGIN_SRC sh
+mkdir -p /root/tmp/oursql
+cd /root/tmp/oursql
+wget https://pypi.python.org/packages/8c/88/9f53a314a2af6f56c0a1249c5673ee384b85dc791bac5c1228772ced3502/oursql-0.9.3.2.tar.gz#md5=ade5959a6571b1626966d47f3ab2d315
+tar xvf oursql-0.9.3.2.tar.gz
+cd oursql-0.9.3.2
+python setup.py install
+
+rm -rf /root/tmp/oursql
+
+#+END_SRC
+*** Copy the template to a location
+    Copy the installation script before it is executed. 
+#+NAME: copy-oursql-script
+#+BEGIN_SRC yaml
+- name: Copy the oursql installation script
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root 
+    group: root 
+    mode: "{{ item.mode }}"
+  loop:
+    - { src: 'install-oursql.sh', dest: '{{ installation_scripts_loc }}/install-oursql.sh', mode: '755' }
+
+#+END_SRC
+
+*** Execute the oursql installation script
+#+NAME: execute-oursql-script
+#+BEGIN_SRC yaml
+- name: Install oursql
+  shell: ./install-oursql.sh
+  args:
+    chdir: "{{ installation_scripts_loc }}"
+
+#+END_SRC
+
+** Install other python packages using pip
+#+NAME: install-other-pip-packages
+#+BEGIN_SRC yaml
+- name: Install pip packages
+  shell: pip install Flask Flask-SQLAlchemy requests flask-cors flask-testing Flask-OAuthlib
+
+#+END_SRC
+* Configuration
+** Configure apache2 server
+*** =apache2.conf= template
+#+NAME: apache-conf-template
+#+BEGIN_SRC text
+#
+# Based upon the NCSA server configuration files originally by Rob McCool.
+#
+# This is the main Apache server configuration file.  It contains the
+# configuration directives that give the server its instructions.
+# See http://httpd.apache.org/docs/2.2/ for detailed information about
+# the directives.
+#
+# Do NOT simply read the instructions in here without understanding
+# what they do.  They're here only as hints or reminders.  If you are unsure
+# consult the online docs. You have been warned.  
+#
+# The configuration directives are grouped into three basic sections:
+#  1. Directives that control the operation of the Apache server process as a
+#     whole (the 'global environment').
+#  2. Directives that define the parameters of the 'main' or 'default' server,
+#     which responds to requests that aren't handled by a virtual host.
+#     These directives also provide default values for the settings
+#     of all virtual hosts.
+#  3. Settings for virtual hosts, which allow Web requests to be sent to
+#     different IP addresses or hostnames and have them handled by the
+#     same Apache server process.
+#
+# Configuration and logfile names: If the filenames you specify for many
+# of the server's control files begin with "/" (or "drive:/" for Win32), the
+# server will use that explicit path.  If the filenames do *not* begin
+# with "/", the value of ServerRoot is prepended -- so "foo.log"
+# with ServerRoot set to "/etc/apache2" will be interpreted by the
+# server as "/etc/apache2/foo.log".
+#
+
+### Section 1: Global Environment
+#
+# The directives in this section affect the overall operation of Apache,
+# such as the number of concurrent requests it can handle or where it
+# can find its configuration files.
+#
+
+#
+# ServerRoot: The top of the directory tree under which the server's
+# configuration, error, and log files are kept.
+#
+# NOTE!  If you intend to place this on an NFS (or otherwise network)
+# mounted filesystem then please read the LockFile documentation (available
+# at <URL:http://httpd.apache.org/docs/2.2/mod/mpm_common.html#lockfile>);
+# you will save yourself a lot of trouble.
+#
+# Do NOT add a slash at the end of the directory path.
+#
+#ServerRoot "/etc/apache2"
+ServerName localhost
+
+#
+# The accept serialization lock file MUST BE STORED ON A LOCAL DISK.
+#
+LockFile ${APACHE_LOCK_DIR}/accept.lock
+
+#
+# PidFile: The file in which the server should record its process
+# identification number when it starts.
+# This needs to be set in /etc/apache2/envvars
+#
+PidFile ${APACHE_PID_FILE}
+
+#
+# Timeout: The number of seconds before receives and sends time out.
+#
+Timeout 300
+
+#
+# KeepAlive: Whether or not to allow persistent connections (more than
+# one request per connection). Set to "Off" to deactivate.
+#
+KeepAlive On
+
+#
+# MaxKeepAliveRequests: The maximum number of requests to allow
+# during a persistent connection. Set to 0 to allow an unlimited amount.
+# We recommend you leave this number high, for maximum performance.
+#
+MaxKeepAliveRequests 100
+
+#
+# KeepAliveTimeout: Number of seconds to wait for the next request from the
+# same client on the same connection.
+#
+KeepAliveTimeout 5
+
+##
+## Server-Pool Size Regulation (MPM specific)
+## 
+
+# prefork MPM
+# StartServers: number of server processes to start
+# MinSpareServers: minimum number of server processes which are kept spare
+# MaxSpareServers: maximum number of server processes which are kept spare
+# MaxClients: maximum number of server processes allowed to start
+# MaxRequestsPerChild: maximum number of requests a server process serves
+<IfModule mpm_prefork_module>
+    StartServers          5
+    MinSpareServers       5
+    MaxSpareServers      10
+    MaxClients          150
+    MaxRequestsPerChild   0
+</IfModule>
+
+# worker MPM
+# StartServers: initial number of server processes to start
+# MinSpareThreads: minimum number of worker threads which are kept spare
+# MaxSpareThreads: maximum number of worker threads which are kept spare
+# ThreadLimit: ThreadsPerChild can be changed to this maximum value during a
+#              graceful restart. ThreadLimit can only be changed by stopping
+#              and starting Apache.
+# ThreadsPerChild: constant number of worker threads in each server process
+# MaxClients: maximum number of simultaneous client connections
+# MaxRequestsPerChild: maximum number of requests a server process serves
+<IfModule mpm_worker_module>
+    StartServers          2
+    MinSpareThreads      25
+    MaxSpareThreads      75 
+    ThreadLimit          64
+    ThreadsPerChild      25
+    MaxClients          150
+    MaxRequestsPerChild   0
+</IfModule>
+
+# event MPM
+# StartServers: initial number of server processes to start
+# MinSpareThreads: minimum number of worker threads which are kept spare
+# MaxSpareThreads: maximum number of worker threads which are kept spare
+# ThreadsPerChild: constant number of worker threads in each server process
+# MaxClients: maximum number of simultaneous client connections
+# MaxRequestsPerChild: maximum number of requests a server process serves
+<IfModule mpm_event_module>
+    StartServers          2
+    MinSpareThreads      25
+    MaxSpareThreads      75 
+    ThreadLimit          64
+    ThreadsPerChild      25
+    MaxClients          150
+    MaxRequestsPerChild   0
+</IfModule>
+
+# These need to be set in /etc/apache2/envvars
+User ${APACHE_RUN_USER}
+Group ${APACHE_RUN_GROUP}
+
+#
+# AccessFileName: The name of the file to look for in each directory
+# for additional configuration directives.  See also the AllowOverride
+# directive.
+#
+
+#AccessFileName .htaccess
+
+#
+# The following lines prevent .htaccess and .htpasswd files from being 
+# viewed by Web clients. 
+#
+<Files ~ "^\.ht">
+    Order allow,deny
+    Deny from all
+    Satisfy all
+</Files>
+
+#
+# DefaultType is the default MIME type the server will use for a document
+# if it cannot otherwise determine one, such as from filename extensions.
+# If your server contains mostly text or HTML documents, "text/plain" is
+# a good value.  If most of your content is binary, such as applications
+# or images, you may want to use "application/octet-stream" instead to
+# keep browsers from trying to display binary files as though they are
+# text.
+#
+# It is also possible to omit any default MIME type and let the
+# client's browser guess an appropriate action instead. Typically the
+# browser will decide based on the file's extension then. In cases
+# where no good assumption can be made, letting the default MIME type
+# unset is suggested  instead of forcing the browser to accept
+# incorrect  metadata.
+#
+DefaultType None
+
+
+#
+# HostnameLookups: Log the names of clients or just their IP addresses
+# e.g., www.apache.org (on) or 204.62.129.132 (off).
+# The default is off because it'd be overall better for the net if people
+# had to knowingly turn this feature on, since enabling it means that
+# each client request will result in AT LEAST one lookup request to the
+# nameserver.
+#
+HostnameLookups Off
+
+# ErrorLog: The location of the error log file.
+# If you do not specify an ErrorLog directive within a <VirtualHost>
+# container, error messages relating to that virtual host will be
+# logged here.  If you *do* define an error logfile for a <VirtualHost>
+# container, that host's errors will be logged there and not here.
+#
+ErrorLog ${APACHE_LOG_DIR}/error.log
+
+#
+# LogLevel: Control the number of messages logged to the error_log.
+# Possible values include: debug, info, notice, warn, error, crit,
+# alert, emerg.
+#
+LogLevel warn
+
+# Include module configuration:
+Include mods-enabled/*.load
+Include mods-enabled/*.conf
+
+# Include all the user configurations:
+Include httpd.conf
+
+# Include ports listing
+Include ports.conf
+
+#
+# The following directives define some format nicknames for use with
+# a CustomLog directive (see below).
+# If you are behind a reverse proxy, you might want to change %h into %{X-Forwarded-For}i
+#
+LogFormat "%v:%p %h %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\"" vhost_combined
+LogFormat "%h %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\"" combined
+LogFormat "%h %l %u %t \"%r\" %>s %O" common
+LogFormat "%{Referer}i -> %U" referer
+LogFormat "%{User-agent}i" agent
+
+# Include of directories ignores editors' and dpkg's backup files,
+# see README.Debian for details.
+
+# Include generic snippets of statements
+Include conf.d/
+
+# Include the virtual host configurations:
+Include sites-enabled/
+
+<Directory />
+    Options FollowSymLinks
+    AllowOverride  All
+</Directory>
+<Directory /var/www/>
+    Options Indexes FollowSymLinks MultiViews
+    AllowOverride all
+    Order allow,deny
+    Allow from all
+</Directory>
+
+#+END_SRC
+*** =default= template
+#+NAME: apache-default-template
+#+BEGIN_SRC text
+<VirtualHost *:80>
+        # The ServerName directive sets the request scheme, hostname and port that
+        # the server uses to identify itself. This is used when creating
+        # redirection URLs. In the context of virtual hosts, the ServerName
+        # specifies what hostname must appear in the request's Host: header to
+        # match this virtual host. For the default virtual host (this file) this
+        # value is not decisive as it is used as a last resort host regardless.
+        # However, you must set it for any further virtual host explicitly.
+        #ServerName www.example.com
+
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www
+
+        # Available loglevels: trace8, ..., trace1, debug, info, notice, warn,
+        # error, crit, alert, emerg.
+        # It is also possible to configure the loglevel for particular
+        # modules, e.g.
+        #LogLevel info ssl:warn
+
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+        # For most configuration files from conf-available/, which are
+        # enabled or disabled at a global level, it is possible to
+        # include a line for only one particular virtual host. For example the
+        # following line enables the CGI configuration for this host only
+        # after it has been globally disabled with "a2disconf".
+        #Include conf-available/serve-cgi-bin.conf
+WSGIScriptAlias / /var/www/runtime/outreach.wsgi
+</VirtualHost>
+
+#+END_SRC
+*** Copy =apache2.conf= to the right location
+#+NAME: copy-apache2-conf
+#+BEGIN_SRC yaml
+- name: Copy apache2.conf to the right location
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root 
+    group: root 
+    mode: "{{ item.mode }}"
+  loop:
+    - { src: 'apache2.conf', dest: '/etc/apache2/apache2.conf', mode: '644' }
+
+#+END_SRC
+
+*** Copy =default= to the right location
+#+NAME: copy-default
+#+BEGIN_SRC yaml
+- name: Copy default to the right location
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root 
+    group: root 
+    mode: "{{ item.mode }}"
+  loop:
+    - { src: 'default', dest: '/etc/apache2/sites-available/default', mode: '644' }
+
+#+END_SRC
+
+*** Enable [[https://docs.ansible.com/ansible/latest/modules/apache2_module_module.html][WSGI mode]] for apache
+#+NAME: enable-wsgi
+#+BEGIN_SRC yaml
+- apache2_module:
+    state: present
+    name: wsgi
+
+#+END_SRC
+
+*** Enable headers
+#+NAME: enable-headers
+#+BEGIN_SRC yaml
+- apache2_module:
+    state: present
+    name: headers
+
+#+END_SRC
+
+*** Enable rewrite
+#+NAME: enable-rewrite
+#+BEGIN_SRC yaml
+- apache2_module:
+    state: present
+    name: rewrite
+
+#+END_SRC
+
+*** Re-start apache2
+#+NAME: restart-apache2
+#+BEGIN_SRC yaml
+- name: Restart apache2
+  service:
+    name: apache2
+    state: restarted
+
+#+END_SRC
+
+** Configure application
+   The application is configured by setting up the right
+   user and password for the database access.  Also the file
+   permissions are set right on the directories. 
+
+*** Template for creating directories and setting permissions
+    A directory is needed to store the workshop files.
+    Also, another directory is needed for saving the scripts
+    which are installed in the crontab.
+#+NAME: create-dirs-template
+#+BEGIN_SRC sh
+
+chmod -R 755 /var/www
+rm -rf /var/www/*
+
+rsync -a "{{ runtime_loc }}" /var/www
+chmod -R 755 /var/www/runtime
+
+rsync -a "{{ scripts_loc }}" /var/www
+chmod -R 755 /var/www/scripts
+
+mkdir /var/www/logs
+chmod -R 777 /var/www/logs
+
+mkdir /var/www/runtime/static/uploads
+chmod -R 777 /var/www/runtime/static/uploads
+
+#+END_SRC
+*** Copy =create-dirs.sh= to the right location
+#+NAME: copy-dirs-template
+#+BEGIN_SRC yaml
+- name: Copy create-dirs.sh to the right location
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root 
+    group: root 
+    mode: "{{ item.mode }}"
+  loop:
+    - { src: 'create-dirs.sh', dest: '{{ installation_scripts_loc }}/create-dirs.sh', mode: '755' }
+
+#+END_SRC
+
+
+*** Execute =create-dirs.sh=
+#+NAME: execute-create-dirs
+#+BEGIN_SRC yaml
+- name: Create the required directories
+  shell: ./create-dirs.sh
+  args:
+    chdir: "{{ installation_scripts_loc }}"
+
+#+END_SRC
+*** Set the config parameters
+    Here different parameters are configured. 
+#+NAME: configure-params
+#+BEGIN_SRC yaml
+- name: set the db user name
+  replace:
+    path: "{{ app_config_file }}"
+    regexp: '<user_id>'
+    replace: "{{ mysql_user }}"
+
+- name: set the db password
+  replace:
+    path: "{{ app_config_file }}"
+    regexp: '<password>'
+    replace: "{{ mysql_password }}"
+
+- name: set the db server name
+  replace:
+    path: "{{ app_config_file }}"
+    regexp: '<server_name>'
+    replace: "{{ mysql_server_name }}"
+
+- name: set the db name
+  replace:
+    path: "{{ app_config_file }}"
+    regexp: '<db_name>'
+    replace: "{{ mysql_db_name }}"
+
+#+END_SRC
+* Setup DB
+  The steps involved are:
+  1. Create the database
+  2. Create the tables
+  3. Create the stored procedures
+
+** Tasks
+#+NAME: setup-db-tasks
+#+BEGIN_SRC yaml
+- name: Create the database
+  shell: cat /var/www/scripts/create-database.sql | mysql -u {{ mysql_user }} -p{{ mysql_password }}
+
+- name: Create tables
+  shell: PYTHONPATH=/var/www/runtime python /var/www/scripts/db_setup.py
+
+- name: create stored procedures
+  shell: cat /var/www/scripts/procedures.sql | mysql -u {{ mysql_user }} -p{{ mysql_password }} {{ mysql_db_name }}
+
+#+END_SRC
+* Set up Crontab
+  Jobs are scheduled using crontab.  These jobs are loaded
+  from file.
+** Templates
+*** Db Dump Template
+#+NAME: db-dump-template
+#+BEGIN_SRC yaml
+
+DB_NAME="{{ mysql_db_name }}"
+DB_USER="{{ mysql_user }}"
+DB_PASS="{{ mysql_password }}"
+DUMP_DIR="{{ db_dump_dir }}"
+
+DATE_AND_TIME=`date +%F'!'%H'!'%M`
+DATE=`echo $DATE_AND_TIME | cut -d '!' -f1`
+HOUR=`echo $DATE_AND_TIME | cut -d '!' -f2`
+MINUTE=`echo $DATE_AND_TIME | cut -d '!' -f3`
+OUT_FILE_NAME="outreach-db-backup-"${DATE}"-"${HOUR}"-"${MINUTE}.sql
+
+# take the dump
+mkdir -p ${DUMP_DIR}
+rm -rf ${DUMP_DIR}/*
+mysqldump -u $DB_USER -p$DB_PASS $DB_NAME > ${DUMP_DIR}/${OUT_FILE_NAME}
+
+if [ $? -ne 0 ]; then
+  echo "Error: Something went wrong while taking db dump."
+  echo "Aborting backup."
+  exit 1;
+fi
+
+#+END_SRC
+*** Check disk space and alert template
+#+NAME: disk-space-alert-template
+#+BEGIN_SRC yaml
+#!/bin/bash
+CURRENT=$(df / | grep / | awk '{ print $5}' | sed 's/%//g')
+THRESHOLD=80
+
+if [ "$CURRENT" -gt "$THRESHOLD" ] ; then
+    mail -s 'Disk Space Alert for outreach'  {{ alerts_email_id }} << EOF
+Remaining free space on root partition for outreach is critically low. Used: $CURRENT%
+EOF
+fi
+
+#+END_SRC
+
+*** Backup workshop files template
+#+NAME: copy-files-template
+#+BEGIN_SRC yaml
+#!/bin/bash
+BACKUP_MACHINE="{{ backup_machine }}"
+FILES_DIR="{{ workshop_files_dir }}"
+rsync -avz --progress ${FILES_DIR}/ root@${BACKUP_MACHINE}:${FILES_DIR}/
+
+#+END_SRC
+
+*** Backup db dump template
+#+NAME: copy-db-dump-template
+#+BEGIN_SRC yaml
+#!/bin/bash
+BACKUP_MACHINE="{{ backup_machine }}"
+HOST_DUMP_DIR="{{ db_dump_dir }}"
+REMOTE_DUMP_DIR="{{ db_dump_dir }}"
+
+rsync -avz --progress ${HOST_DUMP_DIR}/ root@${BACKUP_MACHINE}:${REMOTE_DUMP_DIR}/
+
+#+END_SRC
+
+** Tasks
+*** Copy templates
+#+NAME: copy-templates
+#+BEGIN_SRC yaml
+- name: Copy templates to its destination
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root 
+    group: root 
+    mode: "{{ item.mode }}"
+  loop:
+    - { src: 'db-dump.j2', dest: '/var/www/scripts/generate-db-dump.sh', mode: '755' }
+    - { src: 'alert.j2', dest: '/var/www/scripts/check-disk-space-and-alert.sh', mode: '755' }
+    - { src: 'copy-workshop-files.j2', dest: '/var/www/scripts/copy-workshop-files.sh', mode: '755' }
+    - { src: 'copy-db-dump.j2', dest: '/var/www/scripts/copy-db-dump.sh', mode: '755' }
+
+#+END_SRC
+
+*** Create Contab
+#+NAME: create-crontab
+#+BEGIN_SRC yaml
+- name: set the crontab
+  shell: crontab /var/www/scripts/cronjobs.txt
+
+#+END_SRC
 * Hosts
 #+NAME: hosts
 #+BEGIN_SRC yaml
@@ -76,18 +894,220 @@ localhost
 #+NAME: driver
 #+BEGIN_SRC yaml
 ---
-
 - hosts: base_machine
   roles:
-  - role: install-build-dependencies
-
+  - role: install-mysql
+  - role: install-pip
+  - role: install-apache
+  - role: install-oursql
+  - role: install-python-packages
+  - role: configure-app
+  - role: setup-db
+  - role: configure-apache2
+  - role: setup-crontab
 
 #+END_SRC
 
 * Tangle
+** Common Vars
+#+BEGIN_SRC yaml :tangle roles/common-vars/vars/main.yaml :noweb yes :eval no
+<<common-vars>>
+#+END_SRC
+
 ** Build Dependecies
-#+BEGIN_SRC yaml :tangle roles/tasks/install-build-dependencies.yaml :noweb yes :eval no
+*** Tasks
+#+BEGIN_SRC yaml :tangle roles/install-build-dependencies/tasks/main.yaml :noweb yes :eval no
 <<install-build-dependencies>>
+#+END_SRC
+
+*** Variables
+#+BEGIN_SRC yaml :tangle roles/install-build-dependencies/meta/main.yaml :noweb yes :eval no
+dependencies:
+   - common-vars
+
+#+END_SRC
+
+** Mysql
+*** Tasks
+#+BEGIN_SRC yaml :tangle roles/install-mysql/tasks/main.yaml :noweb yes :eval no
+---
+<<install-mysql>>
+<<mysql-set-password>>
+<<save-mysql-pass>>
+<<remove-anonymous-users>>
+
+#+END_SRC
+*** Variables
+#+BEGIN_SRC yaml :tangle roles/install-mysql/meta/main.yaml :noweb yes :eval no
+dependencies:
+   - common-vars
+
+#+END_SRC
+*** Templates
+#+BEGIN_SRC yaml :tangle roles/install-mysql/templates/root.cnf.j2 :noweb yes :eval no
+<<mysql-pass-template>>
+#+END_SRC
+
+*** Handler
+#+BEGIN_SRC yaml :tangle roles/install-mysql/handlers/main.yaml :noweb yes :eval no
+<<restart-mysql>>
+#+END_SRC
+
+** Pip
+*** Tasks
+#+BEGIN_SRC yaml :tangle roles/install-pip/tasks/main.yaml :noweb yes :eval no
+---
+<<copy-pip-script>>
+<<execute-pip-script>>
+
+#+END_SRC
+*** Variables
+#+BEGIN_SRC yaml :tangle roles/install-pip/meta/main.yaml :noweb yes :eval no
+dependencies:
+   - common-vars
+
+#+END_SRC
+*** Templates
+#+BEGIN_SRC yaml :tangle roles/install-pip/templates/install-pip.sh :noweb yes :eval no
+<<install-pip-template>>
+#+END_SRC
+
+** Apache and other dependencies
+*** Tasks
+#+BEGIN_SRC yaml :tangle roles/install-apache/tasks/main.yaml :noweb yes :eval no
+---
+<<install-apache-and-other-dependencies>>
+
+#+END_SRC
+*** Variables
+#+BEGIN_SRC yaml :tangle roles/install-apache/meta/main.yaml :noweb yes :eval no
+dependencies:
+   - common-vars
+
+#+END_SRC
+
+** oursql
+*** Tasks
+#+BEGIN_SRC yaml :tangle roles/install-oursql/tasks/main.yaml :noweb yes :eval no
+---
+<<copy-oursql-script>>
+<<execute-oursql-script>>
+
+#+END_SRC
+*** Variables
+#+BEGIN_SRC yaml :tangle roles/install-oursql/meta/main.yaml :noweb yes :eval no
+dependencies:
+   - common-vars
+
+#+END_SRC
+*** Templates
+#+BEGIN_SRC yaml :tangle roles/install-oursql/templates/install-oursql.sh :noweb yes :eval no
+<<oursql-install-script>>
+#+END_SRC
+
+** Python packages
+*** Tasks
+#+BEGIN_SRC yaml :tangle roles/install-python-packages/tasks/main.yaml :noweb yes :eval no
+---
+<<install-other-pip-packages>>
+#+END_SRC
+*** Variables
+#+BEGIN_SRC yaml :tangle roles/install-python-packages/meta/main.yaml :noweb yes :eval no
+dependencies:
+   - common-vars
+
+#+END_SRC
+
+** Configure Apache2
+*** Tasks
+#+BEGIN_SRC yaml :tangle roles/configure-apache2/tasks/main.yaml :noweb yes :eval no
+---
+<<copy-apache2-conf>>
+<<copy-default>>
+<<enable-wsgi>>
+<<enable-headers>>
+<<enable-rewrite>>
+<<restart-apache2>>
+
+#+END_SRC
+*** Variables
+#+BEGIN_SRC yaml :tangle roles/configure-apache2/meta/main.yaml :noweb yes :eval no
+dependencies:
+   - common-vars
+
+#+END_SRC
+*** Templates
+#+BEGIN_SRC yaml :tangle roles/configure-apache2/templates/default :noweb yes :eval no
+<<apache-default-template>>
+#+END_SRC
+
+#+BEGIN_SRC yaml :tangle roles/configure-apache2/templates/apache2.conf :noweb yes :eval no
+<<apache-conf-template>>
+#+END_SRC
+
+** Configure Application
+*** Tasks
+#+BEGIN_SRC yaml :tangle roles/configure-app/tasks/main.yaml :noweb yes :eval no
+---
+<<copy-dirs-template>>
+<<execute-create-dirs>>
+<<configure-params>>
+
+#+END_SRC
+*** Variables
+#+BEGIN_SRC yaml :tangle roles/configure-app/meta/main.yaml :noweb yes :eval no
+dependencies:
+   - common-vars
+
+#+END_SRC
+*** Templates
+#+BEGIN_SRC yaml :tangle roles/configure-app/templates/create-dirs.sh :noweb yes :eval no
+<<create-dirs-template>>
+#+END_SRC
+
+** Set up DB
+*** Tasks
+#+BEGIN_SRC yaml :tangle roles/setup-db/tasks/main.yaml :noweb yes :eval no
+---
+<<setup-db-tasks>>
+
+#+END_SRC
+
+*** Variables
+#+BEGIN_SRC yaml :tangle roles/setup-db/meta/main.yaml :noweb yes :eval no
+dependencies:
+   - common-vars
+
+#+END_SRC
+
+** Set up crontab
+*** Tasks
+#+BEGIN_SRC yaml :tangle roles/setup-crontab/tasks/main.yaml :noweb yes :eval no
+---
+<<copy-templates>>
+<<create-crontab>>
+#+END_SRC
+*** Variables
+#+BEGIN_SRC yaml :tangle roles/setup-crontab/meta/main.yaml :noweb yes :eval no
+dependencies:
+   - common-vars
+
+#+END_SRC
+*** Templates
+#+BEGIN_SRC yaml :tangle roles/setup-crontab/templates/db-dump.j2 :noweb yes :eval no
+<<db-dump-template>>
+#+END_SRC
+
+#+BEGIN_SRC yaml :tangle roles/setup-crontab/templates/copy-db-dump.j2 :noweb yes :eval no
+<<copy-db-dump-template>>
+#+END_SRC
+
+#+BEGIN_SRC yaml :tangle roles/setup-crontab/templates/copy-workshop-files.j2 :noweb yes :eval no
+<<copy-files-template>>
+#+END_SRC
+
+#+BEGIN_SRC yaml :tangle roles/setup-crontab/templates/alert.j2 :noweb yes :eval no
+<<disk-space-alert-template>>
 #+END_SRC
 
 ** Hosts
@@ -98,4 +1118,8 @@ localhost
 ** Driver
 #+BEGIN_SRC yaml :tangle site.yaml :noweb yes :eval no
 <<driver>>
+#+END_SRC
+** Init
+#+BEGIN_SRC sh :tangle init.sh :noweb yes :eval no
+<<init>>
 #+END_SRC

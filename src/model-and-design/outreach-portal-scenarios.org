@@ -170,7 +170,7 @@
      - Virtual Labs Introduction presentation and College Report format
 
 ** Scenario 20 : Creating new workshops that can be modified by Outreach Coordinators
-   - Page 34 : Required following details to create new workshop
+    - Page 34 : Required following details to create new workshop
      - Name
      - Location
      - Participating institutes

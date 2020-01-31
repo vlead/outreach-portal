@@ -16,7 +16,8 @@ The dump of the database is taken every day at 1 minute past
 midnight
 #+NAME: create-dump
 #+BEGIN_SRC sh
-1 0 * * * sh /root/labs/outreach-portal/scripts/backup
+1 0 * * * sh /var/www/scripts/generate-db-dump.sh
+
 #+END_SRC
 
 ** Update Analytics
@@ -31,26 +32,27 @@ minutes.
 Run the alert generator every eight hours
 #+NAME: alert
 #+BEGIN_SRC sh
-1 */8 * * * sh /var/www/scripts/disk-space.sh
+1 */8 * * * sh /var/www/scripts/check-disk-space-and-alert.sh
 #+END_SRC
-
 
 ** Copy the files
 Copy the outreach files to the backup server every 4 hours
 #+NAME: copy-files
 #+BEGIN_SRC sh
-1 */4 * * * sh /var/www/scripts/copy-files.sh
+1 */4 * * * sh /var/www/scripts/copy-workshop-files.sh
+
 #+END_SRC
 
 ** Copy Dump
 #+NAME: copy-dump
 #+BEGIN_SRC sh
-10 0 * * * sh /var/www/scripts/copy-dump.sh
+10 0 * * * sh /var/www/scripts/copy-db-dump.sh
+
 #+END_SRC
 
 
 * Tangle
-#+BEGIN_SRC sh :tangle cronjobs :eval no :noweb yes
+#+BEGIN_SRC sh :tangle scripts/cronjobs.txt :eval no :noweb yes
 <<create-dump>>
 <<analytics>>
 <<alert>>

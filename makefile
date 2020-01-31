@@ -9,6 +9,7 @@ LITERATE_DIR=literate-tools
 ELISP_DIR=elisp
 ORG_DIR=org-templates
 STYLE_DIR=style
+BUILD_DIR=build
 CODE_DIR=build/code
 DOC_DIR=build/docs
 SRC_DIR=src
@@ -22,14 +23,15 @@ all:  build-with-lint
 
 clean:	
 	make -f tangle-make clean
+	rm -rf ${BUILD_DIR}
 
 init:
 	./init.sh
 
 build: init
 	make -f tangle-make -k all
-	rsync -a ${SRC_DIR}/static ${CODE_DIR}/src/
-	rsync -a ${SRC_DIR}/templates ${CODE_DIR}/src/
+	rsync -a ${SRC_DIR}/runtime/static ${CODE_DIR}/runtime/
+	rsync -a ${SRC_DIR}/runtime/templates ${CODE_DIR}/runtime/
 
 # get the latest commit hash and its subject line
 # and write that to the VERSION file
