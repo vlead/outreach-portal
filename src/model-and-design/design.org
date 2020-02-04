@@ -1,7 +1,7 @@
 #+TITLE: Design of Outreach Portal
 #+AUTHOR: VLEAD
 #+DATE: [2016-11-08 Tue]
-#+SETUPFILE: ./org-templates/level-0.org
+#+SETUPFILE: ../org-templates/level-1.org
 #+TAGS: boilerplate(b)
 #+EXCLUDE_TAGS: boilerplate
 #+OPTIONS: ^:nil

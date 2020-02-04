@@ -1,14 +1,49 @@
 
+* Deployment Steps
+  1. =wget= the sources from this [[https://github.com/outreach-portal][repo]].
+     #+BEGIN_EXAMPLE
+     wget https://github.com/vlead/outreach-portal/archive/master.zip
+     #+END_EXAMPLE
+  2. Install the program to unzip files
+     #+BEGIN_EXAMPLE
+     apt-get install unzip
+     #+END_EXAMPLE
+  3. unzip the sources
+     #+BEGIN_EXAMPLE
+     unzip master.zip
+     #+END_EXAMPLE
+  4. change directory to the unzipped sources
+     #+BEGIN_EXAMPLE
+     cd outreach-portal-master
+     #+END_EXAMPLE
+  5. Make =deploy.sh= executable
+     #+BEGIN_EXAMPLE
+     chmod +x deploy.sh
+     #+END_EXAMPLE
+  6. Set the backup server's IP address and app url
+     #+BEGIN_EXAMPLE
+     vi src/deployment/setup-machine.org
+     #+END_EXAMPLE
+     and search for =backup-machine= and set the right IP
+     address.  Similarly, search for =<app_url>= and set the
+     application url.
+  7. Run =deploy.sh>
+     #+BEGIN_EXAMPLE
+     ./deploy.sh
+     #+END_EXAMPLE
+
+
+
 * Post Installation steps
 
-  1. Set http_proxy, https_proxy and no_proxy in /etc/profile .
-#+BEGIN_EXAMPLE
-export http_proxy="http://proxy.iiit.ac.in:8080"
-#+END_EXAMPLE
-  2. Set http_proxy, https_proxy and no_proxy in /etc/environment
-  2. Change the APP_URL in file /var/www/src/config.py appropriately.
-#+BEGIN_EXAMPLE
-# APP_URL
-APP_URL = "http://10.2.57.1"
-#+END_EXAMPLE
+  1. Set the app url :: Open the file
+       =/var/www/runtime/config.py= and change the field
+       =APP_URL= to point to the right host name.
+
+  2. Set the google keys for authentication :: Open the file
+       =/var/www/runtime/config.py= and copy the right
+       values for the fields =CONSUMER_KEY= and
+       =CONSUMER_SECRET= from the google developer's
+       console.
+
 

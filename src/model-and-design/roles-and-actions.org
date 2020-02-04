@@ -1,0 +1,45 @@
+#+TITLE: Roles and allowed actions in Outreach Portal
+#+Author: VLEAD
+#+Date: [2015-10-30 Fri]
+#+PROPERTY: results output
+#+PROPERTY: exports code
+#+SETUPFILE: ../org-templates/level-1.org
+#+options: ^:nil
+
+
+* Introduction
+  This document lists out all the roles in the outreach portal and the
+  actions allowed to each role.  The intention is to have a clear
+  understanding with the client as well as internally among the team
+  members.
+
+  Please note that this document is work in progress and is not yet
+  agreed upon.
+
+* Roles and their allowed actions
+
+|----------------------+---------------------------------------------------------------------------------|
+| Roles                | Actions allowed                                                                 |
+|----------------------+---------------------------------------------------------------------------------|
+| Admin                | 1. Add/Edit/Delete outreach coordinators                                        |
+|                      | 2. Add/Edit/Delete documents like guidance, presentation and workshop materials |
+|                      | 3. View the dashboard                                                           |
+|----------------------+---------------------------------------------------------------------------------|
+| Outreach Coordinator | 1. Add/Edit/Delete nodal coordinators and nodal centers                         |
+|                      | 2. Add/Edit/Delete workshop details conducted by OC                             |
+|                      | 3. Approve/Reject a workshop report associated with a workshop and comment      |
+|                      | 4. Add/Edit/Delete nodal centres associated with nodal coordinators             |
+|                      | 5. Set targets for nodal coordinators                                           |
+|                      | 6. Add/Update old workshops and its details                                     |
+|                      | 7. Create/Edit/Cancel new workshops and its details                             |
+|                      | 8. Add workshop documents (needs to be approved by the admin)                   |
+|                      | 9.View and download documents uploaded by nodal coordinators.                   |
+|----------------------+---------------------------------------------------------------------------------|
+| Nodal Coordinator    | 1. Add/Edit/Cancel multiple workshops                                           |
+|                      | 2. Add/Edit/Delete workshop reports                                             |
+|                      | 3. Add/Edit/Delete workshop photos                                              |
+|                      | 4. Add feedback copies                                                          |
+|                      | 5. View and download documents uploaded by admin and outreach coordinator       |
+|                      | 6. Add feedback (positive and negative)                                         |
+|----------------------+---------------------------------------------------------------------------------|
+

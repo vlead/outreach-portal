@@ -1,6 +1,7 @@
 #+TITLE: Outreach Portal Version V2.4.0
 #+AUTHOR: VLEAD
 #+DATE: [2017-04-13 Tue]
+#+SETUPFILE: ../org-templates/level-1.org
 
 * Introduction
   This document describes the release notes of =Outreach Portal=

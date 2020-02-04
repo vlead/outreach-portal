@@ -1,0 +1,8 @@
+* Commands
+#+BEGIN_EXAMPLE
+mysql -u root -proot outreach < ~/outreach.sql
+update users set email='travula@vlabs.ac.in' where id = 5;
+#+END_EXAMPLE
+
+* Keys
+

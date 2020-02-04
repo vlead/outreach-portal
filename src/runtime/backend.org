@@ -3,7 +3,7 @@
 #+DATE: [2015-10-27 Tue]
 #+PROPERTY: results output
 #+PROPERTY: exports code
-#+SETUPFILE: ./org-templates/level-0.org
+#+SETUPFILE: ../org-templates/level-1.org
 #+options: ^:nil
 
 * Introduction
@@ -25,7 +25,7 @@
 * Design and Implementation
 ** Some initialization and boilerplate code
 *** __init__
-#+BEGIN_SRC python :tangle src/__init__.py :eval no
+#+BEGIN_SRC python :tangle __init__.py :eval no
 print "src package"
 import db
 import app
@@ -38,7 +38,7 @@ print "test package"
 #+END_SRC
 
 *** Imports for Python AP
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
 # -*- coding: utf-8 -*-
 
 from collections import OrderedDict
@@ -101,7 +101,7 @@ class Entity(db.Model):
    APIs.  We are using Flask blueprints to make the API, and then we
    can plug this blueprint in our main application. [[http://flask.pocoo.org/docs/0.10/blueprints/][More on Flask
    blueprints]].
-#+BEGIN_SRC python :tangle src/api.py :eval no :noweb yes
+#+BEGIN_SRC python :tangle api.py :eval no :noweb yes
 # -*- coding: utf-8 -*-
 
 import os
@@ -165,12 +165,12 @@ config = {
 
 ** The Data Model
 *** ER Diagram
-    [[./diagrams/model-diagram.jpg][schema diagram]] 
+    [[../img/model-diagram.jpg][schema diagram]] 
 *** Name
      
     Name is an alphabetical string.
 
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
 class Name(object):
     def __init__(self, value):
         # if the string contains any non-alphabet and non-space character, raise
@@ -188,7 +188,7 @@ class Name(object):
      Email is a type as defined in RFC [[https://tools.ietf.org/html/rfc5321][5321]], [[https://tools.ietf.org/html/rfc5322][5322]] and [[https://tools.ietf.org/html/rfc6531][6531]].  Following
      is the constructor for this class.
 
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
 class Email(object):
     def __init__(self, value):
         if not re.search('[^@]+@[^@]+\.[^@]+', value):
@@ -236,7 +236,7 @@ class TestCustomTypes(TestCase):
      + Role Name
 
 **** Definition
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
 class Role(Entity):
 
     __tablename__ = 'roles'
@@ -253,7 +253,7 @@ class Role(Entity):
     role = Role(name=<instance of class Name>)
                     
 #+END_EXAMPLE
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def __init__(self, **kwargs):
         if 'name' not in kwargs:
             current_app.logger.debug("mandatory attribute `name` is missing")
@@ -298,7 +298,7 @@ class TestRole(TestCase):
 #+END_SRC
 **** Functions that operate on the Role domain
 ***** getRole: Id --> Role
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @staticmethod
     def get_by_id(id):
         current_app.logger.debug("get by Role id: %s"  % id)
@@ -314,7 +314,7 @@ class TestRole(TestCase):
 
 #+END_SRC
 ***** getAll: Nil --> set[Role]
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @staticmethod
     def get_all():
         current_app.logger.debug("get all rows of Role entity")
@@ -341,7 +341,7 @@ class TestRole(TestCase):
 
 #+END_SRC
 ***** getName: Role --> Name
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def get_name(self):
         current_app.logger.debug("get name of the Role: %s" % self.name)
         return self.name
@@ -357,7 +357,7 @@ class TestRole(TestCase):
 #+END_SRC
 
 ***** setName: Role, Name --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @typecheck(name=Name)
     def set_name(self, name):
         self.name = name.value
@@ -373,7 +373,7 @@ class TestRole(TestCase):
 #+END_SRC
 
 ***** to_client
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def to_client(self):
         return {
             'id': self.id,
@@ -404,7 +404,7 @@ class TestRole(TestCase):
      + Last Active
      + Intitue Name
 **** Definition
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
 class User(Entity):
 
     __tablename__ = 'users'
@@ -433,7 +433,7 @@ class User(Entity):
                 [,institute_name=str])
                                             
 #+END_EXAMPLE
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def __init__(self, **kwargs):
         if 'name' not in kwargs:
             current_app.logger.debug("mandatory attribute `name` is missing")
@@ -526,7 +526,7 @@ class TestUser(TestCase):
 #+END_SRC
 **** Functions that operate on the Role domain
 ***** getAll: Nil --> set[User]
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @staticmethod
     def get_all():
         current_app.logger.debug("get all rows of User entity")
@@ -556,7 +556,7 @@ class TestUser(TestCase):
         self.assertEqual("Admin", user_list[1].role.name)
 #+END_SRC
 ***** getUser: Id --> User
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @staticmethod
     def get_by_id(id):
         current_app.logger.debug("get by User id: %s"  % id)
@@ -574,7 +574,7 @@ class TestUser(TestCase):
 #+END_SRC
 
 ***** getName: User --> Name
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def get_name(self):
         current_app.logger.debug("get name of the User: %s" % self.name)
         return self.name
@@ -591,7 +591,7 @@ class TestUser(TestCase):
 #+END_SRC
 
 ***** getEmail: User --> Email
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def get_email(self):
         current_app.logger.debug("get email of the User: %s" % self.email)
         return self.email
@@ -608,7 +608,7 @@ class TestUser(TestCase):
 #+END_SRC
 
 ***** getPhone: User --> String
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def get_phone(self):
 	current_app.logger.debug("get phone number of the User: %s" % self.phone)
         return self.phone
@@ -627,7 +627,7 @@ class TestUser(TestCase):
 #+END_SRC
 
 ***** getInstituteName: User --> String
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def get_institute_name(self):
         current_app.logger.debug("get institute_name of the User: %s" % self.institute_name)
         return self.institute_name
@@ -646,7 +646,7 @@ class TestUser(TestCase):
 #+END_SRC
 
 ***** getRole: User --> Role
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def get_role(self):
         current_app.logger.debug("get role of the User: %s" % self.role)
         return self.role
@@ -663,7 +663,7 @@ class TestUser(TestCase):
 #+END_SRC
 
 ***** gettimeOfCreation: User --> Datetime
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def get_created(self):
         current_app.logger.debug("get time of creation of the User: %s" % self.created)
         return self.created
@@ -681,7 +681,7 @@ class TestUser(TestCase):
 #+END_SRC
 
 ***** getLastActive: User --> String
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def get_last_active(self):
         current_app.logger.debug("get last active time of the User: %s" % self.last_active)
         return self.last_active
@@ -700,7 +700,7 @@ class TestUser(TestCase):
 #+END_SRC
 
 ***** setName: User, Name --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @typecheck(name=Name)
     def set_name(self, name):
         self.name = name.value
@@ -720,7 +720,7 @@ class TestUser(TestCase):
 #+END_SRC
 
 ***** setEmail: User, Email --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @typecheck(email=Email)
     def set_email(self, email):
         self.email = email.value
@@ -740,7 +740,7 @@ class TestUser(TestCase):
 #+END_SRC
 
 ***** setPhone: User, Phone --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def set_phone(self, phone):
 	self.phone = phone
 #+END_SRC
@@ -758,7 +758,7 @@ class TestUser(TestCase):
 #+END_SRC
 
 ***** setInstituteName: User, InstituteName --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def set_institute_name(self, institute_name):
         self.institute_name = institute_name
 #+END_SRC
@@ -776,7 +776,7 @@ class TestUser(TestCase):
 #+END_SRC
 
 ***** setLastActive: User, Time --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def set_last_active(self, last_active):
         self.last_active = last_active
 #+END_SRC
@@ -794,7 +794,7 @@ class TestUser(TestCase):
 #+END_SRC
 
 ***** set timeOfCreation: User, Time --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def set_toc(self, created):
         self.created = created
 #+END_SRC
@@ -812,7 +812,7 @@ class TestUser(TestCase):
 #+END_SRC
 
 ***** setRole: User, Role --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @typecheck(role=Role)
     def set_role(self, role):
         self.role = role
@@ -834,14 +834,14 @@ class TestUser(TestCase):
 #+END_SRC
 
 ***** setUserStatus: User, UserStatus --> void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def set_user_status(self, user_status):
         self.user_status = user_status
 
 #+END_SRC
 
 ***** getUserStatus: User --> UserStatus
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def get_user_status(self):
 	current_app.logger.debug("get user status of the User: %s" % self.user_status)
         return self.user_status
@@ -849,7 +849,7 @@ class TestUser(TestCase):
 #+END_SRC
 
 ***** to_client
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def to_client(self):
         return {
             'id': self.id,
@@ -888,7 +888,7 @@ class TestUser(TestCase):
      + Created By 
 
 **** Definition
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
 class ReferenceDocument(Entity):
 
     __tablename__ = 'reference_documents'
@@ -907,7 +907,7 @@ class ReferenceDocument(Entity):
                                          user=<instance of class User>)
                                             
 #+END_EXAMPLE
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def __init__(self, **kwargs):
         if 'name' not in kwargs:
             raise AttributeRequired("mandatory attribute `name` is missing")
@@ -976,7 +976,7 @@ class TestReferenceDocument(TestCase):
 #+END_SRC
 **** Functions that operate on the Reference Document domain
 ***** getAll: Nil --> set[ReferenceDocument]
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @staticmethod
     def get_all():
         current_app.logger.debug("get all rows of Reference Document entity")
@@ -1010,7 +1010,7 @@ class TestReferenceDocument(TestCase):
 #+END_SRC
 
 ***** getReferenceDocument: Id --> ReferenceDocument
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @staticmethod
     def get_by_id(id):
         current_app.logger.debug("get by ReferenceDocument id: %s"  % id)
@@ -1037,7 +1037,7 @@ class TestReferenceDocument(TestCase):
 #+END_SRC
      
 ***** getName: ReferenceDocument --> Name
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def get_name(self):
         current_app.logger.debug("get name of the Reference Document: %s" % self.name)
         return self.name
@@ -1061,7 +1061,7 @@ class TestReferenceDocument(TestCase):
 #+END_SRC
 
 ***** getPath: ReferenceDocument --> String
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle db.py :eval no 
     def get_path(self):
         current_app.logger.debug("get path of the Reference Document: %s" % self.path)
         return self.path
@@ -1086,14 +1086,14 @@ class TestReferenceDocument(TestCase):
 #+END_SRC
      
 ***** getUser: ReferenceDocument --> User
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle db.py :eval no 
     def get_user(self):
         current_app.logger.debug("get user of the Reference Document: %s" % self.user)
         return self.user
 #+END_SRC
 ***** TestUser: ReferenceDocument --> User
 ***** setName: ReferenceDocument, Name --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def set_name(self, name):
         self.name = name
 #+END_SRC
@@ -1116,7 +1116,7 @@ class TestReferenceDocument(TestCase):
 #+END_SRC
 
 ***** setPath: ReferenceDocument, String --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle db.py :eval no 
     def set_path(self, path):
         self.path = path
 #+END_SRC
@@ -1142,14 +1142,14 @@ class TestReferenceDocument(TestCase):
 #+END_SRC
       
 ***** setUser: ReferenceDocument, User --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @typecheck(user=User)
     def set_user(self, user):
         self.user = user
 
 #+END_SRC
 ***** to_client
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def to_client(self):
         return {
             'id': self.id,
@@ -1187,7 +1187,7 @@ class TestReferenceDocument(TestCase):
      + Status Name
 
 **** Definition
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
 class Status(Entity):
 
     __tablename__ = 'status'
@@ -1204,7 +1204,7 @@ class Status(Entity):
     status = Status(name=<instance of class Name>)
                     
 #+END_EXAMPLE
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def __init__(self, **kwargs):
         if 'name' not in kwargs:
             raise AttributeRequired("mandatory attribute `name` is missing")
@@ -1248,7 +1248,7 @@ class TestStatus(TestCase):
 #+END_SRC
 **** Functions that operate on the Role domain
 ***** getStatus: Id --> Status
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @staticmethod
     def get_by_id(id):
         current_app.logger.debug("get by Status id: %s"  % id)
@@ -1265,7 +1265,7 @@ class TestStatus(TestCase):
 
 #+END_SRC
 ***** getAll: Nil --> set[Status]
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @staticmethod
     def get_all():
         current_app.logger.debug("get all rows of Status entity")
@@ -1288,7 +1288,7 @@ class TestStatus(TestCase):
 
 #+END_SRC
 ***** getName: Status --> Name
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def get_name(self):
         current_app.logger.debug("set the name of the status: %s" % self.name)
         return self.name
@@ -1303,7 +1303,7 @@ class TestStatus(TestCase):
 #+END_SRC
 
 ***** setName: Status, Name --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @typecheck(name=Name)
     def set_name(self, name):
         self.name = name.value
@@ -1319,7 +1319,7 @@ class TestStatus(TestCase):
 #+END_SRC
 
 ***** to_client
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def to_client(self):
         return {
             'id': self.id,
@@ -1349,7 +1349,7 @@ class TestStatus(TestCase):
      + Total Participants Attended
 
 **** Definition
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
 class InstituteAnalytics(Entity):
 
     __tablename__ = 'institute_analytics'
@@ -1368,7 +1368,7 @@ class InstituteAnalytics(Entity):
     status = Status(name=<instance of class Name>)
                     
 #+END_EXAMPLE
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def __init__(self, **kwargs):
         if 'institute_name' not in kwargs:
             raise AttributeRequired("mandatory attribute `institute_name` is missing")
@@ -1378,7 +1378,7 @@ class InstituteAnalytics(Entity):
 
 **** Functions that operate on the Analytics domain
 ***** getStatus: Id --> Analytics
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @staticmethod
     def get_by_id(id):
         current_app.logger.debug("get by Institute Analytics id: %s"  % id)
@@ -1387,7 +1387,7 @@ class InstituteAnalytics(Entity):
 #+END_SRC
 
 ***** getAll: Nil --> set[Status]
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @staticmethod
     def get_all():
         current_app.logger.debug("get all rows of Institute Analytics entity")
@@ -1396,14 +1396,14 @@ class InstituteAnalytics(Entity):
 #+END_SRC
 
 ***** setName: Status, Name --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @typecheck(institute_name=str)
     def set_institute_name(self, institute_name):
         self.institute_name = institute_name.value
 #+END_SRC
 
 ***** to_client
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def to_client(self):
         return {
             'id': self.id,
@@ -1424,7 +1424,7 @@ class InstituteAnalytics(Entity):
      + Institute Name
      + Total Nodal Centre
 **** Definition
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
 class NodalCentreAnalytics(Entity):
 
     __tablename__ = 'nc_analytics'
@@ -1441,7 +1441,7 @@ class NodalCentreAnalytics(Entity):
     status = Status(name=<instance of class Name>)
                     
 #+END_EXAMPLE
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def __init__(self, **kwargs):
         if 'institute_name' not in kwargs:
             raise AttributeRequired("mandatory attribute `institute_name` is missing")
@@ -1451,7 +1451,7 @@ class NodalCentreAnalytics(Entity):
 
 **** Functions that operate on the Analytics domain
 ***** getStatus: Id --> Analytics
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @staticmethod
     def get_by_id(id):
         current_app.logger.debug("get by NodalCentreAnalytics Analytics id: %s"  % id)
@@ -1460,7 +1460,7 @@ class NodalCentreAnalytics(Entity):
 #+END_SRC
 
 ***** getAll: Nil --> set[Status]
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @staticmethod
     def get_all():
         current_app.logger.debug("get all rows of NodalCentreAnalytics Analytics entity")
@@ -1469,14 +1469,14 @@ class NodalCentreAnalytics(Entity):
 #+END_SRC
 
 ***** setName: Status, Name --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @typecheck(institute_name=str)
     def set_institute_name(self, institute_name):
         self.institute_name = institute_name.value
 #+END_SRC
 
 ***** to_client
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def to_client(self):
         return {
             'id': self.id,
@@ -1495,7 +1495,7 @@ class NodalCentreAnalytics(Entity):
      + Name
      + Total Value
 **** Definition
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
 class Analytics(Entity):
 
     __tablename__ = 'analytics'
@@ -1511,7 +1511,7 @@ class Analytics(Entity):
     status = Status(name=<instance of class Name>)
                     
 #+END_EXAMPLE
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def __init__(self, **kwargs):
         if 'name' not in kwargs:
             raise AttributeRequired("mandatory attribute `name` is missing")
@@ -1521,7 +1521,7 @@ class Analytics(Entity):
 
 **** Functions that operate on the Analytics domain
 ***** getStatus: Id --> Analytics
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @staticmethod
     def get_by_id(id):
         current_app.logger.debug("get by Analytics id: %s"  % id)
@@ -1530,7 +1530,7 @@ class Analytics(Entity):
 #+END_SRC
 
 ***** getAll: Nil --> set[Status]
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @staticmethod
     def get_all():
         current_app.logger.debug("get all rows of Analytics entity")
@@ -1539,14 +1539,14 @@ class Analytics(Entity):
 #+END_SRC
 
 ***** setName: Status, Name --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @typecheck(name=str)
     def set_name(self, name):
         self.name = name.value
 #+END_SRC
 
 ***** to_client
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def to_client(self):
         return {
             'id': self.id,
@@ -1581,7 +1581,7 @@ class Analytics(Entity):
      + Not Approval Reason
        
 **** Definition
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
 class Workshop(Entity):
 
     __tablename__ = 'workshops'
@@ -1634,7 +1634,7 @@ class Workshop(Entity):
                       [,last_updated=str])                                                                           
                                           
 #+END_EXAMPLE
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def __init__(self, **kwargs):
         if 'name' not in kwargs:
             raise AttributeRequired("mandatory attribute `name` is missing")
@@ -1803,7 +1803,7 @@ class TestWorkshop(TestCase):
 #+END_SRC
 **** Functions that operate on the Workshop Document domain
 ***** getAll: Nil --> set[Workshop]
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @staticmethod
     def get_all():
         current_app.logger.debug("get all rows of Workshop entity")
@@ -1850,7 +1850,7 @@ class TestWorkshop(TestCase):
         self.assertEqual("Thirumal Ravula", workshop_list[1].user.name)
 #+END_SRC
 ***** getWorkshop: Id --> Workshop
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @staticmethod
     def get_by_id(id):
         current_app.logger.debug("get by Status id: %s"  % id)
@@ -1882,7 +1882,7 @@ class TestWorkshop(TestCase):
 #+END_SRC
 
 ***** getName: Workshop --> Name
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def get_name(self):
         current_app.logger.debug("get the name of the Workshop: %s" % self.name)
         return self.name
@@ -1912,7 +1912,7 @@ class TestWorkshop(TestCase):
 #+END_SRC
 
 ***** getLocation: Workshop --> Location
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def get_location(self):
         current_app.logger.debug("get the name of the Workshop: %s" % self.name)
         return self.location
@@ -1943,7 +1943,7 @@ class TestWorkshop(TestCase):
 #+END_SRC
 
 ***** getDate: Workshop --> String
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def get_date(self):
         current_app.logger.debug("get the date of the Workshop: %s" % self.date)
         return self.date
@@ -1971,7 +1971,7 @@ class TestWorkshop(TestCase):
 #+END_SRC
 
 ***** getUser: Workshop --> User
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def get_user(self):
         current_app.logger.debug("get the user of the Workshop: %s" % self.user)
         return self.user
@@ -2000,7 +2000,7 @@ class TestWorkshop(TestCase):
 #+END_SRC
 
 ***** timeOfCreation: Workshop --> Datetime
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def get_created(self):
         current_app.logger.debug("get the time of creation of the Workshop: %s" % self.created)
         return self.created
@@ -2042,7 +2042,7 @@ class TestWorkshop(TestCase):
 #+END_SRC
 
 ***** getLastUpdated: Workshop --> String
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def get_last_updated(self):
         current_app.logger.debug("get the last updated time of the Workshop: %s" % self.last_updated)
         return self.last_updated
@@ -2071,7 +2071,7 @@ class TestWorkshop(TestCase):
 #+END_SRC
 
 ***** getParticipatingInstitutes: Workshop --> ParticipatingInstitutes
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def get_participating_institutes(self):
         current_app.logger.debug("get the participating_institutes of the Workshop: %s" % self.participating_institutes)
         return self.participating_institutes
@@ -2098,7 +2098,7 @@ class TestWorkshop(TestCase):
         self.assertEqual(participants, "HCU, IIIT-Hyd")
 #+END_SRC
 ***** getNoOfParticipantsExpected: Workshop --> ParticipantsExpected
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def get_no_of_participants_expected(self):
         current_app.logger.debug("get the no_of_participants_expected of the Workshop: %s" % self.no_of_participants_expected)
         return self.no_of_participants_expected
@@ -2125,7 +2125,7 @@ class TestWorkshop(TestCase):
         self.assertEqual(participants_exp, 100)
 #+END_SRC
 ***** getNoOfParticipantsAttended: Workshop --> NoOfParticipantsAttended
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def get_no_of_participants_attended(self):
         current_app.logger.debug("get the participants_attended for the Workshop: %s" % self.participants_attended)
         return self.participants_attended
@@ -2152,7 +2152,7 @@ class TestWorkshop(TestCase):
         self.assertEqual(participants_att, 120)
 #+END_SRC
 ***** getOtherDetails: Workshop --> OtherDetails
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def get_other_details(self):
         current_app.logger.debug("get the participants_attended for the Workshop: %s" % self.participants_attended)
         return self.other_details
@@ -2179,7 +2179,7 @@ class TestWorkshop(TestCase):
         self.assertEqual(details, "Overwhelming response!")
 #+END_SRC
 ***** getNoOfExptsConducted: Workshop --> NoOfExptsConducted
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def get_no_of_expts_conducted(self):
         current_app.logger.debug("get the number of experiments conducted for the Workshop: %s" % self.experiments_conducted)
         return self.experiments_conducted
@@ -2206,7 +2206,7 @@ class TestWorkshop(TestCase):
         self.assertEqual(expts_conducted, 20)
 #+END_SRC
 ***** getDurationOfSessions: Workshop --> DurationOfSessions
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def get_duration_of_sessions(self):
         current_app.logger.debug("get the duration_of_sessions for the Workshop: %s" % self.duration_of_sessions)
         return self.duration_of_sessions
@@ -2233,7 +2233,7 @@ class TestWorkshop(TestCase):
         self.assertEqual(duration, "10:30")
 #+END_SRC
 ***** getDisciplines: Workshop --> Disciplines
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def get_disciplines(self):
         current_app.logger.debug("get the disciplines for the Workshop: %s" % self.disciplines)
         return self.disciplines
@@ -2260,7 +2260,7 @@ class TestWorkshop(TestCase):
         self.assertEqual(disc, "Electronics & Communication")
 #+END_SRC
 ***** getNoOfSessions: Workshop --> NoOfSessions
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def get_no_of_sessions(self):
         current_app.logger.debug("get the no_of_sessions for the Workshop: %s" % self.no_of_sessions)
         return self.no_of_sessions
@@ -2286,7 +2286,7 @@ class TestWorkshop(TestCase):
         self.assertEqual(3, workshop_1.get_no_of_sessions())
 #+END_SRC
 ***** getPlannedLabs: Workshop --> PlannedLabs
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def get_planned_labs(self):
         current_app.logger.debug("get the labs_planned for the Workshop: %s" % self.labs_planned)
         return self.labs_planned
@@ -2313,7 +2313,7 @@ class TestWorkshop(TestCase):
         self.assertEqual(wkshp_labs_plan, 4)
 #+END_SRC
 ***** getStatus: Workshop --> Status
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def get_status(self):
         current_app.logger.debug("get the status of the Workshop: %s" % self.status)
         return self.status
@@ -2340,7 +2340,7 @@ class TestWorkshop(TestCase):
         self.assertEqual(wkshp_status.name, "Upcoming")
 #+END_SRC
 ***** getCancellationReason: Workshop --> Reason
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def get_cancellation_reason(self):
         current_app.logger.debug("get the cancellation_reason for the Workshop: %s" % self.cancellation_reason)
         return self.cancellation_reason
@@ -2367,19 +2367,19 @@ class TestWorkshop(TestCase):
         self.assertEqual(reason, "Univ Exams")
 #+END_SRC
 ***** getNotApprovalReason: Workshop --> Reason
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def get_not_approval_reason(self):
         current_app.logger.debug("get the not_approval_reason for the Workshop: %s" % self.not_approval_reason)
         return self.not_approval_reason
 #+END_SRC
 ***** getGatwayIP: Workshop --> Reason
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def get_gateway_ip(self):
         current_app.logger.debug("get the gateway_ip: %s" % self.gateway_ip)
         return self.gateway_ip
 #+END_SRC
 ***** getConductedOn: Workshop --> version
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def get_version(self):
         current_app.logger.debug("get version: %s" % self.version)
         return self.version
@@ -2408,7 +2408,7 @@ class TestWorkshop(TestCase):
 #+END_SRC
 
 ***** setName: Workshop, Name --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @typecheck(name=str)
     def set_name(self, name):
         self.name = name
@@ -2438,7 +2438,7 @@ class TestWorkshop(TestCase):
 #+END_SRC
 
 ***** setLocation: Workshop, Location --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @typecheck(location=str)
     def set_location(self, location):
         self.location = location
@@ -2468,7 +2468,7 @@ class TestWorkshop(TestCase):
 #+END_SRC
 
 ***** setUser: Workshop, User --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @typecheck(user=User)
     def set_user(self, user):
         self.user = user
@@ -2499,7 +2499,7 @@ class TestWorkshop(TestCase):
         self.assertEqual(workshop.user, user2)
 #+END_SRC
 ***** setDate: Workshop, String --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @typecheck(date=str)
     def set_date(self, date):
         self.date = date
@@ -2534,7 +2534,7 @@ class TestWorkshop(TestCase):
 #+END_SRC
 
 ***** setParticipatingInstitutes: Workshop, Institutes --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @typecheck(participating_institutes=str)
     def set_participating_institutes(self, participating_institutes):
         self.participating_institutes = participating_institutes
@@ -2562,7 +2562,7 @@ class TestWorkshop(TestCase):
         self.assertEqual("Osmania Uni", workshop.participating_institutes)
 #+END_SRC
 ***** setNoOfParticipantsExpected: Workshop, NoOfParticipants --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @typecheck(no_of_participants_expected=int)
     def set_no_of_participants_expected(self, no_of_participants_expected):
         self.no_of_participants_expected = no_of_participants_expected
@@ -2590,7 +2590,7 @@ class TestWorkshop(TestCase):
         self.assertEqual(120, workshop.no_of_participants_expected)
 #+END_SRC
 ***** setParticipantsAttended: Workshop, ParticipantsAttended --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @typecheck(participants_attended=int)
     def set_participants_attended(self, participants_attended):
         self.participants_attended = participants_attended
@@ -2618,7 +2618,7 @@ class TestWorkshop(TestCase):
         self.assertEqual(100, workshop.participants_attended)
 #+END_SRC
 ***** setNoOfSessions: Workshop, NoOfSessions --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @typecheck(no_of_sessions=int)
     def set_no_of_sessions(self, no_of_sessions):
         self.no_of_sessions = no_of_sessions
@@ -2646,7 +2646,7 @@ class TestWorkshop(TestCase):
         self.assertEqual(2, no)
 #+END_SRC
 ***** setDurationOfSessions: Workshop, DurationOfSessions --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @typecheck(duration_of_sessions=str)
     def set_duration_of_sessions(self, duration_of_sessions):
         self.duration_of_sessions = duration_of_sessions
@@ -2675,7 +2675,7 @@ class TestWorkshop(TestCase):
 #+END_SRC
 
 ***** setDisciplines: Workshop, Disciplines --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @typecheck(disciplines=str)
     def set_disciplines(self, disciplines):
         self.disciplines = disciplines
@@ -2703,7 +2703,7 @@ class TestWorkshop(TestCase):
         self.assertEqual("Electronics & Communication", workshop.disciplines)
 #+END_SRC
 ***** setLastUpdated: Workshop, String --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @typecheck(last_updated=str)
     def set_last_updated(self, last_updated):
         self.last_updated = last_updated
@@ -2733,7 +2733,7 @@ class TestWorkshop(TestCase):
 #+END_SRC
 
 ***** setLabsPlanned: Workshop, LabsPlanned --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @typecheck(labs_planned=int)
     def set_labs_planned(self, labs_planned):
         self.labs_planned = labs_planned
@@ -2761,7 +2761,7 @@ class TestWorkshop(TestCase):
         self.assertEqual(5, workshop.labs_planned)
 #+END_SRC
 ***** setExperimentsConducted: Workshop, ExperimentsConducted --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @typecheck(experiments_conducted=int)
     def set_experiments_conducted(self, experiments_conducted):
         self.experiments_conducted = experiments_conducted
@@ -2789,7 +2789,7 @@ class TestWorkshop(TestCase):
         self.assertEqual(20, workshop.experiments_conducted)
 #+END_SRC
 ***** setOtherDetails: Workshop, OtherDetails --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @typecheck(other_details=str)
     def set_other_details(self, other_details):
         self.other_details = other_details
@@ -2817,7 +2817,7 @@ class TestWorkshop(TestCase):
         self.assertEqual("Overwhelming Response!", workshop.other_details)
 #+END_SRC
 ***** setStatus: Workshop, Status --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @typecheck(status=Status)
     def set_status(self, status):
         self.status = status
@@ -2851,7 +2851,7 @@ class TestWorkshop(TestCase):
         self.assertEqual(workshop.status, status2)
 #+END_SRC
 ***** setCancellationReason: Workshop, Reason --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @typecheck(cancellation_reason=str)
     def set_cancellation_reason(self, cancellation_reason):
         self.cancellation_reason = cancellation_reason
@@ -2879,7 +2879,7 @@ class TestWorkshop(TestCase):
         self.assertEqual("Univ Exams", workshop.cancellation_reason)
 #+END_SRC
 ***** setNotApprovalReason: Workshop, Reason --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @typecheck(not_approval_reason=str)
     def set_not_approval_reason(self, not_approval_reason):
         self.not_approval_reason = not_approval_reason
@@ -2889,7 +2889,7 @@ class TestWorkshop(TestCase):
         self.gateway_ip = gateway_ip
 #+END_SRC
 ***** setConductedOn: Workshop, version --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @typecheck(version=str)
     def set_version(self, version):
         self.version = version
@@ -2919,7 +2919,7 @@ class TestWorkshop(TestCase):
         self.assertEqual("Attendance Sheet missing", workshop.not_approval_reason)
 #+END_SRC
 ***** setWorkshopStatus: Workshop, WorkshopStatus --> void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def set_workshop_status(self, workshop_status):
 	current_app.logger.debug("set workshop status of the User: %s" % self.workshop_status)
         self.workshop_status = workshop_status
@@ -2927,7 +2927,7 @@ class TestWorkshop(TestCase):
 #+END_SRC
 
 ***** getWorkshopStatus: Workshop --> WorkshopStatus
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def get_workshop_status(self):
 	current_app.logger.debug("get workshop status of the User: %s" % self.workshop_status)
         return self.workshop_status
@@ -2935,7 +2935,7 @@ class TestWorkshop(TestCase):
 #+END_SRC
 
 ***** to_client
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def to_client(self):
         return {
             'id': self.id,
@@ -2999,7 +2999,7 @@ class TestWorkshop(TestCase):
      + User --> Id
 
 **** Definition
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
 class NodalCentre(Entity):
 
     __tablename__ = 'nodal_centres'
@@ -3023,7 +3023,7 @@ class NodalCentre(Entity):
                                location=str,                  
                                created_by=<instance of class User>)
 #+END_EXAMPLE
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def __init__(self, **kwargs):
         if 'name' not in kwargs:
             raise AttributeRequired("mandatory attribute `name` is missing")
@@ -3122,7 +3122,7 @@ class TestNodalCentre(TestCase):
 
 **** Functions that operate on the Nodal Centre domain
 ***** getAll: Nil --> set[NodalCentre]
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle db.py :eval no 
     @staticmethod
     def get_all():
         current_app.logger.debug("get all rows of Nodal Centre entity")
@@ -3168,7 +3168,7 @@ class TestNodalCentre(TestCase):
 
 #+END_SRC
 ***** getNodalCentre: Id --> NodalCentre
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle db.py :eval no 
     @staticmethod
     def get_by_id(id):
         current_app.logger.debug("get by NodalCentre id: %s"  % id)
@@ -3209,7 +3209,7 @@ class TestNodalCentre(TestCase):
         self.assertEqual(nodal_centre2.get_by_id(2).name, "HCU")
 #+END_SRC
 ***** getCreatedBy: NodalCentre --> User
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle db.py :eval no 
     def get_created_by(self):
         current_app.logger.debug("get of the user who created the NodalCentre: %s"  % self.created_by)
         return self.created_by
@@ -3252,7 +3252,7 @@ class TestNodalCentre(TestCase):
 #+END_SRC
 
 ***** getName: NodalCentre --> Name
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle db.py :eval no 
     def get_name(self):
         current_app.logger.debug("get name of the NodalCentre: %s"  % self.name)
         return self.name
@@ -3293,7 +3293,7 @@ class TestNodalCentre(TestCase):
 #+END_SRC
 
 ***** getLocation: NodalCentre --> Location
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle db.py :eval no 
     def get_location(self):
         current_app.logger.debug("get location of the NodalCentre : %s"  % self.location)
         return self.location
@@ -3334,7 +3334,7 @@ class TestNodalCentre(TestCase):
 #+END_SRC
 
 ***** setCreatedBy: NodalCentre, User --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @typecheck(created_by=User)
     def set_created_by(self, created_by):
         self.created_by = created_by
@@ -3379,7 +3379,7 @@ class TestNodalCentre(TestCase):
 #+END_SRC
 
 ***** setName: NodalCentre, Name --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle db.py :eval no 
     @typecheck(name=str)
     def set_name(self, name):
         self.name = name
@@ -3458,20 +3458,20 @@ class TestNodalCentre(TestCase):
 #+END_SRC
 
 ***** setLocation: NodalCentre, Location --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle db.py :eval no 
     @typecheck(location=str)
     def set_location(self, location):
         self.location = location
 #+END_SRC
 
 ***** setLongitude: NodalCentre, Longitude --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle db.py :eval no 
     @typecheck(longitude=str)
     def set_longitude(self, longitude):
         self.longitude = longitude
 #+END_SRC
 ***** setPincode: NodalCentre, Pincode --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle db.py :eval no 
     @typecheck(pincode=str)
     def set_pincode(self, pincode):
         self.pincode = pincode
@@ -3546,7 +3546,7 @@ class TestNodalCentre(TestCase):
 #+END_SRC
 
 ***** setLattitude: NodalCentre, Lattitude --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle db.py :eval no 
     @typecheck(lattitude=str)
     def set_lattitude(self, lattitude):
         self.lattitude = lattitude
@@ -3586,19 +3586,19 @@ class TestNodalCentre(TestCase):
 
 ***** getCentreStatus: NodalCentre --> CentreStatus
 
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle db.py :eval no 
     def get_centre_status(self):
         current_app.logger.debug("get name of the NodalCentre: %s"  % self.centre_status)
         return self.centre_status
 #+END_SRC
 ***** setCentreStatus: NodalCentre, CentreStatus --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle db.py :eval no 
     @typecheck(centre_status=str)
     def set_centre_status(self, centre_status):
         self.centre_status = centre_status
 #+END_SRC
 ***** to_client
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def to_client(self):
         return {
             'id': self.id,
@@ -3663,7 +3663,7 @@ class TestNodalCentre(TestCase):
      + Target Experiments
 
 **** Definition
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
 class NodalCoordinatorDetail(Entity):
 
     __tablename__ = 'nodal_coordinator_details'
@@ -3697,7 +3697,7 @@ class NodalCoordinatorDetail(Entity):
                                                       [,last_updated=str])
                                             
 #+END_EXAMPLE
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def __init__(self, **kwargs):
 
         if 'user' not in kwargs:
@@ -3841,7 +3841,7 @@ class TestNodalCoordinatorDetail(TestCase):
 #+END_SRC
 **** Functions that operate on the Nodal Coordinator Details domain
 ***** getAll: Nil --> set[NodalCoordinatorDetail]
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @staticmethod
     def get_all():
         current_app.logger.debug("get all rows of NodalCoordinatorDetail entity")
@@ -3911,7 +3911,7 @@ class TestNodalCoordinatorDetail(TestCase):
 
 #+END_SRC
 ***** getNodalCoordinatorDetail: Id --> NodalCoordinatorDetail
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @staticmethod
     def get_by_id(id):
         current_app.logger.debug("get by NodalCoordinatorDetail id: %s"  % id)
@@ -3976,7 +3976,7 @@ class TestNodalCoordinatorDetail(TestCase):
 #+END_SRC
 
 ***** getUser: NodalCoordinatorDetail --> User
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def get_user(self):
         current_app.logger.debug("get user from NodalCoordinatorDetail Entity: %s"  % self.user)
         return self.user
@@ -4044,7 +4044,7 @@ class TestNodalCoordinatorDetail(TestCase):
 #+END_SRC
 
 ***** getCreatedBy: NodalCoordinatorDetail --> User
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def get_created_by(self):
         current_app.logger.debug("get created_by user from NodalCoordinatorDetail: %s"  % self.created_by)
         return self.created_by
@@ -4113,7 +4113,7 @@ class TestNodalCoordinatorDetail(TestCase):
 #+END_SRC
 
 ***** getNodalCentre: NodalCoordinatorDetail --> NodalCentre
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def get_nodal_centre(self):
         current_app.logger.debug("get nodal_centre from NodalCoordinatorDetail: %s"  % self.nodal_centre)
         return self.nodal_centre
@@ -4181,7 +4181,7 @@ class TestNodalCoordinatorDetail(TestCase):
 #+END_SRC
 
 ***** timeOfCreation: NodalCoordinatorDetail --> Datetime
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def get_created(self):
         current_app.logger.debug("get time of creation from NodalCoordinatorDetail: %s"  % self.created)
         return self.created
@@ -4260,7 +4260,7 @@ class TestNodalCoordinatorDetail(TestCase):
 #+END_SRC
 
 ***** getLastUpdated: NodalCoordinatorDetail --> String
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def get_last_updated(self):
         current_app.logger.debug("get created_by user from NodalCoordinatorDetail: %s"  % self.last_updated)
         return self.last_updated
@@ -4325,7 +4325,7 @@ class TestNodalCoordinatorDetail(TestCase):
 #+END_SRC
 
 ***** getTargetWorkshops: NodalCoordinatorDetail --> TargetWorkshops
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def get_target_workshops(self):
         current_app.logger.debug("get target_workshops from NodalCoordinatorDetail: %s"  % self.target_workshops)
         return self.target_workshops
@@ -4391,7 +4391,7 @@ class TestNodalCoordinatorDetail(TestCase):
 #+END_SRC
 
 ***** getTargetParticipants: NodalCoordinatorDetail --> TargetParticipants
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def get_target_participants(self):
         current_app.logger.debug("get target_participants from NodalCoordinatorDetail: %s"  % self.target_participants)
         return self.target_participants
@@ -4456,7 +4456,7 @@ class TestNodalCoordinatorDetail(TestCase):
 #+END_SRC
 
 ***** getTargetExperiments: NodalCoordinatorDetail --> TargetExperiments
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def get_target_experiments(self):
         current_app.logger.debug("get target_experiments from NodalCoordinatorDetail: %s"  % self.target_experiments)
         return self.target_experiments
@@ -4521,7 +4521,7 @@ class TestNodalCoordinatorDetail(TestCase):
 #+END_SRC
 
 ***** setLastUpdated: NodalCoordinatorDetail, String --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def set_last_updated(self, last_updated):
         current_app.logger.debug("set last updated time of the NodalCoordinatorDetail: %s" % last_updated)
         self.last_updated = last_updated
@@ -4592,7 +4592,7 @@ class TestNodalCoordinatorDetail(TestCase):
 #+END_SRC
 
 ***** setUser: NodalCoordinatorDetail, User --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @typecheck(user=User)
     def set_user(self, user):
         current_app.logger.debug("set user of the NodalCoordinatorDetail: %s" % user)
@@ -4668,7 +4668,7 @@ class TestNodalCoordinatorDetail(TestCase):
 #+END_SRC
 
 ***** setCreatedBy: NodalCoordinatorDetail, User --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @typecheck(created_by=User)
     def set_created_by(self, created_by):
         current_app.logger.debug("set created by user of the NodalCoordinatorDetail: %s" % created_by)
@@ -4742,7 +4742,7 @@ class TestNodalCoordinatorDetail(TestCase):
 #+END_SRC
 
 ***** setNodalCentre: NodalCoordinatorDetail, NodalCentre --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @typecheck(nodal_centre=NodalCentre)
     def set_nodal_centre(self, nodal_centre):
         current_app.logger.debug("set target workshops of the NodalCoordinatorDetail: %s" % nodal_centre)
@@ -4817,7 +4817,7 @@ class TestNodalCoordinatorDetail(TestCase):
 #+END_SRC
 
 ***** setTargetWorkshops: NodalCoordinatorDetail, Int --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def set_target_workshops(self, target_workshops):
         current_app.logger.debug("set target workshops of the NodalCoordinatorDetail: %s" % target_workshops)
         self.target_workshops = target_workshops
@@ -4885,7 +4885,7 @@ class TestNodalCoordinatorDetail(TestCase):
 #+END_SRC
 
 ***** setTargetParticipants: NodalCoordinatorDetail, Int --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def set_target_participants(self, target_participants):
         current_app.logger.debug("set target participants of the NodalCoordinatorDetail: %s" % target_participants)
         self.target_participants = target_participants
@@ -4957,7 +4957,7 @@ class TestNodalCoordinatorDetail(TestCase):
 #+END_SRC
 
 ***** setTargetExperiments: NodalCoordinatorDetail, Int --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def set_target_experiments(self, target_experiments):
         current_app.logger.debug("set target experiments of the NodalCoordinatorDetail: %s" % target_experiments)
         self.target_experiments = target_experiments
@@ -5029,7 +5029,7 @@ class TestNodalCoordinatorDetail(TestCase):
 #+END_SRC
 
 ***** to_client
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def to_client(self):
         return {
             'id': self.id,
@@ -5114,7 +5114,7 @@ class TestNodalCoordinatorDetail(TestCase):
      + Workshop Id
 
 **** Definition
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
 class WorkshopReport(Entity):
 
     __tablename__ = 'workshop_reports'
@@ -5131,7 +5131,7 @@ class WorkshopReport(Entity):
     workshop_report = WorkshopReport(name=str, path=str,  workshop=<instance of class Workshop>)
                                             
 #+END_EXAMPLE
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle db.py :eval no 
     def __init__(self, **kwargs):
 
         if 'workshop' not in kwargs:
@@ -5213,7 +5213,7 @@ class TestWorkshopReport(TestCase):
 #+END_SRC
 **** Functions that operate on the Workshop Report domain
 ***** getAll: Nil --> set[WorkshopReport]
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @staticmethod
     def get_all():
         current_app.logger.debug("get all rows of WorkshopReport entity")
@@ -5263,7 +5263,7 @@ class TestWorkshopReport(TestCase):
 #+END_SRC
 
 ***** getWorkshopReport: Id --> WorkshopReport
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle db.py :eval no 
     @staticmethod
     def get_by_id(id):
         current_app.logger.debug("get by WorkshopReport id: %s"  % id)
@@ -5303,7 +5303,7 @@ class TestWorkshopReport(TestCase):
 #+END_SRC
      
 ***** getPath: WorkshopReport --> String
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def get_path(self):
         current_app.logger.debug("get path of the WorkshopReport: %s"  % self.path)
         return self.path
@@ -5341,7 +5341,7 @@ class TestWorkshopReport(TestCase):
 #+END_SRC
      
 ***** getName: WorkshopReport --> String
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     def get_name(self):
         current_app.logger.debug("get name of the WorkshopReport: %s"  % self.name)
         return self.name
@@ -5379,7 +5379,7 @@ class TestWorkshopReport(TestCase):
 #+END_SRC
      
 ***** getWorkshop: WorkshopReport --> Workshop
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle db.py :eval no 
     def get_workshop(self):
         current_app.logger.debug("get workshop of the WorkshopReport: %s"  % self.workshop)
         return self.workshop
@@ -5408,7 +5408,7 @@ class TestWorkshopReport(TestCase):
 
 #+END_SRC
 ***** setPath: WorkshopReport, String --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle db.py :eval no 
     @typecheck(path=str)
     def set_path(self, path):
         current_app.logger.debug("set path of the WorkshopReport: %s" % path)
@@ -5449,7 +5449,7 @@ class TestWorkshopReport(TestCase):
 #+END_SRC
       
 ***** setName: WorkshopReport, String --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle db.py :eval no 
     @typecheck(name=str)
     def set_name(self, name):
         current_app.logger.debug("set name of the WorkshopReport: %s" % name)
@@ -5490,7 +5490,7 @@ class TestWorkshopReport(TestCase):
 #+END_SRC
       
 ***** setWorkshop: WorkshopReport, Workshop --> Void
-#+BEGIN_SRC python :tangle src/db.py :eval no
+#+BEGIN_SRC python :tangle db.py :eval no
     @typecheck(workshop=Workshop)
     def set_workshop(self, workshop):
         current_app.logger.debug("set workshop of the WorkshopReport: %s" % workshop)
@@ -5535,7 +5535,7 @@ class TestWorkshopReport(TestCase):
         self.assertEqual(workshop_report.workshop.location, "IIT-D")
 #+END_SRC
 ***** to_client
-#+BEGIN_SRC python :tangle src/db.py :eval no 
+#+BEGIN_SRC python :tangle db.py :eval no 
     def to_client(self):
         return {
             'id': self.id,
@@ -5581,7 +5581,7 @@ class TestWorkshopReport(TestCase):
 ** Custom Exceptions
 These are some of the custom exceptions used in the application.
 *** AttributeRequired
-#+BEGIN_SRC python :tangle src/op_exceptions.py :eval no
+#+BEGIN_SRC python :tangle op_exceptions.py :eval no
 class AttributeRequired(Exception):
     str = None
 
@@ -5594,7 +5594,7 @@ class AttributeRequired(Exception):
 #+END_SRC
 
 ** Utility Functions
-#+BEGIN_SRC python :tangle src/utils.py :eval no
+#+BEGIN_SRC python :tangle utils.py :eval no
 # module to hold all utilities/helper functions
 
 import json
@@ -5744,7 +5744,7 @@ def typecheck(**typemap):
 #+END_SRC
 
 ** The web application
-#+BEGIN_SRC python :tangle src/app.py :eval no
+#+BEGIN_SRC python :tangle app.py :eval no
 # -*- coding: utf-8 -*-
 import os
 
@@ -5901,12 +5901,12 @@ if __name__ == "__main__":
 
 ** Configuring the application
 Below is the configuration for the application
-#+BEGIN_SRC python :tangle src/config.py :eval no
+#+BEGIN_SRC python :tangle config.py :eval no
 # DB URI
 # example DB URI:
 # mysql+oursql://scott:tiger@localhost/mydatabase
 # postgresql+psycopg2://scott:tiger@localhost/mydatabase
-SQLALCHEMY_DATABASE_URI = 'mysql+oursql://<userid>:<password>@<servername>/<db_name>'
+SQLALCHEMY_DATABASE_URI = 'mysql+oursql://<user_id>:<password>@<server_name>/<db_name>'
 # example
 # SQLALCHEMY_DATABASE_URI = 'mysql+oursql://root:mysql@localhost/outreach'
 
@@ -5939,14 +5939,16 @@ ALLOWED_FILE_EXTENSIONS = ['txt', 'TXT', 'pdf', 'PDF', 'png', 'PNG', 'jpg', 'JPG
 # APP_URL
 ELASTIC_IP = "http://10.100.2.40:9200"
 #APP_URL = "http://localhost"
-APP_URL = "http://outreach.virtual-labs.ac.in"
+APP_URL = "<app_url>"
+REDIRECT_URI = "<app_url>/authorized"
 
 # Persona Verifier URL
 PERSONA_VERIFIER_URL = "https://verifier.login.persona.org/verify"
 
+
 #Google Authentication Credentials
-CONSUMER_KEY = "420719460133-g13g6abnnised3v4nq4d430jo8mpb9m8.apps.googleusercontent.com"
-CONSUMER_SECRET = "DQxOnwOectvfFFe05jqKTIQT"
+CONSUMER_KEY = "461232146926-t0p85bhd3556qrhpdcjcn56v1sbicm06.apps.googleusercontent.com"
+CONSUMER_SECRET = "wicsOBnV5798Te8DykvmxBjY"
 
 EMAIL_FOR_GET_AUTH = "admin@vlabs.ac.in"
 TOKEN_FOR_GET_AUTH = "dummytoken"
@@ -5964,8 +5966,9 @@ BASE_DIR = BASE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)))
 
 sys.path.insert(0, BASE_DIR)
 
-from src.app import create_app
-from src import config
+from app import create_app
+
+import config as config
 
 application = create_app(config)
 
@@ -5975,7 +5978,10 @@ application = create_app(config)
     The model-diagram can be found below. This gives an overview of the
     relationships between different entities.
 
-    [[https://github.com/vlead/outreach-portal/blob/develop/src/diagrams/outreach-model-diagram.jpg][Model-diagram]] 
+    [[../img
+
+
+/model-diagram.jpg][Model-Diagram]] 
 
 ** REST APIs to read and query data
    These are the set of REST APIs for read operations.
@@ -6059,7 +6065,7 @@ application = create_app(config)
      All the attributes of an entity and the relationship between the entity
      and the attribute is captured to facilitate run time creation of queries.
 
-#+BEGIN_SRC python :tangle src/maps.py :eval no
+#+BEGIN_SRC python :tangle maps.py :eval no
 from db import *
 role = {'entity_class': Role,
         'attributes': [
@@ -6381,7 +6387,7 @@ entity_pairs = {
 **** GET APIS
 ***** Google OAuth Credentials
       - Google OAuth service required URLs (Credentials) should be specified
-#+BEGIN_SRC python :tangle src/api.py :eval 
+#+BEGIN_SRC python :tangle api.py :eval 
 session_list = {}
 oauth = OAuth()
 
@@ -6404,7 +6410,7 @@ google_oauth = oauth.remote_app(
 ***** =Login= API
       - When user clicks on =login= button from f/e it will invoke
         =/login= api and thereby it will forward request to =google=
-#+BEGIN_SRC python :tangle src/api.py :eval 
+#+BEGIN_SRC python :tangle api.py :eval 
 def get_college_name(mac_addr):
     index_name = "college_cloud"
     doc_name = "details"
@@ -6426,7 +6432,7 @@ def login():
 ***** =Logout= API
       - When user clicks on =logout= button from f/e it will invoke
   =/logout= api and thereby it will destroy all session variables.
-#+BEGIN_SRC python :tangle src/api.py :eval 
+#+BEGIN_SRC python :tangle api.py :eval 
 
 @api.route('/logout')
 def logout():
@@ -6455,7 +6461,7 @@ def logout():
         authorize the user by providing the user dashboard based on the role of
         the user. 
 
-#+BEGIN_SRC python :tangle src/api.py :eval 
+#+BEGIN_SRC python :tangle api.py :eval 
 @api.route('/authorized')
 def authorized():
     try:
@@ -6509,7 +6515,7 @@ def authorized():
 #+END_SRC
 ***** Google token getter
       - Once the google verfies the credentials token will be shared.
-#+BEGIN_SRC python :tangle src/api.py :eval 
+#+BEGIN_SRC python :tangle api.py :eval 
 @google_oauth.tokengetter
 def get_google_oauth_token():
     return session.get('google_token')
@@ -6522,7 +6528,7 @@ def get_google_oauth_token():
         and due to domain issue with Google Oauth service this api will always
         make sures that user will redirect to
         =http://outreach.virtual-labs.ac.in=
-#+BEGIN_SRC python :tangle src/api.py :eval 
+#+BEGIN_SRC python :tangle api.py :eval 
 @api.route("/")
 def index():
     remote_url = request.url
@@ -6582,7 +6588,7 @@ def index():
     #+END_EXAMPLE
 
 ****** Implementation 
-#+BEGIN_SRC python :tangle src/api.py :eval 
+#+BEGIN_SRC python :tangle api.py :eval 
 @api.route("/get_usage", methods=['GET','POST'])
 def get_usage():
     if request.method == 'GET':
@@ -6634,7 +6640,7 @@ def get_usage():
 #+END_SRC
 
 ***** Other GET APIs
-#+BEGIN_SRC python :tangle src/api.py :eval 
+#+BEGIN_SRC python :tangle api.py :eval 
 @api.route("/ws_details")
 def ws_details():
     return render_template("ws_details.html")
@@ -7456,7 +7462,7 @@ def typecast_compound_item(const, attr, val):
 ***** Code tangle
 In the below, all the above code blocks are arranged in the order the python
 interpreter expects them to be.
-#+BEGIN_SRC python :tangle src/api.py :eval no :noweb yes
+#+BEGIN_SRC python :tangle api.py :eval no :noweb yes
 <<entity-map-types>>
 
 <<delete-record>>
@@ -7529,7 +7535,7 @@ def create_record(entity_name, entity):
 #+END_SRC
 
 ***** Code tangle
-#+BEGIN_SRC python :tangle src/api.py :eval no :noweb yes
+#+BEGIN_SRC python :tangle api.py :eval no :noweb yes
 <<create-record>>
 <<create-entity>>
 #+END_SRC

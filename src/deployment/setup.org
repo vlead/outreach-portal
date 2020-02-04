@@ -3,7 +3,7 @@
 #+Date: [2015-08-25 Tue]
 #+PROPERTY: results output
 #+PROPERTY: exports code
-#+SETUPFILE: ./org-templates/level-0.org
+#+SETUPFILE: ../org-templates/level-1.org
 #+options: ^:nil
 
 
@@ -15,7 +15,7 @@
   Here we use the =setuptools= module from the standard lib, to make a
   =setup.py= file, which will install all the python library dependencies.
 
-#+BEGIN_SRC python :tangle setup.py :eval no
+#+BEGIN_SRC python :tangle scripts/setup.py :eval no
 from setuptools import setup
 
 requires = [
@@ -37,11 +37,11 @@ setup(
 #+END_SRC
 
 * Program to set up the database
-  #+BEGIN_SRC python :tangle db_setup.py :eval no
+#+BEGIN_SRC python :tangle scripts/db_setup.py :eval no
 
-from src.app import create_app
-from src.db import *
-import src.config as config
+from app import create_app
+from db import *
+import config as config
 
 
 def create_roles():
@@ -96,9 +96,9 @@ if __name__ == "__main__":
     create_roles()
     create_status()
 
-  #+END_SRC
+#+END_SRC
 * Program to migrate the data from old database to new database of outreach portal
-#+BEGIN_SRC python :tangle migrate_old_to_new_data.py :eval
+#+BEGIN_SRC python :tangle scripts/migrate_old_to_new_data.py :eval
 #!/usr/bin/python
 import MySQLdb
 import sys
@@ -546,7 +546,7 @@ if __name__ == "__main__":
 
 #+END_SRC
 * Program to add Pincodes
-#+BEGIN_SRC python :tangle pincode_migration.py :eval no 
+#+BEGIN_SRC python :tangle scripts/pincode_migration.py :eval no 
 import requests
 import json
 import yaml
@@ -581,7 +581,7 @@ for nc in ncs:
 
 #+END_SRC
 * Program to add the phone column in existing database 
-#+BEGIN_SRC python :tangle migrate_phone.py :eval
+#+BEGIN_SRC python :tangle scripts/migrate_phone.py :eval
 #!/usr/bin/python                                                                                           
 import MySQLdb
 from src.app import create_app
@@ -606,7 +606,7 @@ if __name__ == "__main__":
 #+END_SRC
 
 * Program to add the analytics table in existing database 
-#+BEGIN_SRC python :tangle add_analytics.py :eval
+#+BEGIN_SRC python :tangle scripts/add_analytics.py :eval
 #!/usr/bin/python                                                                                           
 import MySQLdb
 from src.app import create_app
@@ -671,7 +671,7 @@ if __name__ == "__main__":
    Following shell script will execute the
    =refresh_analytics_now= procedure which defined in the
    above section to update the analytics.
-   #+BEGIN_SRC sh :tangle update_analytics.sh :eval no
+   #+BEGIN_SRC sh :tangle scripts/update_analytics.sh :eval no
    #!/bin/bash                                                                                                                                           
 
    mysql --user="root" --password="root" --database="outreach" --execute="CALL refresh_institute_analytics_now(@rc);CALL refresh_analytics_now(@rc);CALL refresh_nc_analytics_now(@rc);"
@@ -681,11 +681,11 @@ if __name__ == "__main__":
    The following commands will set the cronjob for updating
    analytics for every 4 hours.
    #+BEGIN_EXAMPLE
-   cd /var/www/
+   cd /var/www/scripts
    chmod 755 update_analytics.sh
    crontab -l
    crontab -e
-   * */4 * * * /var/www/update_analytics.sh
+   * */4 * * * /var/www/scripts/update_analytics.sh
 
    #+END_EXAMPLE
 
@@ -694,7 +694,7 @@ if __name__ == "__main__":
   setup the database, configure the webserver, and finally deploy the
   application.
 
-#+BEGIN_SRC sh :tangle setup.sh :eval no
+#+BEGIN_SRC sh :tangle scripts/setup.sh :eval no
 #!/bin/bash
 # Shell script to install deb package dependencies as well as python package
 # dependencies for dataservice.
@@ -793,7 +793,7 @@ exit 0
   to use WSGI and use the application scripts, and finally calls the database
   setup scripts to actually setup the database with tables.
 
-#+BEGIN_SRC sh :tangle configure.sh :eval no
+#+BEGIN_SRC sh :tangle scripts/configure.sh :eval no
 #!/bin/bash
 # Configure the application in the deployment environment
 # 1. Update the config.py file with appropriate values

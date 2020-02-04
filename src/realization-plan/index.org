@@ -12,13 +12,16 @@
     implementing the Outreach portal driven by data.
 
 * Milestones Snapshot
-  |------+-------+---------+------------------------------+------+------------+---------+---------+--------|
-  | S.No | Mi.no | Req Map | Milestone                    | Plan | Status     | Est hrs | Act hrs | Issues |
-  |------+-------+---------+------------------------------+------+------------+---------+---------+--------|
-  |   1. |       |         | [[https://github.com/vlead/outreach-portal/issues?q=is%3Aopen+is%3Aissue+milestone%3A%22Outreach+Portal+Enhancements%22][Outreach Portal Enhancements]] |      | Inprogress |     312 |         |      8 |
-  |------+-------+---------+------------------------------+------+------------+---------+---------+--------|
-  |   2. |       |         | [[https://gitlab.com/vlead-systems/vlead-security-audit/milestones/9][C-DAC Phase II]]               |      | Done       |     240 |      32 |      5 |
-  |------+-------+---------+------------------------------+------+------------+---------+---------+--------|
+  |------+-------+---------+------------------------------+------+-------------+---------+---------+--------|
+  | S.No | Mi.no | Req Map | Milestone                    | Plan | Status      | Est hrs | Act hrs | Issues |
+  |------+-------+---------+------------------------------+------+-------------+---------+---------+--------|
+  |   1. |       |         | [[https://github.com/vlead/outreach-portal/milestone/6][Allow]] NC to view approved    |      | In Progress |      48 |         |        |
+  |      |       |         | workshops                    |      |             |         |         |        |
+  |------+-------+---------+------------------------------+------+-------------+---------+---------+--------|
+  |   1. |       |         | [[https://github.com/vlead/outreach-portal/issues?q=is%3Aopen+is%3Aissue+milestone%3A%22Outreach+Portal+Enhancements%22][Outreach Portal Enhancements]] |      | In Progress |     312 |         |      8 |
+  |------+-------+---------+------------------------------+------+-------------+---------+---------+--------|
+  |   2. |       |         | [[https://gitlab.com/vlead-systems/vlead-security-audit/milestones/9][C-DAC Phase II]]               |      | Done        |     240 |      32 |      5 |
+  |------+-------+---------+------------------------------+------+-------------+---------+---------+--------|
 
   #+TBLFM: $est=vsum(@II+1..@-1)
   #+TBLFM: $act=vsum(@II+1..@-1)
@@ -159,3 +162,44 @@
 |-------+-----------------------+--------+----------+---------+------------+-------------+------------+----------|
 #+TBLFM: $est=vsum(@II+1..@-1)
 #+TBLFM: $act=vsum(@II+1..@-1)
+
+* Tasks
+** [2020-01-22 Wed]
+   1. Thirumal to update the Data Model of the Outreach Portal
+   2. Thirumal to share link to Outreach Portal Requirements
+      and Scenarios document with Prof. Venkatesh after
+      updating it.  This needs to shared with Sanjeet.
+   3. Thirumal to share the plan, target and efforts
+      estimate for Outreach Portal.
+
+
+* Estimates
+|------+-------------------------------+----------+---+---|
+| S.No | Task                          | Estimate |   |   |
+|      |                               |  (person |   |   |
+|      |                               |    days) |   |   |
+|------+-------------------------------+----------+---+---|
+|   1. | [[https://github.com/vlead/outreach-portal/milestone/7][Set up]] the test machine       |       10 |   |   |
+|      | and implement, test the       |          |   |   |
+|      | back up scripts.              |          |   |   |
+|------+-------------------------------+----------+---+---|
+|   2. | [[https://github.com/vlead/outreach-portal/milestone/8][Update]] the data model         |        7 |   |   |
+|      | and work on the scenarios     |          |   |   |
+|      | document                      |          |   |   |
+|------+-------------------------------+----------+---+---|
+|   3. | [[https://github.com/vlead/outreach-portal/milestone/6][Allow]] NC to view approved     |       10 |   |   |
+|      | workshops                     |          |   |   |
+|------+-------------------------------+----------+---+---|
+|   4. | [[https://github.com/vlead/outreach-portal/milestone/11][Show]] the Workshops created by |       15 |   |   |
+|      | NC to the OC                  |          |   |   |
+|------+-------------------------------+----------+---+---|
+|   5. | [[https://github.com/vlead/outreach-portal/milestone/10][Disallow]] creation of multiple |       15 |   |   |
+|      | workshops when one single     |          |   |   |
+|      | workshop is created           |          |   |   |
+|------+-------------------------------+----------+---+---|
+|   7. | [[https://github.com/vlead/outreach-portal/milestone/12][Re design]] and re implement    |      120 |   |   |
+|      | the portal                    |          |   |   |
+|------+-------------------------------+----------+---+---|
+|   6. | Support                       |          |   |   |
+|------+-------------------------------+----------+---+---|
+
