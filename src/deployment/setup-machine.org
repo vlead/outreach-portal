@@ -12,55 +12,47 @@ all the dependencies and later installs the outreach
 application.
 
 * Design
-Ansible is used to configure the machine.  The configuration
-is split into different steps:
-1. dependencies like make, git are installed.
-2. application dependencies like mysql, flask etc are
-   installed.
-3. the application is configured, like setting the web
-   server, google oauth tokens etc are set up.
+  Ansible is used to configure the machine.  Deployment of
+  the application is split into different steps:
+  1. Install dependencies - make, git, ansible - to
+     bootstrap the machine.
 
-* Initialization
-  These are the initial steps executed on the machine to
-  bootstrap the machine for installing and configuring the
-  outreach portal application.
+  2. Install application dependencies - mysql, flask etc
 
-  1. Create [[https://stackoverflow.com/questions/10767488/automate-ssh-keygen-t-rsa-so-it-does-not-ask-for-a-passphrase][ssh keys]]
-  2. Copy the public key to the authorized_keys
-  3. Install Ansible
-  4. Create a directory to save the installation scripts
+  3. Configure web server, application variables, database
+     etc.
 
-#+NAME: init
-#+BEGIN_SRC sh
-ssh-keygen -f /root/.ssh/id_rsa -t rsa -N ''
-cat /root/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys
+  The deployment is driven from a single script -
+  =[[../../deploy.sh][deploy.sh]]=.  The first step is to bootstrap the machine.
+  As part of the bootstrap the following task are
+  accomplished. 
 
-apt-add-repository -y ppa:ansible/ansible
-apt-get -y update
-apt-get -y install ansible
-mkdir -p /root/tmp/installation-scripts
+  - Programs - ansible, emacs and make are installed.
 
-#+END_SRC
+  - A directory =/root/tmp/installation-scripts= is created
+    as a staging area for all templates and application code
+    are copied before they are copied to the right place by
+    the configuration manager.
 
-* Get the code
-#+BEGIN_SRC sh :tangle ../get.sh
-#!/bin/bash
-BUILD_MACHINE_IP=10.200.118.1
-CODE_PATH=/home/travula/projects/vlead-projects/github/outreach-portal/build/code
-USER_NAME=travula
+  - Build the sources
 
-rm -rf runtime
-rm -rf deployment
-rsync -a --progress $USER_NAME@${BUILD_MACHINE_IP}:${CODE_PATH}/ .
+  - Copy the built files to the staging area
 
-#+END_SRC
+  - Hand over the control to the configuration tool. 
+
 * Code Layout
   - site.yaml
     - roles
       - common-vars
-      - install-build-dependencies
-      - install-application-dependencies
-      - configure-application
+      - install-mysql
+      - install-pip
+      - install-apache
+      - install-oursql
+      - install-python-packages
+      - configure-app
+      - setup-db
+      - configure-apache2
+      - setup-crontab
 
 * Common Vars
   All configuration variables are defined here.
@@ -109,32 +101,6 @@ application_dependencies:
   - libapache2-modsecurity
 
 #+END_SRC
-* Build Dependencies
-[[https://askubuntu.com/questions/297170/how-to-install-emacs-24-3-on-ubuntu][emacs]] is used to build the application.  The application
-code is version controlled using [[https://askubuntu.com/questions/571549/git-1-7-9-5-upgrade-to-current-release-of-git-2-x-on-ubuntu-12-04][git]].
-
-#+NAME: install-build-dependencies
-#+BEGIN_SRC yaml
----
-
-- name: install a source repo for git
-  apt_repository:
-    repo: "{{ git_repo }}"
-
-- name: install a source repo for emacs 24
-  apt_repository:
-    repo: "{{ emacs24_repo }}"
-
-- name: update
-  apt:
-    update_cache: yes
-
-- name: Installs all the dependencies requires for build
-  apt: name={{ item }} state=present
-  loop: "{{ build_dependency_pkgs }}"
-
-#+END_SRC
-
 * Application Dependencies
 The application is built using =python=.  It uses =mysql=
 database.  =apache= web server serves the application.
@@ -915,23 +881,23 @@ localhost
 
 #+END_SRC
 
+* Get the code
+#+BEGIN_SRC sh :tangle ../get.sh
+#!/bin/bash
+BUILD_MACHINE_IP=10.200.118.1
+CODE_PATH=/home/travula/projects/vlead-projects/github/outreach-portal/build/code
+USER_NAME=travula
+
+rm -rf runtime
+rm -rf deployment
+rsync -a --progress $USER_NAME@${BUILD_MACHINE_IP}:${CODE_PATH}/ .
+
+#+END_SRC
+
 * Tangle
 ** Common Vars
 #+BEGIN_SRC yaml :tangle roles/common-vars/vars/main.yaml :noweb yes :eval no
 <<common-vars>>
-#+END_SRC
-
-** Build Dependecies
-*** Tasks
-#+BEGIN_SRC yaml :tangle roles/install-build-dependencies/tasks/main.yaml :noweb yes :eval no
-<<install-build-dependencies>>
-#+END_SRC
-
-*** Variables
-#+BEGIN_SRC yaml :tangle roles/install-build-dependencies/meta/main.yaml :noweb yes :eval no
-dependencies:
-   - common-vars
-
 #+END_SRC
 
 ** Mysql

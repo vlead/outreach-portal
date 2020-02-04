@@ -1,0 +1,47 @@
+#+TITLE: Requirements for the outreach portal
+#+AUTHOR: VLEAD
+#+DATE: [2020-02-04 Tue]
+#+SETUPFILE: ../org-templates/level-1.org
+#+TAGS: boilerplate(b)
+#+EXCLUDE_TAGS: boilerplate
+#+OPTIONS: ^:nil
+
+* Introduction
+This document carries the requirements for the outreach
+portal.
+
+* Requirements
+
+  The requirements are derived from the [[./outreach-portal-scenarios.org][scenarios]]. 
+
+  1. Outreach portal has three types of users: Admin, Outreach coordinator and
+     Nodal coordinator.
+  2. Admin adds, updates and deletes an outreach coordinator.
+  3. An outreach coordinator adds, updates and deletes an nodal coordinator.
+  4. Documents
+     1. Admin adds and deletes a set of documents. For the format of the
+        documents refer scenarios [[./outreach-portal-scenarios.org::#document_formats][document]].
+     2. Outreach coordinator views and downloads the documents uploaded by
+        admin.
+     3. Outreach coordinator adds and deletes his/her set of documents. 
+     4. Nodal coordinator views and downloads the documents uploaded both by
+        the Admin and his/her respective outreach coordinator.
+  5. Dashboard
+     1. Admin has a Dashboard. For ontents of the dashboard refer [[./outreach-portal-scenarios.org::#admin_dashboard][here]]
+     2. Outreach coordinator has a dashboard
+     3. Nodal coordinator has a dashboard.
+  6. Outreach coordinator adds, updates and deletes an nodal coordinator.
+  7. Outreach coordinator creates, updates and completes a workshop that is
+     done in the past.
+  8. Outreach coordinator creates, updates and completes an upcoming workshop.
+  9. Outreach coordinator uploads a set of documents to complete a
+     workshop. For the document list refer to scenarios [[./outreach-portal-scenarios.org::#workshop_documents][document]].  
+  10. Outreach coordinator edits workshops created by nodal coordinator.
+  11. Outreach coordinator approves the workshops conducted by nodal coordinator.
+  12. Outreach coordinator views workshop history.
+  13. Nodal coordinator creates a workshop. 
+  14. Nodal coordinator uploads workshop documents for approval by outreach
+      coordinator or cancels a workshop. 
+  15. Nodal coordinator views the workshop history. 
+  
+
