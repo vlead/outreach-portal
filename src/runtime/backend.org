@@ -3,7 +3,7 @@
 #+DATE: [2015-10-27 Tue]
 #+PROPERTY: results output
 #+PROPERTY: exports code
-#+SETUPFILE: ./org-templates/level-0.org
+#+SETUPFILE: ../org-templates/level-1.org
 #+options: ^:nil
 
 * Introduction
@@ -5939,10 +5939,12 @@ ALLOWED_FILE_EXTENSIONS = ['txt', 'TXT', 'pdf', 'PDF', 'png', 'PNG', 'jpg', 'JPG
 # APP_URL
 ELASTIC_IP = "http://10.100.2.40:9200"
 #APP_URL = "http://localhost"
-APP_URL = "http://outreach.vlabs.ac.in"
+APP_URL = "<app_url>"
+REDIRECT_URI = "<app_url>/authorized"
 
 # Persona Verifier URL
 PERSONA_VERIFIER_URL = "https://verifier.login.persona.org/verify"
+
 
 #Google Authentication Credentials
 CONSUMER_KEY = "461232146926-t0p85bhd3556qrhpdcjcn56v1sbicm06.apps.googleusercontent.com"

@@ -3,7 +3,7 @@
 #+Date: [2015-10-30 Fri]
 #+PROPERTY: results output
 #+PROPERTY: exports code
-#+SETUPFILE: ./org-templates/level-0.org
+#+SETUPFILE: ../org-templates/level-1.org
 #+options: ^:nil
 
 

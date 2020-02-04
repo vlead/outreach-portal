@@ -1,7 +1,7 @@
 #+TITLE: Set up the Machine to run Outreach Portal
 #+AUTHOR: VLEAD
 #+DATE: [2020-01-23 Thu]
-#+SETUPFILE: ./org-templates/level-0.org
+#+SETUPFILE: ../org-templates/level-1.org
 #+TAGS: boilerplate(b)
 #+EXCLUDE_TAGS: boilerplate
 #+OPTIONS: ^:nil
@@ -72,10 +72,11 @@ mysql_password: "root"
 mysql_server_name: "localhost"
 mysql_db_name: "outreach"
 
+app_url: ""
 db_dump_dir: "/root/db_dump"
 alerts_email_id: "alerts@vlabs.ac.in"
 workshop_files_dir: "/var/www/runtime/static/uploads"
-backup_machine: "10.200.118.1"
+backup_machine: ""
 
 git_repo: "ppa:git-core/ppa"
 emacs24_repo: "ppa:cassou/emacs"
@@ -767,6 +768,12 @@ chmod -R 777 /var/www/runtime/static/uploads
     path: "{{ app_config_file }}"
     regexp: '<db_name>'
     replace: "{{ mysql_db_name }}"
+
+- name: set the app url
+  replace:
+    path: "{{ app_config_file }}"
+    regexp: '<app_url>'
+    replace: "{{ app_url }}"
 
 #+END_SRC
 * Setup DB
