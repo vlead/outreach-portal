@@ -1,4 +1,4 @@
-#+TITLE: Outreach
+#+TITLE: Run Outreach in development environment
 #+Author: VLEAD
 #+Date: [2016-05-05 Thu]
 #+PROPERTY: results output

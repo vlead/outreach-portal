@@ -24,7 +24,7 @@ application.
 
   The deployment is driven from a single script -
   =[[../../deploy.sh][deploy.sh]]=.  The first step is to bootstrap the machine.
-  As part of the bootstrap the following task are
+  As part of the bootstrap the following tasks are
   accomplished. 
 
   - Programs - ansible, emacs and make are installed.
@@ -293,7 +293,7 @@ rm -rf /root/tmp/oursql
 #+NAME: install-other-pip-packages
 #+BEGIN_SRC yaml
 - name: Install pip packages
-  shell: pip install Flask Flask-SQLAlchemy requests flask-cors flask-testing Flask-OAuthlib
+  shell: pip install Flask Flask-SQLAlchemy requests flask-cors flask-testing Flask-OAuthlib werkzeug==0.16.1
 
 #+END_SRC
 * Configuration
@@ -1091,8 +1091,4 @@ dependencies:
 ** Driver
 #+BEGIN_SRC yaml :tangle site.yaml :noweb yes :eval no
 <<driver>>
-#+END_SRC
-** Init
-#+BEGIN_SRC sh :tangle init.sh :noweb yes :eval no
-<<init>>
 #+END_SRC

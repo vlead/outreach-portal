@@ -1,0 +1,56 @@
+#+TITLE: Take dump form production and create database from it
+#+AUTHOR: VLEAD
+#+DATE: [2020-06-06 Sat]
+#+SETUPFILE: ./org-templates/level-0.org
+#+TAGS: boilerplate(b)
+#+EXCLUDE_TAGS: boilerplate
+#+OPTIONS: ^:nil
+
+* Introduction
+This document lists the steps to take the database dump from
+the production environment and later create a database in
+the test environment from the same dump file.
+
+
+* Create the database dump file from production
+  
+  1. Login to the production machine on AWS cloud.  The
+     production machine details are not put here for
+     security reasons.
+
+  2. Create the dump file
+     #+BEGIN_EXAMPLE
+     mysqldump -u root -proot outreach > outreach.sql
+     #+END_EXAMPLE
+
+     At this point =outreach.sql= is generated.  Get this
+     file to the machine on which outreach application is
+     deployed.
+
+* Create the database from the dump file
+  Login in to the test machine where outreach application is
+  deployed and run these two steps to create the database
+  from the dump file.
+
+  1. Drop and create the database This is done from the
+     mysql console.
+     #+BEGIN_EXAMPLE
+     mysql -u root -proot
+     drop database outreach
+     create database outreach
+     #+END_EXAMPLE
+
+   2. Load the database from the dump.  The below command is
+      run from the main console and not from the mysql
+      console.
+      #+BEGIN_EXAMPLE
+      mysql -u root -p outreach < outreach.sql
+      #+END_EXAMPLE
+
+      where =outreach.sql= is the dump file copied from the
+      production server.
+        
+        
+
+
+
