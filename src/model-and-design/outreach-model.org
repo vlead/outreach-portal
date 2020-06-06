@@ -288,7 +288,9 @@
    The model-diagram can be found below. This gives an overview of the
    relationships between different entities.
 
-   [[../img/model-diagram.jpg][Model-diagram]] 
+#+CAPTION: Entity Relationship diagram
+#+NAME: fig:e-r
+[[../img/model-diagram.jpg]]
 
    This diagram highlights the following facts:
 
