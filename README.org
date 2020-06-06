@@ -1,4 +1,7 @@
 * Deployment Steps
+  This application runs on Ubuntu 12.04.  Create a VM and
+  follow these steps to run the outreach application.
+
   1. =wget= the sources from this [[https://github.com/outreach-portal][repo]].
      #+BEGIN_EXAMPLE
      wget https://github.com/vlead/outreach-portal/archive/approved-workshops.zip
