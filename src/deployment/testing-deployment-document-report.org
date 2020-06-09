@@ -22,6 +22,14 @@
       #+BEGIN_EXAMPLE
       127.0.0.1 <dns>
       #+END_EXAMPLE
+      *Note: hostname and dns in the url should be same* Example:- dns
+      for the test outreach is outrach-installation then the hostname
+      should be outreach-installation.
+      #+BEGIN_EXAMPLE
+      hostname outreach-installation
+      /etc/hosts - 127.0.0.1 outreach-installation
+      url : http://outreach-installation.vlabs.ac.in
+      #+END_EXAMPLE
    3. wget the sources from this repo. 
       #+BEGIN_EXAMPLE
       wget https://github.com/vlead/outreach-portal/archive/approved-workshops.zip
