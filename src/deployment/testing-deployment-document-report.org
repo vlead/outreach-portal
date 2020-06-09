@@ -1,0 +1,99 @@
+#+TITLE: Testing Deployment Document Report
+#+Author: VLEAD
+#+Date: [2020-06-08 Mon]
+
+* Introduction
+  - This document has the test installation steps of outreach portal to be
+    used by IITB while migrating the application from IIITH
+* Motivation
+  - IITB can use the document to install the outreach applciation once
+    the document is merged to master
+* Audience
+  - Thirumal, and a person who deploys the application
+* Test Done
+** Deployment
+   - This application runs on Ubuntu 12.04. Create a VM and follow
+     these steps to run the outreach application.
+   1. Set the host name in the VM with the below command:
+      #+BEGIN_EXAMPLE
+      hostname <dns> 
+      #+END_EXAMPLE
+   2. Edit /etc/hosts and add the following line to the file:
+      #+BEGIN_EXAMPLE
+      127.0.0.1 <dns>
+      #+END_EXAMPLE
+   3. wget the sources from this repo. 
+      #+BEGIN_EXAMPLE
+      wget https://github.com/vlead/outreach-portal/archive/approved-workshops.zip
+      #+END_EXAMPLE
+   4. Install the program to unzip files 
+      #+BEGIN_EXAMPLE
+      apt-get install unzip
+      #+END_EXAMPLE
+   5. unzip the sources
+      #+BEGIN_EXAMPLE
+      unzip approved-workshops.zip
+      #+END_EXAMPLE
+   6. change directory to the unzipped sources 
+      #+BEGIN_EXAMPLE
+      cd outreach-portal-approved-workshops
+      #+END_EXAMPLE
+   7. Make deploy.sh executable
+      #+BEGIN_EXAMPLE
+      chmod +x deploy.sh
+      #+END_EXAMPLE
+   8. Run deploy.sh
+      #+BEGIN_EXAMPLE
+      ./deploy.sh
+      #+END_EXAMPLE
+*** Post Installation Steps
+    1. Set the app URL:
+       - Open the file /var/www/runtime/config.py and change the field
+         *APP_URL* and *REDIRECT_URI* to point to the right hostname
+	 #+BEGIN_EXAMPLE
+	 APP_URL = "http://newoutreach.vlabs.ac.in"
+	 REDIRECT_URI = "http://newoutreach.vlabs.ac.in/authorized"
+	 #+END_EXAMPLE
+    2. Get the google keys for authentication
+       - Open the [[ Open the file /var/www/runtime/config.py and copy the right values for the fields CONSUMER_KEY and CONSUMER_SECRET from the google developer¡¯s console.][link]]
+       - Click on credentials -> Create Credentials -> OAuth Client ID
+         -> Selecct Web Application in Application type
+       - Add url as http://newoutreach.vlabs.ac.in in Authorized
+         JavaScript origins
+       - Add the url as http://newoutreach.vlabs.ac.in/authorized in
+         Authorized redirect URIs
+       - Click on create, it will give us the *Client ID* and *Client secret*.	 
+    3. Set the google keys for authentication
+       -  Open the file /var/www/runtime/config.py and copy the CLient
+          ID and CLient secret values from the google keys and give
+          them for the fields CONSUMER_KEY and CONSUMER_SECRET then
+          save and exit the file.
+** Database Dump
+*** Create the database dump file from production   
+   - Login to the production outreach machine on AWS Cloud and follow
+     the steps to get the database dump
+     1. Create the dump file
+	#+BEGIN_EXAMPLE
+	mysqldump -u root -proot outreach > outreach.sql
+	#+END_EXAMPLE
+     2. At this point outreach.sql is generated. Get this file to the
+        machine on which the new outreach application is being deployed.
+*** Create the database from the dump file
+    - Login in to the test machine where outreach application is
+      deployed and run these two steps to create the database from
+      the dump file.
+      1. Login to mysql console to *Drop and create the database* 
+         #+BEGIN_EXAMPLE
+         mysql -u root -proot
+         drop database outreach
+         create database outreach	 
+         #+END_EXAMPLE
+      2. Exit from mysql console	 
+      3. To load the database from the dump run the below command from
+         where the dump file (outreach.sql) is placed in the new
+         outreach machine.
+	 #+BEGIN_EXAMPLE
+	 mysql -u root -proot outreach < outreach.sql
+	 #+END_EXAMPLE
+	 
+** Validity of Data
