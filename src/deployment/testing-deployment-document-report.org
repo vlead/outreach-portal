@@ -77,12 +77,12 @@
           them for the fields CONSUMER_KEY and CONSUMER_SECRET then
           save and exit the file.
 ** Details of Operating System 
-   - Running OS environment: Outreach portal application is developed in ubuntu 12.0
+   - *Running OS environment:* Outreach portal application is developed in ubuntu 12.0
      environment with all the required dependencies. 
-   - Migrated OS environment: Earlier we have migrated it in to Ubuntu
+   - *Migrated OS environment:* Earlier we have migrated it in to Ubuntu
      14.0 and it was working fine but not deployed (migration done
      only for testing purpose). 
-   - Migrate OS environment: We have to migrate the application to
+   - *Migrate OS environment:* We have to migrate the application to
      Ubuntu 18.0 as it is the latest version.
 ** Database Dump
 *** Create the database dump file from production   
