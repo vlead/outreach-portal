@@ -14,14 +14,14 @@
 ** Deployment Process
    - This application runs on Ubuntu 12.04. Create a VM and follow
      these steps to run the outreach application.
-     Step1: Set the host name in the VM with the below command:
-      #+BEGIN_EXAMPLE
-      hostname <dns> 
-      #+END_EXAMPLE
-     Step2: Edit /etc/hosts and add the following line to the file:
-      #+BEGIN_EXAMPLE
-      127.0.0.1 <dns>
-      #+END_EXAMPLE
+     *Step1:* Set the host name in the VM with the below command:
+          #+BEGIN_EXAMPLE
+          hostname <dns> 
+          #+END_EXAMPLE
+     *Step2:* Edit /etc/hosts and add the following line to the file:
+          #+BEGIN_EXAMPLE
+          127.0.0.1 <dns>
+          #+END_EXAMPLE
       *Note: hostname and dns in the url should be same* Example:- dns
       for the test outreach is outrach-installation then the hostname
       should be outreach-installation.
@@ -30,30 +30,30 @@
       /etc/hosts - 127.0.0.1 outreach-installation
       url : http://outreach-installation.vlabs.ac.in
       #+END_EXAMPLE
-     Step3: wget the sources from this repo. 
-      #+BEGIN_EXAMPLE
-      wget https://github.com/vlead/outreach-portal/archive/approved-workshops.zip
-      #+END_EXAMPLE
-     Step4: Install the program to unzip files 
-      #+BEGIN_EXAMPLE
-      apt-get install unzip
-      #+END_EXAMPLE
-     Step5: unzip the sources
-      #+BEGIN_EXAMPLE
-      unzip approved-workshops.zip
-      #+END_EXAMPLE
-     Step6: change directory to the unzipped sources 
-      #+BEGIN_EXAMPLE
-      cd outreach-portal-approved-workshops
-      #+END_EXAMPLE
-     Step7: Make deploy.sh executable
-      #+BEGIN_EXAMPLE
-      chmod +x deploy.sh
-      #+END_EXAMPLE
-     Step8: Run deploy.sh
-      #+BEGIN_EXAMPLE
-      ./deploy.sh
-      #+END_EXAMPLE
+     *Step3:* wget the sources from this repo. 
+          #+BEGIN_EXAMPLE
+          wget https://github.com/vlead/outreach-portal/archive/approved-workshops.zip
+          #+END_EXAMPLE
+     *Step4:* Install the program to unzip files 
+          #+BEGIN_EXAMPLE
+          apt-get install unzip
+          #+END_EXAMPLE
+     *Step5:* unzip the sources
+          #+BEGIN_EXAMPLE
+          unzip approved-workshops.zip
+          #+END_EXAMPLE
+     *Step6:* change directory to the unzipped sources 
+          #+BEGIN_EXAMPLE
+          cd outreach-portal-approved-workshops
+          #+END_EXAMPLE
+     *Step7:* Make deploy.sh executable
+          #+BEGIN_EXAMPLE
+          chmod +x deploy.sh
+          #+END_EXAMPLE
+     *Step8:* Run deploy.sh
+          #+BEGIN_EXAMPLE
+          ./deploy.sh
+          #+END_EXAMPLE
 *** Post Installation Steps
     1. Set the app URL:
        - Open the file /var/www/runtime/config.py and change the field
