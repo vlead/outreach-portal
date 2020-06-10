@@ -11,7 +11,7 @@
 * Audience
   - Thirumal, and a person who deploys the application
 * Test Done
-** Deployment
+** Deployment Process
    - This application runs on Ubuntu 12.04. Create a VM and follow
      these steps to run the outreach application.
    1. Set the host name in the VM with the below command:
@@ -76,6 +76,14 @@
           ID and CLient secret values from the google keys and give
           them for the fields CONSUMER_KEY and CONSUMER_SECRET then
           save and exit the file.
+** Details of Operating System 
+   - Running OS environment: Outreach portal application is developed in ubuntu 12.0
+     environment with all the required dependencies. 
+   - Migrated OS environment: Earlier we have migrated it in to Ubuntu
+     14.0 and it was working fine but not deployed (migration done
+     only for testing purpose). 
+   - Migrate OS environment: We have to migrate the application to
+     Ubuntu 18.0 as it is the latest version.
 ** Database Dump
 *** Create the database dump file from production   
    - Login to the production outreach machine on AWS Cloud and follow
@@ -99,11 +107,16 @@
       2. Exit from mysql console	 
       3. To load the database from the dump run the below command from
          where the dump file (outreach.sql) is placed in the new
-         outreach machine.
+         outreach vm.
 	 #+BEGIN_EXAMPLE
 	 mysql -u root -proot outreach < outreach.sql
 	 #+END_EXAMPLE
-	 
+*** Steps to retrieve the data from database is missing
+    1. Database backup process
+    2. Database usage
+    3. MySql queries to get the participants, usage, workshop
+       conducted at nodal centers, year wise data collection etc. from
+       data base.
 ** Validity of Data
 *** Scope for testing
    - Testing can be done only through the IoC and NC login of IIIT Hyderabad. 
@@ -168,7 +181,6 @@
 |   11 | Edit workshop               |       Working |  Working | Yes             |
 |------+-----------------------------+---------------+----------+-----------------|
 
-
 *** Testing through NC login
     - The following table has the existing data compared with the new data through NC login of IIIT Hyderabad.
 
@@ -199,3 +211,4 @@
 |------+------------------------------------------+---------------+----------+-----------------|
 |   12 | Reference documents                      |             3 |        3 | Yes             |
 |------+------------------------------------------+---------------+----------+-----------------|
+
