@@ -118,6 +118,9 @@
        conducted at nodal centers, year wise data collection etc. from
        data base.
 ** Validity of Data
+*** Related terms
+    - Integration Outreach Coordinator is referred as IOC
+    - Nodal Coordinator is referred as NC
 *** Scope for testing
    - Testing can be done only through the IoC and NC login of IIIT Hyderabad. 
    - Login details of Admin are not available. 
