@@ -110,6 +110,34 @@
    - Login details of Admin are not available. 
    - It is also not possible to test through other institute login also as each institute has different logins for both IOC and NC. 
 
+*** Duration for testing
+|------+-----------+-------------|
+| S.No | Testing   | Duration    |
+|------+-----------+-------------|
+|    1 | IOC login | 60 minutes  |
+|------+-----------+-------------|
+|    2 | NC login  | 120 minutes |
+|------+-----------+-------------|
+|    3 | Dashboard | 30 minutes  |
+|------+-----------+-------------|
+
+*** Testing Outreach portal dashboard
+    - The following table has the existing data compared with the new data of the outreach portal dashboard. 
+
+|------+-----------------------+---------------+----------+-----------------|
+| S.No | Item                  | Existing data | New data | Is it matching? |
+|------+-----------------------+---------------+----------+-----------------|
+|    1 | Upcoming workshops    |             0 |        0 | Yes             |
+|------+-----------------------+---------------+----------+-----------------|
+|    2 | Participants attended |        208879 |   208879 | Yes             |
+|------+-----------------------+---------------+----------+-----------------|
+|    3 | Nodal Centers         |           887 |      887 | Yes             |
+|------+-----------------------+---------------+----------+-----------------|
+|    4 | Workshops run         |          1286 |     1286 | Yes             |
+|------+-----------------------+---------------+----------+-----------------|
+|    5 | Usage                 |       2909624 |  2909624 | Yes             |
+|------+-----------------------+---------------+----------+-----------------|
+
 *** Testing through IOC Login
     - The following table has the existing data compared with the new data through IoC login of IIIT hyderabad. 
 
@@ -139,7 +167,6 @@
 |------+-----------------------------+---------------+----------+-----------------|
 |   11 | Edit workshop               |       Working |  Working | Yes             |
 |------+-----------------------------+---------------+----------+-----------------|
-
 
 
 *** Testing through NC login
