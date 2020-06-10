@@ -108,7 +108,7 @@
 *** Scope for testing
    - Testing can be done only through the IoC and NC login of IIIT Hyderabad. 
    - Login details of Admin are not available. 
-   - It is also not possible to test through other institute login also as each institute has different logins for both IOC and NC. 
+   - It is not possible to test through other institute login as each institute has different logins for both IOC and NC. 
 
 *** Duration for testing
 |------+-----------+-------------|
