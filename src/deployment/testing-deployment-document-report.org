@@ -3,22 +3,22 @@
 #+Date: [2020-06-08 Mon]
 
 * Introduction
-  - This document has the test installation steps of outreach portal to be
-    used by IITB while migrating the application from IIITH
+  - This document has the test report for the outreach portal
+    deployment document.
 * Motivation
-  - IITB can use the document to install the outreach applciation once
-    the document is merged to master
+  - Author can use this test report to make the changes in the deployment
+    document.
 * Audience
-  - Thirumal, and a person who deploys the application
+  - Author of the outreach installation [[https://github.com/vlead/outreach-portal/blob/approved-workshops/README.org][document]] 
 * Test Done
 ** Deployment Process
    - This application runs on Ubuntu 12.04. Create a VM and follow
      these steps to run the outreach application.
-   1. Set the host name in the VM with the below command:
+     Step1: Set the host name in the VM with the below command:
       #+BEGIN_EXAMPLE
       hostname <dns> 
       #+END_EXAMPLE
-   2. Edit /etc/hosts and add the following line to the file:
+     Step2: Edit /etc/hosts and add the following line to the file:
       #+BEGIN_EXAMPLE
       127.0.0.1 <dns>
       #+END_EXAMPLE
@@ -30,27 +30,27 @@
       /etc/hosts - 127.0.0.1 outreach-installation
       url : http://outreach-installation.vlabs.ac.in
       #+END_EXAMPLE
-   3. wget the sources from this repo. 
+     Step3: wget the sources from this repo. 
       #+BEGIN_EXAMPLE
       wget https://github.com/vlead/outreach-portal/archive/approved-workshops.zip
       #+END_EXAMPLE
-   4. Install the program to unzip files 
+     Step4: Install the program to unzip files 
       #+BEGIN_EXAMPLE
       apt-get install unzip
       #+END_EXAMPLE
-   5. unzip the sources
+     Step5: unzip the sources
       #+BEGIN_EXAMPLE
       unzip approved-workshops.zip
       #+END_EXAMPLE
-   6. change directory to the unzipped sources 
+     Step6: change directory to the unzipped sources 
       #+BEGIN_EXAMPLE
       cd outreach-portal-approved-workshops
       #+END_EXAMPLE
-   7. Make deploy.sh executable
+     Step7: Make deploy.sh executable
       #+BEGIN_EXAMPLE
       chmod +x deploy.sh
       #+END_EXAMPLE
-   8. Run deploy.sh
+     Step8: Run deploy.sh
       #+BEGIN_EXAMPLE
       ./deploy.sh
       #+END_EXAMPLE
@@ -76,14 +76,6 @@
           ID and CLient secret values from the google keys and give
           them for the fields CONSUMER_KEY and CONSUMER_SECRET then
           save and exit the file.
-** Details of Operating System 
-   - *Running OS environment:* Outreach portal application is developed in ubuntu 12.0
-     environment with all the required dependencies. 
-   - *Migrated OS environment:* Earlier we have migrated it in to Ubuntu
-     14.0 and it was working fine but not deployed (migration done
-     only for testing purpose). 
-   - *Migrate OS environment:* We have to migrate the application to
-     Ubuntu 18.0 as it is the latest version.
 ** Database Dump
 *** Create the database dump file from production   
    - Login to the production outreach machine on AWS Cloud and follow
@@ -111,21 +103,36 @@
 	 #+BEGIN_EXAMPLE
 	 mysql -u root -proot outreach < outreach.sql
 	 #+END_EXAMPLE
-*** Steps to retrieve the data from database is missing
-    1. Database backup process
-    2. Database usage
-    3. MySql queries to get the participants, usage, workshop
-       conducted at nodal centers, year wise data collection etc. from
-       data base.
+** Recommendations
+   - *Running OS environment:* Outreach portal application is developed in ubuntu 12.0
+     environment with all the required dependencies. 
+   - *Migrated OS environment:* Earlier we have migrated it in to Ubuntu
+     14.0 and it was working fine but not deployed (migration done
+     only for testing purpose). 
+   - *Migrate OS environment:* We have to migrate the application to
+     Ubuntu 18.0 as it is the latest version.
+   - Steps to retrieve the data from database is missing
+     1. Database backup process
+     2. Database usage
+     3. MySql queries to get the participants, usage, workshop
+        conducted at nodal centers, year wise data collection etc. from
+        data base.
+** Estimated time to install the outreach portal
+   - The following table has the estimated time for installing the
+     outreach application
+   | Item              | Estimated Time |
+   |-------------------+----------------|
+   | Deployment        | 40mins         |
+   |-------------------+----------------|
+   | Post installation | 10mins         |
+   |-------------------+----------------|
+   | Database Dump     | 5mins          |
+   |-------------------+----------------|
+   
 ** Validity of Data
 *** Related terms
     - Integration Outreach Coordinator is referred as IOC
     - Nodal Coordinator is referred as NC
-*** Scope for testing
-   - Testing can be done only through the IoC and NC login of IIIT Hyderabad. 
-   - Login details of Admin are not available. 
-   - It is not possible to test through other institute login as each institute has different logins for both IOC and NC. 
-
 *** Duration for testing
 |------+-----------+-------------|
 | S.No | Testing   | Duration    |
@@ -215,3 +222,7 @@
 |   12 | Reference documents                      |             3 |        3 | Yes             |
 |------+------------------------------------------+---------------+----------+-----------------|
 
+*** Recommendations
+   - Testing can be done only through the IoC and NC login of IIIT Hyderabad. 
+   - Login details of Admin are not available. 
+   - It is not possible to test through other institute login as each institute has different logins for both IOC and NC. 
