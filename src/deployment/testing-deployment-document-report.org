@@ -63,7 +63,7 @@
 	 REDIRECT_URI = "http://newoutreach.vlabs.ac.in/authorized"
 	 #+END_EXAMPLE
     2. Get the google keys for authentication
-       - Open the [[ Open the file /var/www/runtime/config.py and copy the right values for the fields CONSUMER_KEY and CONSUMER_SECRET from the google developer¡¯s console.][link]]
+       - Open the [[ Open the file /var/www/runtime/config.py and copy the right values for the fields CONSUMER_KEY and CONSUMER_SECRET from the google developerÂ¡Â¯s console.][link]]
        - Click on credentials -> Create Credentials -> OAuth Client ID
          -> Selecct Web Application in Application type
        - Add url as http://newoutreach.vlabs.ac.in in Authorized
@@ -106,16 +106,12 @@
 	 
 ** Validity of Data
 *** Scope for testing
-   - Testing can be done only through the IoC and NC login of
-IIIT Hyderabad. 
+   - Testing can be done only through the IoC and NC login of IIIT Hyderabad. 
    - Login details of Admin are not available. 
-   - It is also not possible to test through other institute
-login also as each institute has different logins for both
-IOC and NC. 
+   - It is also not possible to test through other institute login also as each institute has different logins for both IOC and NC. 
 
 *** Testing through IOC Login
-    - The following table has the existing data compared with the
-new data through IoC login of IIIT hyderabad. 
+    - The following table has the existing data compared with the new data through IoC login of IIIT hyderabad. 
 
 
 |------+-----------------------------+---------------+----------+-----------------|
@@ -147,8 +143,7 @@ new data through IoC login of IIIT hyderabad.
 
 
 *** Testing through NC login
-    - The following table has the existing data compared with the
-new data through NC login of IIIT Hyderabad.
+    - The following table has the existing data compared with the new data through NC login of IIIT Hyderabad.
 
 |------+------------------------------------------+---------------+----------+-----------------|
 | S.No | Item                                     | Existing data | New data | Is it matching? |
