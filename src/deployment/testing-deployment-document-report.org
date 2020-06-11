@@ -9,9 +9,9 @@
   - Author can use this test report to make the changes in the deployment
     document.
 * Audience
-  - Author of the outreach installation [[https://github.com/vlead/outreach-portal/blob/approved-workshops/README.org][document]] 
+  - Author of the outreach deployment [[https://github.com/vlead/outreach-portal/blob/approved-workshops/README.org][document]] 
 * Test Done
-** Deployment Process
+** Deployment Steps followed as listed in the [[https://github.com/vlead/outreach-portal/blob/approved-workshops/README.org][document]]
    - This application runs on Ubuntu 12.04. Create a VM and follow
      these steps to run the outreach application.
      *Step1:* Set the host name in the VM with the below command:
@@ -54,7 +54,7 @@
           #+BEGIN_EXAMPLE
           ./deploy.sh
           #+END_EXAMPLE
-*** Post Installation Steps
+*** Post Deployment Steps
     1. Set the app URL:
        - Open the file /var/www/runtime/config.py and change the field
          *APP_URL* and *REDIRECT_URI* to point to the right hostname
@@ -117,7 +117,9 @@
      3. MySql queries to get the participants, usage, workshop
         conducted at nodal centers, year wise data collection etc. from
         data base.
-** Estimated time to install the outreach portal
+   - The final document needs to be pushed to master and that link
+     should be shared with IITB.	
+** Estimated time to deploy the outreach portal
    - The following table has the estimated time for installing the
      outreach application
    | Item              | Estimated Time |
@@ -226,3 +228,4 @@
    - Testing can be done only through the IoC and NC login of IIIT Hyderabad. 
    - Login details of Admin are not available. 
    - It is not possible to test through other institute login as each institute has different logins for both IOC and NC. 
+   - The estimated time could be added to the document.  
