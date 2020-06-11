@@ -119,6 +119,7 @@
         data base.
    - The final document needs to be pushed to master and that link
      should be shared with IITB.	
+   - The estimated time could be added to the document.  
 ** Estimated time to deploy the outreach portal
    - The following table has the estimated time for installing the
      outreach application
@@ -224,8 +225,7 @@
 |   12 | Reference documents                      |             3 |        3 | Yes             |
 |------+------------------------------------------+---------------+----------+-----------------|
 
-*** Recommendations
-   - Testing can be done only through the IoC and NC login of IIIT Hyderabad. 
-   - Login details of Admin are not available. 
-   - It is not possible to test through other institute login as each institute has different logins for both IOC and NC. 
-   - The estimated time could be added to the document.  
+*** Recommendations 
+    *Suggestions for the following tests needed*
+    - Validating Data for all IOC and NC and Admin  from front end.
+    - Validating Data for all IOC and NC and Admin  from the Database Dump.
