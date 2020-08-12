@@ -158,6 +158,7 @@
   - Page 31 : The outreach coordinator should be able to search any information regarding a workshop on the portal.
   - The outreach coordinator should be able to view past workshops in chronological order as well as according to nodal         coordinators. 
   - Page 32 : Result page on successful/failure of searching
+** State Transition of a workshop
 
 * Nodal Coordinator User
 ** Scenario 19 : Can view and download documents that are uploaded by Admin and Outreach Coordinator 
@@ -210,7 +211,6 @@
  - Page 42 : Page with workshop details like date, location, no of participants
    and experiments and also which associate with submitted reports.
 
-   
 ** Scenario 23A: Dashboard of Nodal Coordinator
 :PROPERTIES:
 :CUSTOM_ID: admin_dashboard
@@ -222,3 +222,4 @@
    - Total number of participants w.r.t targets set by Outreach Coordinator
   
     
+** State Transition of a workshop

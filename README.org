@@ -12,7 +12,7 @@
      #+END_EXAMPLE
   3. unzip the sources
      #+BEGIN_EXAMPLE
-     unzip master.zip
+     unzip approved-workshops.zip
      #+END_EXAMPLE
   4. change directory to the unzipped sources
      #+BEGIN_EXAMPLE

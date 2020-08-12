@@ -18,11 +18,11 @@ knowledge transfer of outreach portal.
    1. how to generate the keys
    2. where to copy them, etc.
 
-3. [[Requirements]] and [[Scenarios]]
+3. [[../model-and-design/requirements.org][Requirements]] and [[../model-and-design/outreach-portal-scenarios.org][Scenarios]]
 
-4. [[Data Model]] and [[Schema]]
+4. [[../model-and-design/outreach-model.org][Data Model]] and [[../model-and-design/outreach-model.org][Schema]]
 
-5. [[Design and Implementation]]
+5. [[../model-and-design/design.org][Design]] and [[../runtime/backend.org][Implementation]]
 
 
 * Sources
