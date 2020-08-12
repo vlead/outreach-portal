@@ -1,0 +1,32 @@
+#+TITLE: KT on outreach portal
+#+AUTHOR: VLEAD
+#+DATE: [2020-06-29 Mon]
+#+SETUPFILE: ./org-templates/level-0.org
+#+TAGS: boilerplate(b)
+#+EXCLUDE_TAGS: boilerplate
+#+OPTIONS: ^:nil
+
+* Introduction
+This document holds information about the sessions on
+knowledge transfer of outreach portal.
+
+* Agenda
+1. [[https://github.com/vlead/outreach-portal/blob/approved-workshops/README.org][Deployment]] of the portal
+
+2. How to enable google single sign on - Sravanthi
+   The steps are:
+   1. how to generate the keys
+   2. where to copy them, etc.
+
+3. [[Requirements]] and [[Scenarios]]
+
+4. [[Data Model]] and [[Schema]]
+
+5. [[Design and Implementation]]
+
+
+* Sources
+The sources are on [[https://github.com/vlead/outreach-portal.git][github]].  The branch we are working on is
+approved-workshops.
+
+
