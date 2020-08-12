@@ -1,0 +1,231 @@
+#+TITLE: Testing Deployment Document Report
+#+Author: VLEAD
+#+Date: [2020-06-08 Mon]
+
+* Introduction
+  - This document has the test report for the outreach portal
+    deployment document.
+* Motivation
+  - Author can use this test report to make the changes in the deployment
+    document.
+* Audience
+  - Author of the outreach deployment [[https://github.com/vlead/outreach-portal/blob/approved-workshops/README.org][document]] 
+* Test Done
+** Deployment Steps followed as listed in the [[https://github.com/vlead/outreach-portal/blob/approved-workshops/README.org][document]]
+   - This application runs on Ubuntu 12.04. Create a VM and follow
+     these steps to run the outreach application.
+     *Step1:* Set the host name in the VM with the below command:
+          #+BEGIN_EXAMPLE
+          hostname <dns> 
+          #+END_EXAMPLE
+     *Step2:* Edit /etc/hosts and add the following line to the file:
+          #+BEGIN_EXAMPLE
+          127.0.0.1 <dns>
+          #+END_EXAMPLE
+      *Note: hostname and dns in the url should be same* Example:- dns
+      for the test outreach is outrach-installation then the hostname
+      should be outreach-installation.
+      #+BEGIN_EXAMPLE
+      hostname outreach-installation
+      /etc/hosts - 127.0.0.1 outreach-installation
+      url : http://outreach-installation.vlabs.ac.in
+      #+END_EXAMPLE
+     *Step3:* wget the sources from this repo. 
+          #+BEGIN_EXAMPLE
+          wget https://github.com/vlead/outreach-portal/archive/approved-workshops.zip
+          #+END_EXAMPLE
+     *Step4:* Install the program to unzip files 
+          #+BEGIN_EXAMPLE
+          apt-get install unzip
+          #+END_EXAMPLE
+     *Step5:* unzip the sources
+          #+BEGIN_EXAMPLE
+          unzip approved-workshops.zip
+          #+END_EXAMPLE
+     *Step6:* change directory to the unzipped sources 
+          #+BEGIN_EXAMPLE
+          cd outreach-portal-approved-workshops
+          #+END_EXAMPLE
+     *Step7:* Make deploy.sh executable
+          #+BEGIN_EXAMPLE
+          chmod +x deploy.sh
+          #+END_EXAMPLE
+     *Step8:* Run deploy.sh
+          #+BEGIN_EXAMPLE
+          ./deploy.sh
+          #+END_EXAMPLE
+*** Post Deployment Steps
+    1. Set the app URL:
+       - Open the file /var/www/runtime/config.py and change the field
+         *APP_URL* and *REDIRECT_URI* to point to the right hostname
+	 #+BEGIN_EXAMPLE
+	 APP_URL = "http://newoutreach.vlabs.ac.in"
+	 REDIRECT_URI = "http://newoutreach.vlabs.ac.in/authorized"
+	 #+END_EXAMPLE
+    2. Get the google keys for authentication
+       - Open the [[ Open the file /var/www/runtime/config.py and copy the right values for the fields CONSUMER_KEY and CONSUMER_SECRET from the google developer¡¯s console.][link]]
+       - Click on credentials -> Create Credentials -> OAuth Client ID
+         -> Selecct Web Application in Application type
+       - Add url as http://newoutreach.vlabs.ac.in in Authorized
+         JavaScript origins
+       - Add the url as http://newoutreach.vlabs.ac.in/authorized in
+         Authorized redirect URIs
+       - Click on create, it will give us the *Client ID* and *Client secret*.	 
+    3. Set the google keys for authentication
+       -  Open the file /var/www/runtime/config.py and copy the CLient
+          ID and CLient secret values from the google keys and give
+          them for the fields CONSUMER_KEY and CONSUMER_SECRET then
+          save and exit the file.
+** Database Dump
+*** Create the database dump file from production   
+   - Login to the production outreach machine on AWS Cloud and follow
+     the steps to get the database dump
+     1. Create the dump file
+	#+BEGIN_EXAMPLE
+	mysqldump -u root -proot outreach > outreach.sql
+	#+END_EXAMPLE
+     2. At this point outreach.sql is generated. Get this file to the
+        machine on which the new outreach application is being deployed.
+*** Create the database from the dump file
+    - Login in to the test machine where outreach application is
+      deployed and run these two steps to create the database from
+      the dump file.
+      1. Login to mysql console to *Drop and create the database* 
+         #+BEGIN_EXAMPLE
+         mysql -u root -proot
+         drop database outreach
+         create database outreach	 
+         #+END_EXAMPLE
+      2. Exit from mysql console	 
+      3. To load the database from the dump run the below command from
+         where the dump file (outreach.sql) is placed in the new
+         outreach vm.
+	 #+BEGIN_EXAMPLE
+	 mysql -u root -proot outreach < outreach.sql
+	 #+END_EXAMPLE
+** Recommendations
+   - *Running OS environment:* Outreach portal application is developed in ubuntu 12.0
+     environment with all the required dependencies. 
+   - *Migrated OS environment:* Earlier we have migrated it in to Ubuntu
+     14.0 and it was working fine but not deployed (migration done
+     only for testing purpose). 
+   - *Migrate OS environment:* We have to migrate the application to
+     Ubuntu 18.0 as it is the latest version.
+   - Steps to retrieve the data from database is missing
+     1. Database backup process
+     2. Database usage
+     3. MySql queries to get the participants, usage, workshop
+        conducted at nodal centers, year wise data collection etc. from
+        data base.
+   - The final document needs to be pushed to master and that link
+     should be shared with IITB.	
+   - The estimated time could be added to the document.  
+** Estimated time to deploy the outreach portal
+   - The following table has the estimated time for installing the
+     outreach application
+   | Item              | Estimated Time |
+   |-------------------+----------------|
+   | Deployment        | 40mins         |
+   |-------------------+----------------|
+   | Post installation | 10mins         |
+   |-------------------+----------------|
+   | Database Dump     | 5mins          |
+   |-------------------+----------------|
+   
+** Validity of Data
+*** Related terms
+    - Integration Outreach Coordinator is referred as IOC
+    - Nodal Coordinator is referred as NC
+*** Duration for testing
+|------+-----------+-------------|
+| S.No | Testing   | Duration    |
+|------+-----------+-------------|
+|    1 | IOC login | 60 minutes  |
+|------+-----------+-------------|
+|    2 | NC login  | 120 minutes |
+|------+-----------+-------------|
+|    3 | Dashboard | 30 minutes  |
+|------+-----------+-------------|
+
+*** Testing Outreach portal dashboard
+    - The following table has the existing data compared with the new data of the outreach portal dashboard. 
+
+|------+-----------------------+---------------+----------+-----------------|
+| S.No | Item                  | Existing data | New data | Is it matching? |
+|------+-----------------------+---------------+----------+-----------------|
+|    1 | Upcoming workshops    |             0 |        0 | Yes             |
+|------+-----------------------+---------------+----------+-----------------|
+|    2 | Participants attended |        208879 |   208879 | Yes             |
+|------+-----------------------+---------------+----------+-----------------|
+|    3 | Nodal Centers         |           887 |      887 | Yes             |
+|------+-----------------------+---------------+----------+-----------------|
+|    4 | Workshops run         |          1286 |     1286 | Yes             |
+|------+-----------------------+---------------+----------+-----------------|
+|    5 | Usage                 |       2909624 |  2909624 | Yes             |
+|------+-----------------------+---------------+----------+-----------------|
+
+*** Testing through IOC Login
+    - The following table has the existing data compared with the new data through IoC login of IIIT hyderabad. 
+
+
+|------+-----------------------------+---------------+----------+-----------------|
+| S.No | Item                        | Existing data | New data | Is it matching? |
+|------+-----------------------------+---------------+----------+-----------------|
+|    1 | Number is Nodal Coordinator |            33 |       33 | Yes             |
+|------+-----------------------------+---------------+----------+-----------------|
+|    2 | Number of Nodal Centers     |            27 |       27 | Yes             |
+|------+-----------------------------+---------------+----------+-----------------|
+|    3 | Number of workshops         |           176 |      176 | Yes             |
+|------+-----------------------------+---------------+----------+-----------------|
+|    4 | Usage                       |        234118 |   234118 | Yes             |
+|------+-----------------------------+---------------+----------+-----------------|
+|    5 | Participants                |         18185 |    18185 | Yes             |
+|------+-----------------------------+---------------+----------+-----------------|
+|    6 | Upcoming workshops          |             0 |        0 | Yes             |
+|------+-----------------------------+---------------+----------+-----------------|
+|    7 | Pending workshops           |             0 |        0 | Yes             |
+|------+-----------------------------+---------------+----------+-----------------|
+|    8 | Workshop History            |            69 |       69 | Yes             |
+|------+-----------------------------+---------------+----------+-----------------|
+|    9 | Reference documents         |             3 |        3 | Yes             |
+|------+-----------------------------+---------------+----------+-----------------|
+|   10 | Add workshop                |       Working |  Working | Yes             |
+|------+-----------------------------+---------------+----------+-----------------|
+|   11 | Edit workshop               |       Working |  Working | Yes             |
+|------+-----------------------------+---------------+----------+-----------------|
+
+*** Testing through NC login
+    - The following table has the existing data compared with the new data through NC login of IIIT Hyderabad.
+
+|------+------------------------------------------+---------------+----------+-----------------|
+| S.No | Item                                     | Existing data | New data | Is it matching? |
+|------+------------------------------------------+---------------+----------+-----------------|
+|    1 | Number of workshops                      |            40 |       40 | Yes             |
+|------+------------------------------------------+---------------+----------+-----------------|
+|    2 | Usage                                    |         42750 |    42750 | Yes             |
+|------+------------------------------------------+---------------+----------+-----------------|
+|    3 | Participants                             |          3748 |     3748 | Yes             |
+|------+------------------------------------------+---------------+----------+-----------------|
+|    4 | Upcoming workshops                       |             0 |        0 | Yes             |
+|------+------------------------------------------+---------------+----------+-----------------|
+|    5 | Pending workshops                        |            13 |       13 | Yes             |
+|------+------------------------------------------+---------------+----------+-----------------|
+|    6 | Workshop History                         |            40 |       40 | Yes             |
+|------+------------------------------------------+---------------+----------+-----------------|
+|    7 | Outreach Coordinator reference documents |             0 |        0 | Yes             |
+|------+------------------------------------------+---------------+----------+-----------------|
+|    8 | Add workshop                             |       Working |  Working | Yes             |
+|------+------------------------------------------+---------------+----------+-----------------|
+|    9 | Edit workshop                            |       Working |  Working | Yes             |
+|------+------------------------------------------+---------------+----------+-----------------|
+|   10 | Contact outreach coordinator             |             0 |        0 | Yes             |
+|------+------------------------------------------+---------------+----------+-----------------|
+|   11 | Nodal Centers                            |         Empty |    Empty | Yes             |
+|------+------------------------------------------+---------------+----------+-----------------|
+|   12 | Reference documents                      |             3 |        3 | Yes             |
+|------+------------------------------------------+---------------+----------+-----------------|
+
+*** Recommendations 
+    *Suggestions for the following tests needed*
+    - Validating Data for all IOC and NC and Admin  from front end.
+    - Validating Data for all IOC and NC and Admin  from the Database Dump.
