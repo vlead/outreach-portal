@@ -24,6 +24,12 @@ knowledge transfer of outreach portal.
 
 5. [[../model-and-design/design.org][Design]] and [[../runtime/backend.org][Implementation]]
 
+6. Database [[../deployment/create-database-from-dump.org][backup]] and [[../deployment/create-database-from-dump.org][restore]]
+
+7. [[../deployment/stored-procedures.org][SQL queries]] :: These are various queries written as stored
+                  procedures to fetch information from the database
+                  like total number of workshops, etc.
+
 
 * Sources
 The sources are on [[https://github.com/vlead/outreach-portal.git][github]].  The branch we are working on is
