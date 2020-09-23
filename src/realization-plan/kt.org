@@ -40,6 +40,9 @@ knowledge transfer of outreach portal.
      happens, then the database is restored properly from
      the backup.
 
+10. Estimated time to push to master :: It will take one
+     person week to test and push all the changes to master.
+
 
 
 * Sources
