@@ -30,6 +30,17 @@ knowledge transfer of outreach portal.
                   procedures to fetch information from the database
                   like total number of workshops, etc.
 
+8. Recommendations :: The current set up is only on ubuntu
+     12.04.  Porting to 18.04 requires changes to libraries.
+     used like mysql driver, and others listed as
+     application dependencies in this [[https://github.com/vlead/outreach-portal/blob/approved-workshops/src/deployment/setup-machine.org#common-vars][section]].  Also, python
+     2.7 will have to be replaced with python 3.
+
+9. Validation of Database :: If the login by the admin
+     happens, then the database is restored properly from
+     the backup.
+
+
 
 * Sources
 The sources are on [[https://github.com/vlead/outreach-portal.git][github]].  The branch we are working on is
