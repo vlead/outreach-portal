@@ -20,3 +20,9 @@ route add default gw IP
 #+END_EXAMPLE
 2. gateway needs to be manually added after every restart of the server. 
 3. Check for syslogs and apache logs.
+
+* OAuth
+1. Email used for GET authentication is ioc-iiit@vlabs.ac.in
+2. Client name : Vlabs Outreach Portal
+3. Updated on 29th October,2021 based on authenciation failure logged by IIT Delhi
+
