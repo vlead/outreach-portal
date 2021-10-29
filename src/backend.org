@@ -5945,10 +5945,11 @@ APP_URL = "http://outreach.virtual-labs.ac.in"
 PERSONA_VERIFIER_URL = "https://verifier.login.persona.org/verify"
 
 #Google Authentication Credentials
+# These 2 values are taken from config.py file
 CONSUMER_KEY = "420719460133-g13g6abnnised3v4nq4d430jo8mpb9m8.apps.googleusercontent.com"
 CONSUMER_SECRET = "DQxOnwOectvfFFe05jqKTIQT"
 
-EMAIL_FOR_GET_AUTH = "admin@vlabs.ac.in"
+EMAIL_FOR_GET_AUTH = "ioc-iiith@vlabs.ac.in"
 TOKEN_FOR_GET_AUTH = "dummytoken"
 
 #+END_SRC
